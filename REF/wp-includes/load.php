@@ -226,3 +226,5 @@ function wp_is_ini_value_changeable( $setting )
 
 	return FALSE;
 }
+
+// @NOW 022

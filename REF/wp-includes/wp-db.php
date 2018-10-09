@@ -843,7 +843,11 @@ class wpdb
 			$this->error = class_exists( 'WP_Error', FALSE )
 				? new WP_Error( $error_code, $message )
 				: $message;
-			// @NOW 020
+
+			return FALSE;
 		}
+
+		wp_die( $message );
+		// @NOW 020 -> wp-includes/functions.php
 	}
 }
