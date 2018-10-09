@@ -34,23 +34,7 @@ class POMO_Reader {
 
 	// refactored. function substr($string, $start, $length) {}
 	// refactored. function strlen($string) {}
-
-	/**
-	 * @param string $string
-	 * @param int    $chunk_size
-	 * @return array
-	 */
-	function str_split($string, $chunk_size) {
-		if (!function_exists('str_split')) {
-			$length = $this->strlen($string);
-			$out = array();
-			for ($i = 0; $i < $length; $i += $chunk_size)
-				$out[] = $this->substr($string, $i, $chunk_size);
-			return $out;
-		} else {
-			return str_split( $string, $chunk_size );
-		}
-	}
+	// refactored. function str_split($string, $chunk_size) {}
 
 	/**
 	 * @return int

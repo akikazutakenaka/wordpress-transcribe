@@ -95,8 +95,10 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 
 			for ( $i = 0; $i < $length; $i += $chunk_size )
 				$out[] = $this->substr( $string, $i, $chunk_size );
-				// @NOW 008
-		}
+
+			return $out;
+		} else
+			return str_split( $string, $chunk_size );
 	}
 }
 

@@ -114,7 +114,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 
 			// Transform raw data into set of indices
 			$originals    = $reader->str_split( $originals, 8 );
-			// @NOW 007 -> wp-includes/pomo/streams.php
+			// @NOW 007
 		}
 	}
 }
