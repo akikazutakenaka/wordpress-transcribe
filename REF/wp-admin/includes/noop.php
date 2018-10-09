@@ -25,4 +25,10 @@ function apply_filters()
 function did_action()
 {}
 
-// @NOW 013
+/**
+ * @ignore
+ */
+function is_admin()
+{
+	return TRUE;
+}

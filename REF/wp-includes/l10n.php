@@ -211,7 +211,7 @@ function _get_path_to_translation_from_lang_dir( $domain )
 	}
 
 	$locale = is_admin() ? get_user_locale() : get_locale();
-	// @NOW 012 -> wp-admin/includes/noop.php, wp-includes/load.php
+	// @NOW 012 -> wp-includes/load.php
 }
 
 /**

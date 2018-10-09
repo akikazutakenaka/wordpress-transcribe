@@ -53,10 +53,7 @@ function do_action_ref_array() {}
  */
 function get_bloginfo() {}
 
-/**
- * @ignore
- */
-function is_admin() {return true;}
+// refactored. function is_admin() {}
 
 /**
  * @ignore

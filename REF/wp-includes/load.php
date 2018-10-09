@@ -26,6 +26,8 @@ function wp_check_php_mysql_version()
 	}
 }
 
+// @NOW 013
+
 /**
  * If Multisite is enabled.
  *
