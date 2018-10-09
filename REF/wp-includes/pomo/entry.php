@@ -29,6 +29,40 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 		var $references = [];
 		var $flags = [];
 
+		/**
+		 * @param array $args Associative array, support following keys:
+		 *     - singular (string)            The string to translate, if omitted and empty entry will be created.
+		 *     - plural (string)              The plural form of the string, setting this will set {@link $is_plural} to true.
+		 *     - translations (array)         Translations of the string and possibly its plural forms.
+		 *     - context (string)             A string differentiating two equal strings used in different contexts.
+		 *     - translator_comments (string) Comments left by translators.
+		 *     - extracted_comments (string)  Comments left by developers.
+		 *     - references (array)           Places in the code this strings is used, in relative_to_root_path/file.php:linum form.
+		 *     - flags (array)                Flags like php-format.
+		 */
+		function __construct( $args = [] )
+		{
+			// if no singular, empty object
+			if ( ! isset( $args['singular'] ) )
+				return;
+
+			// Get member variable values from args hash
+			foreach ( $args as $varname => $value )
+				$this->$varname = $value;
+
+			if ( isset( $args['plural'] ) && $args['plural'] )
+				$this->is_plural = TRUE;
+
+			if ( ! is_array( $this->translations ) )
+				$this->translations = [];
+
+			if ( ! is_array( $this->references ) )
+				$this->references = [];
+
+			if ( ! is_array( $this->flags ) )
+				$this->flags = [];
+		}
+
 		// @NOW 009
 	}
 }
