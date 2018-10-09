@@ -42,5 +42,5 @@ function load_textdomain( $domain, $mofile )
 	 * @param string $mofile   Path to the MO file.
 	 */
 	$plugin_override = apply_filters( 'override_load_textdomain', FALSE, $domain, $mofile );
-	// @NOW 006 -> wp-includes/plugin.php
+	// @NOW 006
 }

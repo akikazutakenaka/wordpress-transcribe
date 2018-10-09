@@ -96,7 +96,8 @@ function apply_filters( $tag, $value )
 	array_shift( $args );
 
 	$filtered = $wp_filter[$tag]->apply_filters( $value, $args );
-	// @NOW 007
+	array_pop( $wp_current_filter );
+	return $filtered;
 }
 
 /**
