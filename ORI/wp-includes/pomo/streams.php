@@ -122,14 +122,7 @@ endif;
 
 if ( ! class_exists( 'POMO_FileReader', false ) ):
 class POMO_FileReader extends POMO_Reader {
-
-	/**
-	 * @param string $filename
-	 */
-	function __construct( $filename ) {
-		parent::POMO_Reader();
-		$this->_f = fopen($filename, 'rb');
-	}
+	// refactored. function __construct( $filename ) {}
 
 	/**
 	 * PHP4 constructor.

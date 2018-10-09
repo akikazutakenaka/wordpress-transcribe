@@ -36,6 +36,15 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 	class POMO_FileReader extends POMO_Reader
 	{
+		/**
+		 * @param string $filename
+		 */
+		function __construct( $filename )
+		{
+			parent::POMO_Reader();
+			$this->_f = fopen( $filename, 'rb' );
+		}
+
 		// @NOW 008
 	}
 }
