@@ -615,8 +615,19 @@ class wpdb
 	public function __construct( $dbuser, $dbpassword, $dbname, $dbhost )
 	{
 		register_shutdown_function( [$this, '__destruct'] );
-		// @NOW 018 -> wp-includes/wp-db.php
+		// @NOW 018
 	}
 
-	// @NOW 019
+	/**
+	 * PHP5 style destructor and will run when database object is destroyed.
+	 *
+	 * @see   wpdb::__construct()
+	 * @since 2.0.8
+	 *
+	 * @return TRUE
+	 */
+	public function __destruct()
+	{
+		return TRUE;
+	}
 }
