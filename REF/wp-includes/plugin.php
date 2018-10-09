@@ -29,3 +29,5 @@ $wp_filter = $wp_filter
 	? WP_Hook::build_preinitialized_hooks( $wp_filter )
 	: [];
 // @NOW 004 -> wp-includes/class-wp-hook.php
+
+// @NOW 007
