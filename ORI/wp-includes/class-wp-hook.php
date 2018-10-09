@@ -120,24 +120,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 	}
 
 	// refactored. public function apply_filters( $value, $args ) {}
-
-	/**
-	 * Executes the callback functions hooked on a specific action hook.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param mixed $args Arguments to pass to the hook callbacks.
-	 */
-	public function do_action( $args ) {
-		$this->doing_action = true;
-		$this->apply_filters( '', $args );
-
-		// If there are recursive calls to the current action, we haven't finished it until we get to the last one.
-		if ( ! $this->nesting_level ) {
-			$this->doing_action = false;
-		}
-	}
-
+	// refactored. public function do_action( $args ) {}
 	// refactored. public function do_all_hook( &$args ) {}
 
 	/**
