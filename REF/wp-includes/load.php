@@ -66,9 +66,15 @@ function wp_load_translations_early()
 
 	$loaded = TRUE;
 
-	if ( function_exists( 'did_action' ) && did_action( 'init' ) ) {
-		// @NOW 005
-	}
+	if ( function_exists( 'did_action' ) && did_action( 'init' ) )
+		return;
+
+	// We need $wp_local_package
+	require ABSPATH . WPINC . '/version.php';
+
+	// Translation and localization
+	require_once ABSPATH . WPINC . '/pomo/mo.php';
+	// @NOW 005 -> wp-includes/pomo/mo.php
 }
 
 /**
