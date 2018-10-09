@@ -38,4 +38,4 @@ global $blog_id;
 
 // Set initial default constants including WP_MEMORY_LIMIT, WP_MAX_MEMORY_LIMIT, WP_DEBUG, SCRIPT_DEBUG, WP_CONTENT_DIR and WP_CACHE.
 wp_initial_constants();
-// @NOW 003 -> wp-includes/default-constants.php
+// @NOW 003
