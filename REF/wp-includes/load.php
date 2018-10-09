@@ -75,7 +75,8 @@ function wp_load_translations_early()
 	// Translation and localization
 	require_once ABSPATH . WPINC . '/pomo/mo.php';
 	require_once ABSPATH . WPINC . '/l10n.php';
-	// @NOW 005 -> wp-includes/l10n.php
+	require_once ABSPATH . WPINC . '/class-wp-locale.php';
+	// @NOW 005
 }
 
 /**
