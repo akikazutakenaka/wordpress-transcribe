@@ -151,7 +151,13 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 			return is_resource( $this->_f );
 		}
 
-		// @NOW 009
+		/**
+		 * @return bool
+		 */
+		function feof()
+		{
+			return feof( $this->_f );
+		}
 
 		/**
 		 * @return string
@@ -161,7 +167,7 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 			$all = '';
 
 			while ( ! $this->feof() ) {
-				// @NOW 008 -> wp-includes/pomo/streams.php
+				// @NOW 008
 			}
 		}
 	}

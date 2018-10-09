@@ -66,13 +66,7 @@ class POMO_FileReader extends POMO_Reader {
 	// refactored. function read($bytes) {}
 	// refactored. function seekto($pos) {}
 	// refactored. function is_resource() {}
-
-	/**
-	 * @return bool
-	 */
-	function feof() {
-		return feof($this->_f);
-	}
+	// refactored. function feof() {}
 
 	/**
 	 * @return bool
