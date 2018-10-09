@@ -13,13 +13,7 @@ class POMO_Reader {
 	// refactored. var $endian = 'little';
 	// refactored. var $_post = '';
 	// refactored. function __construct() {}
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function POMO_Reader() {
-		self::__construct();
-	}
+	// refactored. public function POMO_Reader() {}
 
 	/**
 	 * Sets the endianness of the file.

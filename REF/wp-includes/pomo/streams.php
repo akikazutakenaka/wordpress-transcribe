@@ -24,12 +24,18 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 		$this->_pos = 0;
 	}
 
-	// @NOW 009
+	/**
+	 * PHP4 constructor.
+	 */
+	public function POMO_Reader()
+	{
+		self::__construct();
+	}
 }
 
 if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 	class POMO_FileReader extends POMO_Reader
 	{
-		// @NOW 008 -> wp-includes/pomo/streams.php
+		// @NOW 008
 	}
 }
