@@ -23,22 +23,7 @@ class Translation_Entry {
 	// refactored. var $flags = array();
 	// refactored. function __construct( $args = array() ) {}
 	// refactored. public function Translation_Entry( $args = array() ) {}
-
-	/**
-	 * Generates a unique key for this entry
-	 *
-	 * @return string|bool the key or false if the entry is empty
-	 */
-	function key() {
-		if ( null === $this->singular || '' === $this->singular ) return false;
-
-		// Prepend context and EOT, like in MO files
-		$key = !$this->context? $this->singular : $this->context.chr(4).$this->singular;
-		// Standardize on \n line endings
-		$key = str_replace( array( "\r\n", "\r" ), "\n", $key );
-
-		return $key;
-	}
+	// refactored. function key() {}
 
 	/**
 	 * @param object $other

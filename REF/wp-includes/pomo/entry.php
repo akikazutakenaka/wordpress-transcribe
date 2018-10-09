@@ -70,5 +70,24 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 		{
 			self::__construct( $args );
 		}
+
+		/**
+		 * Generates a unique key for this entry
+		 *
+		 * @return string|bool the key or false if the entry is empty
+		 */
+		function key()
+		{
+			if ( NULL === $this->singular || '' === $this->singular )
+				return FALSE;
+
+			// Prepend context and EOT, like in MO files
+			$key = ! $this->context ? $this->singular : $this->context . chr( 4 ) . $this->singular;
+
+			// Standardize on \n line endings
+			$key = str_replace( ["\r\n", "\r"], "\n", $key );
+
+			return $key;
+		}
 	}
 }

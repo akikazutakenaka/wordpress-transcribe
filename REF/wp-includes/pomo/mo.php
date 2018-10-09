@@ -141,6 +141,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 					$this->set_headers( $this->make_headers( $translation ) );
 				else {
 					$entry = &$this->make_entry( $original, $translation );
+					$this->entries[$entry->key()] = &$entry;
 					// @NOW 007
 				}
 			}
