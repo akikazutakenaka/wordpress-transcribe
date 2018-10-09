@@ -40,7 +40,7 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 	function readint32()
 	{
 		$bytes = $this->read( 4 );
-		// @NOW 008 -> wp-includes/pomo/streams.php
+		// @NOW 008
 	}
 }
 
@@ -64,7 +64,13 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 			self::__construct( $filename );
 		}
 
-		// @NOW 009
+		/**
+		 * @param int $bytes
+		 */
+		function read( $bytes )
+		{
+			return fread( $this->_f, $bytes );
+		}
 
 		/**
 		 * @return bool

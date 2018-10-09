@@ -124,13 +124,7 @@ if ( ! class_exists( 'POMO_FileReader', false ) ):
 class POMO_FileReader extends POMO_Reader {
 	// refactored. function __construct( $filename ) {}
 	// refactored. public function POMO_FileReader( $filename ) {}
-
-	/**
-	 * @param int $bytes
-	 */
-	function read($bytes) {
-		return fread($this->_f, $bytes);
-	}
+	// refactored. function read($bytes) {}
 
 	/**
 	 * @param int $pos
