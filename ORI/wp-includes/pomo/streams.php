@@ -14,16 +14,7 @@ class POMO_Reader {
 	// refactored. var $_post = '';
 	// refactored. function __construct() {}
 	// refactored. public function POMO_Reader() {}
-
-	/**
-	 * Sets the endianness of the file.
-	 *
-	 * @param $endian string 'big' or 'little'
-	 */
-	function setEndian($endian) {
-		$this->endian = $endian;
-	}
-
+	// refactored. function setEndian($endian) {}
 	// refactored. function readint32() {}
 
 	/**

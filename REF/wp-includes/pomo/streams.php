@@ -33,6 +33,16 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 	}
 
 	/**
+	 * Sets the endianness of the file.
+	 *
+	 * @param string $endian 'big' or 'little'
+	 */
+	function setEndian( $endian )
+	{
+		$this->endian = $endian;
+	}
+
+	/**
 	 * Reads a 32bit Integer from the Stream
 	 *
 	 * @return mixed The integer, corresponding to the next 32 bits from the stream or false if there are not enough bytes or on error.
