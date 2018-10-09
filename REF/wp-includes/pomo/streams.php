@@ -32,7 +32,16 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 		self::__construct();
 	}
 
-	// @NOW 008
+	/**
+	 * Reads a 32bit Integer from the Stream
+	 *
+	 * @return mixed The integer, corresponding to the next 32 bits from the stream or false if there are not enough bytes or on error.
+	 */
+	function readint32()
+	{
+		$bytes = $this->read( 4 );
+		// @NOW 008 -> wp-includes/pomo/streams.php
+	}
 }
 
 if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
@@ -54,6 +63,8 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		{
 			self::__construct( $filename );
 		}
+
+		// @NOW 009
 
 		/**
 		 * @return bool
