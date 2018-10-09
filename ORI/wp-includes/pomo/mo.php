@@ -12,15 +12,8 @@ require_once dirname(__FILE__) . '/streams.php';
 
 if ( ! class_exists( 'MO', false ) ):
 class MO extends Gettext_Translations {
-
-	var $_nplurals = 2;
-
-	/**
-	 * Loaded MO file.
-	 *
-	 * @var string
-	 */
-	private $filename = '';
+	// refactored. var $_nplurals = 2;
+	// refactored. private $filename = '';
 
 	/**
 	 * Returns the loaded MO file.

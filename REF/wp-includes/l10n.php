@@ -74,5 +74,8 @@ function load_textdomain( $domain, $mofile )
 		return FALSE;
 
 	$mo = new MO();
-	// @NOW 006 -> wp-includes/pomo/mo.php
+
+	if ( ! $mo->import_from_file( $mofile ) ) {
+		// @NOW 006 -> wp-includes/pomo/mo.php
+	}
 }
