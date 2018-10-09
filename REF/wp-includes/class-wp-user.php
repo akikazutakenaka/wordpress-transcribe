@@ -94,5 +94,38 @@ class WP_User
 	 */
 	private static $back_compat_keys;
 
-	// @NOW 015
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the userdata and passes it to WP_User::init().
+	 *
+	 * @since  2.0.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param int|string|stdClass|WP_User $id      User's ID, a WP_User object, or a user object from the DB.
+	 * @param string                      $name    Optional.
+	 *                                             User's username.
+	 * @param int                         $site_id Optional Site ID, defaults to current site.
+	 */
+	public function __construct( $id = 0, $name = '', $site_id = '' )
+	{
+		if ( ! isset( self::$back_compat_keys ) ) {
+			$prefix = $GLOBALS['wpdb']->prefix;
+			self::$back_compat_keys = [
+				'user_firstname'             => 'first_name',
+				'user_lastname'              => 'last_name',
+				'user_description'           => 'description',
+				'user_level'                 => $prefix . 'user_level',
+				$prefix . 'usersettings'     => $prefix . 'user-settings',
+				$prefix . 'usersettingstime' => $prefix . 'user-settings-time'
+			];
+		}
+
+		if ( $id instanceof WP_User ) {
+			$this->init( $id->data, $site_id );
+			// @NOW 015 -> wp-includes/class-wp-user.php
+		}
+	}
+
+	// @NOW 016
 }
