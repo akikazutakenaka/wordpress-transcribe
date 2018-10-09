@@ -54,73 +54,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 		}
 	}
 
-	/**
-	 * Handles reseting callback priority keys mid-iteration.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param bool|int $new_priority     Optional. The priority of the new filter being added. Default false,
-	 *                                   for no priority being added.
-	 * @param bool     $priority_existed Optional. Flag for whether the priority already existed before the new
-	 *                                   filter was added. Default false.
-	 */
-	private function resort_active_iterations( $new_priority = false, $priority_existed = false ) {
-		$new_priorities = array_keys( $this->callbacks );
-
-		// If there are no remaining hooks, clear out all running iterations.
-		if ( ! $new_priorities ) {
-			foreach ( $this->iterations as $index => $iteration ) {
-				$this->iterations[ $index ] = $new_priorities;
-			}
-			return;
-		}
-
-		$min = min( $new_priorities );
-		foreach ( $this->iterations as $index => &$iteration ) {
-			$current = current( $iteration );
-			// If we're already at the end of this iteration, just leave the array pointer where it is.
-			if ( false === $current ) {
-				continue;
-			}
-
-			$iteration = $new_priorities;
-
-			if ( $current < $min ) {
-				array_unshift( $iteration, $current );
-				continue;
-			}
-
-			while ( current( $iteration ) < $current ) {
-				if ( false === next( $iteration ) ) {
-					break;
-				}
-			}
-
-			// If we have a new priority that didn't exist, but ::apply_filters() or ::do_action() thinks it's the current priority...
-			if ( $new_priority === $this->current_priority[ $index ] && ! $priority_existed ) {
-				/*
-				 * ... and the new priority is the same as what $this->iterations thinks is the previous
-				 * priority, we need to move back to it.
-				 */
-
-				if ( false === current( $iteration ) ) {
-					// If we've already moved off the end of the array, go back to the last element.
-					$prev = end( $iteration );
-				} else {
-					// Otherwise, just go back to the previous element.
-					$prev = prev( $iteration );
-				}
-				if ( false === $prev ) {
-					// Start of the array. Reset, and go about our day.
-					reset( $iteration );
-				} elseif ( $new_priority !== $prev ) {
-					// Previous wasn't the same. Move forward again.
-					next( $iteration );
-				}
-			}
-		}
-		unset( $iteration );
-	}
+	// refactored. private function resort_active_iterations( $new_priority = false, $priority_existed = false ) {}
 
 	/**
 	 * Unhooks a function or method from a specific filter action.

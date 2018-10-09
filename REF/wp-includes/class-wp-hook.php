@@ -70,7 +70,84 @@ final class WP_Hook implements Iterator, ArrayAccess
 	public function add_filter( $tag, $function_to_add, $priority, $accepted_args )
 	{
 		$idx = _wp_filter_build_unique_id( $tag, $function_to_add, $priority );
-		// @NOW 006
+		$priority_existed = isset( $this->callbacks[$priority] );
+		$this->callbacks[$priority][$idx] = [
+			'function'      => $function_to_add,
+			'accepted_args' => $accepted_args
+		];
+
+		// If we're adding a new priority to the list, put them in sorted order
+		if ( ! $priority_existed && count( $this->callbacks ) > 1 )
+			ksort( $this->callbacks, SORT_NUMERIC );
+
+		if ( $this->nesting_level > 0 )
+			$this->resort_active_iterations( $priority, $priority_existed );
+			// @NOW 006
+	}
+
+	/**
+	 * Handles reseting callback priority keys mid-iteration.
+	 *
+	 * @since  4.7.0
+	 *
+	 * @param bool|int $new_priority     Optional.
+	 *                                   The priority of the new filter being added.
+	 *                                   Default false, for no priority being added.
+	 * @param bool     $priority_existed Optional.
+	 *                                   Flag for whether the priority already existed before the new filter was added.
+	 *                                   Default false.
+	 */
+	private function resort_active_iterations( $new_priority = FALSE, $priority_existed = FALSE )
+	{
+		$new_priorities = array_keys( $this->callbacks );
+
+		// If there are no remaining hooks, clear out all running iterations.
+		if ( ! $new_priorities ) {
+			foreach ( $this->iterations as $index => $iteration )
+				$this->iterations[$index] = $new_priorities;
+
+			return;
+		}
+
+		$min = min( $new_priorities );
+
+		foreach ( $this->iterations as $index => &$iteration ) {
+			$current = current( $iteration );
+
+			// If we're already at the end of this iteration, just leave the array pointer where it is.
+			if ( FALSE === $current )
+				continue;
+
+			$iteration = $new_priorities;
+
+			if ( $current < $min ) {
+				array_unshift( $iteration, $current );
+				continue;
+			}
+
+			while ( current( $iteration ) < $current )
+				if ( FALSE === next( $iteration ) )
+					break;
+
+			// If we have a new priority that didn't exist, but ::apply_filters() or ::do_action() thinks it's the current priority...
+			if ( $new_priority === $this->current_priority[$index] && ! $priority_existed ) {
+				// ...and the new priority is the same as what $this->iterations thinks is the previous priority, we need to move back to it.
+				$prev = ( FALSE === current( $iteration ) )
+					? end( $iteration ) // If we've already moved off the end of the array, go back to the last element.
+					: prev( $iteration ); // Otherwise, just go back to the previous element.
+
+				if ( FALSE === $prev )
+					// Start of the array.
+					// Reset, and go about our day.
+					reset( $iteration );
+				elseif ( $new_priority !== $prev )
+					// Previous wasn't the same.
+					// Move forward again.
+					next( $iteration );
+			}
+		}
+
+		unset( $iteration );
 	}
 
 	/**
