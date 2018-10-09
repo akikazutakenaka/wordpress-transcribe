@@ -10,9 +10,14 @@
 require_once dirname( __FILE__ ) . '/plural-forms.php';
 require_once dirname( __FILE__ ) . '/entry.php';
 
-// @NOW 009
+if ( ! class_exists( 'Translations', FALSE ) ) {
+	class Translations
+	{
+		var $entries = [];
+		var $headers = [];
+	}
+}
 
 class Gettext_Translations extends Translations
 {
-	// @NOW 008 -> wp-includes/pomo/translations.php
 }

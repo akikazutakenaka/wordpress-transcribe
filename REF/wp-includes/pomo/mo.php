@@ -13,6 +13,6 @@ require_once dirname( __FILE__ ) . '/streams.php';
 if ( ! class_exists( 'MO', FALSE ) ) {
 	class MO extends Gettext_Translations
 	{
-		// @NOW 007 -> wp-includes/pomo/translations.php
+		// @NOW 007
 	}
 }

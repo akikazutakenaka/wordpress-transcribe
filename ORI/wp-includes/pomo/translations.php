@@ -12,8 +12,8 @@ require_once dirname(__FILE__) . '/entry.php';
 
 if ( ! class_exists( 'Translations', false ) ):
 class Translations {
-	var $entries = array();
-	var $headers = array();
+	// refactored. var $entries = array();
+	// refactored. var $headers = array();
 
 	/**
 	 * Add entry to the PO structure
