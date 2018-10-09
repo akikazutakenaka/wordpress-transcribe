@@ -52,5 +52,13 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		{
 			self::__construct( $filename );
 		}
+
+		/**
+		 * @return bool
+		 */
+		function is_resource()
+		{
+			return is_resource( $this->_f );
+		}
 	}
 }

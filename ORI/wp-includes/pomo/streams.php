@@ -144,12 +144,7 @@ class POMO_FileReader extends POMO_Reader {
 		return true;
 	}
 
-	/**
-	 * @return bool
-	 */
-	function is_resource() {
-		return is_resource($this->_f);
-	}
+	// refactored. function is_resource() {}
 
 	/**
 	 * @return bool

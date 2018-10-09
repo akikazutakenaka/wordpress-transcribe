@@ -30,7 +30,10 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		function import_from_file( $filename )
 		{
 			$reader = new POMO_FileReader( $filename );
-			// @NOW 007
+
+			if ( ! $reader->is_resource() ) {
+				// @NOW 007
+			}
 		}
 	}
 }
