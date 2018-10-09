@@ -597,5 +597,26 @@ class wpdb
 	 */
 	private $has_connected = FALSE;
 
-	// @NOW 018
+	/**
+	 * Connects to the database server and selects a database.
+	 *
+	 * PHP5 style constructor for compatibility with PHP5.
+	 * Does the actual setting up of the class properties and connection to the database.
+	 *
+	 * @link   https://core.trac.wordpress.org/ticket/3354
+	 * @since  2.0.8
+	 * @global string $wp_version
+	 *
+	 * @param string $dbuser     MySQL database user
+	 * @param string $dbpassword MySQL database password
+	 * @param string $dbname     MySQL database name
+	 * @param string $dbhost     MySQL database host
+	 */
+	public function __construct( $dbuser, $dbpassword, $dbname, $dbhost )
+	{
+		register_shutdown_function( [$this, '__destruct'] );
+		// @NOW 018 -> wp-includes/wp-db.php
+	}
+
+	// @NOW 019
 }
