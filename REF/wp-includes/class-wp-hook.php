@@ -150,6 +150,46 @@ final class WP_Hook implements Iterator, ArrayAccess
 	}
 
 	/**
+	 * Calls the callback functions added to a filter hook.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param  mixed $value The value to filter.
+	 * @param  array $args  Arguments to pass to callbacks.
+	 * @return mixed The filtered value after all hooked functions are applied to it.
+	 */
+	public function apply_filters( $value, $args )
+	{
+		if ( ! $this->callbacks )
+			return $value;
+
+		$nesting_level = $this->nesting_level++;
+		$this->iterations[$nesting_level] = array_keys( $this->callbacks );
+		$num_args = count( $args );
+
+		do {
+			$this->current_priority[$nesting_level] = $priority = current( $this->iterations[$nesting_level] );
+
+			foreach ( $this->callbacks[$priority] as $the_ ) {
+				if ( ! $this->doing_action )
+					$args[0] = $value;
+
+				// Avoid the array_slice if possible.
+				$value = ( $the_['accepted_args'] == 0 )
+					? call_user_func_array( $the_['function'], [] )
+					: ( ( $the_['accepted_args'] >= $num_args )
+						? call_user_func_array( $the_['function'], $args )
+						: call_user_func_array( $the_['function'], array_slice( $args, 0, ( int ) $the_['accepted_args'] ) ) );
+			}
+		} while ( FALSE !== next( $this->iterations[$nesting_level] ) );
+
+		unset( $this->iterations[$nesting_level] );
+		unset( $this->current_priority[$nesting_level] );
+		$this->nesting_level--;
+		return $value;
+	}
+
+	/**
 	 * Processes the functions hooked into the 'all' hook.
 	 *
 	 * @since 4.7.0

@@ -77,8 +77,26 @@ function apply_filters( $tag, $value )
 		$wp_current_filter[] = $tag;
 		$args = func_get_args();
 		_wp_call_all_hook( $args );
-		// @NOW 007
 	}
+
+	if ( ! isset( $wp_filter[$tag] ) ) {
+		if ( isset( $wp_filter['all'] ) )
+			array_pop( $wp_current_filter );
+
+		return $value;
+	}
+
+	if ( ! isset( $wp_filter['all'] ) )
+		$wp_current_filter[] = $tag;
+
+	if ( empty( $args ) )
+		$args = func_get_args();
+
+	// Don't pass the tag name to WP_Hook
+	array_shift( $args );
+
+	$filtered = $wp_filter[$tag]->apply_filters( $value, $args );
+	// @NOW 007
 }
 
 /**
