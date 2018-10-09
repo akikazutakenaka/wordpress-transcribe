@@ -38,4 +38,7 @@ global $blog_id;
 
 // Set initial default constants including WP_MEMORY_LIMIT, WP_MAX_MEMORY_LIMIT, WP_DEBUG, SCRIPT_DEBUG, WP_CONTENT_DIR and WP_CACHE.
 wp_initial_constants();
-// @NOW 003
+
+// Check for the required PHP version and for the MySQL extension or a database drop-in.
+wp_check_php_mysql_versions();
+// @NOW 003 -> wp-includes/load.php

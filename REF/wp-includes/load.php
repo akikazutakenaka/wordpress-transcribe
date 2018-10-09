@@ -6,6 +6,27 @@
  */
 
 /**
+ * Check for the required PHP version, and the MySQL extension or a database drop-in.
+ *
+ * Dies if requirements are not met.
+ *
+ * @since  3.0.0
+ * @access private
+ * @global string $required_php_version The required PHP version string.
+ * @global string $wp_version           The WordPress version string.
+ */
+function wp_check_php_mysql_version()
+{
+	global $required_php_version, $wp_version;
+	$php_version = phpversion();
+
+	if ( version_compare( $required_php_version, $php_version, '>' ) ) {
+		wp_load_translations_early();
+		// @NOW 004 -> wp-includes/load.php
+	}
+}
+
+/**
  * If Multisite is enabled.
  *
  * @since 3.0.0
@@ -22,6 +43,8 @@ function is_multisite()
 
 	return FALSE;
 }
+
+// @NOW 005
 
 /**
  * Converts a shorthand byte value to an integer byte value.
