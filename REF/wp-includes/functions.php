@@ -1,2 +1,9 @@
 <?php
-// @NOW 018
+/**
+ * Main WordPress API
+ *
+ * @package WordPress
+ */
+
+require( ABSPATH . WPINC . '/option.php' );
+// @NOW 018 -> wp-includes/option.php
