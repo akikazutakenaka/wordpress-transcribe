@@ -1,2 +1,7 @@
 <?php
-// @NOW 019
+/**
+ * Option API
+ *
+ * @package    WordPress
+ * @subpackage Option
+ */

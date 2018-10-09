@@ -63,6 +63,8 @@ function is_multisite()
 	return FALSE;
 }
 
+// @NOW 018
+
 /**
  * Attempt an early load of translations.
  *
