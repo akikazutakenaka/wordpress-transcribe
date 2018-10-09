@@ -48,20 +48,7 @@ class Translations {
 		return true;
 	}
 
-	/**
-	 * Sets $header PO header to $value
-	 *
-	 * If the header already exists, it will be overwritten
-	 *
-	 * TODO: this should be out of this class, it is gettext specific
-	 *
-	 * @param string $header header name, without trailing :
-	 * @param string $value header value, without trailing \n
-	 */
-	function set_header($header, $value) {
-		$this->headers[$header] = $value;
-	}
-
+	// refactored. function set_header($header, $value) {}
 	// refactored. function set_headers($headers) {}
 
 	/**

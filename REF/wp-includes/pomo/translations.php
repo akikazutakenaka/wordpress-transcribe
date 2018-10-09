@@ -16,7 +16,20 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		var $entries = [];
 		var $headers = [];
 
-		// @NOW 008
+		/**
+		 * Sets $header PO header to $value
+		 *
+		 * If the header already exists, it will be overwritten
+		 *
+		 * @todo This should be out of this class, it is gettext specific
+		 *
+		 * @param string $header Header name, without trailing :
+		 * @param string $value  Header value, without trailing \n
+		 */
+		function set_header( $header, $value )
+		{
+			$this->headers[$header] = $value;
+		}
 
 		/**
 		 * @param array $headers
@@ -27,8 +40,9 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 				$this->set_header( $header, $value );
 		}
 	}
-}
 
-class Gettext_Translations extends Translations
-{
+	class Gettext_Translations extends Translations
+	{
+		// @NOW 008
+	}
 }
