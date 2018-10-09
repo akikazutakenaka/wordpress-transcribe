@@ -139,7 +139,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 
 				if ( '' === $original )
 					$this->set_headers( $this->make_headers( $translation ) );
-					// @NOW 007 -> wp-includes/pomo/translations.php
+					// @NOW 007
 			}
 		}
 	}

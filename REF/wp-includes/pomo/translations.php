@@ -43,6 +43,28 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 
 	class Gettext_Translations extends Translations
 	{
-		// @NOW 008
+		/**
+		 * @param  string $translation
+		 * @return array
+		 */
+		function make_headers( $translation )
+		{
+			$headers = [];
+
+			// Sometimes \ns are used instead of real new lines
+			$translation = str_replace( '\n', "\n", $translation );
+			$lines = explode( "\n", $translation );
+
+			foreach ( $lines as $line ) {
+				$parts = explode( ':', $line, 2 );
+
+				if ( ! isset( $parts[1] ) )
+					continue;
+
+				$headers[trim( $parts[0] )] = trim( $parts[1] );
+			}
+
+			return $headers;
+		}
 	}
 }
