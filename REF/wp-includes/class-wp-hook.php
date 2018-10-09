@@ -60,6 +60,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 	 * Hooks a function or method to a specific filter action.
 	 *
 	 * @since 4.7.0
+	 *
 	 * @param string   $tag             The name of the filter to hook the $function_to_add callback to.
 	 * @param callable $function_to_add The callback to be run when the filter is applied.
 	 * @param int      $priority        The order in which the functions associated with a particular action are executed.
@@ -69,7 +70,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 	public function add_filter( $tag, $function_to_add, $priority, $accepted_args )
 	{
 		$idx = _wp_filter_build_unique_id( $tag, $function_to_add, $priority );
-		// @NOW 006 -> wp-includes/plugin.php
+		// @NOW 006
 	}
 
 	/**
@@ -77,6 +78,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 	 *
 	 * @since  4.7.0
 	 * @static
+	 *
 	 * @param  array     $filters Filters to normalize.
 	 * @return WP_Hook[] Array of normalized filters.
 	 */
