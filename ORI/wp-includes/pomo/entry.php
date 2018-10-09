@@ -12,22 +12,15 @@ if ( ! class_exists( 'Translation_Entry', false ) ):
  * Translation_Entry class encapsulates a translatable string
  */
 class Translation_Entry {
-
-	/**
-	 * Whether the entry contains a string and its plural form, default is false
-	 *
-	 * @var boolean
-	 */
-	var $is_plural = false;
-
-	var $context = null;
-	var $singular = null;
-	var $plural = null;
-	var $translations = array();
-	var $translator_comments = '';
-	var $extracted_comments = '';
-	var $references = array();
-	var $flags = array();
+	// refactored. var $is_plural = false;
+	// refactored. var $context = null;
+	// refactored. var $singular = null;
+	// refactored. var $plural = null;
+	// refactored. var $translations = array();
+	// refactored. var $translator_comments = '';
+	// refactored. var $extracted_comments = '';
+	// refactored. var $references = array();
+	// refactored. var $flags = array();
 
 	/**
 	 * @param array $args associative array, support following keys:

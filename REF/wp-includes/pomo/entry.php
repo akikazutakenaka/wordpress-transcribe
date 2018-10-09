@@ -7,4 +7,28 @@
  * @subpackage entry
  */
 
-// @NOW 009
+if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
+	/**
+	 * Translation_Entry class encapsulates a translatable string
+	 */
+	class Translation_Entry
+	{
+		/**
+		 * Whether the entry contains a string and its plural form, default is false
+		 *
+		 * @var bool
+		 */
+		var $is_plural = FALSE;
+
+		var $context = NULL;
+		var $singular = NULL;
+		var $plural = NULL;
+		var $translations = [];
+		var $translator_comments = '';
+		var $extracted_comments = '';
+		var $references = [];
+		var $flags = [];
+
+		// @NOW 009
+	}
+}
