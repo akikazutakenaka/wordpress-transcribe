@@ -56,5 +56,37 @@ final class WP_Hook implements Iterator, ArrayAccess
 	 */
 	private $doing_action = FALSE;
 
-	// @NOW 005
+	// @NOW 006
+
+	/**
+	 * Normalizes filters set up before WordPress has initialized to WP_Hook objects.
+	 *
+	 * @since  4.7.0
+	 * @static
+	 * @param  array     $filters Filters to normalize.
+	 * @return WP_Hook[] Array of normalized filters.
+	 */
+	public static function build_preinitialized_hooks( $filters )
+	{
+		/**
+		 * @var WP_Hook[] $normalized
+		 */
+		$normalized = [];
+
+		foreach ( $filters as $tag => $callback_groups ) {
+			if ( is_object( $callback_groups ) && $callback_groups instanceof WP_Hook ) {
+				$normalized[$tag] = $callback_groups;
+				continue;
+			}
+
+			$hook = new WP_Hook();
+
+			// Loop through callback groups.
+			foreach ( $callback_groups as $priority => $callbacks )
+				// Loop through callbacks.
+				foreach ( $callbacks as $cb )
+					$hook->add_filter( $tag, $cb['function'], $priority, $cb['accepted_args'] );
+					// @NOW 005 -> wp-includes/class-wp-hook.php
+		}
+	}
 }
