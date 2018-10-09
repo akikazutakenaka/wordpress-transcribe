@@ -9,4 +9,3 @@
 
 require_once dirname( __FILE__ ) . '/plural-forms.php';
 require_once dirname( __FILE__ ) . '/entry.php';
-// @NOW 007 -> wp-includes/pomo/entry.php
