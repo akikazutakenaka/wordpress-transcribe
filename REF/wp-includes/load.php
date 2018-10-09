@@ -76,7 +76,8 @@ function wp_load_translations_early()
 	require_once ABSPATH . WPINC . '/pomo/mo.php';
 	require_once ABSPATH . WPINC . '/l10n.php';
 	require_once ABSPATH . WPINC . '/class-wp-locale.php';
-	// @NOW 005
+	require_once ABSPATH . WPINC . '/class-wp-locale-switcher.php';
+	// @NOW 005 -> wp-includes/class-wp-locale-switcher.php
 }
 
 /**
