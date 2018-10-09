@@ -89,7 +89,32 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 
 			// Seek to data blocks
 			$reader->seekto( $header['originals_lenghts_addr'] );
-			// @NOW 007
+
+			// Read originals' indices
+			$originals_lengths_length = $header['translations_lenghts_addr'] - $header['originals_lenghts_addr'];
+
+			if ( $originals_lengths_length != $header['total'] * 8 )
+				return FALSE;
+
+			$originals = $reader->read( $originals_lengths_length );
+
+			if ( $reader->strlen( $originals ) != $originals_lengths_length )
+				return FALSE;
+
+			// Read translations' indices
+			$translations_lenghts_length = $header['hash_addr'] - $header['translations_lenghts_addr'];
+
+			if ( $translations_lenghts_length != $header['total'] * 8 )
+				return FALSE;
+
+			$translations = $reader->read( $translations_lenghts_length );
+
+			if ( $reader->strlen( $translations ) != $translations_lenghts_length )
+				return FALSE;
+
+			// Transform raw data into set of indices
+			$originals    = $reader->str_split( $originals, 8 );
+			// @NOW 007 -> wp-includes/pomo/streams.php
 		}
 	}
 }
