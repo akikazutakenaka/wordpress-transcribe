@@ -42,5 +42,21 @@ function load_textdomain( $domain, $mofile )
 	 * @param string $mofile   Path to the MO file.
 	 */
 	$plugin_override = apply_filters( 'override_load_textdomain', FALSE, $domain, $mofile );
-	// @NOW 006
+
+	if ( TRUE == $plugin_override ) {
+		unset( $l10n_unloaded[$domain] );
+		return TRUE;
+	}
+
+	/**
+	 * Fires before the MO translation file is loaded.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $domain Text domain.
+	 *                       Unique identifier for retrieving translated strings.
+	 * @param string $mofile Path to the .mo file.
+	 */
+	do_action( 'load_textdomain', $domain, $mofile );
+	// @NOW 006 -> wp-includes/plugin.php
 }

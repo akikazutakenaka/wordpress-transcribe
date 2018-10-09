@@ -189,6 +189,8 @@ final class WP_Hook implements Iterator, ArrayAccess
 		return $value;
 	}
 
+	// @NOW 008
+
 	/**
 	 * Processes the functions hooked into the 'all' hook.
 	 *
