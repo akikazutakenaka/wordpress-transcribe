@@ -123,13 +123,7 @@ endif;
 if ( ! class_exists( 'POMO_FileReader', false ) ):
 class POMO_FileReader extends POMO_Reader {
 	// refactored. function __construct( $filename ) {}
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function POMO_FileReader( $filename ) {
-		self::__construct( $filename );
-	}
+	// refactored. public function POMO_FileReader( $filename ) {}
 
 	/**
 	 * @param int $bytes

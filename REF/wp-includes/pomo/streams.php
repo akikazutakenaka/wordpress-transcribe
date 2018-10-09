@@ -45,6 +45,12 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 			$this->_f = fopen( $filename, 'rb' );
 		}
 
-		// @NOW 008
+		/**
+		 * PHP4 constructor.
+		 */
+		public function POMO_FileReader( $filename )
+		{
+			self::__construct( $filename );
+		}
 	}
 }

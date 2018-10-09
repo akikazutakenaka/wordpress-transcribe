@@ -30,7 +30,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		function import_from_file( $filename )
 		{
 			$reader = new POMO_FileReader( $filename );
-			// @NOW 007 -> wp-includes/pomo/streams.php
+			// @NOW 007
 		}
 	}
 }
