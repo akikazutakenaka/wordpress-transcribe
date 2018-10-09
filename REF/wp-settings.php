@@ -16,4 +16,5 @@ define( 'WPINC', 'wp-includes' );
 
 // Include files required for initialization.
 require( ABSPATH . WPINC . '/load.php' );
-// @NOW 003 -> wp-includes/load.php
+require( ABSPATH . WPINC . '/default-constants.php' );
+// @NOW 003 -> wp-includes/default-constants.php

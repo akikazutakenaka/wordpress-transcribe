@@ -1,2 +1,6 @@
 <?php
-// @NOW 004
+/**
+ * These functions are needed to load WordPress.
+ *
+ * @package WordPress
+ */
