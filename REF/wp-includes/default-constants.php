@@ -32,7 +32,9 @@ function wp_initial_constants()
 
 	// Define memory limits.
 	if ( ! defined( 'WP_MEMORY_LIMIT' ) ) {
-		if ( FALSE === wp_is_ini_value_changeable( 'memory_limit' ) ) {
+		if ( FALSE === wp_is_ini_value_changeable( 'memory_limit' ) )
+			define( 'WP_MEMORY_LIMIT', $current_limit );
+		elseif ( is_multisite() ) {
 			// @NOW 004
 		}
 	}
