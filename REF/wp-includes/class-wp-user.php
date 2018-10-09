@@ -157,10 +157,10 @@ class WP_User
 	public function for_site( $site_id = '' )
 	{
 		global $wpdb;
-
 		$this->site_id = ! empty( $site_id )
 			? absint( $site_id )
 			: get_current_blog_id();
-		// @NOW 017
+		$this->cap_key = $wpdb->get_blog_prefix( $this->site_id ) . 'capabilities';
+		// @NOW 017 -> wp-includes/wp-db.php
 	}
 }
