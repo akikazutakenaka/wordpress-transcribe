@@ -113,5 +113,16 @@ class WP_Locale
 	 */
 	public $number_format;
 
-	// @NOW 006
+	/**
+	 * Constructor which calls helper methods to set up object variables.
+	 *
+	 * @since 2.1.0
+	 */
+	public function __construct()
+	{
+		$this->init();
+		// @NOW 006 -> wp-includes/class-wp-locale.php
+	}
+
+	// @NOW 007
 }
