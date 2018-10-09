@@ -29,6 +29,6 @@ function wp_initial_constants()
 
 	$current_limit     = @ini_get( 'memory_limit' );
 	$current_limit_int = wp_convert_hr_to_bytes( $current_limit );
-	// @NOW 004 -> wp-includes/load.php
+	// @NOW 004
 }
 
