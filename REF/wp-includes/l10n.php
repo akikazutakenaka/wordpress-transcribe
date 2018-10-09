@@ -127,4 +127,26 @@ function load_textdomain( $domain, $mofile )
 	return TRUE;
 }
 
-// @NOW 009
+// @NOW 010
+
+/**
+ * Return the Translations instance for a text domain.
+ *
+ * If there isn't one, returns empty Translations instance.
+ *
+ * @since  2.8.0
+ * @global array $l10n
+ *
+ * @param  string                         $domain Text domain.
+ *                                                Unique identifier for retrieving translated strings.
+ * @return Translations|NOOP_Translations A Translations instance.
+ */
+function get_translations_for_domain( $domain )
+{
+	global $l10n;
+
+	if ( isset( $l10n[$domain] )
+	  || ( _load_textdomain_just_in_time( $domain ) && isset( $l10n[$domain] ) ) ) {
+		// @NOW 009 -> wp-includes/l10n.php
+	}
+}
