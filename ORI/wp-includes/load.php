@@ -768,20 +768,7 @@ function is_user_admin() {
 }
 
 // refactored. function is_multisite() {}
-
-/**
- * Retrieve the current site ID.
- *
- * @since 3.1.0
- *
- * @global int $blog_id
- *
- * @return int Site ID.
- */
-function get_current_blog_id() {
-	global $blog_id;
-	return absint($blog_id);
-}
+// refactored. function get_current_blog_id() {}
 
 /**
  * Retrieves the current network ID.

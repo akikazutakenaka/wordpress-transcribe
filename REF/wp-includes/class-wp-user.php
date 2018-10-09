@@ -161,6 +161,6 @@ class WP_User
 		$this->site_id = ! empty( $site_id )
 			? absint( $site_id )
 			: get_current_blog_id();
-		// @NOW 017 -> wp-includes/load.php
+		// @NOW 017
 	}
 }

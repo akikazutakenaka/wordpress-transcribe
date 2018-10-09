@@ -63,7 +63,19 @@ function is_multisite()
 	return FALSE;
 }
 
-// @NOW 018
+/**
+ * Retrieve the current site ID.
+ *
+ * @since  3.1.0
+ * @global int $blog_id
+ *
+ * @return int Site ID.
+ */
+function get_current_blog_id()
+{
+	global $blog_id;
+	return absint( $blog_id );
+}
 
 /**
  * Attempt an early load of translations.
