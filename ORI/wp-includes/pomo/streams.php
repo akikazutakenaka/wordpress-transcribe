@@ -93,19 +93,7 @@ class POMO_FileReader extends POMO_Reader {
 	// refactored. function __construct( $filename ) {}
 	// refactored. public function POMO_FileReader( $filename ) {}
 	// refactored. function read($bytes) {}
-
-	/**
-	 * @param int $pos
-	 * @return boolean
-	 */
-	function seekto($pos) {
-		if ( -1 == fseek($this->_f, $pos, SEEK_SET)) {
-			return false;
-		}
-		$this->_pos = $pos;
-		return true;
-	}
-
+	// refactored. function seekto($pos) {}
 	// refactored. function is_resource() {}
 
 	/**

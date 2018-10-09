@@ -99,6 +99,19 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		}
 
 		/**
+		 * @param  int  $pos
+		 * @return bool
+		 */
+		function seekto( $pos )
+		{
+			if ( -1 == fseek( $this->_f, $pos, SEEK_SET ) )
+				return FALSE;
+
+			$this->_pos = $pos;
+			return TRUE;
+		}
+
+		/**
 		 * @return bool
 		 */
 		function is_resource()

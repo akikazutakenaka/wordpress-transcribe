@@ -71,6 +71,24 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 				return FALSE;
 
 			$reader->setEndian( $endian_string );
+			$endian = ( 'big' == $endian_string ) ? 'N' : 'V';
+			$header = $reader->read( 24 );
+
+			if ( $reader->strlen( $header ) != 24 )
+				return FALSE;
+
+			// Parse header
+			$header = unpack( "{$endian}revision/{$endian}total/{$endian}originals_lenghts_addr/{$endian}translations_lenghts_addr/{$endian}hash_length/{$endian}hash_addr", $header );
+
+			if ( ! is_array( $header ) )
+				return FALSE;
+
+			// Support revision 0 of MO format specs, only
+			if ( $header['revision']] != 0 )
+				return FALSE;
+
+			// Seek to data blocks
+			$reader->seekto( $header['originals_lenghts_addr'] );
 			// @NOW 007
 		}
 	}
