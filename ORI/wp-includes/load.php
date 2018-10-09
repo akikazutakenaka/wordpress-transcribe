@@ -695,26 +695,7 @@ function wp_clone( $object ) {
 	return clone( $object );
 }
 
-/**
- * Whether the current request is for an administrative interface page.
- *
- * Does not check if the user is an administrator; current_user_can()
- * for checking roles and capabilities.
- *
- * @since 1.5.1
- *
- * @global WP_Screen $current_screen
- *
- * @return bool True if inside WordPress administration interface, false otherwise.
- */
-function is_admin() {
-	if ( isset( $GLOBALS['current_screen'] ) )
-		return $GLOBALS['current_screen']->in_admin();
-	elseif ( defined( 'WP_ADMIN' ) )
-		return WP_ADMIN;
-
-	return false;
-}
+// refactored. function is_admin() {}
 
 /**
  * Whether the current request is for a site's admininstrative interface.

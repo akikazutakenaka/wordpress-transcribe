@@ -43,7 +43,6 @@ function is_admin()
 		: ( defined( 'WP_ADMIN' )
 			? WP_ADMIN
 			: FALSE );
-	// @NOW 013 -> wp-admin/includes/class-wp-screen.php
 }
 
 /**

@@ -214,5 +214,19 @@ final class WP_Screen
 	private function __construct()
 	{}
 
-	// @NOW 014
+	/**
+	 * Indicates whether the screen is in a particular admin
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param  string $admin The admin to check against (network | user | site).
+	 *                       If empty any of the three admins will result in true.
+	 * @return bool   True if the screen is in the indicated admin, false otherwise.
+	 */
+	public function in_admin( $admin = NULL )
+	{
+		return empty( $admin )
+			? ( bool ) $this->in_admin
+			: ( $admin == $this->in_admin );
+	}
 }

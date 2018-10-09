@@ -7,6 +7,8 @@
  * @since      1.2.0
  */
 
+// @NOW 013
+
 /**
  * Retrieve the translation of $text.
  *
@@ -211,7 +213,7 @@ function _get_path_to_translation_from_lang_dir( $domain )
 	}
 
 	$locale = is_admin() ? get_user_locale() : get_locale();
-	// @NOW 012 -> wp-includes/load.php
+	// @NOW 012 -> wp-includes/l10n.php
 }
 
 /**
