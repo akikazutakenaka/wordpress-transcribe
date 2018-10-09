@@ -124,5 +124,19 @@ class WP_Locale
 		// @NOW 006 -> wp-includes/class-wp-locale.php
 	}
 
-	// @NOW 007
+	/**
+	 * Sets up the translated strings and object properties.
+	 *
+	 * The method creates the translatable strings for various calendar elements.
+	 * Which allows for specifying locale specific calendar names and text direction.
+	 *
+	 * @since  2.1.0
+	 * @global string $text_direction
+	 */
+	public function init()
+	{
+		// The Weekdays
+		$this->weekday[0] = __( 'Sunday' );
+		// @NOW 007 -> wp-admin/includes/noop.php, wp-includes/l10n.php
+	}
 }
