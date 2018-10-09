@@ -75,15 +75,7 @@ class POMO_FileReader extends POMO_Reader {
 		return fclose($this->_f);
 	}
 
-	/**
-	 * @return string
-	 */
-	function read_all() {
-		$all = '';
-		while ( !$this->feof() )
-			$all .= $this->read(4096);
-		return $all;
-	}
+	// refactored. function read_all() {}
 }
 endif;
 

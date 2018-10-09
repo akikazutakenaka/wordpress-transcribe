@@ -121,7 +121,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 
 			$reader->seekto( $strings_addr );
 			$strings = $reader->read_all();
-			// @NOW 007 -> wp-includes/pomo/streams.php
+			// @NOW 007
 		}
 	}
 }

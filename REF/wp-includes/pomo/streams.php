@@ -166,9 +166,10 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		{
 			$all = '';
 
-			while ( ! $this->feof() ) {
-				// @NOW 008
-			}
+			while ( ! $this->feof() )
+				$all .= $this->read( 4096 );
+
+			return $all;
 		}
 	}
 }
