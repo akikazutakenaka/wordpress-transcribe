@@ -77,7 +77,7 @@ function apply_filters( $tag, $value )
 		$wp_current_filter[] = $tag;
 		$args = func_get_args();
 		_wp_call_all_hook( $args );
-		// @NOW 007 -> wp-includes/class-wp-hook.php
+		// @NOW 007
 	}
 }
 

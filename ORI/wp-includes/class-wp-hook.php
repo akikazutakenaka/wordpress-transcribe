@@ -182,27 +182,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 		}
 	}
 
-	/**
-	 * Processes the functions hooked into the 'all' hook.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param array $args Arguments to pass to the hook callbacks. Passed by reference.
-	 */
-	public function do_all_hook( &$args ) {
-		$nesting_level = $this->nesting_level++;
-		$this->iterations[ $nesting_level ] = array_keys( $this->callbacks );
-
-		do {
-			$priority = current( $this->iterations[ $nesting_level ] );
-			foreach ( $this->callbacks[ $priority ] as $the_ ) {
-				call_user_func_array( $the_['function'], $args );
-			}
-		} while ( false !== next( $this->iterations[ $nesting_level ] ) );
-
-		unset( $this->iterations[ $nesting_level ] );
-		$this->nesting_level--;
-	}
+	// refactored. public function do_all_hook( &$args ) {}
 
 	/**
 	 * Return the current priority level of the currently running iteration of the hook.
