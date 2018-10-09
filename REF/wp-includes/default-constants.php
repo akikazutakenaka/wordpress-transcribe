@@ -1,2 +1,6 @@
 <?php
-// @NOW 004
+/**
+ * Defines constants and global variables that can be overridden, generally in wp-config.php.
+ *
+ * @package WordPress
+ */
