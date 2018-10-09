@@ -58,5 +58,21 @@ function load_textdomain( $domain, $mofile )
 	 * @param string $mofile Path to the .mo file.
 	 */
 	do_action( 'load_textdomain', $domain, $mofile );
-	// @NOW 006
+
+	/**
+	 * Filters MO file path for loading translations for a specific text domain.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $mofile Path to the MO file.
+	 * @param string $domain Text domain.
+	 *                       Unique identifier for retrieving translated strings.
+	 */
+	$mofile = apply_filters( 'load_textdomain_mofile', $mofile, $domain );
+
+	if ( ! is_readable( $mofile ) )
+		return FALSE;
+
+	$mo = new MO();
+	// @NOW 006 -> wp-includes/pomo/mo.php
 }
