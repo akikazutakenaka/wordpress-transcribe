@@ -8,7 +8,15 @@
  * @subpackage streams
  */
 
-// @NOW 009
+if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
+	class POMO_Reader
+	{
+		var $endian = 'little';
+		var $_post = '';
+	}
+
+	// @NOW 009
+}
 
 if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 	class POMO_FileReader extends POMO_Reader
