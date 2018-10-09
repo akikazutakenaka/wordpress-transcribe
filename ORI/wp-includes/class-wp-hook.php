@@ -21,39 +21,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 	// refactored. private $current_priority = array();
 	// refactored. private $nesting_level = 0;
 	// refactored. private $doing_action = false;
-
-	/**
-	 * Hooks a function or method to a specific filter action.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param string   $tag             The name of the filter to hook the $function_to_add callback to.
-	 * @param callable $function_to_add The callback to be run when the filter is applied.
-	 * @param int      $priority        The order in which the functions associated with a
-	 *                                  particular action are executed. Lower numbers correspond with
-	 *                                  earlier execution, and functions with the same priority are executed
-	 *                                  in the order in which they were added to the action.
-	 * @param int      $accepted_args   The number of arguments the function accepts.
-	 */
-	public function add_filter( $tag, $function_to_add, $priority, $accepted_args ) {
-		$idx = _wp_filter_build_unique_id( $tag, $function_to_add, $priority );
-		$priority_existed = isset( $this->callbacks[ $priority ] );
-
-		$this->callbacks[ $priority ][ $idx ] = array(
-			'function' => $function_to_add,
-			'accepted_args' => $accepted_args
-		);
-
-		// if we're adding a new priority to the list, put them back in sorted order
-		if ( ! $priority_existed && count( $this->callbacks ) > 1 ) {
-			ksort( $this->callbacks, SORT_NUMERIC );
-		}
-
-		if ( $this->nesting_level > 0 ) {
-			$this->resort_active_iterations( $priority, $priority_existed );
-		}
-	}
-
+	// refactored. public function add_filter( $tag, $function_to_add, $priority, $accepted_args ) {}
 	// refactored. private function resort_active_iterations( $new_priority = false, $priority_existed = false ) {}
 
 	/**

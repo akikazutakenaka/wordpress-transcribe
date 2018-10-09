@@ -82,7 +82,6 @@ final class WP_Hook implements Iterator, ArrayAccess
 
 		if ( $this->nesting_level > 0 )
 			$this->resort_active_iterations( $priority, $priority_existed );
-			// @NOW 006
 	}
 
 	/**
@@ -179,7 +178,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 				// Loop through callbacks.
 				foreach ( $callbacks as $cb )
 					$hook->add_filter( $tag, $cb['function'], $priority, $cb['accepted_args'] );
-					// @NOW 005 -> wp-includes/class-wp-hook.php
+					// @NOW 005
 		}
 	}
 }
