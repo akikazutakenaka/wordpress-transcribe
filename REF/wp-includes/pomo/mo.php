@@ -159,7 +159,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		function &make_entry( $original, $translation )
 		{
 			$entry = new Translation_Entry();
-			// @NOW 008 -> wp-includes/pomo/entry.php
+			// @NOW 008
 		}
 	}
 }

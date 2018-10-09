@@ -22,13 +22,7 @@ class Translation_Entry {
 	// refactored. var $references = array();
 	// refactored. var $flags = array();
 	// refactored. function __construct( $args = array() ) {}
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function Translation_Entry( $args = array() ) {
-		self::__construct( $args );
-	}
+	// refactored. public function Translation_Entry( $args = array() ) {}
 
 	/**
 	 * Generates a unique key for this entry

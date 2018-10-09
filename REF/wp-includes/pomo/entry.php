@@ -63,6 +63,12 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 				$this->flags = [];
 		}
 
-		// @NOW 009
+		/**
+		 * PHP4 constructor.
+		 */
+		public function Translation_Entry( $args = [] )
+		{
+			self::__construct( $args );
+		}
 	}
 }
