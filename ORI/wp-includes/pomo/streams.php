@@ -10,17 +10,9 @@
 
 if ( ! class_exists( 'POMO_Reader', false ) ):
 class POMO_Reader {
-
-	var $endian = 'little';
-	var $_post = '';
-
-	/**
-	 * PHP5 constructor.
-	 */
-	function __construct() {
-		$this->is_overloaded = ((ini_get("mbstring.func_overload") & 2) != 0) && function_exists('mb_substr');
-		$this->_pos = 0;
-	}
+	// refactored. var $endian = 'little';
+	// refactored. var $_post = '';
+	// refactored. function __construct() {}
 
 	/**
 	 * PHP4 constructor.

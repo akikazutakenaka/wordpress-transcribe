@@ -15,6 +15,15 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 		var $_post = '';
 	}
 
+	/**
+	 * PHP5 constructor.
+	 */
+	function __construct()
+	{
+		$this->is_overloaded = ( ( ini_get( "mbstring.func_overload" ) & 2 ) != 0 ) && function_exists( 'mb_substr' );
+		$this->_pos = 0;
+	}
+
 	// @NOW 009
 }
 
