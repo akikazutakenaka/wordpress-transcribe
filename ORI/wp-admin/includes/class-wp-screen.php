@@ -228,12 +228,7 @@ final class WP_Screen {
 		do_action( 'current_screen', $current_screen );
 	}
 
-	/**
-	 * Constructor
-	 *
-	 * @since 3.3.0
-	 */
-	private function __construct() {}
+	// refactored. private function __construct() {}
 
 	/**
 	 * Indicates whether the screen is in a particular admin

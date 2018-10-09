@@ -206,5 +206,13 @@ final class WP_Screen
 	 */
 	private $_screen_settings;
 
+	/**
+	 * Constructor
+	 *
+	 * @since 3.3.0
+	 */
+	private function __construct()
+	{}
+
 	// @NOW 014
 }
