@@ -141,7 +141,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 					$this->set_headers( $this->make_headers( $translation ) );
 				else {
 					$entry = &$this->make_entry( $original, $translation );
-					// @NOW 007 -> wp-includes/pomo/mo.php
+					// @NOW 007
 				}
 			}
 		}
@@ -159,7 +159,28 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		function &make_entry( $original, $translation )
 		{
 			$entry = new Translation_Entry();
-			// @NOW 008
+
+			// Look for context
+			$parts = explode( chr( 4 ), $original );
+
+			if ( isset( $parts[1] ) ) {
+				$original = $parts[1];
+				$entry->context = $parts[0];
+			}
+
+			// Look for plural original
+			$parts = explode( chr( 0 ), $original );
+			$entry->singular = $parts[0];
+
+			if ( isset( $parts[1] ) ) {
+				$entry->is_plural = TRUE;
+				$entry->plural = $parts[1];
+			}
+
+			// Plural translations are also separated by \0
+			$entry->translations = explode( chr( 0 ), $translation );
+
+			return $entry;
 		}
 	}
 }

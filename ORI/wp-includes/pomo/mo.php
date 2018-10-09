@@ -234,35 +234,7 @@ class MO extends Gettext_Translations {
 		return true;
 	}
 
-	/**
-	 * Build a Translation_Entry from original string and translation strings,
-	 * found in a MO file
-	 *
-	 * @static
-	 * @param string $original original string to translate from MO file. Might contain
-	 * 	0x04 as context separator or 0x00 as singular/plural separator
-	 * @param string $translation translation string from MO file. Might contain
-	 * 	0x00 as a plural translations separator
-	 */
-	function &make_entry($original, $translation) {
-		$entry = new Translation_Entry();
-		// look for context
-		$parts = explode(chr(4), $original);
-		if (isset($parts[1])) {
-			$original = $parts[1];
-			$entry->context = $parts[0];
-		}
-		// look for plural original
-		$parts = explode(chr(0), $original);
-		$entry->singular = $parts[0];
-		if (isset($parts[1])) {
-			$entry->is_plural = true;
-			$entry->plural = $parts[1];
-		}
-		// plural translations are also separated by \0
-		$entry->translations = explode(chr(0), $translation);
-		return $entry;
-	}
+	// refactored. function &make_entry($original, $translation) {}
 
 	/**
 	 * @param int $count
