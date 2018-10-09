@@ -25,7 +25,7 @@ function get_user_locale( $user_id = 0 )
 
 	if ( 0 === $user_id && function_exists( 'wp_get_current_user' ) )
 		$user = wp_get_current_user();
-		// @NOW 013 -> wp-includes/pluggable.php
+		// @NOW 013 -> wp-includes/user.php
 }
 
 /**
