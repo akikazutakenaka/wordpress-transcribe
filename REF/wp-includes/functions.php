@@ -55,7 +55,7 @@ function wp_die( $message = '', $title = '', $args = [] )
 	}
 
 	if ( wp_doing_ajax() ) {
-		// @NOW 021 -> wp-includes/load.php
+		// @NOW 021
 	}
 }
 
