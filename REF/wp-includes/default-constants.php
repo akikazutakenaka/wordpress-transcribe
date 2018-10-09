@@ -29,6 +29,12 @@ function wp_initial_constants()
 
 	$current_limit     = @ini_get( 'memory_limit' );
 	$current_limit_int = wp_convert_hr_to_bytes( $current_limit );
-	// @NOW 004
+
+	// Define memory limits.
+	if ( ! defined( 'WP_MEMORY_LIMIT' ) ) {
+		if ( FALSE === wp_is_ini_value_changeable( 'memory_limit' ) ) {
+			// @NOW 004
+		}
+	}
 }
 
