@@ -35,6 +35,8 @@ if ( ! isset( $wp_actions ) )
 if ( ! isset( $wp_current_filter ) )
 	$wp_current_filter = [];
 
+// @NOW 007
+
 /**
  * Retrieve the number of times an action is fired.
  *

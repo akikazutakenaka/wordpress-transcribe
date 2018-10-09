@@ -27,10 +27,7 @@ function add_filter() {}
  */
 function esc_attr() {}
 
-/**
- * @ignore
- */
-function apply_filters() {}
+// refactored. function apply_filters() {}
 
 /**
  * @ignore

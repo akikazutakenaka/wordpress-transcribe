@@ -7,7 +7,11 @@
  * @since      4.4.0
  */
 
-// @NOW 007
+/**
+ * @ignore
+ */
+function apply_filters()
+{}
 
 /**
  * @ignore
