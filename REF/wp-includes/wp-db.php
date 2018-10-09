@@ -705,10 +705,59 @@ class wpdb
 			$is_ipv6 = FALSE;
 
 			if ( $host_data = $this->parse_db_host( $this->dbhost ) ) {
-				// @NOW 019 -> wp-includes/wp-db.php
+				// @NOW 019
 			}
 		}
 	}
 
-	// @NOW 020
+	/**
+	 * Parse the DB_HOST setting to interpret it for mysqli_real_connect.
+	 *
+	 * mysqli_real_connect doesn't support the host param including a port or socket like mysql_connect does.
+	 * This duplicates how mysql_connect detects a port and/or socket file.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param  string     $host The DB_HOST setting to parse.
+	 * @return array|bool Array containing the host, the port, the socket and whether it is an IPv6 address, in that order.
+	 *                    If $host couldn't be parsed, returns false.
+	 */
+	public function parse_db_host( $host )
+	{
+		$port = NULL;
+		$socket = NULL;
+		$is_ipv6 = FALSE;
+
+		// First peel off the socket parameter from the right, if it exists.
+		$socket_pos = strpos( $host, ':/' );
+
+		if ( $socket_pos !== FALSE ) {
+			$socket = substr( $host, $socket_pos + 1 );
+			$host = substr( $host, 0, $socket_pos );
+		}
+
+		// We need to check for an IPv6 address first.
+		// An IPv6 address will always contain at least two colons.
+		if ( substr_count( $host, ':' ) > 1 ) {
+			$pattern = '#^(?:\[)?(?P<host>[0-9a-fA-F:]+)(?:\]:(?P<port>[\d]+))?#';
+			$is_ipv6 = TRUE;
+		} else
+			// We seem to be dealing with an IPv4 address.
+			$pattern = '#^(?P<host>[^:/]*)(?::(?P<port>[\d]+))?#';
+
+		$matches = [];
+		$result = preg_match( $pattern, $host, $matches );
+
+		if ( 1 !== $result )
+			// Couldn't parse the address, bail.
+			return FALSE;
+
+		$host = '';
+
+		foreach ( ['host', 'port'] as $component )
+			if ( ! empty( $matches[$component] ) )
+				$$component = $matches[$component];
+
+		return [$host, $port, $socket, $is_ipv6];
+	}
 }
