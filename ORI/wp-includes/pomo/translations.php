@@ -62,14 +62,7 @@ class Translations {
 		$this->headers[$header] = $value;
 	}
 
-	/**
-	 * @param array $headers
-	 */
-	function set_headers($headers) {
-		foreach($headers as $header => $value) {
-			$this->set_header($header, $value);
-		}
-	}
+	// refactored. function set_headers($headers) {}
 
 	/**
 	 * @param string $header

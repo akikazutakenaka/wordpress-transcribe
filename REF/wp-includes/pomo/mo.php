@@ -122,7 +122,25 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 			$reader->seekto( $strings_addr );
 			$strings = $reader->read_all();
 			$reader->close();
-			// @NOW 007
+
+			for ( $i = 0; $i < $header['total']; $i++ ) {
+				$o = unpack( "{$endian}length/{$endian}pos", $originals[$i] );
+				$t = unpack( "{$endian}length/{$endian}pos", $translations[$i] );
+
+				if ( ! $o || ! $t )
+					return FALSE;
+
+				// Adjust offset due to reading strings to separate space before
+				$o['pos'] -= $strings_addr;
+				$t['pos'] -= $strings_addr;
+
+				$original    = $reader->substr( $strings, $o['pos'], $o['length'] );
+				$translation = $reader->substr( $strings, $t['pos'], $t['length'] );
+
+				if ( '' === $original )
+					$this->set_headers( $this->make_headers( $translation ) );
+					// @NOW 007 -> wp-includes/pomo/translations.php
+			}
 		}
 	}
 }

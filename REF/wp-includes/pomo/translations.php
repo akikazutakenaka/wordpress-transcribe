@@ -15,6 +15,17 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 	{
 		var $entries = [];
 		var $headers = [];
+
+		// @NOW 008
+
+		/**
+		 * @param array $headers
+		 */
+		function set_headers( $headers )
+		{
+			foreach ( $headers as $header => $value )
+				$this->set_header( $header, $value );
+		}
 	}
 }
 
