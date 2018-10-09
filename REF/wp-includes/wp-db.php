@@ -618,7 +618,26 @@ class wpdb
 
 		if ( WP_DEBUG && WP_DEBUG_DISPLAY )
 			$this->show_errors();
-		// @NOW 018
+
+		// Use ext/mysqli if it exists unless WP_USE_EXT_MYSQL is defined as true
+		if ( function_exists( 'mysqli_connect' ) ) {
+			$this->use_mysqli = TRUE;
+
+			if ( defined( 'WP_USE_EXT_MYSQL' ) )
+				$this->use_mysqli = ! WP_USE_EXT_MYSQL;
+		}
+
+		$this->dbuser = $dbuser;
+		$this->dbpassword = $dbpassword;
+		$this->dbname = $dbname;
+		$this->dbhost = $dbhost;
+
+		// wp-config.php creation will manually connect when ready.
+		if ( defined( 'WP_SETUP_CONFIG' ) )
+			return;
+
+		$this->db_connect();
+		// @NOW 018 -> wp-includes/wp-db.php
 	}
 
 	/**
@@ -653,4 +672,43 @@ class wpdb
 		$this->show_errors = $show;
 		return $errors;
 	}
+
+	/**
+	 * Connect to and select database.
+	 *
+	 * If $allow_bail is false, the lack of database connection will need to be handled manually.
+	 *
+	 * @since 3.0.0
+	 * @since 3.9.0 $allow_bail parameter added.
+	 *
+	 * @param  bool $allow_bail Optional.
+	 *                          Allows the function to bail.
+	 *                          Default true.
+	 * @return bool True with a successful connection, false on failure.
+	 */
+	public function db_connect( $allow_bail = TRUE )
+	{
+		$this->is_mysql = TRUE;
+
+		/**
+		 * Deprecated in 3.9+ when using MySQLi.
+		 * No equivalent $new_link parameter exists for mysqli_* functions.
+		 */
+		$new_link = defined( 'MYSQL_NEW_LINK' ) ? MYSQL_NEW_LINK : TRUE;
+		$client_flags = defined( 'MYSQL_CLIENT_FLAGS' ) ? MYSQL_CLIENT_FLAGS : 0;
+
+		if ( $this->use_mysqli ) {
+			$this->dbh = mysqli_init();
+			$host = $this->dbhost;
+			$port = NULL;
+			$socket = NULL;
+			$is_ipv6 = FALSE;
+
+			if ( $host_data = $this->parse_db_host( $this->dbhost ) ) {
+				// @NOW 019 -> wp-includes/wp-db.php
+			}
+		}
+	}
+
+	// @NOW 020
 }
