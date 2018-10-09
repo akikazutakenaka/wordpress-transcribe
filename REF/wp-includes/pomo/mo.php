@@ -31,9 +31,13 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		{
 			$reader = new POMO_FileReader( $filename );
 
-			if ( ! $reader->is_resource() ) {
-				// @NOW 007
-			}
+			if ( ! $reader->is_resource() )
+				return FALSE;
+
+			$this->filename = ( string ) $filename;
+			return $this->import_from_reader( $reader );
 		}
+
+		// @NOW 007
 	}
 }
