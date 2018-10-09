@@ -7,7 +7,27 @@
  * @since      1.2.0
  */
 
-// @NOW 008
+/**
+ * Retrieve the translation of $text.
+ *
+ * If there is no translation, or the text domain isn't loaded, the original text is returned.
+ *
+ * *Note:* Don't use translate() directly, use __() or related functions.
+ *
+ * @since 2.2.0
+ *
+ * @param  string $text   Text to translate.
+ * @param  string $domain Optional.
+ *                        Text domain.
+ *                        Unique identifier for retrieving translated strings.
+ *                        Default 'default'.
+ * @return string Translated text.
+ */
+function translate( $text, $domain = 'default' )
+{
+	$translations = get_translations_for_domain( $domain );
+	// @NOW 008 -> wp-includes/l10n.php
+}
 
 /**
  * Retrieve the translation of $text.
@@ -106,3 +126,5 @@ function load_textdomain( $domain, $mofile )
 	$l10n[$domain] = &$mo;
 	return TRUE;
 }
+
+// @NOW 009
