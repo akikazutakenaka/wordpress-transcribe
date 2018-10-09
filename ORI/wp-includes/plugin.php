@@ -805,28 +805,5 @@ function register_uninstall_hook( $file, $callback ) {
 	update_option('uninstall_plugins', $uninstallable_plugins);
 }
 
-/**
- * Call the 'all' hook, which will process the functions hooked into it.
- *
- * The 'all' hook passes all of the arguments or parameters that were used for
- * the hook, which this function was called for.
- *
- * This function is used internally for apply_filters(), do_action(), and
- * do_action_ref_array() and is not meant to be used from outside those
- * functions. This function does not check for the existence of the all hook, so
- * it will fail unless the all hook exists prior to this function call.
- *
- * @since 2.5.0
- * @access private
- *
- * @global array $wp_filter  Stores all of the filters
- *
- * @param array $args The collected parameters from the hook that was called.
- */
-function _wp_call_all_hook($args) {
-	global $wp_filter;
-
-	$wp_filter['all']->do_all_hook( $args );
-}
-
+// refactored. function _wp_call_all_hook($args) {}
 // refactored. function _wp_filter_build_unique_id($tag, $function, $priority) {}

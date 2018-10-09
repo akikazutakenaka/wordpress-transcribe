@@ -77,7 +77,7 @@ function apply_filters( $tag, $value )
 		$wp_current_filter[] = $tag;
 		$args = func_get_args();
 		_wp_call_all_hook( $args );
-		// @NOW 007 -> wp-includes/plugin.php
+		// @NOW 007 -> wp-includes/class-wp-hook.php
 	}
 }
 
@@ -100,7 +100,25 @@ function did_action( $tag )
 	return $wp_actions[$tag];
 }
 
-// @NOW 008
+/**
+ * Call the 'all' hook, which will process the functions hooked into it.
+ *
+ * The 'all' hook passes all of the arguments or parameters that were used for the hook, which this function was called for.
+ *
+ * This function is used internally for apply_filters(), do_action(), and do_action_ref_array() and is not meant to be used from outside those functions.
+ * This function does not check for the existence of the all hook, so it will fail unless the all hook exists prior to this function call.
+ *
+ * @since  2.5.0
+ * @access private
+ * @global array $wp_filter Stores all of the filters.
+ *
+ * @param array $args The collected parameters from the hook that was called.
+ */
+function _wp_call_all_hook( $args )
+{
+	global $wp_filter;
+	$wp_filter['all']->do_all_hook( $args );
+}
 
 /**
  * Build Unique ID for storage and retrieval.

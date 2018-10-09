@@ -149,6 +149,8 @@ final class WP_Hook implements Iterator, ArrayAccess
 		unset( $iteration );
 	}
 
+	// @NOW 008
+
 	/**
 	 * Normalizes filters set up before WordPress has initialized to WP_Hook objects.
 	 *
