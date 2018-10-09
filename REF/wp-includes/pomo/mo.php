@@ -38,6 +38,15 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 			return $this->import_from_reader( $reader );
 		}
 
-		// @NOW 007
+		// @NOW 008
+
+		/**
+		 * @param POMO_FileReader $reader
+		 */
+		function import_from_reader( $reader )
+		{
+			$endian_string = MO::get_byteorder( $reader->readint32() );
+			// @NOW 007 -> wp-includes/pomo/mo.php
+		}
 	}
 }
