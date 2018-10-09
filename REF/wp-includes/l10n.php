@@ -75,7 +75,10 @@ function load_textdomain( $domain, $mofile )
 
 	$mo = new MO();
 
-	if ( ! $mo->import_from_file( $mofile ) ) {
+	if ( ! $mo->import_from_file( $mofile ) )
+		return FALSE;
+
+	if ( isset( $l10n[$domain] ) )
+		$mo->merge_with( $l10n[$domain] );
 		// @NOW 006
-	}
 }

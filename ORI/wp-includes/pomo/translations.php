@@ -118,17 +118,7 @@ class Translations {
 			return 1 == $count? $singular : $plural;
 	}
 
-	/**
-	 * Merge $other in the current object.
-	 *
-	 * @param Object $other Another Translation object, whose translations will be merged in this one (passed by reference).
-	 * @return void
-	 **/
-	function merge_with(&$other) {
-		foreach( $other->entries as $entry ) {
-			$this->entries[$entry->key()] = $entry;
-		}
-	}
+	// refactored. function merge_with(&$other) {}
 
 	/**
 	 * @param object $other
