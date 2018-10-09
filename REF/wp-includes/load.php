@@ -77,7 +77,50 @@ function wp_load_translations_early()
 	require_once ABSPATH . WPINC . '/l10n.php';
 	require_once ABSPATH . WPINC . '/class-wp-locale.php';
 	require_once ABSPATH . WPINC . '/class-wp-locale-switcher.php';
-	// @NOW 005 -> wp-includes/class-wp-locale-switcher.php
+
+	// General libraries
+	require_once ABSPATH . WPINC . '/plugin.php';
+
+	$locales = $locations = [];
+
+	while ( TRUE ) {
+		if ( defined( 'WPLANG' ) ) {
+			if ( '' == WPLANG )
+				break;
+
+			$locales[] = WPLANG;
+		}
+
+		if ( isset( $wp_local_package ) )
+			$locales[] = $wp_local_package;
+
+		if ( ! $locales )
+			break;
+
+		if ( defined( 'WP_LANG_DIR' ) && @is_dir( WP_LANG_DIR ) )
+			$locations[] = WP_LANG_DIR;
+
+		if ( defined( 'WP_CONTENT_DIR' ) && @is_dir( WP_CONTENT_DIR . '/languages' ) )
+			$locations[] = WP_CONTENT_DIR . '/languages';
+
+		if ( @is_dir( ABSPATH . 'wp-content/languages' ) )
+			$locations[] = ABSPATH . 'wp-content/languages';
+
+		if ( @is_dir( ABSPATH . WPINC . '/languages' ) )
+			$locations[] = ABSPATH . WPINC . '/languages';
+
+		if ( ! $locations )
+			break;
+
+		$locations = array_unique( $locations );
+
+		foreach ( $locales as $locale )
+			foreach ( $locations as $location )
+				if ( file_exists( $location . '/' . $locale . '.mo' ) ) {
+					load_textdomain( 'default', $location . '/' . $locale . '.mo' );
+					// @NOW 005 -> wp-includes/l10n.php
+				}
+	}
 }
 
 /**
