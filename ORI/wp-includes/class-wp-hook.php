@@ -16,46 +16,11 @@
  * @see ArrayAccess
  */
 final class WP_Hook implements Iterator, ArrayAccess {
-
-	/**
-	 * Hook callbacks.
-	 *
-	 * @since 4.7.0
-	 * @var array
-	 */
-	public $callbacks = array();
-
-	/**
-	 * The priority keys of actively running iterations of a hook.
-	 *
-	 * @since 4.7.0
-	 * @var array
-	 */
-	private $iterations = array();
-
-	/**
-	 * The current priority of actively running iterations of a hook.
-	 *
-	 * @since 4.7.0
-	 * @var array
-	 */
-	private $current_priority = array();
-
-	/**
-	 * Number of levels this hook can be recursively called.
-	 *
-	 * @since 4.7.0
-	 * @var int
-	 */
-	private $nesting_level = 0;
-
-	/**
-	 * Flag for if we're current doing an action, rather than a filter.
-	 *
-	 * @since 4.7.0
-	 * @var bool
-	 */
-	private $doing_action = false;
+	// refactored. public $callbacks = array();
+	// refactored. private $iterations = array();
+	// refactored. private $current_priority = array();
+	// refactored. private $nesting_level = 0;
+	// refactored. private $doing_action = false;
 
 	/**
 	 * Hooks a function or method to a specific filter action.
