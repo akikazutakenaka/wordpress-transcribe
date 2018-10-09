@@ -118,7 +118,7 @@ function wp_load_translations_early()
 			foreach ( $locations as $location )
 				if ( file_exists( $location . '/' . $locale . '.mo' ) ) {
 					load_textdomain( 'default', $location . '/' . $locale . '.mo' );
-					// @NOW 005 -> wp-includes/l10n.php
+					// @NOW 005
 				}
 	}
 }

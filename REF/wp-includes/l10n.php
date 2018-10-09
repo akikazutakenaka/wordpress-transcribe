@@ -80,5 +80,8 @@ function load_textdomain( $domain, $mofile )
 
 	if ( isset( $l10n[$domain] ) )
 		$mo->merge_with( $l10n[$domain] );
-		// @NOW 006
+
+	unset( $l10n_unloaded[$domain] );
+	$l10n[$domain] = &$mo;
+	return TRUE;
 }
