@@ -144,5 +144,23 @@ class WP_User
 		// @NOW 016 -> wp-includes/class-wp-user.php
 	}
 
-	// @NOW 017
+	/**
+	 * Sets the site to operate on.
+	 * Defaults to the current site.
+	 *
+	 * @since  4.9.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param int $site_id Site ID to initialize user capabilities for.
+	 *                     Default is the current site.
+	 */
+	public function for_site( $site_id = '' )
+	{
+		global $wpdb;
+
+		$this->site_id = ! empty( $site_id )
+			? absint( $site_id )
+			: get_current_blog_id();
+		// @NOW 017 -> wp-includes/functions.php
+	}
 }
