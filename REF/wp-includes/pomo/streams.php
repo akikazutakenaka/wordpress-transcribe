@@ -8,4 +8,11 @@
  * @subpackage streams
  */
 
-// @NOW 008
+// @NOW 009
+
+if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
+	class POMO_FileReader extends POMO_Reader
+	{
+		// @NOW 008 -> wp-includes/pomo/streams.php
+	}
+}
