@@ -150,5 +150,19 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		{
 			return is_resource( $this->_f );
 		}
+
+		// @NOW 009
+
+		/**
+		 * @return string
+		 */
+		function read_all()
+		{
+			$all = '';
+
+			while ( ! $this->feof() ) {
+				// @NOW 008 -> wp-includes/pomo/streams.php
+			}
+		}
 	}
 }

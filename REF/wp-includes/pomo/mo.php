@@ -114,7 +114,14 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 
 			// Transform raw data into set of indices
 			$originals    = $reader->str_split( $originals, 8 );
-			// @NOW 007
+			$translations = $header->str_split( $translations, 8 );
+
+			// Skip hash table
+			$strings_addr = $header['hash_addr'] + $header['hash_length'] * 4;
+
+			$reader->seekto( $strings_addr );
+			$strings = $reader->read_all();
+			// @NOW 007 -> wp-includes/pomo/streams.php
 		}
 	}
 }
