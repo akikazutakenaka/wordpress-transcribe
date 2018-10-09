@@ -25,4 +25,17 @@ require_once( ABSPATH . WPINC . '/plugin.php' );
  */
 global $wp_version, $wp_db_version, $tinymce_version, $required_php_version, $required_mysql_version, $wp_local_package;
 require( ABSPATH . WPINC . '/version.php' );
-// @NOW 003
+
+/**
+ * If not already configured, `$blog_id` will default to 1 in a single site configuration.
+ * In multisite, it will be overridden by default in ms-settings.php.
+ *
+ * @since 2.0.0
+ *
+ * @global int $blog_id
+ */
+global $blog_id;
+
+// Set initial default constants including WP_MEMORY_LIMIT, WP_MAX_MEMORY_LIMIT, WP_DEBUG, SCRIPT_DEBUG, WP_CONTENT_DIR and WP_CACHE.
+wp_initial_constants();
+// @NOW 003 -> wp-includes/default-constants.php
