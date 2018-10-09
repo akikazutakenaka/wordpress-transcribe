@@ -142,9 +142,10 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 				else {
 					$entry = &$this->make_entry( $original, $translation );
 					$this->entries[$entry->key()] = &$entry;
-					// @NOW 007
 				}
 			}
+
+			return TRUE;
 		}
 
 		/**
