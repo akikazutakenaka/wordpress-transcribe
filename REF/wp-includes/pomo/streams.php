@@ -160,6 +160,14 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		}
 
 		/**
+		 * @return bool
+		 */
+		function close()
+		{
+			return fclose( $this->_f );
+		}
+
+		/**
 		 * @return string
 		 */
 		function read_all()

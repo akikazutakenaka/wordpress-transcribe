@@ -121,6 +121,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 
 			$reader->seekto( $strings_addr );
 			$strings = $reader->read_all();
+			$reader->close();
 			// @NOW 007
 		}
 	}

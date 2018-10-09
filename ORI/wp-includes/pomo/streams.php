@@ -60,23 +60,7 @@ class POMO_Reader {
 endif;
 
 if ( ! class_exists( 'POMO_FileReader', false ) ):
-class POMO_FileReader extends POMO_Reader {
-	// refactored. function __construct( $filename ) {}
-	// refactored. public function POMO_FileReader( $filename ) {}
-	// refactored. function read($bytes) {}
-	// refactored. function seekto($pos) {}
-	// refactored. function is_resource() {}
-	// refactored. function feof() {}
-
-	/**
-	 * @return bool
-	 */
-	function close() {
-		return fclose($this->_f);
-	}
-
-	// refactored. function read_all() {}
-}
+// refactored. class POMO_FileReader extends POMO_Reader {}
 endif;
 
 if ( ! class_exists( 'POMO_StringReader', false ) ):
