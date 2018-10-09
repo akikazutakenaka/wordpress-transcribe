@@ -7,7 +7,26 @@
  * @since      1.2.0
  */
 
-// @NOW 013
+/**
+ * Retrieves the locale of a user.
+ *
+ * If the user has a locale set to a non-empty string then it will be returned.
+ * Otherwise it returns the locale of get_locale().
+ *
+ * @since 4.7.0
+ *
+ * @param  int|WP_User $user_id User's ID or a WP_User object.
+ *                              Defaults to current user.
+ * @return string      The locale of the user.
+ */
+function get_user_locale( $user_id = 0 )
+{
+	$user = FALSE;
+
+	if ( 0 === $user_id && function_exists( 'wp_get_current_user' ) )
+		$user = wp_get_current_user();
+		// @NOW 013 -> wp-includes/pluggable.php
+}
 
 /**
  * Retrieve the translation of $text.
