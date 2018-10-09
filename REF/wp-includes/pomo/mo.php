@@ -66,7 +66,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		function import_from_reader( $reader )
 		{
 			$endian_string = MO::get_byteorder( $reader->readint32() );
-			// @NOW 007 -> wp-includes/pomo/streams.php
+			// @NOW 007
 		}
 	}
 }

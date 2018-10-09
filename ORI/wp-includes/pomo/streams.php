@@ -24,20 +24,7 @@ class POMO_Reader {
 		$this->endian = $endian;
 	}
 
-	/**
-	 * Reads a 32bit Integer from the Stream
-	 *
-	 * @return mixed The integer, corresponding to the next 32 bits from
-	 * 	the stream of false if there are not enough bytes or on error
-	 */
-	function readint32() {
-		$bytes = $this->read(4);
-		if (4 != $this->strlen($bytes))
-			return false;
-		$endian_letter = ('big' == $this->endian)? 'N' : 'V';
-		$int = unpack($endian_letter, $bytes);
-		return reset( $int );
-	}
+	// refactored. function readint32() {}
 
 	/**
 	 * Reads an array of 32-bit Integers from the Stream

@@ -41,9 +41,11 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 	{
 		$bytes = $this->read( 4 );
 
-		if ( 4 != $this->strlen( $bytes ) ) {
-			// @NOW 008
-		}
+		if ( 4 != $this->strlen( $bytes ) )
+			return FALSE;
+
+		$endian_letter = ( 'big' == $this->endian ) ? 'N' : 'V';
+		return unpack( $endian_letter . $count, $bytes );
 	}
 
 	/**
