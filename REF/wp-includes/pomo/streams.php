@@ -40,7 +40,21 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 	function readint32()
 	{
 		$bytes = $this->read( 4 );
-		// @NOW 008
+
+		if ( 4 != $this->strlen( $bytes ) ) {
+			// @NOW 008
+		}
+	}
+
+	/**
+	 * @param  string $string
+	 * @return int
+	 */
+	function strlen( $string )
+	{
+		return $this->is_overloaded
+			? mb_strlen( $string, 'ascii' )
+			: strlen( $string );
 	}
 }
 

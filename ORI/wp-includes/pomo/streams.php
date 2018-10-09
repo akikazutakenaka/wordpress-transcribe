@@ -68,17 +68,7 @@ class POMO_Reader {
 		}
 	}
 
-	/**
-	 * @param string $string
-	 * @return int
-	 */
-	function strlen($string) {
-		if ($this->is_overloaded) {
-			return mb_strlen($string, 'ascii');
-		} else {
-			return strlen($string);
-		}
-	}
+	// refactored. function strlen($string) {}
 
 	/**
 	 * @param string $string
