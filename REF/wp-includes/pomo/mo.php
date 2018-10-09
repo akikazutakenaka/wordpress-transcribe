@@ -9,4 +9,3 @@
 
 require_once dirname( __FILE__ ) . '/translations.php';
 require_once dirname( __FILE__ ) . '/streams.php';
-// @NOW 006 -> wp-includes/pomo/streams.php
