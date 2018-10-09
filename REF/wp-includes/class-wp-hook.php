@@ -178,7 +178,10 @@ final class WP_Hook implements Iterator, ArrayAccess
 				// Loop through callbacks.
 				foreach ( $callbacks as $cb )
 					$hook->add_filter( $tag, $cb['function'], $priority, $cb['accepted_args'] );
-					// @NOW 005
+
+			$normalized[$tag] = $hook;
 		}
+
+		return $normalized;
 	}
 }

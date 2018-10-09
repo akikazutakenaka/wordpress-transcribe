@@ -28,7 +28,7 @@ global $wp_filter, $wp_actions, $wp_current_filter;
 $wp_filter = $wp_filter
 	? WP_Hook::build_preinitialized_hooks( $wp_filter )
 	: [];
-// @NOW 004 -> wp-includes/class-wp-hook.php
+// @NOW 004
 
 /**
  * Build Unique ID for storage and retrieval.
