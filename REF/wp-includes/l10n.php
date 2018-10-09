@@ -181,7 +181,38 @@ function _get_path_to_translation( $domain, $reset = FALSE )
 		// @NOW 011 -> wp-includes/l10n.php
 }
 
-// @NOW 012
+/**
+ * Gets the path to a translation file in the languages directory for the current locale.
+ *
+ * Holds a cached list of available .mo files to improve performance.
+ *
+ * @since  4.7.0
+ * @access private
+ * @see    _get_path_to_translation()
+ *
+ * @param  string       $domain Text domain.
+ *                              Unique identifier for retrieving translated strings.
+ * @return string|false The path to the translation file or false if no translation file was found.
+ */
+function _get_path_to_translation_from_lang_dir( $domain )
+{
+	static $cached_mofiles = NULL;
+
+	if ( NULL === $cached_mofiles ) {
+		$cached_mofiles = [];
+		$locations = [WP_LANG_DIR . '/plugins', WP_LANG_DIR . '/themes'];
+
+		foreach ( $locations as $location ) {
+			$mofiles = glob( $location . '/*.mo' );
+
+			if ( $mofiles )
+				$cached_mofiles = array_merge( $cached_mofiles, $mofiles );
+		}
+	}
+
+	$locale = is_admin() ? get_user_locale() : get_locale();
+	// @NOW 012 -> wp-admin/includes/noop.php, wp-includes/load.php
+}
 
 /**
  * Return the Translations instance for a text domain.
