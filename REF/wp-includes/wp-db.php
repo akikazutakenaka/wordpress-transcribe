@@ -615,6 +615,9 @@ class wpdb
 	public function __construct( $dbuser, $dbpassword, $dbname, $dbhost )
 	{
 		register_shutdown_function( [$this, '__destruct'] );
+
+		if ( WP_DEBUG && WP_DEBUG_DISPLAY )
+			$this->show_errors();
 		// @NOW 018
 	}
 
@@ -629,5 +632,25 @@ class wpdb
 	public function __destruct()
 	{
 		return TRUE;
+	}
+
+	/**
+	 * Enables showing of database errors.
+	 *
+	 * This function should be used only to enable showing of errors.
+	 * wpdb::hide_errors() should be used instead for hiding of errors.
+	 * However, this function can be used to enable and disable showing of database errors.
+	 *
+	 * @since 0.71
+	 * @see   wpdb::hide_errors()
+	 *
+	 * @param  bool $show Whether to show or hide errors.
+	 * @return bool Old value for showing errors.
+	 */
+	public function show_errors( $show = TRUE )
+	{
+		$errors = $this->show_errors;
+		$this->show_errors = $show;
+		return $errors;
 	}
 }
