@@ -704,9 +704,73 @@ class wpdb
 			$socket = NULL;
 			$is_ipv6 = FALSE;
 
-			if ( $host_data = $this->parse_db_host( $this->dbhost ) ) {
-				// @NOW 019
+			if ( $host_data = $this->parse_db_host( $this->dbhost ) )
+				list( $host, $port, $socket, $is_ipv6 ) = $host_data;
+
+			/**
+			 * If using the `mysqlnd` library, the IPv6 address needs to be enclosed in square brackets, whereas it doesn't while using the `libmysqlclient` library.
+			 *
+			 * @see https://bugs.php.net/bug.php?id=67563
+			 */
+			if ( $is_ipv6 && extension_loaded( 'mysqlnd' ) )
+				$host = "[$host]";
+
+			if ( WP_DEBUG )
+				mysqli_real_connect( $this->dbh, $host, $this->dbuser, $this->dbpassword, NULL, $port, $socket, $client_flags );
+			else
+				@mysqli_real_connect( $this->dbh, $host, $this->dbuser, $this->dbpassword, NULL, $port, $socket, $client_flags );
+
+			if ( $this->dbh->connect_errno ) {
+				$this->dbh = NULL;
+
+				/**
+				 * It's possible ext/mysqli is misconfigured.
+				 * Fall back to ext/mysql if:
+				 *
+				 * - We haven't previously connected, and
+				 * - WP_USE_EXT_MYSQL isn't set to false, and
+				 * - ext/mysql is loaded.
+				 */
+				$attempt_fallback = TRUE;
+
+				if ( $this->has_connected )
+					$attempt_fallback = FALSE;
+				elseif ( defined( 'WP_USE_EXT_MYSQL' ) && ! WP_USE_EXT_MYSQL )
+					$attempt_fallback = FALSE;
+				elseif ( ! function_exists( 'mysql_connect' ) )
+					$attempt_fallback = FALSE;
+
+				if ( $attempt_fallback ) {
+					$this->use_mysqli = FALSE;
+					return $this->db_connect( $allow_bail );
+				}
 			}
+		} else {
+			if ( WP_DEBUG )
+				$this->dbh = mysql_connect( $this->dbhost, $this->dbuser, $this->dbpassword, $new_link, $client_flags );
+			else
+				$this->dbh = @mysql_connect( $this->dbhost, $this->dbuser, $this->dbpassword, $new_link, $client_flags );
+		}
+
+		if ( ! $this->dbh && $allow_bail ) {
+			wp_load_translations_early();
+
+			// Load custom DB error template, if present.
+			if ( file_exists( WP_CONTENT_DIR . '/db-error.php' ) ) {
+				require_once( WP_CONTENT_DIR . '/db-error.php' );
+				die();
+			}
+
+			$message = '<h1>' . __( 'Error establishing a database connection' ) . "</h1>\n";
+			$message .= '<p>' . sprintf( __( 'This either means that the username and password information in your %1$s file is incorrect or we can&#8217;t contact the database server at %2$s. This could mean your host&#8217;s database server is down.' ), '<code>wp-config.php</code>', '<code>' . htmlspecialchars( $this->dbhost, ENT_QUOTES ) . '</code>' ) . "</p>\n";
+			$message .= "<ul>\n";
+			$message .= '<li>' . __( 'Are you sure you have the correct username and password?' ) . "</li>\n";
+			$message .= '<li>' . __( 'Are you sure that you have typed the correct hostname?' ) . "</li>\n";
+			$message .= '<li>' . __( 'Are you sure that the database server is running?' ) . "</li>\n";
+			$message .= "</ul>\n";
+			$message .= '<p>' . sprintf( __( 'If you&#8217;re unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress Support Forums</a>.' ), __( 'https://wordpress.org/support/' ) ) . "</p>\n";
+			$this->bail( $message, 'db_connect_fail' );
+			// @NOW 019 -> wp-includes/wp-db.php
 		}
 	}
 
@@ -759,5 +823,27 @@ class wpdb
 				$$component = $matches[$component];
 
 		return [$host, $port, $socket, $is_ipv6];
+	}
+
+	/**
+	 * Wraps errors in a nice header and footer and dies.
+	 *
+	 * Will not die if wpdb::$show_errors is false.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param  string     $message    The Error message.
+	 * @param  string     $error_code Optional.
+	 *                                A Computer readable string to identify the error.
+	 * @return false|void
+	 */
+	public function bail( $message, $error_code = '500' )
+	{
+		if ( ! $this->show_errors ) {
+			$this->error = class_exists( 'WP_Error', FALSE )
+				? new WP_Error( $error_code, $message )
+				: $message;
+			// @NOW 020 -> wp-includes/class-wp-error.php
+		}
 	}
 }
