@@ -139,8 +139,27 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 
 				if ( '' === $original )
 					$this->set_headers( $this->make_headers( $translation ) );
-					// @NOW 007
+				else {
+					$entry = &$this->make_entry( $original, $translation );
+					// @NOW 007 -> wp-includes/pomo/mo.php
+				}
 			}
+		}
+
+		/**
+		 * Build a Translation_Entry from original string and translation strings, found in a MO file
+		 *
+		 * @static
+		 *
+		 * @param string $original    Original string to translate from MO file.
+		 *                            Might contain 0x04 as context separator or 0x00 as singular/plural separator.
+		 * @param string $translation Translation string from MO file.
+		 *                            Might contain 0x00 as a plural translations separator.
+		 */
+		function &make_entry( $original, $translation )
+		{
+			$entry = new Translation_Entry();
+			// @NOW 008 -> wp-includes/pomo/entry.php
 		}
 	}
 }
