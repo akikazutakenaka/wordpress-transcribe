@@ -147,26 +147,7 @@ class MO extends Gettext_Translations {
 		return $exported;
 	}
 
-	/**
-	 * @param int $magic
-	 * @return string|false
-	 */
-	function get_byteorder($magic) {
-		// The magic is 0x950412de
-
-		// bug in PHP 5.0.2, see https://savannah.nongnu.org/bugs/?func=detailitem&item_id=10565
-		$magic_little = (int) - 1794895138;
-		$magic_little_64 = (int) 2500072158;
-		// 0xde120495
-		$magic_big = ((int) - 569244523) & 0xFFFFFFFF;
-		if ($magic_little == $magic || $magic_little_64 == $magic) {
-			return 'little';
-		} else if ($magic_big == $magic) {
-			return 'big';
-		} else {
-			return false;
-		}
-	}
+	// refactored. function get_byteorder($magic) {}
 
 	/**
 	 * @param POMO_FileReader $reader

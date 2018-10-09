@@ -31,6 +31,8 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 	{
 		self::__construct();
 	}
+
+	// @NOW 008
 }
 
 if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {

@@ -38,7 +38,27 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 			return $this->import_from_reader( $reader );
 		}
 
-		// @NOW 008
+		/**
+		 * @param  int          $magic
+		 * @return string|false
+		 */
+		function get_byteorder( $magic )
+		{
+			// The magic is 0x950412de
+
+			// Bug in PHP 5.0.2, see https://savannah.nongnu.org/bugs/?func=detailitem&item_id=10565
+			$magic_little = ( int ) -1794895138;
+			$magic_little_64 = ( int ) 2500072158;
+
+			// 0xde120495
+			$magic_big = ( ( int ) -569244523 ) & 0xFFFFFFFF;
+
+			return ( $magic_little == $magic || $magic_little_64 == $magic )
+				? 'little'
+				: ( ( $magic_big == $magic )
+					? 'big'
+					: FALSE );
+		}
 
 		/**
 		 * @param POMO_FileReader $reader
@@ -46,7 +66,7 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		function import_from_reader( $reader )
 		{
 			$endian_string = MO::get_byteorder( $reader->readint32() );
-			// @NOW 007 -> wp-includes/pomo/mo.php
+			// @NOW 007 -> wp-includes/pomo/streams.php
 		}
 	}
 }
