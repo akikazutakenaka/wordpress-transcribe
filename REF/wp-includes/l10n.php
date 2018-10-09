@@ -58,5 +58,5 @@ function load_textdomain( $domain, $mofile )
 	 * @param string $mofile Path to the .mo file.
 	 */
 	do_action( 'load_textdomain', $domain, $mofile );
-	// @NOW 006 -> wp-includes/plugin.php
+	// @NOW 006
 }

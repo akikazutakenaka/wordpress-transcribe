@@ -155,7 +155,7 @@ function do_action( $tag, $arg = '' )
 		$args[] = func_get_arg( $a );
 
 	$wp_filter[$tag]->do_action( $args );
-	// @NOW 007
+	array_pop( $wp_current_filter );
 }
 
 /**

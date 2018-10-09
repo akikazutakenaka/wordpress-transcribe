@@ -332,62 +332,7 @@ function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1) 
 	return add_filter($tag, $function_to_add, $priority, $accepted_args);
 }
 
-/**
- * Execute functions hooked on a specific action hook.
- *
- * This function invokes all functions attached to action hook `$tag`. It is
- * possible to create new action hooks by simply calling this function,
- * specifying the name of the new hook using the `$tag` parameter.
- *
- * You can pass extra arguments to the hooks, much like you can with apply_filters().
- *
- * @since 1.2.0
- *
- * @global array $wp_filter         Stores all of the filters
- * @global array $wp_actions        Increments the amount of times action was triggered.
- * @global array $wp_current_filter Stores the list of current filters with the current one last
- *
- * @param string $tag     The name of the action to be executed.
- * @param mixed  $arg,... Optional. Additional arguments which are passed on to the
- *                        functions hooked to the action. Default empty.
- */
-function do_action($tag, $arg = '') {
-	global $wp_filter, $wp_actions, $wp_current_filter;
-
-	if ( ! isset($wp_actions[$tag]) )
-		$wp_actions[$tag] = 1;
-	else
-		++$wp_actions[$tag];
-
-	// Do 'all' actions first
-	if ( isset($wp_filter['all']) ) {
-		$wp_current_filter[] = $tag;
-		$all_args = func_get_args();
-		_wp_call_all_hook($all_args);
-	}
-
-	if ( !isset($wp_filter[$tag]) ) {
-		if ( isset($wp_filter['all']) )
-			array_pop($wp_current_filter);
-		return;
-	}
-
-	if ( !isset($wp_filter['all']) )
-		$wp_current_filter[] = $tag;
-
-	$args = array();
-	if ( is_array($arg) && 1 == count($arg) && isset($arg[0]) && is_object($arg[0]) ) // array(&$this)
-		$args[] =& $arg[0];
-	else
-		$args[] = $arg;
-	for ( $a = 2, $num = func_num_args(); $a < $num; $a++ )
-		$args[] = func_get_arg($a);
-
-	$wp_filter[ $tag ]->do_action( $args );
-
-	array_pop($wp_current_filter);
-}
-
+// refactored. function do_action($tag, $arg = '') {}
 // refactored. function did_action($tag) {}
 
 /**
