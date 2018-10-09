@@ -67,7 +67,7 @@ function wp_load_translations_early()
 	$loaded = TRUE;
 
 	if ( function_exists( 'did_action' ) && did_action( 'init' ) ) {
-		// @NOW 005 -> wp-admin/includes/noop.php, wp-includes/plugin.php
+		// @NOW 005 -> wp-includes/plugin.php
 	}
 }
 
