@@ -7,7 +7,11 @@
  * @since      4.4.0
  */
 
-// @NOW 008
+/**
+ * @ignore
+ */
+function __()
+{}
 
 /**
  * @ignore

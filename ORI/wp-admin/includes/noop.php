@@ -7,10 +7,7 @@
  * @since 4.4.0
  */
 
-/**
- * @ignore
- */
-function __() {}
+// refactored. function __() {}
 
 /**
  * @ignore

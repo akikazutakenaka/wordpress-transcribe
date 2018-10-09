@@ -137,6 +137,6 @@ class WP_Locale
 	{
 		// The Weekdays
 		$this->weekday[0] = __( 'Sunday' );
-		// @NOW 007 -> wp-admin/includes/noop.php, wp-includes/l10n.php
+		// @NOW 007 -> wp-includes/l10n.php
 	}
 }

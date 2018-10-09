@@ -7,6 +7,8 @@
  * @since      1.2.0
  */
 
+// @NOW 008
+
 /**
  * Load a .mo file into the text domain $domain.
  *
