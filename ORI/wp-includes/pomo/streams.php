@@ -32,20 +32,7 @@ class POMO_Reader {
 		return unpack($endian_letter.$count, $bytes);
 	}
 
-	/**
-	 * @param string $string
-	 * @param int    $start
-	 * @param int    $length
-	 * @return string
-	 */
-	function substr($string, $start, $length) {
-		if ($this->is_overloaded) {
-			return mb_substr($string, $start, $length, 'ascii');
-		} else {
-			return substr($string, $start, $length);
-		}
-	}
-
+	// refactored. function substr($string, $start, $length) {}
 	// refactored. function strlen($string) {}
 
 	/**

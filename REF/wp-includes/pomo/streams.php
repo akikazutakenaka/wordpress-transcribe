@@ -58,7 +58,18 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 		return unpack( $endian_letter . $count, $bytes );
 	}
 
-	// @NOW 009
+	/**
+	 * @param  string $string
+	 * @param  int    $start
+	 * @param  int    $length
+	 * @return string
+	 */
+	function substr( $string, $start, $length )
+	{
+		return ( $this->is_overloaded )
+			? mb_substr( $string, $start, $length, 'ascii' )
+			: substr( $string, $start, $length );
+	}
 
 	/**
 	 * @param  string $string
@@ -84,7 +95,7 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 
 			for ( $i = 0; $i < $length; $i += $chunk_size )
 				$out[] = $this->substr( $string, $i, $chunk_size );
-				// @NOW 008 -> wp-includes/pomo/streams.php
+				// @NOW 008
 		}
 	}
 }
