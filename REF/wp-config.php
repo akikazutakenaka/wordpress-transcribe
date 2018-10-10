@@ -33,8 +33,10 @@ define( 'DB_HOST', 'localhost' );
 // Database Charset to use in creating database tables.
 define( 'DB_CHARSET', 'utf8' );
 
-// The Database Collate type.
-// Don't change this if in doubt.
+/**
+ * The Database Collate type.
+ * Don't change this if in doubt.
+ */
 define( 'DB_COLLATE', '' );
 
 /**
@@ -76,8 +78,10 @@ $table_prefix = 'wp_';
  */
 define( 'WP_DEBUG', FALSE );
 
-// That's all, stop editing!
-// Happy blogging.
+/**
+ * That's all, stop editing!
+ * Happy blogging.
+ */
 
 // Absolute path to the WordPress directory.
 if ( ! defined( 'ABSPATH' ) )

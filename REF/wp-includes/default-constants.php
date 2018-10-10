@@ -66,8 +66,10 @@ function wp_initial_constants()
 	if ( ! defined( 'WP_DEBUG' ) )
 		define( 'WP_DEBUG', FALSE );
 
-	// Add define( 'WP_DEBUG_DISPLAY', NULL ); to wp-config.php use the globally configured setting for display_errors and not force errors to be displayed.
-	// Use false to force display_errors off.
+	/**
+	 * Add define( 'WP_DEBUG_DISPLAY', NULL ); to wp-config.php use the globally configured setting for display_errors and not force errors to be displayed.
+	 * Use false to force display_errors off.
+	 */
 	if ( ! defined( 'WP_DEBUG_DISPLAY' ) )
 		define( 'WP_DEBUG_DISPLAY', TRUE );
 

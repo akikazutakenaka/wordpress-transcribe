@@ -141,12 +141,16 @@ final class WP_Hook implements Iterator, ArrayAccess
 					: prev( $iteration ); // Otherwise, just go back to the previous element.
 
 				if ( FALSE === $prev )
-					// Start of the array.
-					// Reset, and go about our day.
+					/**
+					 * Start of the array.
+					 * Reset, and go about our day.
+					 */
 					reset( $iteration );
 				elseif ( $new_priority !== $prev )
-					// Previous wasn't the same.
-					// Move forward again.
+					/**
+					 * Previous wasn't the same.
+					 * Move forward again.
+					 */
 					next( $iteration );
 			}
 		}

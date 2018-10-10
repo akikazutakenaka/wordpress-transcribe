@@ -1053,8 +1053,10 @@ class wpdb
 			$host = substr( $host, 0, $socket_pos );
 		}
 
-		// We need to check for an IPv6 address first.
-		// An IPv6 address will always contain at least two colons.
+		/**
+		 * We need to check for an IPv6 address first.
+		 * An IPv6 address will always contain at least two colons.
+		 */
 		if ( substr_count( $host, ':' ) > 1 ) {
 			$pattern = '#^(?:\[)?(?P<host>[0-9a-fA-F:]+)(?:\]:(?P<port>[\d]+))?#';
 			$is_ipv6 = TRUE;
