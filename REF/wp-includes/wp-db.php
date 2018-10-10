@@ -1105,9 +1105,9 @@ class wpdb
 		 * Add the filter to remove the placeholder escaper.
 		 * Uses priority 0, so that anything else attached to this filter will receive the query with the placeholder string removed.
 		 */
-		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) ) {
-			// @NOW 022
-		}
+		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) )
+			add_filter( 'query', [$this, 'remove_placeholder_escape'] );
+			// @NOW 022 -> wp-includes/plugin.php
 	}
 
 	/**

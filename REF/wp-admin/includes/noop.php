@@ -16,6 +16,12 @@ function __()
 /**
  * @ignore
  */
+function add_filter()
+{}
+
+/**
+ * @ignore
+ */
 function apply_filters()
 {}
 

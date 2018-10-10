@@ -14,10 +14,7 @@
  */
 function _x() {}
 
-/**
- * @ignore
- */
-function add_filter() {}
+// refactored. function add_filter() {}
 
 /**
  * @ignore
