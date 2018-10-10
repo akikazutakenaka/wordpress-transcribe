@@ -770,7 +770,7 @@ class wpdb
 			$message .= "</ul>\n";
 			$message .= '<p>' . sprintf( __( 'If you&#8217;re unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress Support Forums</a>.' ), __( 'https://wordpress.org/support/' ) ) . "</p>\n";
 			$this->bail( $message, 'db_connect_fail' );
-			// @NOW 019 -> wp-includes/wp-db.php
+			// @NOW 019
 		}
 	}
 
@@ -848,6 +848,5 @@ class wpdb
 		}
 
 		wp_die( $message );
-		// @NOW 020
 	}
 }
