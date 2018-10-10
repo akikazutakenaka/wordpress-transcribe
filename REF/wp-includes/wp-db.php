@@ -899,5 +899,23 @@ class wpdb
 		wp_die( $message );
 	}
 
-	// @NOW 022
+	/**
+	 * Determine if a database supports a particular feature.
+	 *
+	 * @since 2.7.0
+	 * @since 4.1.0 Added support for the 'utf8mb4' feature.
+	 * @since 4.6.0 Added support for the 'utf8mb4_520' feature.
+	 * @see   wpdb::db_version()
+	 *
+	 * @param  string    $db_cap The feature to check for.
+	 *                           Accepts 'collation', 'group_concat', 'subqueries', 'set_charset', 'utf8mb4', or 'utf8mb4_520'.
+	 * @return int|false Whether the database feature is supported, false otherwise.
+	 */
+	public function has_cap( $db_cap )
+	{
+		$version = $this->db_version();
+		// @NOW 022 -> wp-includes/wp-db.php
+	}
+
+	// @NOW 023
 }
