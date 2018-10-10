@@ -676,7 +676,27 @@ class wpdb
 		// @NOW 020 -> wp-includes/wp-db.php
 	}
 
-	// @NOW 021
+	/**
+	 * Determines the best charset and collation to use given a charset and collation.
+	 *
+	 * For example, when able, utf8mb4 should be used instead of utf8.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param  string $charset The character set to check.
+	 * @param  string $collate The collation to check.
+	 * @return array  The most appropriate character set and collation to use.
+	 */
+	public function determine_charset( $charset, $collate )
+	{
+		if ( ( $this->use_mysqli && ! ( $this->dbh instanceof mysqli ) )
+		  || empty( $this->dbh ) )
+			return compact( 'charset', 'collate' );
+
+		if ( 'utf8' === $charset && $this->has_cap( 'utf8mb4' ) ) {
+			// @NOW 021 -> wp-includes/wp-db.php
+		}
+	}
 
 	/**
 	 * Enables showing of database errors.
@@ -878,4 +898,6 @@ class wpdb
 
 		wp_die( $message );
 	}
+
+	// @NOW 022
 }
