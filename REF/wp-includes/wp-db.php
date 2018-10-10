@@ -745,7 +745,7 @@ class wpdb
 
 				if ( $set_charset_succeeded ) {
 					$query = $this->prepare( 'SET NAMES %s', $charset );
-					// @NOW 020 -> wp-includes/wp-db.php
+					// @NOW 020
 				}
 			}
 		}
@@ -896,7 +896,8 @@ class wpdb
 		}
 
 		array_walk( $args, [$this, 'escape_by_ref'] );
-		// @NOW 021
+		$query = @vsprintf( $query, $args );
+		return $this->add_placeholder_escape( $query );
 	}
 
 	/**
