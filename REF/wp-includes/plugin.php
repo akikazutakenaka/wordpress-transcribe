@@ -35,7 +35,29 @@ if ( ! isset( $wp_actions ) )
 if ( ! isset( $wp_current_filter ) )
 	$wp_current_filter = [];
 
-// @NOW 023
+/**
+ * Check if any filter has been registered for a hook.
+ *
+ * @since  2.5.0
+ * @global array $wp_filter Stores all of the filters.
+ *
+ * @param  string        $tag               The name of the filter hook.
+ * @param  callable|bool $function_to_check Optional.
+ *                                          The callback to check for.
+ *                                          Default false.
+ * @return false|int     If $function_to_check is omitted, returns boolean for whether the hook has anything registered.
+ *                       When checking a specific function, the priority of that hook is returned, or false if the function is not attached.
+ *                       When using the $function_to_check argument, this function may return a non-boolean value that evaluates to false (e.g.) 0, so use the === operator for testing the return value.
+ */
+function has_filter( $tag, $function_to_check = FALSE )
+{
+	global $wp_filter;
+
+	if ( ! isset( $wp_filter[$tag] ) )
+		return FALSE;
+
+	return $wp_filter[$tag]->has_filter( $tag, $function_to_check );
+}
 
 /**
  * Call the functions added to a filter hook.

@@ -158,6 +158,8 @@ final class WP_Hook implements Iterator, ArrayAccess
 		unset( $iteration );
 	}
 
+	// @NOW 023
+
 	/**
 	 * Calls the callback functions added to a filter hook.
 	 *
