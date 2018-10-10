@@ -793,7 +793,7 @@ class wpdb
 		if ( strpos( $query, '%' ) === FALSE ) {
 			wp_load_translations_early();
 			_doing_it_wrong( 'wpdb::prepare', sprintf( __( 'The query argument of %s must have a placeholder.' ), 'wpdb::prepare()' ), '3.9.0' );
-			// @NOW 021 -> wp-includes/functions.php
+			// @NOW 021
 		}
 	}
 

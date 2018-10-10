@@ -98,4 +98,50 @@ function absint( $maybeint )
 	return abs( intval( $maybeint ) );
 }
 
-// @NOW 022
+/**
+ * Mark something as being incorrectly called.
+ *
+ * There is ahook {@see 'doing_it_wrong_run'} that will be called that can be used to get the backtrace up to what file and function called the deprecated function.
+ *
+ * The current behavior is to trigger a user error if `WP_DEBUG` is true.
+ *
+ * @since  3.1.0
+ * @access private
+ *
+ * @param string $function The function that was called.
+ * @param string $message  A message explaining what has been done incorrectly.
+ * @param string $version  The version of WordPress where the message was added.
+ */
+function _doing_it_wrong( $function, $message, $version )
+{
+	/**
+	 * Fires when the given function is being used incorrectly.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $function The function that was called.
+	 * @param string $message  A message explaining what has been done incorrectly.
+	 * @param string $version  The version of WordPress where the message was added.
+	 */
+	do_action( 'doing_it_wrong_run', $function, $message, $version );
+
+	/**
+	 * Filters whether to trigger an error for _doing_it_wrong() calls.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param bool $trigger Whether to trigger the error for _doing_it_wrong() calls.
+	 *                      Default true.
+	 */
+	if ( WP_DEBUG && apply_filters( 'doing_it_wrong_trigger_error', TRUE ) ) {
+		if ( function_exists( '__' ) ) {
+			$version = is_null( $version ) ? '' : sprintf( __( '(This message was added in version %s.)' ), $version );
+			$message .= ' ' . sprintf( __( 'Please see <a href="%s">Debugging in WordPress</a> for more information.' ), __( 'https://codex.wordpress.org/Debugging_in_WordPress' ) );
+			trigger_error( sprintf( __( '%1$s was called <strong>incorrectly</strong>. %2$s %3$s' ), $function, $message, $version ) );
+		} else {
+			$version = is_null( $version ) ? '' : sprintf( '(This message was added in version %s.)', $version );
+			$message .= sprintf( ' Please see <a href="%s">Debugging in WordPress</a> for more information.', 'https://codex.wordpress.org/Debugging_in_WordPress' );
+			trigger_error( sprintf( '%1$s was called <strong>incorrectly</strong>. %2$s %3$s', $function, $message, $version ) );
+		}
+	}
+}
