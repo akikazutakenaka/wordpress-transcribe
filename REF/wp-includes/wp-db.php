@@ -848,6 +848,6 @@ class wpdb
 		}
 
 		wp_die( $message );
-		// @NOW 020 -> wp-includes/functions.php
+		// @NOW 020
 	}
 }

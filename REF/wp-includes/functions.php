@@ -54,9 +54,35 @@ function wp_die( $message = '', $title = '', $args = [] )
 		$title = '';
 	}
 
-	if ( wp_doing_ajax() ) {
-		// @NOW 021
-	}
+	if ( wp_doing_ajax() )
+		/**
+		 * Filters the callback for killing WordPress execution for Ajax requests.
+		 *
+		 * @since 3.4.0
+		 *
+		 * @param callable $function Callback function name.
+		 */
+		$function = apply_filters( 'wp_die_ajax_handler', '_ajax_wp_die_handler' );
+	elseif ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
+		/**
+		 * Filters the callback for killing WordPress execution for XML-RPC requests.
+		 *
+		 * @since 3.4.0
+		 *
+		 * @param callable $function Callback function name.
+		 */
+		$function = apply_filters( 'wp_die_xmlrpc_handler', '_xmlrpc_wp_die_handler' );
+	else
+		/**
+		 * Filters the callback for killing WordPress execution for all non-Ajax, non-XML-RPC requests.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param callable $function Callback function name.
+		 */
+		$function = apply_filters( 'wp_die_handler', '_default_wp_die_handler' );
+
+	call_user_func( $function, $message, $title, $args );
 }
 
 /**
