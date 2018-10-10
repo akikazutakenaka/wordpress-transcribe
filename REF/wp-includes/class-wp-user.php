@@ -161,6 +161,6 @@ class WP_User
 			? absint( $site_id )
 			: get_current_blog_id();
 		$this->cap_key = $wpdb->get_blog_prefix( $this->site_id ) . 'capabilities';
-		// @NOW 017 -> wp-includes/wp-db.php
+		// @NOW 017
 	}
 }

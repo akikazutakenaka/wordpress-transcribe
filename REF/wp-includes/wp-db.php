@@ -813,7 +813,28 @@ class wpdb
 			mysql_query( "SET SESSION sql_mode='$modes_str'", $this->dbh );
 	}
 
-	// @NOW 018
+	/**
+	 * Gets blog prefix.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param  int    $blog_id Optional.
+	 * @return string Blog prefix.
+	 */
+	public function get_blog_prefix( $blog_id = NULL )
+	{
+		if ( is_multisite() ) {
+			if ( NULL === $blog_id )
+				$blog_id = $this->blogid;
+
+			$blog_id = ( int ) $blog_id;
+			return ( defined( 'MULTISITE' )
+			      && ( 0 == $blog_id || 1 == $blog_id ) )
+				? $this->base_prefix
+				: $this->base_prefix . $blog_id . '_';
+		} else
+			return $this->base_prefix;
+	}
 
 	/**
 	 * Selects a database using the current database connection.
