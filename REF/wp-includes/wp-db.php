@@ -1107,7 +1107,7 @@ class wpdb
 		 */
 		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) )
 			add_filter( 'query', [$this, 'remove_placeholder_escape'] );
-			// @NOW 022 -> wp-includes/plugin.php
+			// @NOW 022
 	}
 
 	/**
