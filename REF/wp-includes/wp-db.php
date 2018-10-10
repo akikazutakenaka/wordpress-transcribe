@@ -694,7 +694,7 @@ class wpdb
 			return compact( 'charset', 'collate' );
 
 		if ( 'utf8' === $charset && $this->has_cap( 'utf8mb4' ) ) {
-			// @NOW 021 -> wp-includes/wp-db.php
+			// @NOW 021
 		}
 	}
 
@@ -914,7 +914,37 @@ class wpdb
 	public function has_cap( $db_cap )
 	{
 		$version = $this->db_version();
-		// @NOW 022
+
+		switch ( strtolower( $db_cap ) ) {
+			case 'collation': // @since 2.5.0
+			case 'group_concat': // @since 2.7.0
+			case 'subqueries': // @since 2.7.0
+				return version_compare( $version, '4.1', '>=' );
+
+			case 'set_charset':
+				return version_compare( $version, '5.0.7', '>=' );
+
+			case 'utf8mb4': // @since 4.1.0
+				if ( version_compare( $version, '5.5.3', '<' ) )
+					return FALSE;
+
+				$client_version = $this->use_mysqli ? mysqli_get_client_info() : mysql_get_client_info();
+
+				/**
+				 * libmysql has supported utf8mb4 since 5.5.3, same as the MySQL server.
+				 * mysqlnd has supported utf8mb4 since 5.0.9.
+				 */
+				if ( FALSE !== strpos( $client_version, 'mysqlnd' ) ) {
+					$client_version = preg_replace( '/^\D+([\d.]+).*/', '$1', $client_version );
+					return version_compare( $client_version, '5.0.9', '>=' );
+				} else
+					return version_compare( $client_version, '5.5.3', '>=' );
+
+			case 'utf8mb4_520': // @since 4.6.0
+				return version_compare( $version, '5.6', '>=' );
+		}
+
+		return FALSE;
 	}
 
 	/**
