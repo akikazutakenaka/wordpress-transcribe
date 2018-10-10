@@ -2871,19 +2871,5 @@ class wpdb {
 		return wp_debug_backtrace_summary( __CLASS__ );
 	}
 
-	/**
-	 * Retrieves the MySQL server version.
-	 *
-	 * @since 2.7.0
-	 *
-	 * @return null|string Null on failure, version number on success.
-	 */
-	public function db_version() {
-		if ( $this->use_mysqli ) {
-			$server_info = mysqli_get_server_info( $this->dbh );
-		} else {
-			$server_info = mysql_get_server_info( $this->dbh );
-		}
-		return preg_replace( '/[^0-9.].*/', '', $server_info );
-	}
+	// refactored. public function db_version() {}
 }

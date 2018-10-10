@@ -914,8 +914,21 @@ class wpdb
 	public function has_cap( $db_cap )
 	{
 		$version = $this->db_version();
-		// @NOW 022 -> wp-includes/wp-db.php
+		// @NOW 022
 	}
 
-	// @NOW 023
+	/**
+	 * Retrieves the MySQL server version.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @return null|string Null on failure, version number on success.
+	 */
+	public function db_version()
+	{
+		$server_info = $this->use_mysqli
+			? mysqli_get_server_info( $this->dbh )
+			: mysql_get_server_info( $this->dbh );
+		return preg_replace( '/[^0-9.].*/', '', $server_info );
+	}
 }
