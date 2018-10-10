@@ -1150,7 +1150,7 @@ class wpdb {
 		return false;
 	}
 
-	public function parse_db_host( $host ) {}
+	// refactored. public function parse_db_host( $host ) {}
 
 	/**
 	 * Checks that the connection to the database is still up. If not, try to reconnect.

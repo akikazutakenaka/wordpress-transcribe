@@ -654,6 +654,31 @@ class wpdb
 	}
 
 	/**
+	 * Set $this->charset and $this->collate
+	 *
+	 * @since 3.1.0
+	 */
+	public function init_charset()
+	{
+		$charset = '';
+		$collate = '';
+
+		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
+			$charset = 'utf8';
+			$collate = ( defined( 'DB_COLLATE' ) && DB_COLLATE ) ? DB_COLLATE : 'utf8_general_ci';
+		} elseif ( defined( 'DB_COLLATE' ) )
+			$collate = DB_COLLATE;
+
+		if ( defined( 'DB_CHARSET' ) )
+			$charset = DB_CHARSET;
+
+		$charset_collate = $this->determine_charset( $charset, $collate );
+		// @NOW 020 -> wp-includes/wp-db.php
+	}
+
+	// @NOW 021
+
+	/**
 	 * Enables showing of database errors.
 	 *
 	 * This function should be used only to enable showing of errors.
@@ -770,7 +795,11 @@ class wpdb
 			$message .= "</ul>\n";
 			$message .= '<p>' . sprintf( __( 'If you&#8217;re unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress Support Forums</a>.' ), __( 'https://wordpress.org/support/' ) ) . "</p>\n";
 			$this->bail( $message, 'db_connect_fail' );
-			// @NOW 019
+			return FALSE;
+		} elseif ( $this->dbh ) {
+			if ( ! $this->has_connected )
+				$this->init_charset();
+				// @NOW 019 -> wp-includes/wp-db.php
 		}
 	}
 
