@@ -161,6 +161,20 @@ class WP_User
 			? absint( $site_id )
 			: get_current_blog_id();
 		$this->cap_key = $wpdb->get_blog_prefix( $this->site_id ) . 'capabilities';
-		// @NOW 017
+		$this->caps = $this->get_caps_data();
+		// @NOW 017 -> wp-includes/class-wp-user.php
+	}
+
+	/**
+	 * Gets the available user capabilities data.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return array User capabilities array.
+	 */
+	private function get_caps_data()
+	{
+		$caps = get_user_meta( $this->ID, $this->cap_key, TRUE );
+		// @NOW 018 -> wp-includes/user.php
 	}
 }

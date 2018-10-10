@@ -6,6 +6,8 @@
  * @subpackage Users
  */
 
+// @NOW 019
+
 /**
  * Retrieves the current user object.
  *
