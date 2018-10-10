@@ -80,21 +80,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 		return false;
 	}
 
-	/**
-	 * Checks if any callbacks have been registered for this hook.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @return bool True if callbacks have been registered for the current hook, otherwise false.
-	 */
-	public function has_filters() {
-		foreach ( $this->callbacks as $callbacks ) {
-			if ( $callbacks ) {
-				return true;
-			}
-		}
-		return false;
-	}
+	// refactored. public function has_filters() {}
 
 	/**
 	 * Removes all callbacks from the current filter.
