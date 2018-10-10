@@ -6,7 +6,24 @@
  * @subpackage Users
  */
 
-// @NOW 019
+/**
+ * Retrieve user meta field for a user.
+ *
+ * @since 3.0.0
+ * @link  https://codex.wordpress.org/Function_Reference/get_user_meta
+ *
+ * @param  int    $user_id User ID.
+ * @param  string $key     Optional.
+ *                         The meta key to retrieve.
+ *                         By default, returns data for all keys.
+ * @param  bool   $single  Whether to return a single value.
+ * @return mixed  Will be an array if $single is false.
+ *                Will be value of meta data field if $single is true.
+ */
+function get_user_meta( $user_id, $key = '', $single = FALSE )
+{
+	return get_metadata( 'user', $user_id, $key, $single );
+}
 
 /**
  * Retrieves the current user object.
