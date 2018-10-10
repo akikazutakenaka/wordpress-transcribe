@@ -1333,21 +1333,7 @@ class wpdb {
 		return $placeholder;
 	}
 
-	/**
-	 * Adds a placeholder escape string, to escape anything that resembles a printf() placeholder.
-	 *
-	 * @since 4.8.3
-	 *
-	 * @param string $query The query to escape.
-	 * @return string The query with the placeholder escape string inserted where necessary.
-	 */
-	public function add_placeholder_escape( $query ) {
-		/*
-		 * To prevent returning anything that even vaguely resembles a placeholder,
-		 * we clobber every % we can find.
-		 */
-		return str_replace( '%', $this->placeholder_escape(), $query );
-	}
+	// refactored. public function add_placeholder_escape( $query ) {}
 
 	/**
 	 * Removes the placeholder escape strings from a query.
