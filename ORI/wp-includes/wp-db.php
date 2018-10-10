@@ -382,67 +382,7 @@ class wpdb {
 		return $tables;
 	}
 
-	/**
-	 * Selects a database using the current database connection.
-	 *
-	 * The database name will be changed based on the current database
-	 * connection. On failure, the execution will bail and display an DB error.
-	 *
-	 * @since 0.71
-	 *
-	 * @param string        $db  MySQL database name
-	 * @param resource|null $dbh Optional link identifier.
-	 */
-	public function select( $db, $dbh = null ) {
-		if ( is_null($dbh) )
-			$dbh = $this->dbh;
-
-		if ( $this->use_mysqli ) {
-			$success = mysqli_select_db( $dbh, $db );
-		} else {
-			$success = mysql_select_db( $db, $dbh );
-		}
-		if ( ! $success ) {
-			$this->ready = false;
-			if ( ! did_action( 'template_redirect' ) ) {
-				wp_load_translations_early();
-
-				$message = '<h1>' . __( 'Can&#8217;t select database' ) . "</h1>\n";
-
-				$message .= '<p>' . sprintf(
-					/* translators: %s: database name */
-					__( 'We were able to connect to the database server (which means your username and password is okay) but not able to select the %s database.' ),
-					'<code>' . htmlspecialchars( $db, ENT_QUOTES ) . '</code>'
-				) . "</p>\n";
-
-				$message .= "<ul>\n";
-				$message .= '<li>' . __( 'Are you sure it exists?' ) . "</li>\n";
-
-				$message .= '<li>' . sprintf(
-					/* translators: 1: database user, 2: database name */
-					__( 'Does the user %1$s have permission to use the %2$s database?' ),
-					'<code>' . htmlspecialchars( $this->dbuser, ENT_QUOTES )  . '</code>',
-					'<code>' . htmlspecialchars( $db, ENT_QUOTES ) . '</code>'
-				) . "</li>\n";
-
-				$message .= '<li>' . sprintf(
-					/* translators: %s: database name */
-					__( 'On some systems the name of your database is prefixed with your username, so it would be like <code>username_%1$s</code>. Could that be the problem?' ),
-					htmlspecialchars( $db, ENT_QUOTES )
-				). "</li>\n";
-
-				$message .= "</ul>\n";
-
-				$message .= '<p>' . sprintf(
-					/* translators: %s: support forums URL */
-					__( 'If you don&#8217;t know how to set up a database you should <strong>contact your host</strong>. If all else fails you may find help at the <a href="%s">WordPress Support Forums</a>.' ),
-					__( 'https://wordpress.org/support/' )
-				) . "</p>\n";
-
-				$this->bail( $message, 'db_select_fail' );
-			}
-		}
-	}
+	// refactored. public function select( $db, $dbh = null ) {}
 
 	/**
 	 * Do not use, deprecated.
