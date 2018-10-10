@@ -637,7 +637,6 @@ class wpdb
 			return;
 
 		$this->db_connect();
-		// @NOW 018 -> wp-includes/wp-db.php
 	}
 
 	/**
@@ -813,6 +812,8 @@ class wpdb
 		else
 			mysql_query( "SET SESSION sql_mode='$modes_str'", $this->dbh );
 	}
+
+	// @NOW 018
 
 	/**
 	 * Selects a database using the current database connection.
@@ -1126,8 +1127,10 @@ class wpdb
 			$this->ready = TRUE;
 			$this->set_sql_mode();
 			$this->select( $this->dbname, $this->dbh );
-			// @NOW 019
+			return TRUE;
 		}
+
+		return FALSE;
 	}
 
 	/**
