@@ -51,35 +51,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 		return $exists;
 	}
 
-	/**
-	 * Checks if a specific action has been registered for this hook.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param string        $tag               Optional. The name of the filter hook. Used for building
-	 *                                         the callback ID when SPL is not available. Default empty.
-	 * @param callable|bool $function_to_check Optional. The callback to check for. Default false.
-	 * @return bool|int The priority of that hook is returned, or false if the function is not attached.
-	 */
-	public function has_filter( $tag = '', $function_to_check = false ) {
-		if ( false === $function_to_check ) {
-			return $this->has_filters();
-		}
-
-		$function_key = _wp_filter_build_unique_id( $tag, $function_to_check, false );
-		if ( ! $function_key ) {
-			return false;
-		}
-
-		foreach ( $this->callbacks as $priority => $callbacks ) {
-			if ( isset( $callbacks[ $function_key ] ) ) {
-				return $priority;
-			}
-		}
-
-		return false;
-	}
-
+	// refactored. public function has_filter( $tag = '', $function_to_check = false ) {}
 	// refactored. public function has_filters() {}
 
 	/**
