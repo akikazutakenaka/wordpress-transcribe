@@ -97,3 +97,5 @@ function absint( $maybeint )
 {
 	return abs( intval( $maybeint ) );
 }
+
+// @NOW 022

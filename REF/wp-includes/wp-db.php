@@ -751,7 +751,51 @@ class wpdb
 		}
 	}
 
-	// @NOW 021
+	/**
+	 * Prepares a SQL query for safe execution.
+	 * Uses sprintf()-like syntax.
+	 *
+	 * The following placeholders can be used in the query string:
+	 *     %d (integer)
+	 *     %f (float)
+	 *     %s (string)
+	 *
+	 * All placeholders MUST be left unquoted in the query string.
+	 * A corresponding argument MUST be passed for each placeholder.
+	 *
+	 * For compatibility with old behavior, numbered or formatted string placeholders (eg, %1$s, %5s) will not have quotes added by this function, so should be passed with appropriate quotes around them for your usage.
+	 *
+	 * Literal percentage signs (%) in the query string must be written as %%.
+	 * Percentage wildcards (for example, to use in LIKE syntax) must be passed via a substitution argument containing the complete LIKE string, these cannot be inserted directly in the query string.
+	 * Also see {@see esc_like()}.
+	 *
+	 * Arguments may be passed as individual arguments to the method, or as a single array containing all arguments.
+	 * A combination of the two is not supported.
+	 *
+	 * Examples:
+	 *     $wpdb->prepare( "SELECT * FROM `table` WHERE `column` = %s AND `field` = %d OR `other_field` LIKE %s", ['foo', 1337, '%bar'] );
+	 *     $wpdb->prepare( "SELECT DATE_FORMAT( `field`, '%%c' ) FROM `table` WHERE `column` = %s", 'foo' );
+	 *
+	 * @link  https://secure.php.net/sprintf Description of syntax.
+	 * @since 2.3.0
+	 *
+	 * @param  string      $query     Query statement with sprintf()-like placeholders.
+	 * @param  array|mixed $args      The array of variables to substitute into the query's placeholders if being called with an array of arguments, or the first variable to substitute into the query's placeholders if being called with individual arguments.
+	 * @param  mixed       $args, ... Further variables to substitute into the query's placeholders if being called with individual arguments.
+	 * @return string|void Sanitized query string, if there is a query to prepare.
+	 */
+	public function prepare( $query, $args )
+	{
+		if ( is_null( $query ) )
+			return;
+
+		// This is not meant to be foolproof -- but it will catch obviously incorrect usage.
+		if ( strpos( $query, '%' ) === FALSE ) {
+			wp_load_translations_early();
+			_doing_it_wrong( 'wpdb::prepare', sprintf( __( 'The query argument of %s must have a placeholder.' ), 'wpdb::prepare()' ), '3.9.0' );
+			// @NOW 021 -> wp-includes/functions.php
+		}
+	}
 
 	/**
 	 * Enables showing of database errors.
