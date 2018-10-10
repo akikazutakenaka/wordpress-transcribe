@@ -213,36 +213,7 @@ class wpdb {
 		unset( $this->$name );
 	}
 
-	/**
-	 * Set $this->charset and $this->collate
-	 *
-	 * @since 3.1.0
-	 */
-	public function init_charset() {
-		$charset = '';
-		$collate = '';
-
-		if ( function_exists('is_multisite') && is_multisite() ) {
-			$charset = 'utf8';
-			if ( defined( 'DB_COLLATE' ) && DB_COLLATE ) {
-				$collate = DB_COLLATE;
-			} else {
-				$collate = 'utf8_general_ci';
-			}
-		} elseif ( defined( 'DB_COLLATE' ) ) {
-			$collate = DB_COLLATE;
-		}
-
-		if ( defined( 'DB_CHARSET' ) ) {
-			$charset = DB_CHARSET;
-		}
-
-		$charset_collate = $this->determine_charset( $charset, $collate );
-
-		$this->charset = $charset_collate['charset'];
-		$this->collate = $charset_collate['collate'];
-	}
-
+	// refactored. public function init_charset() {}
 	// refactored. public function determine_charset( $charset, $collate ) {}
 
 	/**

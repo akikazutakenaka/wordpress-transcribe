@@ -673,7 +673,8 @@ class wpdb
 			$charset = DB_CHARSET;
 
 		$charset_collate = $this->determine_charset( $charset, $collate );
-		// @NOW 020
+		$this->charset = $charset_collate['charset'];
+		$this->collate = $charset_collate['collate'];
 	}
 
 	/**
@@ -835,7 +836,7 @@ class wpdb
 		} elseif ( $this->dbh ) {
 			if ( ! $this->has_connected )
 				$this->init_charset();
-				// @NOW 019 -> wp-includes/wp-db.php
+				// @NOW 019
 		}
 	}
 
