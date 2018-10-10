@@ -1303,36 +1303,7 @@ class wpdb {
 		}
 	}
 
-	/**
-	 * Generates and returns a placeholder escape string for use in queries returned by ::prepare().
-	 *
-	 * @since 4.8.3
-	 *
-	 * @return string String to escape placeholders.
-	 */
-	public function placeholder_escape() {
-		static $placeholder;
-
-		if ( ! $placeholder ) {
-			// If ext/hash is not present, compat.php's hash_hmac() does not support sha256.
-			$algo = function_exists( 'hash' ) ? 'sha256' : 'sha1';
-			// Old WP installs may not have AUTH_SALT defined.
-			$salt = defined( 'AUTH_SALT' ) && AUTH_SALT ? AUTH_SALT : (string) rand();
-
-			$placeholder = '{' . hash_hmac( $algo, uniqid( $salt, true ), $salt ) . '}';
-		}
-
-		/*
-		 * Add the filter to remove the placeholder escaper. Uses priority 0, so that anything
-		 * else attached to this filter will recieve the query with the placeholder string removed.
-		 */
-		if ( ! has_filter( 'query', array( $this, 'remove_placeholder_escape' ) ) ) {
-			add_filter( 'query', array( $this, 'remove_placeholder_escape' ), 0 );
-		}
-
-		return $placeholder;
-	}
-
+	// refactored. public function placeholder_escape() {}
 	// refactored. public function add_placeholder_escape( $query ) {}
 	// refactored. public function remove_placeholder_escape( $query ) {}
 

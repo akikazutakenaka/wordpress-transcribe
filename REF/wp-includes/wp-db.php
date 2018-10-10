@@ -896,7 +896,7 @@ class wpdb
 		}
 
 		array_walk( $args, [$this, 'escape_by_ref'] );
-		// @NOW 021 -> wp-includes/wp-db.php
+		// @NOW 021
 	}
 
 	/**
@@ -1107,7 +1107,8 @@ class wpdb
 		 */
 		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) )
 			add_filter( 'query', [$this, 'remove_placeholder_escape'] );
-			// @NOW 022
+
+		return $placeholder;
 	}
 
 	/**
