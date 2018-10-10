@@ -745,7 +745,11 @@ class wpdb
 
 				if ( $set_charset_succeeded ) {
 					$query = $this->prepare( 'SET NAMES %s', $charset );
-					// @NOW 020
+
+					if ( ! empty( $collate ) )
+						$query .= $this->prepare( ' COLLATE %s', $collate );
+
+					mysql_query( $query, $dbh );
 				}
 			}
 		}
@@ -1024,7 +1028,7 @@ class wpdb
 
 			$this->has_connected = TRUE;
 			$this->set_charset( $this->dbh );
-			// @NOW 019 -> wp-includes/wp-db.php
+			// @NOW 019
 		}
 	}
 

@@ -215,48 +215,7 @@ class wpdb {
 
 	// refactored. public function init_charset() {}
 	// refactored. public function determine_charset( $charset, $collate ) {}
-
-	/**
-	 * Sets the connection's character set.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param resource $dbh     The resource given by mysql_connect
-	 * @param string   $charset Optional. The character set. Default null.
-	 * @param string   $collate Optional. The collation. Default null.
-	 */
-	public function set_charset( $dbh, $charset = null, $collate = null ) {
-		if ( ! isset( $charset ) )
-			$charset = $this->charset;
-		if ( ! isset( $collate ) )
-			$collate = $this->collate;
-		if ( $this->has_cap( 'collation' ) && ! empty( $charset ) ) {
-			$set_charset_succeeded = true;
-
-			if ( $this->use_mysqli ) {
-				if ( function_exists( 'mysqli_set_charset' ) && $this->has_cap( 'set_charset' ) ) {
-					$set_charset_succeeded = mysqli_set_charset( $dbh, $charset );
-				}
-
-				if ( $set_charset_succeeded ) {
-					$query = $this->prepare( 'SET NAMES %s', $charset );
-					if ( ! empty( $collate ) )
-						$query .= $this->prepare( ' COLLATE %s', $collate );
-					mysqli_query( $dbh, $query );
-				}
-			} else {
-				if ( function_exists( 'mysql_set_charset' ) && $this->has_cap( 'set_charset' ) ) {
-					$set_charset_succeeded = mysql_set_charset( $charset, $dbh );
-				}
-				if ( $set_charset_succeeded ) {
-					$query = $this->prepare( 'SET NAMES %s', $charset );
-					if ( ! empty( $collate ) )
-						$query .= $this->prepare( ' COLLATE %s', $collate );
-					mysql_query( $query, $dbh );
-				}
-			}
-		}
-	}
+	// refactored. public function set_charset( $dbh, $charset = null, $collate = null ) {}
 
 	/**
 	 * Change the current SQL mode, and ensure its WordPress compatibility.
