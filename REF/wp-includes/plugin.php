@@ -35,6 +35,8 @@ if ( ! isset( $wp_actions ) )
 if ( ! isset( $wp_current_filter ) )
 	$wp_current_filter = [];
 
+// @NOW 023
+
 /**
  * Call the functions added to a filter hook.
  *
