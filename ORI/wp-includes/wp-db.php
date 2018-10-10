@@ -654,19 +654,7 @@ class wpdb {
 		return $data;
 	}
 
-	/**
-	 * Escapes content by reference for insertion into the database, for security
-	 *
-	 * @uses wpdb::_real_escape()
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param string $string to escape
-	 */
-	public function escape_by_ref( &$string ) {
-		if ( ! is_float( $string ) )
-			$string = $this->_real_escape( $string );
-	}
+	// refactored. public function escape_by_ref( &$string ) {}
 
 	/**
 	 * Prepares a SQL query for safe execution. Uses sprintf()-like syntax.

@@ -751,6 +751,22 @@ class wpdb
 		}
 	}
 
+	// @NOW 022
+
+	/**
+	 * Escapes content by reference for insertion into the database, for security.
+	 *
+	 * @uses  wpdb::_real_escape()
+	 * @since 2.3.0
+	 *
+	 * @param string $string to escape
+	 */
+	public function escape_by_ref( &$string )
+	{
+		if ( ! is_float( $string ) )
+			$string = $this->_real_escape( $string );
+	}
+
 	/**
 	 * Prepares a SQL query for safe execution.
 	 * Uses sprintf()-like syntax.
@@ -793,8 +809,68 @@ class wpdb
 		if ( strpos( $query, '%' ) === FALSE ) {
 			wp_load_translations_early();
 			_doing_it_wrong( 'wpdb::prepare', sprintf( __( 'The query argument of %s must have a placeholder.' ), 'wpdb::prepare()' ), '3.9.0' );
-			// @NOW 021
 		}
+
+		$args = func_get_args();
+		array_shift( $args );
+
+		// If args were passed as an array (as in vsprintf), move them up.
+		$passed_as_array = FALSE;
+
+		if ( is_array( $args[0] ) && count( $args ) == 1 ) {
+			$passed_as_array = TRUE;
+			$args = $args[0];
+		}
+
+		foreach ( $args as $arg )
+			if ( ! is_scalar( $arg ) && ! is_null( $arg ) ) {
+				wp_load_translations_early();
+				_doing_it_wrong( 'wpdb::prepare', sprintf( __( 'Unsupported value type (%s).' ), gettype( $arg ) ), '4.8.2' );
+			}
+
+		/**
+		 * Specify the formatting allowed in a placeholder.
+		 * The following are allowed:
+		 *
+		 *     - Sign specifier. eg, $+d
+		 *     - Numbered placeholders. eg, %1$s
+		 *     - Padding specifier, including custom padding characters. eg, %05s, %'#5s
+		 *     - Alignment specifier. eg, %05-s
+		 *     - Precision specifier. eg, %.2f
+		 */
+		$allowed_format = '(?:[1-9][0-9]*[$])?[-+0-9]*(?: |0|\'.)?[-+0-9]*(?:\.[0-9]+)?';
+
+		/**
+		 * If a %s placeholder already has quoted around it, removing the existing quotes and re-inserting them ensures the quotes are consistent.
+		 *
+		 * For backwards compatibility, this is only applied to %s, and not to placeholders like %1$s, which are frequently used in the middle of longer strings, or as table name placeholders.
+		 */
+		$query = str_replace( "'%s'", '%s', $query ); // Strip any existing single quotes.
+		$query = str_replace( '"%s"', '%s', $query ); // Strip any existing double quotes.
+		$query = preg_replace( '/(?<!%)%s/', "'%s'", $query ); // Quote the strings, avoiding escaped strings like %%s.
+
+		$query = preg_replace( "/(?<!%)(%($allowed_format)?f)/", '%\\2F', $query ); // Force floats to be locale unaware.
+
+		$query = preg_replace( "/%(?:%|$|(?!($allowed_format)?[sdF]))/", '%%\\1', $query ); // Escape any unescaped percents.
+
+		// Count the number of valid placeholders in the query.
+		$placeholders = preg_match_all( "/(^|[^%]|(%%)+)%($allowed_format)?[sdF]/", $query, $matches );
+
+		if ( count( $args ) !== $placeholders ) {
+			if ( 1 === $placeholders && $passed_as_array ) {
+				// If the passed query only expected one argument, but the wrong number of arguments were sent as an array, bail.
+				wp_load_translations_early();
+				_doing_it_wrong( 'wpdb::prepare', __( 'The query only expected one placeholder, but an array of multiple placeholders was sent.' ), '4.9.0' );
+				return;
+			} else {
+				// If we don't have the right number of placeholders, but they were passed as individual arguments, or we were expecting multiple arguments in an array, throw a warning.
+				wp_load_translations_early();
+				_doing_it_wrong( 'wpdb::prepare', sprintf( __( 'The query does not contain the correct number of placeholders (%1$d) for the number of arguments passed (%2$d).' ), $placeholders, count( $args ) ), '4.8.3' );
+			}
+		}
+
+		array_walk( $args, [$this, 'escape_by_ref'] );
+		// @NOW 021 -> wp-includes/wp-db.php
 	}
 
 	/**
