@@ -751,7 +751,33 @@ class wpdb
 		}
 	}
 
-	// @NOW 022
+	/**
+	 * Real escape, using mysqli_real_escape_string() or mysql_real_escape_string()
+	 *
+	 * @see   mysqli_real_escape_string()
+	 * @see   mysql_real_escape_string()
+	 * @since 2.8.0
+	 *
+	 * @param  string $string to escape
+	 * @return string escaped
+	 */
+	function _real_escape( $string )
+	{
+		if ( $this->dbh )
+			$escaped = $this->use_mysqli ? mysqli_real_escape_string( $this->dbh, $string ) : mysql_real_escape_string( $string, $this->dbh );
+		else {
+			$class = get_class( $this );
+
+			if ( function_exists( '__' ) )
+				_doing_it_wrong( $class, sprintf( __( '%s must set a database connection for use with escaping.' ), $class ), '3.6.0' );
+			else
+				_doing_it_wrong( $class, sprintf( '%s must set a database connection for use with escaping.', $class ), '3.6.0' );
+
+			$escaped = addslashes( $string );
+		}
+
+		return $this->add_placeholder_escape( $escaped );
+	}
 
 	/**
 	 * Escapes content by reference for insertion into the database, for security.
@@ -1051,6 +1077,8 @@ class wpdb
 
 		return [$host, $port, $socket, $is_ipv6];
 	}
+
+	// @NOW 022
 
 	/**
 	 * Wraps errors in a nice header and footer and dies.
