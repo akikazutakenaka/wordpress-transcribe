@@ -1106,7 +1106,7 @@ class wpdb
 		 * Uses priority 0, so that anything else attached to this filter will receive the query with the placeholder string removed.
 		 */
 		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) ) {
-			// @NOW 022 -> wp-includes/wp-db.php
+			// @NOW 022
 		}
 	}
 
@@ -1124,7 +1124,18 @@ class wpdb
 		return str_replace( '%', $this->placeholder_escape(), $query );
 	}
 
-	// @NOW 023
+	/**
+	 * Removes the placeholder escape strings from a query.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  string $query The query from which the placeholder will be removed.
+	 * @return string The query with the placeholder removed.
+	 */
+	public function remove_placeholder_escape( $query )
+	{
+		return str_replace( $this->placeholder_escape(), '%', $query );
+	}
 
 	/**
 	 * Wraps errors in a nice header and footer and dies.

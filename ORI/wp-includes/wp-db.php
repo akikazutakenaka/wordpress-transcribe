@@ -1334,18 +1334,7 @@ class wpdb {
 	}
 
 	// refactored. public function add_placeholder_escape( $query ) {}
-
-	/**
-	 * Removes the placeholder escape strings from a query.
-	 *
-	 * @since 4.8.3
-	 *
-	 * @param string $query The query from which the placeholder will be removed.
-	 * @return string The query with the placeholder removed.
-	 */
-	public function remove_placeholder_escape( $query ) {
-		return str_replace( $this->placeholder_escape(), '%', $query );
-	}
+	// refactored. public function remove_placeholder_escape( $query ) {}
 
 	/**
 	 * Insert a row into a table.
