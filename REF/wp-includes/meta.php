@@ -79,7 +79,12 @@ function update_meta_cache( $meta_type, $object_ids )
 		return FALSE;
 
 	$table = _get_meta_table( $meta_type );
-// @NOW 020
+
+	if ( ! $table )
+		return FALSE;
+
+	$column = sanitize_key( $meta_type . '_id' );
+// @NOW 020 -> wp-includes/formatting.php
 }
 
 /**
