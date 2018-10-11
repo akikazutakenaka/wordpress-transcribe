@@ -624,19 +624,7 @@ class WP_Object_Cache {
 		$this->blog_prefix = $this->multisite ? $blog_id . ':' : '';
 	}
 
-	/**
-	 * Serves as a utility function to determine whether a key exists in the cache.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @param int|string $key   Cache key to check for existence.
-	 * @param string     $group Cache group for the key existence check.
-	 * @return bool Whether the key exists in the cache for the given group.
-	 */
-	protected function _exists( $key, $group ) {
-		return isset( $this->cache[ $group ] ) && ( isset( $this->cache[ $group ][ $key ] ) || array_key_exists( $key, $this->cache[ $group ] ) );
-	}
-
+	// refactored. protected function _exists( $key, $group ) {}
 	// refactored. public function __construct() {}
 	// refactored. public function __destruct() {}
 }
