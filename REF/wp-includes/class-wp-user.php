@@ -162,7 +162,7 @@ class WP_User
 			: get_current_blog_id();
 		$this->cap_key = $wpdb->get_blog_prefix( $this->site_id ) . 'capabilities';
 		$this->caps = $this->get_caps_data();
-// @NOW 017 -> wp-includes/class-wp-user.php
+// @NOW 017
 	}
 
 	/**
@@ -175,6 +175,11 @@ class WP_User
 	private function get_caps_data()
 	{
 		$caps = get_user_meta( $this->ID, $this->cap_key, TRUE );
-// @NOW 018
+
+		if ( ! is_array( $caps ) ) {
+			return [];
+		}
+
+		return $caps;
 	}
 }

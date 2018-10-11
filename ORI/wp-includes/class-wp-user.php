@@ -761,20 +761,5 @@ class WP_User {
 		return $this->site_id;
 	}
 
-	/**
-	 * Gets the available user capabilities data.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @return array User capabilities array.
-	 */
-	private function get_caps_data() {
-		$caps = get_user_meta( $this->ID, $this->cap_key, true );
-
-		if ( ! is_array( $caps ) ) {
-			return array();
-		}
-
-		return $caps;
-	}
+	// refactored. private function get_caps_data() {}
 }
