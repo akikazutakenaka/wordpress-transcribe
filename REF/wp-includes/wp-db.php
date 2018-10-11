@@ -1767,7 +1767,7 @@ class wpdb
 			$charset = $this->get_table_charset( $table );
 
 			if ( is_wp_error( $charset ) ) {
-// @NOW 026 -> wp-includes/load.php
+// @NOW 026
 			}
 		}
 	}
