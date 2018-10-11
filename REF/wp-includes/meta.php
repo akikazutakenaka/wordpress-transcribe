@@ -151,7 +151,7 @@ EOQ
 		}
 
 		wp_cache_add( $id, $cache[ $id ], $cache_key );
-// @NOW 020 -> wp-includes/cache.php
+// @NOW 020
 	}
 }
 
