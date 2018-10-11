@@ -67,6 +67,6 @@ function get_option( $option, $default = FALSE )
 	$passed_default = func_num_args() > 1;
 
 	if ( ! wp_installing() ) {
-// @NOW 022 -> wp-includes/load.php
+// @NOW 022
 	}
 }
