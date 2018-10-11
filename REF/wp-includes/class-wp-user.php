@@ -175,6 +175,6 @@ class WP_User
 	private function get_caps_data()
 	{
 		$caps = get_user_meta( $this->ID, $this->cap_key, TRUE );
-// @NOW 018 -> wp-includes/meta.php
+// @NOW 018
 	}
 }

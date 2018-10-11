@@ -71,8 +71,9 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 		return $single
 			? maybe_unserialize( $meta_cache[ $meta_key ][0] )
 			: array_map( 'maybe_unserialize', $meta_cache[ $meta_key ] );
-// @NOW 019
 	}
+
+	return $single ? '' : [];
 }
 
 /**

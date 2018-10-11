@@ -447,76 +447,7 @@ function delete_metadata($meta_type, $object_id, $meta_key, $meta_value = '', $d
 	return true;
 }
 
-/**
- * Retrieve metadata for the specified object.
- *
- * @since 2.9.0
- *
- * @param string $meta_type Type of object metadata is for (e.g., comment, post, or user)
- * @param int    $object_id ID of the object metadata is for
- * @param string $meta_key  Optional. Metadata key. If not specified, retrieve all metadata for
- * 		                    the specified object.
- * @param bool   $single    Optional, default is false.
- *                          If true, return only the first value of the specified meta_key.
- *                          This parameter has no effect if meta_key is not specified.
- * @return mixed Single metadata value, or array of values
- */
-function get_metadata($meta_type, $object_id, $meta_key = '', $single = false) {
-	if ( ! $meta_type || ! is_numeric( $object_id ) ) {
-		return false;
-	}
-
-	$object_id = absint( $object_id );
-	if ( ! $object_id ) {
-		return false;
-	}
-
-	/**
-	 * Filters whether to retrieve metadata of a specific type.
-	 *
-	 * The dynamic portion of the hook, `$meta_type`, refers to the meta
-	 * object type (comment, post, or user). Returning a non-null value
-	 * will effectively short-circuit the function.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param null|array|string $value     The value get_metadata() should return - a single metadata value,
-	 *                                     or an array of values.
-	 * @param int               $object_id Object ID.
-	 * @param string            $meta_key  Meta key.
-	 * @param bool              $single    Whether to return only the first value of the specified $meta_key.
-	 */
-	$check = apply_filters( "get_{$meta_type}_metadata", null, $object_id, $meta_key, $single );
-	if ( null !== $check ) {
-		if ( $single && is_array( $check ) )
-			return $check[0];
-		else
-			return $check;
-	}
-
-	$meta_cache = wp_cache_get($object_id, $meta_type . '_meta');
-
-	if ( !$meta_cache ) {
-		$meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
-		$meta_cache = $meta_cache[$object_id];
-	}
-
-	if ( ! $meta_key ) {
-		return $meta_cache;
-	}
-
-	if ( isset($meta_cache[$meta_key]) ) {
-		if ( $single )
-			return maybe_unserialize( $meta_cache[$meta_key][0] );
-		else
-			return array_map('maybe_unserialize', $meta_cache[$meta_key]);
-	}
-
-	if ($single)
-		return '';
-	else
-		return array();
-}
+// refactored. function get_metadata($meta_type, $object_id, $meta_key = '', $single = false) {}
 
 /**
  * Determine if a meta key is set for a given object
