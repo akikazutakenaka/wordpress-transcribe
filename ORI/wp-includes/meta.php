@@ -892,26 +892,7 @@ function get_meta_sql( $meta_query, $type, $primary_table, $primary_id_column, $
 	return $meta_query_obj->get_sql( $type, $primary_table, $primary_id_column, $context );
 }
 
-/**
- * Retrieve the name of the metadata table for the specified object type.
- *
- * @since 2.9.0
- *
- * @global wpdb $wpdb WordPress database abstraction object.
- *
- * @param string $type Type of object to get metadata table for (e.g., comment, post, or user)
- * @return string|false Metadata table name, or false if no metadata table exists
- */
-function _get_meta_table($type) {
-	global $wpdb;
-
-	$table_name = $type . 'meta';
-
-	if ( empty($wpdb->$table_name) )
-		return false;
-
-	return $wpdb->$table_name;
-}
+// refactored. function _get_meta_table($type) {}
 
 /**
  * Determine whether a meta key is protected.

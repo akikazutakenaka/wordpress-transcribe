@@ -79,7 +79,25 @@ function update_meta_cache( $meta_type, $object_ids )
 		return FALSE;
 
 	$table = _get_meta_table( $meta_type );
-// @NOW 020 -> wp-includes/meta.php
+// @NOW 020
 }
 
-// @NOW 021
+/**
+ * Retrieve the name of the metadata table for the specified object type.
+ *
+ * @since  2.9.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  string       $type Type of object to get metadata table for (e.g., comment, post, or user).
+ * @return string|false Metadata table name, or false if no metadata table exists.
+ */
+function _get_meta_table( $type )
+{
+	global $wpdb;
+	$table_name = $type . 'meta';
+
+	if ( empty( $wpdb->$table_name ) )
+		return FALSE;
+
+	return $wpdb->$table_name;
+}
