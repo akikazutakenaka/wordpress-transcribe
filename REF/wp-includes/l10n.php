@@ -25,7 +25,7 @@ function get_user_locale( $user_id = 0 )
 
 	if ( 0 === $user_id && function_exists( 'wp_get_current_user' ) )
 		$user = wp_get_current_user();
-		// @NOW 013 -> wp-includes/user.php
+// @NOW 013 -> wp-includes/user.php
 }
 
 /**
@@ -47,7 +47,7 @@ function get_user_locale( $user_id = 0 )
 function translate( $text, $domain = 'default' )
 {
 	$translations = get_translations_for_domain( $domain );
-	// @NOW 008 -> wp-includes/l10n.php
+// @NOW 008 -> wp-includes/l10n.php
 }
 
 /**
@@ -172,7 +172,7 @@ function _load_textdomain_just_in_time( $domain )
 		return FALSE;
 
 	$translation_path = _get_path_to_translation( $domain );
-	// @NOW 010 -> wp-includes/l10n.php
+// @NOW 010 -> wp-includes/l10n.php
 }
 
 /**
@@ -199,7 +199,7 @@ function _get_path_to_translation( $domain, $reset = FALSE )
 
 	if ( ! isset( $available_translations[$domain] ) )
 		$available_translations[$domain] = _get_path_to_translation_from_lang_dir( $domain );
-		// @NOW 011 -> wp-includes/l10n.php
+// @NOW 011 -> wp-includes/l10n.php
 }
 
 /**
@@ -232,7 +232,7 @@ function _get_path_to_translation_from_lang_dir( $domain )
 	}
 
 	$locale = is_admin() ? get_user_locale() : get_locale();
-	// @NOW 012 -> wp-includes/l10n.php
+// @NOW 012 -> wp-includes/l10n.php
 }
 
 /**
@@ -253,6 +253,6 @@ function get_translations_for_domain( $domain )
 
 	if ( isset( $l10n[$domain] )
 	  || ( _load_textdomain_just_in_time( $domain ) && isset( $l10n[$domain] ) ) ) {
-		// @NOW 009 -> wp-includes/l10n.php
+// @NOW 009 -> wp-includes/l10n.php
 	}
 }

@@ -54,5 +54,32 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 		return ( $single && is_array( $check ) ) ? $check[0] : $check;
 
 	$meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
-	// @NOW 019
+
+	if ( ! $meta_cache ) {
+		$meta_cache = update_meta_cache( $meta_type, [$object_id] );
+// @NOW 019 -> wp-includes/meta.php
+	}
 }
+
+/**
+ * Update the metadata cache for the specified objects.
+ *
+ * @since  2.9.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  string      $meta_type  Type of object metadata is for (e.g., comment, post, or user).
+ * @param  int|array   $object_ids Array or comma delimited list of object IDs to update cache for.
+ * @return array|false Metadata cache for the specified objects, or false in failure.
+ */
+function update_meta_cache( $meta_type, $object_ids )
+{
+	global $wpdb;
+
+	if ( ! $meta_type || ! $object_ids )
+		return FALSE;
+
+	$table = _get_meta_table( $meta_type );
+// @NOW 020 -> wp-includes/meta.php
+}
+
+// @NOW 021

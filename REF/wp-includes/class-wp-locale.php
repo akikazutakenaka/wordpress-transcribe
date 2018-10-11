@@ -121,7 +121,7 @@ class WP_Locale
 	public function __construct()
 	{
 		$this->init();
-		// @NOW 006 -> wp-includes/class-wp-locale.php
+// @NOW 006 -> wp-includes/class-wp-locale.php
 	}
 
 	/**
@@ -137,6 +137,6 @@ class WP_Locale
 	{
 		// The Weekdays
 		$this->weekday[0] = __( 'Sunday' );
-		// @NOW 007 -> wp-includes/l10n.php
+// @NOW 007 -> wp-includes/l10n.php
 	}
 }
