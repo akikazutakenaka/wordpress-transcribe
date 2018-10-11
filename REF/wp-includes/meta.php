@@ -89,7 +89,70 @@ function update_meta_cache( $meta_type, $object_ids )
 	}
 
 	$column = sanitize_key( $meta_type . '_id' );
-// @NOW 020
+
+	if ( ! is_array( $object_ids ) ) {
+		$object_ids = preg_replace( '|[^0-9,]|', '', $object_ids );
+		$object_ids = explode( ',', $object_ids );
+	}
+
+	$object_ids = array_map( 'intval', $object_ids );
+	$cache_key = $meta_type . '_meta';
+	$ids = [];
+	$cache = [];
+
+	foreach ( $object_ids as $id ) {
+		$cached_object = wp_cache_get( $id, $cache_key );
+
+		if ( FALSE === $cached_object ) {
+			$ids[] = $id;
+		} else {
+			$cache[ $id ] = $cached_object;
+		}
+	}
+
+	if ( empty( $ids ) ) {
+		return $cache;
+	}
+
+	// Get meta info
+	$id_list = join( ',', $ids );
+	$id_column = 'user' == $meta_type ? 'umeta_id' : 'meta_id';
+	$meta_list = $wpdb->get_results( <<<EOQ
+SELECT $column, meta_key, meta_value
+FROM $table
+WHERE $column IN ( $id_list )
+ORDER BY $id_column ASC
+EOQ
+		, ARRAY_A );
+
+	if ( ! empty( $meta_list ) ) {
+		foreach ( $meta_list as $metarow ) {
+			$mpid = intval( $metarow[ $column ] );
+			$mkey = $metarow['meta_key'];
+			$mval = $metarow['meta_value'];
+
+			// Force subkeys to be array type:
+			if ( ! isset( $cache[ $mpid ] ) || ! is_array( $cache[ $mpid ] ) ) {
+				$cache[ $mpid ] = [];
+			}
+
+			if ( ! isset( $cache[ $mpid ][ $mkey ] ) || ! is_array( $cache[ $mpid ][ $mkey ] ) ) {
+				$cache[ $mpid ][ $mkey ] = [];
+			}
+
+			// Add a value to the current pid/key:
+			$cache[ $mpid ][ $mkey ][] = $mval;
+		}
+	}
+
+	foreach ( $ids as $id ) {
+		if ( ! isset( $cache[ $id ] ) ) {
+			$cache[ $id ] = [];
+		}
+
+		wp_cache_add( $id, $cache[ $id ], $cache_key );
+// @NOW 020 -> wp-includes/cache.php
+	}
 }
 
 /**
