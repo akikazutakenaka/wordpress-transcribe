@@ -1991,8 +1991,19 @@ class wpdb
 
 			$this->check_current_query = FALSE;
 			$row = $this->get_row( "SELECT " . implode( ', ', $sql ), ARRAY_A );
-// @NOW 027
+
+			if ( ! $row ) {
+				return new WP_Error( 'wpdb_strip_invalid_text_failure' );
+			}
+
+			foreach ( array_keys( $data ) as $column ) {
+				if ( isset( $row["x_$column"] ) ) {
+					$data[ $column ]['value'] = $row["x_$column"];
+				}
+			}
 		}
+
+		return $data;
 	}
 
 	/**
@@ -2036,7 +2047,7 @@ class wpdb
 			'length'  => FALSE
 		];
 		$data = $this->strip_invalid_text( [ $data ] );
-// @NOW 026 -> wp-includes/wp-db.php
+// @NOW 026
 	}
 
 	/**
