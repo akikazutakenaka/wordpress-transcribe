@@ -84,7 +84,7 @@ function update_meta_cache( $meta_type, $object_ids )
 		return FALSE;
 
 	$column = sanitize_key( $meta_type . '_id' );
-// @NOW 020 -> wp-includes/formatting.php
+// @NOW 020
 }
 
 /**
