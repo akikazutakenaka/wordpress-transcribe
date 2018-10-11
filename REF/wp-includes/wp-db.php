@@ -1453,6 +1453,33 @@ class wpdb
 	}
 
 	/**
+	 * Retrieve an entire SQL result set from the database (i.e., many rows)
+	 *
+	 * Executes a SQL query and returns the entire SQL result.
+	 *
+	 * @since 0.71
+	 *
+	 * @param  string            $query  SQL query.
+	 * @param  string            $output Optional.
+	 *                                   Any of ARRAY_A | ARRAY_N | OBJECT | OBJECT_K constants.
+	 *                                   With one of the first three, return an array of rows indexed from 0 by SQL result row number.
+	 *                                   Each row is an associative array (column => value, ...), a numerically indexed array (0 => value, ...), or an object ( ->column = value), respectively.
+	 *                                   With OBJECT_K, return an asociative array of row objects keyed by the value of each row's first column's value.
+	 *                                   Duplicate keys are discarded.
+	 * @return array|object|null Database query results.
+	 */
+	public function get_results( $query = NULL, $output = OBJECT )
+	{
+		$this->func_call = "\$db->get_results(\"$query\", $output)";
+
+		if ( $this->check_current_query && $this->check_safe_collation( $query ) ) {
+// @NOW 024 -> wp-includes/wp-db.php
+		}
+	}
+
+// @NOW 025
+
+	/**
 	 * Wraps errors in a nice header and footer and dies.
 	 *
 	 * Will not die if wpdb::$show_errors is false.

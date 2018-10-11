@@ -109,6 +109,14 @@ function wp_load_alloptions()
 
 	if ( ! $alloptions ) {
 		$suppress = $wpdb->suppress_errors();
-// @NOW 023
+
+		if ( ! $alloptions_db = $wpdb->get_results( <<<EOQ
+SELECT option_name, option_value
+FROM $wpdb->options
+WHERE autoload = 'yes'
+EOQ
+			) ) {
+// @NOW 023 -> wp-includes/wp-db.php
+		}
 	}
 }
