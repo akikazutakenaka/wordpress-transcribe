@@ -1177,7 +1177,39 @@ class wpdb
 		return $this->add_placeholder_escape( $query );
 	}
 
-// @NOW 028
+	/**
+	 * Print SQL/DB error.
+	 *
+	 * @since  0.71
+	 * @global array $EZSQL_ERROR Stores error information of query and error string.
+	 *
+	 * @param  string     $str The error to display.
+	 * @return false|void False if the showing of errors is disabled.
+	 */
+	public function print_error( $str = '' )
+	{
+		global $EZSQL_ERROR;
+
+		if ( ! $str ) {
+			$str = $this->use_mysqli ? mysqli_error( $this->dbh ) : mysql_error( $this->dbh );
+		}
+
+		$EZSQL_ERROR[] = [
+			'query'     => $this->last_query,
+			'error_str' => $str
+		];
+
+		if ( $this->suppress_errors ) {
+			return FALSE;
+		}
+
+		wp_load_translations_early();
+
+		$error_str = ( $caller = $this->get_caller() )
+			? sprintf( __( 'WordPress database error %1$s for query %2$s made by %3$s' ), $str, $this->last_query, $caller )
+			: sprintf( __( 'WordPress database error %1$s for query %2$s' ), $str, $this->last_query );
+// @NOW 028 -> wp-includes/wp-db.php
+	}
 
 	/**
 	 * Enables showing of database errors.
@@ -2127,6 +2159,8 @@ class wpdb
 
 		return FALSE;
 	}
+
+// @NOW 029
 
 	/**
 	 * Retrieves the MySQL server version.
