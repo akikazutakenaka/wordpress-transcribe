@@ -1197,6 +1197,8 @@ class wpdb
 		return $errors;
 	}
 
+// @NOW 024
+
 	/**
 	 * Connect to and select database.
 	 *

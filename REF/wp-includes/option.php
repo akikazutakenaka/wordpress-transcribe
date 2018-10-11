@@ -67,6 +67,48 @@ function get_option( $option, $default = FALSE )
 	$passed_default = func_num_args() > 1;
 
 	if ( ! wp_installing() ) {
-// @NOW 022
+		// Prevent non-existent options from triggering multiple queries
+		$notoptions = wp_cache_get( 'notoptions', 'options' );
+
+		if ( isset( $notoptions[ $option ] ) ) {
+			/**
+			 * Filters the default value for an option.
+			 *
+			 * The dynamic portion of the hook name, `$option`, refers to the option name.
+			 *
+			 * @since 3.4.0
+			 * @since 4.4.0 The `$option` parameter was added.
+			 * @since 4.7.0 The `$passed_default` parameter was added to distinguish between a `false` value and the default parameter value.
+			 *
+			 * @param mixed  $default        The default value to return if the option does not exist in the database.
+			 * @param string $option         Option name.
+			 * @param bool   $passed_default Was `get_option()` passed a default value?
+			 */
+			return apply_filters( "default_option_{$option}", $default, $option, $passed_default );
+		}
+
+		$alloptions = wp_load_alloptions();
+// @NOW 022 -> wp-includes/option.php
+	}
+}
+
+/**
+ * Loads and caches all autoloaded options, if available or all options.
+ *
+ * @since  2.2.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @return array List of all options.
+ */
+function wp_load_alloptions()
+{
+	global $wpdb;
+	$alloptions = ( ! wp_installing() || ! is_multisite() )
+		? wp_cache_get( 'alloptions', 'options' )
+		: FALSE;
+
+	if ( ! $alloptions ) {
+		$suppress = $wpdb->suppress_errors();
+// @NOW 023 -> wp-includes/wp-db.php
 	}
 }
