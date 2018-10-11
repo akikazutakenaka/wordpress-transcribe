@@ -847,26 +847,7 @@ function restore_current_blog() {
 	return true;
 }
 
-/**
- * Switches the initialized roles and current user capabilities to another site.
- *
- * @since 4.9.0
- *
- * @param int $new_site_id New site ID.
- * @param int $old_site_id Old site ID.
- */
-function wp_switch_roles_and_user( $new_site_id, $old_site_id ) {
-	if ( $new_site_id == $old_site_id ) {
-		return;
-	}
-
-	if ( ! did_action( 'init' ) ) {
-		return;
-	}
-
-	wp_roles()->for_site( $new_site_id );
-	wp_get_current_user()->for_site( $new_site_id );
-}
+// refactored. function wp_switch_roles_and_user( $new_site_id, $old_site_id ) {}
 
 /**
  * Determines if switch_to_blog() is in effect
