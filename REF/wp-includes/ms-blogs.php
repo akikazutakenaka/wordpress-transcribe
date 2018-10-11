@@ -58,5 +58,5 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 	}
 
 	$wpdb->set_blog_id( $new_blog );
-// @NOW 018 -> wp-includes/wp-db.php
+// @NOW 018
 }

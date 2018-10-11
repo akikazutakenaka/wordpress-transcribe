@@ -212,34 +212,7 @@ class wpdb {
 		return $old_prefix;
 	}
 
-	/**
-	 * Sets blog id.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param int $blog_id
-	 * @param int $network_id Optional.
-	 * @return int previous blog id
-	 */
-	public function set_blog_id( $blog_id, $network_id = 0 ) {
-		if ( ! empty( $network_id ) ) {
-			$this->siteid = $network_id;
-		}
-
-		$old_blog_id  = $this->blogid;
-		$this->blogid = $blog_id;
-
-		$this->prefix = $this->get_blog_prefix();
-
-		foreach ( $this->tables( 'blog' ) as $table => $prefixed_table )
-			$this->$table = $prefixed_table;
-
-		foreach ( $this->tables( 'old' ) as $table => $prefixed_table )
-			$this->$table = $prefixed_table;
-
-		return $old_blog_id;
-	}
-
+	// refactored. public function set_blog_id( $blog_id, $network_id = 0 ) {}
 	// refactored. public function get_blog_prefix( $blog_id = null ) {}
 	// refactored. public function tables( $scope = 'all', $prefix = true, $blog_id = 0 ) {}
 	// refactored. public function select( $db, $dbh = null ) {}

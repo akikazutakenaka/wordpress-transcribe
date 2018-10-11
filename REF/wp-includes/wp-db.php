@@ -853,8 +853,14 @@ class wpdb
 		$this->prefix = $this->get_blog_prefix();
 
 		foreach ( $this->tables( 'blog' ) as $table => $prefixed_table ) {
-// @NOW 019
+			$this->table = $prefixed_table;
 		}
+
+		foreach ( $this->tables( 'old' ) as $table => $prefixed_table ) {
+			$this->table = $prefixed_table;
+		}
+
+		return $old_blog_id;
 	}
 
 	/**
