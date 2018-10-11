@@ -64,6 +64,6 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 
 	if ( function_exists( 'wp_cache_switch_to_blog' ) ) {
 		wp_cache_switch_to_blog( $new_blog );
-// @NOW 018 -> wp-includes/cache.php
+// @NOW 018
 	}
 }

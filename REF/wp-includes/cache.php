@@ -266,7 +266,20 @@ class WP_Object_Cache
 		return TRUE;
 	}
 
-// @NOW 019
+	/**
+	 * Switches the internal blog ID.
+	 *
+	 * This changes the blog ID used to create keys in blog specific groups.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param int $blog_id Blog ID.
+	 */
+	public function switch_to_blog( $blog_id )
+	{
+		$blog_id = ( int ) $blog_id;
+		$this->blog_prefix = $this->multisite ? $blog_id . ':' : '';
+	}
 
 	/**
 	 * Serves as a utility function to determine whether a key exists in the cache.
