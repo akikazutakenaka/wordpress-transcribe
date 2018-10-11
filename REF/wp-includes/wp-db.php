@@ -1478,6 +1478,113 @@ class wpdb
 	}
 
 	/**
+	 * Retrieves the character set for the given table.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  string          $table Table name.
+	 * @return string|WP_Error Table character set, WP_Error object if it couldn't be found.
+	 */
+	protected function get_table_charset( $table )
+	{
+		$tablekey = strtolower( $table );
+
+		/**
+		 * Filters the table charset value before the DB is checked.
+		 *
+		 * Passing a non-null value to the filter will effectively short-circuit checking the DB for the charset, returning that value instead.
+		 *
+		 * @since 4.2.0
+		 *
+		 * @param string $charset The character set to use.
+		 *                        Default null.
+		 * @param string $table   The name of the table being checked.
+		 */
+		$charset = apply_filters( 'pre_get_table_charset', NULL, $table );
+
+		if ( NULL !== $charset ) {
+			return $charset;
+		}
+
+		if ( isset( $this->table_charset[ $tablekey ] ) ) {
+			return $this->table_charset[ $tablekey ];
+		}
+
+		$charsets = columns = [];
+		$table_parts = explode( '.', $table );
+		$table = '`' . implode( '`.`', $table_parts ) . '`';
+		$results = $this->get_results( "SHOW FULL COLUMNS FROM $table" );
+
+		if ( ! $results ) {
+			return new WP_Error( 'wpdb_get_table_charset_failure' );
+		}
+
+		foreach ( $results as $column ) {
+			$columns[ strtolower( $column->Field ) ] = $column;
+		}
+
+		$this->col_meta[ $tablekey ] = $columns;
+
+		foreach ( $columns as $column ) {
+			if ( ! empty( $column->Collation ) ) {
+				list( $charset ) = explode( '_', $column->Collation );
+
+				// If the current connection can't support utf8mb4 characters, let's only send 3-byte utf8 characters.
+				if ( 'utf8mb4' === $charset && ! $this->has_cap( 'utf8mb4' ) ) {
+					$charset = 'utf8';
+				}
+
+				$charsets[ strtolower( $charset ) ] = TRUE;
+			}
+
+			list( $type ) = explode( '(', $column->Type );
+
+			// A binary/blob means the whole query gets treated like this.
+			if ( in_array( strtoupper( $type ), ['BINARY', 'VARBINARY', 'TINYBLOB', 'MEDIUMBLOB', 'BLOB', 'LONGBLOB'] ) ) {
+				$this->table_charset[ $tablekey ] = 'binary';
+				return 'binary';
+			}
+		}
+
+		// utf8mb3 is an alias for utf8.
+		if ( isset( $charsets['utf8mb3'] ) ) {
+			$charsets['utf8'] = TRUE;
+			unset( $charsets['utf8mb3'] );
+		}
+
+		// Check if we have more than one charset in play.
+		$count = count( $charsets );
+
+		if ( 1 === $count ) {
+			$charset = key( $charsets );
+		} elseif ( 0 === $count ) {
+			// No charsets, assume this table can store whatever.
+			$charset = FALSE;
+		} else {
+			/**
+			 * More than one charset.
+			 * Remove latin1 if present and recalculate.
+			 */
+			unset( $charsets['latin1'] );
+			$count = count( $charsets );
+
+			if ( 1 === $count ) {
+				// Only one charset (besides latin1).
+				$charset = key( $charsets );
+			} elseif ( 2 === $count && isset( $charsets['utf8'], $charsets['utf8mb4'] ) ) {
+				// Two charsets, but they're utf8 and utf8mb4, use utf8.
+				$charset = 'utf8';
+			} else {
+				// Two mixed character sets, ascii.
+				$charset = 'ascii';
+			}
+		}
+
+		$this->table_charset[ $tablekey ] = $charset;
+		return $charset;
+	}
+
+	/**
 	 * Check if a string is ASCII.
 	 *
 	 * The negative regex is faster for non-ASCII strings, as it allows the search to finish as soon as it encounters a non-ASCII character.
@@ -1527,6 +1634,13 @@ class wpdb
 		}
 
 		$table = $this->get_table_from_query( $query );
+
+		if ( ! $table ) {
+			return FALSE;
+		}
+
+		$this->checking_collation = TRUE;
+		$collation = $this->get_table_charset( $table );
 // @NOW 025
 	}
 
