@@ -1477,7 +1477,34 @@ class wpdb
 		}
 	}
 
-// @NOW 025
+// @NOW 026
+
+	/**
+	 * Check if the query is accessing a collation considered safe on the current version of MySQL.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  string $query The query to check.
+	 * @return bool   True if the collation is safe, false if it isn't.
+	 */
+	protected function check_safe_collation( $query )
+	{
+		if ( $this->checking_collation ) {
+			return TRUE;
+		}
+
+		// We don't need to check the collation for queries that don't read data.
+		$query = ltrim( $query, "\r\n\t (" );
+
+		if ( preg_match( '/^(?:SHOW|DESCRIBE|DESC|EXPLAIN|CREATE)\s/i', $query ) ) {
+			return TRUE;
+		}
+
+		// All-ASCII queries don't need extra checking.
+		if ( $this->check_ascii( $query ) ) {
+// @NOW 025 -> wp-includes/wp-db.php
+		}
+	}
 
 	/**
 	 * Wraps errors in a nice header and footer and dies.
