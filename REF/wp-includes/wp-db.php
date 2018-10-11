@@ -1799,7 +1799,7 @@ class wpdb
 
 			if ( $truncate_by_byte_length ) {
 				mbstring_binary_safe_encoding();
-// @NOW 027 -> wp-includes/functions.php
+// @NOW 027
 			}
 		}
 	}
