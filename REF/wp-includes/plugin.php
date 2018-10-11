@@ -232,8 +232,13 @@ function remove_filter( $tag, $function_to_remove, $priority = 10 )
 
 	if ( isset( $wp_filter[ $tag ] ) ) {
 		$r = $wp_filter[ $tag ]->remove_filter( $tag, $function_to_remove, $priority );
-// @NOW 021
+
+		if ( ! $wp_filter[ $tag ]->callbacks ) {
+			unset( $wp_filter[ $tag ] );
+		}
 	}
+
+	return $r;
 }
 
 /**

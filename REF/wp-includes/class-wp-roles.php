@@ -138,7 +138,7 @@ class WP_Roles
 
 		if ( is_multisite() && $this->site_id != get_current_blog_id() ) {
 			remove_action( 'switch_blog', 'wp_switch_roles_and_user', 1 );
-// @NOW 020 -> wp-includes/plugin.php
+// @NOW 020
 		}
 	}
 }
