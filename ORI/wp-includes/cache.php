@@ -637,22 +637,7 @@ class WP_Object_Cache {
 		return isset( $this->cache[ $group ] ) && ( isset( $this->cache[ $group ][ $key ] ) || array_key_exists( $key, $this->cache[ $group ] ) );
 	}
 
-	/**
-	 * Sets up object properties; PHP 5 style constructor.
-	 *
-	 * @since 2.0.8
-	 */
-	public function __construct() {
-		$this->multisite = is_multisite();
-		$this->blog_prefix =  $this->multisite ? get_current_blog_id() . ':' : '';
-
-
-		/**
-		 * @todo This should be moved to the PHP4 style constructor, PHP5
-		 * already calls __destruct()
-		 */
-		register_shutdown_function( array( $this, '__destruct' ) );
-	}
+	// refactored. public function __construct() {}
 
 	/**
 	 * Saves the object cache before object is completely destroyed.
