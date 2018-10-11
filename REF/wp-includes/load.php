@@ -180,6 +180,8 @@ function wp_load_translations_early()
 // @NOW 005 -> wp-includes/class-wp-locale.php
 }
 
+// @NOW 023
+
 /**
  * Converts a shorthand byte value to an integer byte value.
  *
