@@ -120,5 +120,25 @@ class WP_Roles
 // @NOW 019 -> wp-includes/class-wp-roles.php
 	}
 
-// @NOW 020
+	/**
+	 * Gets the available roles data.
+	 *
+	 * @since  4.9.0
+	 * @global array $wp_user_roles Used to set the 'roles' property value.
+	 *
+	 * @return array Roles array.
+	 */
+	protected function get_roles_data()
+	{
+		global $wp_user_roles;
+
+		if ( ! empty( $wp_user_roles ) ) {
+			return $wp_user_roles;
+		}
+
+		if ( is_multisite() && $this->site_id != get_current_blog_id() ) {
+			remove_action( 'switch_blog', 'wp_switch_roles_and_user', 1 );
+// @NOW 020 -> wp-includes/plugin.php
+		}
+	}
 }

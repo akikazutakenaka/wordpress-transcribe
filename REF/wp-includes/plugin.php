@@ -288,6 +288,8 @@ function did_action( $tag )
 	return $wp_actions[ $tag ];
 }
 
+// @NOW 021
+
 /**
  * Call the 'all' hook, which will process the functions hooked into it.
  *
