@@ -144,7 +144,26 @@ class WP_User
 // @NOW 016 -> wp-includes/class-wp-user.php
 	}
 
-// @NOW 017
+	/**
+	 * Retrieve all of the role capabilities and merge with individual capabilities.
+	 *
+	 * All of the capabilities of the roles the user belongs to are merged with the users individual roles.
+	 * This also means that the user can be denied specific roles that their role might have, but the specific user isn't granted permission to.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array List of all capabilities for the user.
+	 */
+	public function get_role_caps()
+	{
+		$switch_site = FALSE;
+
+		if ( is_multisite() && $this->site_id != get_current_blog_id() ) {
+			$switch_site = TRUE;
+			switch_to_blog( $this->site_id );
+// @NOW 017 -> wp-includes/ms-blogs.php
+		}
+	}
 
 	/**
 	 * Sets the site to operate on.
