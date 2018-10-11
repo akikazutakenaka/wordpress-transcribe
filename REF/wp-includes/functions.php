@@ -18,8 +18,11 @@ require( ABSPATH . WPINC . '/option.php' );
 function maybe_unserialize( $original )
 {
 	if ( is_serialized( $original ) ) {
-		// @NOW 020
+		// Don't attempt to unserialize data that wasn't serialized going in.
+		return @unserialize( $original );
 	}
+
+	return $original;
 }
 
 /**
