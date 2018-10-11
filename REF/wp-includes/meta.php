@@ -54,5 +54,5 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 		return ( $single && is_array( $check ) ) ? $check[0] : $check;
 
 	$meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
-	// @NOW 019 -> wp-includes/cache.php
+	// @NOW 019
 }

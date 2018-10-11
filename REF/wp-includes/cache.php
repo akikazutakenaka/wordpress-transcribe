@@ -133,8 +133,16 @@ class WP_Object_Cache
 			$key = $this->blog_prefix . $key;
 
 		if ( $this->_exists( $key, $group ) ) {
-			// @NOW 020
+			$found = TRUE;
+			$this->cache_hits += 1;
+			return is_object( $this->cache[$group][$key] )
+				? clone $this->cache[$group][$key]
+				: $this->cache[$group][$key];
 		}
+
+		$found = FALSE;
+		$this->cache_misses += 1;
+		return FALSE;
 	}
 
 	/**

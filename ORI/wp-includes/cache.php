@@ -438,45 +438,7 @@ class WP_Object_Cache {
 		return true;
 	}
 
-	/**
-	 * Retrieves the cache contents, if it exists.
-	 *
-	 * The contents will be first attempted to be retrieved by searching by the
-	 * key in the cache group. If the cache is hit (success) then the contents
-	 * are returned.
-	 *
-	 * On failure, the number of cache misses will be incremented.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param int|string $key    What the contents in the cache are called.
-	 * @param string     $group  Optional. Where the cache contents are grouped. Default 'default'.
-	 * @param string     $force  Optional. Unused. Whether to force a refetch rather than relying on the local
-	 *                           cache. Default false.
-	 * @param bool        $found  Optional. Whether the key was found in the cache (passed by reference).
-	 *                            Disambiguates a return of false, a storable value. Default null.
-	 * @return false|mixed False on failure to retrieve contents or the cache contents on success.
-	 */
-	public function get( $key, $group = 'default', $force = false, &$found = null ) {
-		if ( empty( $group ) )
-			$group = 'default';
-
-		if ( $this->multisite && ! isset( $this->global_groups[ $group ] ) )
-			$key = $this->blog_prefix . $key;
-
-		if ( $this->_exists( $key, $group ) ) {
-			$found = true;
-			$this->cache_hits += 1;
-			if ( is_object($this->cache[$group][$key]) )
-				return clone $this->cache[$group][$key];
-			else
-				return $this->cache[$group][$key];
-		}
-
-		$found = false;
-		$this->cache_misses += 1;
-		return false;
-	}
+	// refactored. public function get( $key, $group = 'default', $force = false, &$found = null ) {}
 
 	/**
 	 * Increments numeric cache item's value.
