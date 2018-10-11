@@ -18,11 +18,97 @@ require( ABSPATH . WPINC . '/option.php' );
 function maybe_unserialize( $original )
 {
 	if ( is_serialized( $original ) ) {
-		// @NOW 020 -> wp-includes/functions.php
+		// @NOW 020
 	}
 }
 
-// @NOW 021
+/**
+ * Check value to find if it was serialized.
+ *
+ * If $data is not an string, then returned value will always be false.
+ * Serialized data is always a string.
+ *
+ * @since 2.0.5
+ *
+ * @param  string $data   Value to check to see if was serialized.
+ * @param  bool   $strict Optional.
+ *                        Whether to be strict about the end of the string.
+ *                        Default true.
+ * @return bool   False if not serialized and true if it was.
+ */
+function is_serialized( $data, $strict = TRUE )
+{
+	// If it isn't a string, it isn't serialized.
+	if ( ! is_string( $data ) ) {
+		return FALSE;
+	}
+
+	$data = trim( $data );
+
+	if ( 'N;' == $data ) {
+		return TRUE;
+	}
+
+	if ( strlen( $data ) < 4 ) {
+		return FALSE;
+	}
+
+	if ( ':' !== $data[1] ) {
+		return FALSE;
+	}
+
+	if ( $strict ) {
+		$lastc = substr( $data, -1 );
+
+		if ( ';' !== $lastc && '}' !== $lastc ) {
+			return FALSE;
+		}
+	} else {
+		$semicolon = strpos( $data, ';' );
+		$brace     = strpos( $data, '}' );
+
+		// Either ; or } must exist.
+		if ( FALSE === $semicolon && FALSE === $brace ) {
+			return FALSE;
+		}
+
+		// But neither must be in the first X characters.
+		if ( FALSE !== $semicolon && $semicolon < 3 ) {
+			return FALSE;
+		}
+
+		if ( FALSE !== $brace && $brace < 4 ) {
+			return FALSE;
+		}
+	}
+
+	$token = $data[0];
+
+	switch ( $token ) {
+		case 's':
+			if ( $strict ) {
+				if ( '"' !== substr( $data, -2, 1 ) ) {
+					return FALSE;
+				}
+			} elseif ( FALSE === strpos( $data, '"' ) ) {
+				return FALSE;
+			}
+
+			// Or else fall through.
+
+		case 'a':
+		case 'O':
+			return ( bool ) preg_match( "/^{$token}:[0-9]+:/s", $data );
+
+		case 'b':
+		case 'i':
+		case 'd':
+			$end = $strict ? '$' : '';
+			return ( bool ) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
+	}
+
+	return FALSE;
+}
 
 /**
  * Kill WordPress execution and display HTML message with error message.
