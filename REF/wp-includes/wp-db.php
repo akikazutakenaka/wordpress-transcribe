@@ -1208,7 +1208,29 @@ class wpdb
 		$error_str = ( $caller = $this->get_caller() )
 			? sprintf( __( 'WordPress database error %1$s for query %2$s made by %3$s' ), $str, $this->last_query, $caller )
 			: sprintf( __( 'WordPress database error %1$s for query %2$s' ), $str, $this->last_query );
-// @NOW 028
+
+		error_log( $error_str );
+
+		// Are we showing errors?
+		if ( ! $this->show_errors )
+			return FALSE;
+
+		// If there is an error then take note of it.
+		if ( is_multisite() ) {
+			$msg = sprintf( "%s [%s]\n%s\n", __( 'WordPress database error:' ), $str, $this->last_query );
+
+			if ( defined( 'ERRORLOGFILE' ) ) {
+				error_log( $msg, 3, ERRORLOGFILE );
+			}
+
+			if ( defined( 'DIEONDBERROR' ) ) {
+				wp_die( $msg );
+			}
+		} else {
+			$str   = htmlspecialchars( $str, ENT_QUOTES );
+			$query = htmlspecialchars( $this->last_query, ENT_QUOTES );
+			printf( '<div id="error"><p class="wpdberror"><strong>%s</strong> [%s]<br /><code>%s</code></p></div>', __( 'WordPress database error:' ), $str, $query );
+		}
 	}
 
 	/**
@@ -1969,7 +1991,7 @@ class wpdb
 
 			$this->check_current_query = FALSE;
 			$row = $this->get_row( "SELECT " . implode( ', ', $sql ), ARRAY_A );
-// @NOW 027 -> wp-includes/wp-db.php
+// @NOW 027
 		}
 	}
 

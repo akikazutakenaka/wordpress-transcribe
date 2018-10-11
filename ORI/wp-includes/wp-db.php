@@ -323,74 +323,7 @@ class wpdb {
 		return addcslashes( $text, '_%\\' );
 	}
 
-	/**
-	 * Print SQL/DB error.
-	 *
-	 * @since 0.71
-	 * @global array $EZSQL_ERROR Stores error information of query and error string
-	 *
-	 * @param string $str The error to display
-	 * @return false|void False if the showing of errors is disabled.
-	 */
-	public function print_error( $str = '' ) {
-		global $EZSQL_ERROR;
-
-		if ( !$str ) {
-			if ( $this->use_mysqli ) {
-				$str = mysqli_error( $this->dbh );
-			} else {
-				$str = mysql_error( $this->dbh );
-			}
-		}
-		$EZSQL_ERROR[] = array( 'query' => $this->last_query, 'error_str' => $str );
-
-		if ( $this->suppress_errors )
-			return false;
-
-		wp_load_translations_early();
-
-		if ( $caller = $this->get_caller() ) {
-			/* translators: 1: Database error message, 2: SQL query, 3: Name of the calling function */
-			$error_str = sprintf( __( 'WordPress database error %1$s for query %2$s made by %3$s' ), $str, $this->last_query, $caller );
-		} else {
-			/* translators: 1: Database error message, 2: SQL query */
-			$error_str = sprintf( __( 'WordPress database error %1$s for query %2$s' ), $str, $this->last_query );
-		}
-
-		error_log( $error_str );
-
-		// Are we showing errors?
-		if ( ! $this->show_errors )
-			return false;
-
-		// If there is an error then take note of it
-		if ( is_multisite() ) {
-			$msg = sprintf(
-				"%s [%s]\n%s\n",
-				__( 'WordPress database error:' ),
-				$str,
-				$this->last_query
-			);
-
-			if ( defined( 'ERRORLOGFILE' ) ) {
-				error_log( $msg, 3, ERRORLOGFILE );
-			}
-			if ( defined( 'DIEONDBERROR' ) ) {
-				wp_die( $msg );
-			}
-		} else {
-			$str   = htmlspecialchars( $str, ENT_QUOTES );
-			$query = htmlspecialchars( $this->last_query, ENT_QUOTES );
-
-			printf(
-				'<div id="error"><p class="wpdberror"><strong>%s</strong> [%s]<br /><code>%s</code></p></div>',
-				__( 'WordPress database error:' ),
-				$str,
-				$query
-			);
-		}
-	}
-
+	// refactored. public function print_error( $str = '' ) {}
 	// refactored. public function show_errors( $show = true ) {}
 
 	/**
