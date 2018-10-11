@@ -165,6 +165,8 @@ final class WP_Hook implements Iterator, ArrayAccess
 		unset( $iteration );
 	}
 
+// @NOW 022
+
 	/**
 	 * Checks if a specific action has been registered for this hook.
 	 *
