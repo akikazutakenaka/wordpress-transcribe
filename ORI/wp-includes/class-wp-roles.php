@@ -30,24 +30,7 @@ class WP_Roles {
 	// refactored. public $role_key;
 	// refactored. public $use_db = true;
 	// refactored. protected $site_id = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @since 2.0.0
-	 * @since 4.9.0 The $site_id argument was added.
-	 *
-	 * @global array $wp_user_roles Used to set the 'roles' property value.
-	 *
-	 * @param int $site_id Site ID to initialize roles for. Default is the current site.
-	 */
-	public function __construct( $site_id = null ) {
-		global $wp_user_roles;
-
-		$this->use_db = empty( $wp_user_roles );
-
-		$this->for_site( $site_id );
-	}
+	// refactored. public function __construct( $site_id = null ) {}
 
 	/**
 	 * Make private/protected methods readable for backward compatibility.

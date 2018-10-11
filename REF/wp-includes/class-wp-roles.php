@@ -78,5 +78,22 @@ class WP_Roles
 	 */
 	protected $site_id = 0;
 
+	/**
+	 * Constructor.
+	 *
+	 * @since  2.0.0
+	 * @since  4.9.0 The $site_id argument was added.
+	 * @global array $wp_user_roles Used to set the 'roles' property value.
+	 *
+	 * @param int $site_id Site ID to initialize roles for.
+	 *                     Default is the current site.
+	 */
+	public function __construct( $site_id = NULL )
+	{
+		global $wp_user_roles;
+		$this->use_db = empty( $wp_user_roles );
+		$this->for_site( $site_id );
+	}
+
 // @NOW 019
 }
