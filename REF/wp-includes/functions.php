@@ -279,3 +279,5 @@ function wp_suspend_cache_addition( $suspend = NULL )
 
 	return $_suspend;
 }
+
+// @NOW 028

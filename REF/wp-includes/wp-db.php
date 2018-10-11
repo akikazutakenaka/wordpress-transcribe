@@ -1745,6 +1745,66 @@ class wpdb
 	}
 
 	/**
+	 * Strips any invalid characters based on value/charset pairs.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  array          $data Array of value arrays.
+	 *                              Each value array has the keys 'value' and 'charset'.
+	 *                              An optional 'ascii' key can be set to false to avoid redundant ASCII checks.
+	 * @return array|WP_Error The $data parameter, with invalid characters removed from each value.
+	 *                        This works as a passthrough: any additional keys such as 'field' are retained in each value array.
+	 *                        If we cannot remove invalid characters, a WP_Error object is returned.
+	 */
+	protected function strip_invalid_text( $data )
+	{
+		$db_check_string = FALSE;
+
+		foreach ( $data as &$value ) {
+			$charset = $value['charset'];
+
+			if ( is_array( $value['length'] ) ) {
+				$length = $value['length']['length'];
+				$truncate_by_byte_length = 'byte' === $value['length']['type'];
+			} else {
+				$length = FALSE;
+
+				/**
+				 * Since we have no length, we'll never truncate.
+				 * Initialize the variable to false.
+				 * True would take us through an unnecessary (for this case) codepath below.
+				 */
+				$truncate_by_byte_length = FALSE;
+			}
+
+			// There's no charset to work with.
+			if ( FALSE === $charset ) {
+				continue;
+			}
+
+			// Column isn't a string.
+			if ( ! is_string( $value['value'] ) ) {
+				continue;
+			}
+
+			$needs_validation = TRUE;
+
+			if ( // latin1 can store any byte sequence.
+			     'latin1' === $charset
+			  || // ASCII is always OK.
+			     ( ! isset( $value['ascii'] ) && $this->check_ascii( $value['value'] ) ) ) {
+				$truncate_by_byte_length = TRUE;
+				$needs_validation = FALSE;
+			}
+
+			if ( $truncate_by_byte_length ) {
+				mbstring_binary_safe_encoding();
+// @NOW 027 -> wp-includes/functions.php
+			}
+		}
+	}
+
+	/**
 	 * Strips any invalid characters from the query.
 	 *
 	 * @since 4.2.0
@@ -1767,9 +1827,25 @@ class wpdb
 			$charset = $this->get_table_charset( $table );
 
 			if ( is_wp_error( $charset ) ) {
-// @NOW 026
+				return $charset;
 			}
+
+			// We can't reliably strip text from tables containing binary/blob columns.
+			if ( 'binary' === $charset ) {
+				return $query;
+			}
+		} else {
+			$charset = $this->charset;
 		}
+
+		$data = [
+			'value'   => $query,
+			'charset' => $charset,
+			'ascii'   => FALSE,
+			'length'  => FALSE
+		];
+		$data = $this->strip_invalid_text( [ $data ] );
+// @NOW 026 -> wp-includes/wp-db.php
 	}
 
 	/**
