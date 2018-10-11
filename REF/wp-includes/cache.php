@@ -100,6 +100,8 @@ class WP_Object_Cache
 	 */
 	private $multisite;
 
+	// @NOW 020
+
 	/**
 	 * Sets up object properties; PHP5 style constructor.
 	 *
@@ -116,5 +118,17 @@ class WP_Object_Cache
 		register_shutdown_function( [$this, '__destruct'] );
 	}
 
-	// @NOW 020
+	/**
+	 * Saves the object cache before object is completely destroyed.
+	 *
+	 * Called upon object destruction, which should be when PHP ends.
+	 *
+	 * @since 2.0.8
+	 *
+	 * @return true Always returns true.
+	 */
+	public function __destruct()
+	{
+		return TRUE;
+	}
 }

@@ -638,17 +638,5 @@ class WP_Object_Cache {
 	}
 
 	// refactored. public function __construct() {}
-
-	/**
-	 * Saves the object cache before object is completely destroyed.
-	 *
-	 * Called upon object destruction, which should be when PHP ends.
-	 *
-	 * @since 2.0.8
-	 *
-	 * @return true Always returns true.
-	 */
-	public function __destruct() {
-		return true;
-	}
+	// refactored. public function __destruct() {}
 }
