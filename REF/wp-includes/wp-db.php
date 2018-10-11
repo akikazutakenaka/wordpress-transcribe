@@ -1208,7 +1208,7 @@ class wpdb
 		$error_str = ( $caller = $this->get_caller() )
 			? sprintf( __( 'WordPress database error %1$s for query %2$s made by %3$s' ), $str, $this->last_query, $caller )
 			: sprintf( __( 'WordPress database error %1$s for query %2$s' ), $str, $this->last_query );
-// @NOW 028 -> wp-includes/functions.php
+// @NOW 028
 	}
 
 	/**
