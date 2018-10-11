@@ -1177,6 +1177,8 @@ class wpdb
 		return $this->add_placeholder_escape( $query );
 	}
 
+// @NOW 028
+
 	/**
 	 * Enables showing of database errors.
 	 *
@@ -1524,6 +1526,55 @@ class wpdb
 	}
 
 	/**
+	 * Retrieve one row from the database.
+	 *
+	 * Executes a SQL query and returns the row from the SQL result.
+	 *
+	 * @since 0.71
+	 *
+	 * @param  string|null            $query  SQL query.
+	 * @param  string                 $output Optional.
+	 *                                        The required return type.
+	 *                                        One of OBJECT, ARRAY_A, or ARRAY_N, which correspond to an stdClass object, an associative array, or a numeric array, respectively.
+	 *                                        Default OBJECT.
+	 * @param  int                    $y      Optional.
+	 *                                        Row to return.
+	 *                                        Indexed from 0.
+	 * @return array|object|null|void Database query result in format specified by $output or null on failure.
+	 */
+	public function get_row( $query = NULL, $output = OBJECT, $y = 0 )
+	{
+		$this->func_call = "\$db->get_row(\"$query\", $output, $y)";
+
+		if ( $this->check_current_query && $this->check_safe_collation( $query ) ) {
+			$this->check_current_query = FALSE;
+		}
+
+		if ( $query ) {
+			$this->query( $query );
+		} else {
+			return NULL;
+		}
+
+		if ( ! isset( $this->last_query[ $y ] ) ) {
+			return NULL;
+		}
+
+		if ( $output == OBJECT ) {
+			return $this->last_result[ $y ] ? $this->last_result[ $y ] : NULL;
+		} elseif ( $output == ARRAY_A ) {
+			return $this->last_result[ $y ] ? get_object_vars( $this->last_result[ $y ] ) : NULL;
+		} elseif ( $output == ARRAY_N ) {
+			return $this->last_result[ $y ] ? array_values( get_object_vars( $this->last_result[ $y ] ) ) : NULL;
+		} elseif ( strtoupper( $output ) === OBJECT ) {
+			// Back compat for OBJECT being previously case insensitive.
+			return $this->last_result[ $y ] ? $this->last_result[ $y ] : NULL;
+		} else {
+			$this->print_error( " \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N" );
+		}
+	}
+
+	/**
 	 * Retrieve an entire SQL result set from the database (i.e., many rows)
 	 *
 	 * Executes a SQL query and returns the entire SQL result.
@@ -1805,8 +1856,88 @@ class wpdb
 				}
 
 				reset_mbstring_encoding();
-// @NOW 027
+
+				if ( ! $needs_validation ) {
+					continue;
+				}
 			}
+
+			// utf8 can be handled by regex, which is a bunch faster than a DB lookup.
+			if ( ( 'utf8' === $charset || 'utf8mb3' === $charset || 'utf8mb4' === $charset )
+			  && function_exists( 'mb_strlen' ) ) {
+				$regex = '/('
+					. '(?:[\x00-\x7F]'              // single-byte sequences 0xxxxxxx
+					. '|[\xC2-\xDF][\x80-\xBF]'     // double-byte sequences 110xxxxx 10xxxxxx
+					. '|\xE0[\xA0-\xBF][\x80-\xBF]' // triple-byte sequences 1110xxxx 10xxxxxx * 2
+					. '|[\xE1-\xEC][\x80-\xBF]{2}'
+					. '|\xED[\x80-\x9F][\x80-\xBF]'
+					. '|[\xEE-\xEF][\x80-\xBF]{2}';
+
+				if ( 'utf8mb4' === $charset ) {
+					$regex .= '|\xF0[\x90-\xBF][\x80-\xBF]{2}' // four-byte sequences 11110xxx 10xxxxxx * 3
+						. '|[\xF1-\xF3][\x80-\xBF]{3}'
+						. '|\xF4[\x80-\x8F][\x80-\xBF]{2}';
+				}
+
+				$regex .= '){1,40}' // ...one or more times
+					. ')|.'         // anything else
+					. '/x';
+				$value['value'] = preg_replace( $regex, '$1', $value['value'] );
+
+				if ( FALSE !== $length && mb_strlen( $value['value'], 'UTF-8' ) > $length ) {
+					$value['value'] = mb_substr( $value['value'], 0, $length, 'UTF-8' );
+				}
+
+				continue;
+			}
+
+			// We couldn't use any local conversions, send it to the DB.
+			$value['db'] = $db_checking_string = TRUE;
+		}
+
+		unset( $value ); // Remove by reference.
+
+		if ( $db_check_string ) {
+			$queries = [];
+
+			foreach ( $data as $col => $value ) {
+				if ( ! empty( $value['db'] ) ) {
+					// We're going to need to truncate by characters or bytes, depending on the length value we have.
+					$charset = ( 'byte' === $value['length']['type'] )
+						? 'binary' // Using binary causes LEFT() to truncate by bytes.
+						: $value['charset'];
+
+					$connection_charset = $this->charset
+						? $this->charset
+						: ( $this->use_mysqli
+							? mysqli_character_set_name( $this->dbh )
+							: mysql_client_encoding() );
+
+					if ( is_array( $value['length'] ) ) {
+						$length = sprintf( '%.0f', $value['length']['length'] );
+						$queries[ $col ] = $this->prepare( "CONVERT( LEFT( CONVERT( %s USING $charset ), $length ) USING $connection_charset )", $value['value'] );
+					} else if ( 'binary' !== $charset ) {
+						// If we don't have a length, there's no need to convert binary - it will always return the same result.
+						$queries[ $col ] = $this->prepare( "CONVERT( CONVERT( %s USING $charset ) USING $connection_charset )", $value['value'] );
+					}
+
+					unset( $data[ $col ]['db'] );
+				}
+			}
+
+			$sql = [];
+
+			foreach ( $queries as $column => $query ) {
+				if ( ! $query ) {
+					continue;
+				}
+
+				$sql[] = $query . " AS x_$column";
+			}
+
+			$this->check_current_query = FALSE;
+			$row = $this->get_row( "SELECT " . implode( ', ', $sql ), ARRAY_A );
+// @NOW 027 -> wp-includes/wp-db.php
 		}
 	}
 

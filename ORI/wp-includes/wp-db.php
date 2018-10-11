@@ -1078,48 +1078,7 @@ class wpdb {
 		return ( isset( $values[$x] ) && $values[$x] !== '' ) ? $values[$x] : null;
 	}
 
-	/**
-	 * Retrieve one row from the database.
-	 *
-	 * Executes a SQL query and returns the row from the SQL result.
-	 *
-	 * @since 0.71
-	 *
-	 * @param string|null $query  SQL query.
-	 * @param string      $output Optional. The required return type. One of OBJECT, ARRAY_A, or ARRAY_N, which correspond to
-	 *                            an stdClass object, an associative array, or a numeric array, respectively. Default OBJECT.
-	 * @param int         $y      Optional. Row to return. Indexed from 0.
-	 * @return array|object|null|void Database query result in format specified by $output or null on failure
-	 */
-	public function get_row( $query = null, $output = OBJECT, $y = 0 ) {
-		$this->func_call = "\$db->get_row(\"$query\",$output,$y)";
-
-		if ( $this->check_current_query && $this->check_safe_collation( $query ) ) {
-			$this->check_current_query = false;
-		}
-
-		if ( $query ) {
-			$this->query( $query );
-		} else {
-			return null;
-		}
-
-		if ( !isset( $this->last_result[$y] ) )
-			return null;
-
-		if ( $output == OBJECT ) {
-			return $this->last_result[$y] ? $this->last_result[$y] : null;
-		} elseif ( $output == ARRAY_A ) {
-			return $this->last_result[$y] ? get_object_vars( $this->last_result[$y] ) : null;
-		} elseif ( $output == ARRAY_N ) {
-			return $this->last_result[$y] ? array_values( get_object_vars( $this->last_result[$y] ) ) : null;
-		} elseif ( strtoupper( $output ) === OBJECT ) {
-			// Back compat for OBJECT being previously case insensitive.
-			return $this->last_result[$y] ? $this->last_result[$y] : null;
-		} else {
-			$this->print_error( " \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N" );
-		}
-	}
+	// refactored. public function get_row( $query = null, $output = OBJECT, $y = 0 ) {}
 
 	/**
 	 * Retrieve one column from the database.
