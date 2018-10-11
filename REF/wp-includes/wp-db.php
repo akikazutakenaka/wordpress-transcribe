@@ -1217,6 +1217,8 @@ class wpdb
 		return $errors;
 	}
 
+// @NOW 026
+
 	/**
 	 * Connect to and select database.
 	 *
@@ -1394,6 +1396,38 @@ class wpdb
 	}
 
 	/**
+	 * Perform a MySQL database query, using current database connection.
+	 *
+	 * More information can be found on the codex page.
+	 *
+	 * @since 0.71
+	 *
+	 * @param  string    $query Database query.
+	 * @return int|false Number of rows affected/selected or false on error.
+	 */
+	public function query( $query )
+	{
+		if ( ! $this->ready ) {
+			$this->check_current_query = TRUE;
+			return FALSE;
+		}
+
+		/**
+		 * Filters the database query.
+		 *
+		 * Some queries are made before the plugins have been loaded, and thus cannot be filtered with this method.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $query Database query.
+		 */
+		$query = apply_filters( 'query', $query );
+
+		$this->flush();
+// @NOW 025 -> wp-includes/wp-db.php
+	}
+
+	/**
 	 * Generates and returns a placeholder escape string for use in queries returned by ::prepare().
 	 *
 	 * @since 4.8.3
@@ -1473,7 +1507,12 @@ class wpdb
 		$this->func_call = "\$db->get_results(\"$query\", $output)";
 
 		if ( $this->check_current_query && $this->check_safe_collation( $query ) ) {
-// @NOW 024
+			$this->check_current_query = FALSE;
+		}
+
+		if ( $query ) {
+			$this->query( $query );
+// @NOW 024 -> wp-includes/wp-db.php
 		}
 	}
 
