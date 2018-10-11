@@ -725,30 +725,7 @@ class WP_User {
 		$this->for_site( $blog_id );
 	}
 
-	/**
-	 * Sets the site to operate on. Defaults to the current site.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @param int $site_id Site ID to initialize user capabilities for. Default is the current site.
-	 */
-	public function for_site( $site_id = '' ) {
-		global $wpdb;
-
-		if ( ! empty( $site_id ) ) {
-			$this->site_id = absint( $site_id );
-		} else {
-			$this->site_id = get_current_blog_id();
-		}
-
-		$this->cap_key = $wpdb->get_blog_prefix( $this->site_id ) . 'capabilities';
-
-		$this->caps = $this->get_caps_data();
-
-		$this->get_role_caps();
-	}
+	// refactored. public function for_site( $site_id = '' ) {}
 
 	/**
 	 * Gets the ID of the site for which the user's capabilities are currently initialized.

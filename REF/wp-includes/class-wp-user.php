@@ -144,6 +144,8 @@ class WP_User
 // @NOW 016 -> wp-includes/class-wp-user.php
 	}
 
+// @NOW 017
+
 	/**
 	 * Sets the site to operate on.
 	 * Defaults to the current site.
@@ -162,7 +164,7 @@ class WP_User
 			: get_current_blog_id();
 		$this->cap_key = $wpdb->get_blog_prefix( $this->site_id ) . 'capabilities';
 		$this->caps = $this->get_caps_data();
-// @NOW 017
+		$this->get_role_caps();
 	}
 
 	/**
