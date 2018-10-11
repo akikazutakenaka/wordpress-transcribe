@@ -95,5 +95,30 @@ class WP_Roles
 		$this->for_site( $site_id );
 	}
 
-// @NOW 019
+	/**
+	 * Sets the site to operate on.
+	 * Defaults to the current site.
+	 *
+	 * @since  4.9.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param int $site_id Site ID to initialize roles for.
+	 *                     Default is the current site.
+	 */
+	public function for_site( $site_id = NULL )
+	{
+		global $wpdb;
+		$this->site_id = ! empty( $site_id )
+			? absint( $site_id )
+			: get_current_blog_id();
+		$this->role_key = $wpdb->get_blog_prefix( $this->site_id ) . 'user_roles';
+
+		if ( ! empty( $this->roles ) && ! $this->use_db )
+			return;
+
+		$this->roles = $this->get_roles_data();
+// @NOW 019 -> wp-includes/class-wp-roles.php
+	}
+
+// @NOW 020
 }
