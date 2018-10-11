@@ -1453,7 +1453,15 @@ class wpdb
 		$query = apply_filters( 'query', $query );
 
 		$this->flush();
-// @NOW 025
+
+		// Log how the function was called.
+		$this->func_call = "\$db->query(\"$query\")";
+
+		// If we're writing to the database, make sure the query will write safely.
+		if ( $this->check_current_query && ! $this->check_ascii( $query ) ) {
+			$stripped_query = $this->strip_invalid_text_from_query( $query );
+// @NOW 025 -> wp-includes/wp-db.php
+		}
 	}
 
 	/**
@@ -1734,6 +1742,34 @@ class wpdb
 		}
 
 		return TRUE;
+	}
+
+	/**
+	 * Strips any invalid characters from the query.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  string          $query Query to convert.
+	 * @return string|WP_Error The converted query, or a WP_Error object if the conversion fails.
+	 */
+	protected function strip_invalid_text_from_query( $query )
+	{
+		// We don't need to check the collation for queries that don't read data.
+		$trimmed_query = ltrim( $query, "\r\n\t (" );
+
+		if ( preg_match( '/^(?:SHOW|DESCRIBE|DESC|EXPLAIN|CREATE)\s/i', $trimmed_query ) ) {
+			return $query;
+		}
+
+		$table = $this->get_table_from_query( $query );
+
+		if ( $table ) {
+			$charset = $this->get_table_charset( $table );
+
+			if ( is_wp_error( $charset ) ) {
+// @NOW 026 -> wp-includes/load.php
+			}
+		}
 	}
 
 	/**
