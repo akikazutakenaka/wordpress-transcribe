@@ -265,54 +265,12 @@ function wp_cache_reset() {
  * @since 2.0.0
  */
 class WP_Object_Cache {
-
-	/**
-	 * Holds the cached objects.
-	 *
-	 * @since 2.0.0
-	 * @var array
-	 */
-	private $cache = array();
-
-	/**
-	 * The amount of times the cache data was already stored in the cache.
-	 *
-	 * @since 2.5.0
-	 * @var int
-	 */
-	public $cache_hits = 0;
-
-	/**
-	 * Amount of times the cache did not have the request in cache.
-	 *
-	 * @since 2.0.0
-	 * @var int
-	 */
-	public $cache_misses = 0;
-
-	/**
-	 * List of global cache groups.
-	 *
-	 * @since 3.0.0
-	 * @var array
-	 */
-	protected $global_groups = array();
-
-	/**
-	 * The blog prefix to prepend to keys in non-global groups.
-	 *
-	 * @since 3.5.0
-	 * @var int
-	 */
-	private $blog_prefix;
-
-	/**
-	 * Holds the value of is_multisite().
-	 *
-	 * @since 3.5.0
-	 * @var bool
-	 */
-	private $multisite;
+	// refactored. private $cache = array();
+	// refactored. public $cache_hits = 0;
+	// refactored. public $cache_misses = 0;
+	// refactored. protected $global_groups = array();
+	// refactored. private $blog_prefix;
+	// refactored. private $multisite;
 
 	/**
 	 * Makes private properties readable for backward compatibility.

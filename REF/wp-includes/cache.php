@@ -33,4 +33,72 @@ function wp_cache_get( $key, $group = '', $force = FALSE, &$found = NULL )
 	return $wp_object_cache->get( $key, $group, $force, $found );
 }
 
-// @NOW 020
+/**
+ * Core class that implements an object cache.
+ *
+ * The WordPress Object Cache is used to save on trips to the database.
+ * The Object Cache stores all of the cache data to memory and makes the cache contents available by using a key, which is used to name and later retrieve the cache contents.
+ *
+ * The Object Cache can be replaced by other caching mechanisms by placing files in the wp-content folder which is looked at in wp-settings.
+ * If that file exists, then this file will not be included.
+ *
+ * @since 2.0.0
+ */
+class WP_Object_Cache
+{
+	/**
+	 * Holds the cached objects.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var array
+	 */
+	private $cache = [];
+
+	/**
+	 * The amount of times the cache data was already stored in the cache.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @var int
+	 */
+	public $cache_hits = 0;
+
+	/**
+	 * Amount of times the cache did not have the request in cache.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var int
+	 */
+	public $cache_misses = 0;
+
+	/**
+	 * List of global cache groups.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @var array
+	 */
+	protected $global_groups = [];
+
+	/**
+	 * The blog prefix to prepend to keys in non-global groups.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @var int
+	 */
+	private $blog_prefix;
+
+	/**
+	 * Holds the value of is_multisite().
+	 *
+	 * @since 3.5.0
+	 *
+	 * @var bool
+	 */
+	private $multisite;
+
+	// @NOW 020
+}
