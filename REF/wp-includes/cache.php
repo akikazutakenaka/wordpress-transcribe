@@ -144,7 +144,7 @@ class WP_Object_Cache
 	public function add( $key, $data, $group = 'default', $expire = 0 )
 	{
 		if ( wp_suspend_cache_addition() ) {
-// @NOW 021 -> wp-includes/functions.php
+// @NOW 021
 		}
 	}
 
