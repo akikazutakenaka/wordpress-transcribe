@@ -58,6 +58,17 @@ function wp_cache_get( $key, $group = '', $force = FALSE, &$found = NULL )
 }
 
 /**
+ * Sets up Object Cache Global and assigns it.
+ *
+ * @since  2.0.0
+ * @global WP_Object_Cache $wp_object_cache
+ */
+function wp_cache_init()
+{
+	$GLOBALS['wp_object_cache'] = new WP_Object_Cache();
+}
+
+/**
  * Switches the internal blog ID.
  *
  * This changes the blog id used to create keys in blog specific groups.

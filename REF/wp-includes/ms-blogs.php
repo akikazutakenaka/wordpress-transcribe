@@ -64,6 +64,12 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 
 	if ( function_exists( 'wp_cache_switch_to_blog' ) ) {
 		wp_cache_switch_to_blog( $new_blog );
+	} else {
+		global $wp_object_cache;
+		$global_groups = ( is_object( $wp_object_cache ) && isset( $wp_object_cache->global_groups ) )
+			? $wp_object_cache->global_groups
+			: FALSE;
+		wp_cache_init();
 // @NOW 018
 	}
 }

@@ -101,16 +101,7 @@ function wp_cache_incr( $key, $offset = 1, $group = '' ) {
 	return $wp_object_cache->incr( $key, $offset, $group );
 }
 
-/**
- * Sets up Object Cache Global and assigns it.
- *
- * @since 2.0.0
- *
- * @global WP_Object_Cache $wp_object_cache
- */
-function wp_cache_init() {
-	$GLOBALS['wp_object_cache'] = new WP_Object_Cache();
-}
+// refactored. function wp_cache_init() {}
 
 /**
  * Replaces the contents of the cache with new data.
