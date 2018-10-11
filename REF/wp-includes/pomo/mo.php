@@ -31,8 +31,9 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		{
 			$reader = new POMO_FileReader( $filename );
 
-			if ( ! $reader->is_resource() )
+			if ( ! $reader->is_resource() ) {
 				return FALSE;
+			}
 
 			$this->filename = ( string ) $filename;
 			return $this->import_from_reader( $reader );
@@ -67,25 +68,29 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 		{
 			$endian_string = MO::get_byteorder( $reader->readint32() );
 
-			if ( FALSE === $endian_string )
+			if ( FALSE === $endian_string ) {
 				return FALSE;
+			}
 
 			$reader->setEndian( $endian_string );
 			$endian = ( 'big' == $endian_string ) ? 'N' : 'V';
 			$header = $reader->read( 24 );
 
-			if ( $reader->strlen( $header ) != 24 )
+			if ( $reader->strlen( $header ) != 24 ) {
 				return FALSE;
+			}
 
 			// Parse header
 			$header = unpack( "{$endian}revision/{$endian}total/{$endian}originals_lenghts_addr/{$endian}translations_lenghts_addr/{$endian}hash_length/{$endian}hash_addr", $header );
 
-			if ( ! is_array( $header ) )
+			if ( ! is_array( $header ) ) {
 				return FALSE;
+			}
 
 			// Support revision 0 of MO format specs, only
-			if ( $header['revision']] != 0 )
+			if ( $header['revision'] != 0 ) {
 				return FALSE;
+			}
 
 			// Seek to data blocks
 			$reader->seekto( $header['originals_lenghts_addr'] );
@@ -93,24 +98,28 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 			// Read originals' indices
 			$originals_lengths_length = $header['translations_lenghts_addr'] - $header['originals_lenghts_addr'];
 
-			if ( $originals_lengths_length != $header['total'] * 8 )
+			if ( $originals_lengths_length != $header['total'] * 8 ) {
 				return FALSE;
+			}
 
 			$originals = $reader->read( $originals_lengths_length );
 
-			if ( $reader->strlen( $originals ) != $originals_lengths_length )
+			if ( $reader->strlen( $originals ) != $originals_lengths_length ) {
 				return FALSE;
+			}
 
 			// Read translations' indices
 			$translations_lenghts_length = $header['hash_addr'] - $header['translations_lenghts_addr'];
 
-			if ( $translations_lenghts_length != $header['total'] * 8 )
+			if ( $translations_lenghts_length != $header['total'] * 8 ) {
 				return FALSE;
+			}
 
 			$translations = $reader->read( $translations_lenghts_length );
 
-			if ( $reader->strlen( $translations ) != $translations_lenghts_length )
+			if ( $reader->strlen( $translations ) != $translations_lenghts_length ) {
 				return FALSE;
+			}
 
 			// Transform raw data into set of indices
 			$originals    = $reader->str_split( $originals, 8 );
@@ -124,11 +133,12 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 			$reader->close();
 
 			for ( $i = 0; $i < $header['total']; $i++ ) {
-				$o = unpack( "{$endian}length/{$endian}pos", $originals[$i] );
-				$t = unpack( "{$endian}length/{$endian}pos", $translations[$i] );
+				$o = unpack( "{$endian}length/{$endian}pos", $originals[ $i ] );
+				$t = unpack( "{$endian}length/{$endian}pos", $translations[ $i ] );
 
-				if ( ! $o || ! $t )
+				if ( ! $o || ! $t ) {
 					return FALSE;
+				}
 
 				// Adjust offset due to reading strings to separate space before
 				$o['pos'] -= $strings_addr;
@@ -137,11 +147,11 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 				$original    = $reader->substr( $strings, $o['pos'], $o['length'] );
 				$translation = $reader->substr( $strings, $t['pos'], $t['length'] );
 
-				if ( '' === $original )
+				if ( '' === $original ) {
 					$this->set_headers( $this->make_headers( $translation ) );
-				else {
+				} else {
 					$entry = &$this->make_entry( $original, $translation );
-					$this->entries[$entry->key()] = &$entry;
+					$this->entries[ $entry->key() ] = &$entry;
 				}
 			}
 

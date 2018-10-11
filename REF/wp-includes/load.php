@@ -54,11 +54,13 @@ function is_admin()
  */
 function is_multisite()
 {
-	if ( defined( 'MULTISITE' ) )
+	if ( defined( 'MULTISITE' ) ) {
 		return MULTISITE;
+	}
 
-	if ( defined( 'SUBDOMAIN_INSTALL' ) || defined( 'VHOST' ) || defined( 'SUNRISE' ) )
+	if ( defined( 'SUBDOMAIN_INSTALL' ) || defined( 'VHOST' ) || defined( 'SUNRISE' ) ) {
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -94,13 +96,15 @@ function wp_load_translations_early()
 	global $wp_locale;
 	static $loaded = FALSE;
 
-	if ( $loaded )
+	if ( $loaded ) {
 		return;
+	}
 
 	$loaded = TRUE;
 
-	if ( function_exists( 'did_action' ) && did_action( 'init' ) )
+	if ( function_exists( 'did_action' ) && did_action( 'init' ) ) {
 		return;
+	}
 
 	// We need $wp_local_package
 	require ABSPATH . WPINC . '/version.php';
@@ -118,45 +122,56 @@ function wp_load_translations_early()
 
 	while ( TRUE ) {
 		if ( defined( 'WPLANG' ) ) {
-			if ( '' == WPLANG )
+			if ( '' == WPLANG ) {
 				break;
+			}
 
 			$locales[] = WPLANG;
 		}
 
-		if ( isset( $wp_local_package ) )
+		if ( isset( $wp_local_package ) ) {
 			$locales[] = $wp_local_package;
+		}
 
-		if ( ! $locales )
+		if ( ! $locales ) {
 			break;
+		}
 
-		if ( defined( 'WP_LANG_DIR' ) && @is_dir( WP_LANG_DIR ) )
+		if ( defined( 'WP_LANG_DIR' ) && @is_dir( WP_LANG_DIR ) ) {
 			$locations[] = WP_LANG_DIR;
+		}
 
-		if ( defined( 'WP_CONTENT_DIR' ) && @is_dir( WP_CONTENT_DIR . '/languages' ) )
+		if ( defined( 'WP_CONTENT_DIR' ) && @is_dir( WP_CONTENT_DIR . '/languages' ) ) {
 			$locations[] = WP_CONTENT_DIR . '/languages';
+		}
 
-		if ( @is_dir( ABSPATH . 'wp-content/languages' ) )
+		if ( @is_dir( ABSPATH . 'wp-content/languages' ) ) {
 			$locations[] = ABSPATH . 'wp-content/languages';
+		}
 
-		if ( @is_dir( ABSPATH . WPINC . '/languages' ) )
+		if ( @is_dir( ABSPATH . WPINC . '/languages' ) ) {
 			$locations[] = ABSPATH . WPINC . '/languages';
+		}
 
-		if ( ! $locations )
+		if ( ! $locations ) {
 			break;
+		}
 
 		$locations = array_unique( $locations );
 
-		foreach ( $locales as $locale )
-			foreach ( $locations as $location )
+		foreach ( $locales as $locale ) {
+			foreach ( $locations as $location ) {
 				if ( file_exists( $location . '/' . $locale . '.mo' ) ) {
 					load_textdomain( 'default', $location . '/' . $locale . '.mo' );
 
-					if ( defined( 'WP_SETUP_CONFIG' ) && file_exists( $location . '/admin-' . $locale . '.mo' ) )
+					if ( defined( 'WP_SETUP_CONFIG' ) && file_exists( $location . '/admin-' . $locale . '.mo' ) ) {
 						load_textdomain( 'default', $location . '/admin-' . $locale . '.mo' );
+					}
 
 					break 2;
 				}
+			}
+		}
 
 		break;
 	}
@@ -181,12 +196,13 @@ function wp_convert_hr_to_bytes( $value )
 	$value = strtolower( trim( $value ) );
 	$bytes = ( int ) $value;
 
-	if ( FALSE !== strpos( $value, 'g' ) )
+	if ( FALSE !== strpos( $value, 'g' ) ) {
 		$bytes *= GB_IN_BYTES;
-	elseif ( FALSE !== strpos( $value, 'm' ) )
+	} elseif ( FALSE !== strpos( $value, 'm' ) ) {
 		$bytes *= MB_IN_BYTES;
-	elseif ( FALSE !== strpos( $value, 'k' ) )
+	} elseif ( FALSE !== strpos( $value, 'k' ) ) {
 		$bytes *= KB_IN_BYTES;
+	}
 
 	// Deal with large (float) values which run into the maximum integer size.
 	return min( $bytes, PHP_INT_MAX );
@@ -211,18 +227,21 @@ function wp_is_ini_value_changeable( $setting )
 		$ini_all = FALSE;
 
 		// Sometimes `ini_get_all()` is disabled via the `disable_functions` option for "security purposes".
-		if ( function_exists( 'ini_get_all' ) )
+		if ( function_exists( 'ini_get_all' ) ) {
 			$ini_all = ini_get_all();
+		}
 	}
 
 	// Bit operator to workaround https://bugs.php.net/bug.php?id=44936 which changes access level to 63 in PHP 5.2.6-5.2.17.
-	if ( isset( $ini_all[$setting]['access'] )
-	  && ( INI_ALL === ( $ini_all[$setting]['access'] & 7 ) || INI_USER === ( $ini_all[$setting]['access'] & 7 ) ) )
+	if ( isset( $ini_all[ $setting ]['access'] )
+	  && ( INI_ALL === ( $ini_all[ $setting ]['access'] & 7 ) || INI_USER === ( $ini_all[ $setting ]['access'] & 7 ) ) ) {
 		return TRUE;
+	}
 
 	// If we were unable to retrieve the details, fail gracefully to assume it's changeable.
-	if ( ! is_array( $ini_all ) )
+	if ( ! is_array( $ini_all ) ) {
 		return TRUE;
+	}
 
 	return FALSE;
 }

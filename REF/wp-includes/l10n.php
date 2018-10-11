@@ -23,9 +23,10 @@ function get_user_locale( $user_id = 0 )
 {
 	$user = FALSE;
 
-	if ( 0 === $user_id && function_exists( 'wp_get_current_user' ) )
+	if ( 0 === $user_id && function_exists( 'wp_get_current_user' ) ) {
 		$user = wp_get_current_user();
 // @NOW 013 -> wp-includes/user.php
+	}
 }
 
 /**
@@ -106,7 +107,7 @@ function load_textdomain( $domain, $mofile )
 	$plugin_override = apply_filters( 'override_load_textdomain', FALSE, $domain, $mofile );
 
 	if ( TRUE == $plugin_override ) {
-		unset( $l10n_unloaded[$domain] );
+		unset( $l10n_unloaded[ $domain ] );
 		return TRUE;
 	}
 
@@ -132,19 +133,22 @@ function load_textdomain( $domain, $mofile )
 	 */
 	$mofile = apply_filters( 'load_textdomain_mofile', $mofile, $domain );
 
-	if ( ! is_readable( $mofile ) )
+	if ( ! is_readable( $mofile ) ) {
 		return FALSE;
+	}
 
 	$mo = new MO();
 
-	if ( ! $mo->import_from_file( $mofile ) )
+	if ( ! $mo->import_from_file( $mofile ) ) {
 		return FALSE;
+	}
 
-	if ( isset( $l10n[$domain] ) )
-		$mo->merge_with( $l10n[$domain] );
+	if ( isset( $l10n[ $domain ] ) ) {
+		$mo->merge_with( $l10n[ $domain ] );
+	}
 
-	unset( $l10n_unloaded[$domain] );
-	$l10n[$domain] = &$mo;
+	unset( $l10n_unloaded[ $domain ] );
+	$l10n[ $domain ] = &$mo;
 	return TRUE;
 }
 
@@ -168,8 +172,9 @@ function _load_textdomain_just_in_time( $domain )
 	$l10n_unloaded = ( array ) $l10n_unloaded;
 
 	// Short-circuit if domain is 'default' which is reserved for core.
-	if ( 'default' === $domain || isset( $l10n_unloaded[$domain] ) )
+	if ( 'default' === $domain || isset( $l10n_unloaded[ $domain ] ) ) {
 		return FALSE;
+	}
 
 	$translation_path = _get_path_to_translation( $domain );
 // @NOW 010 -> wp-includes/l10n.php
@@ -194,12 +199,14 @@ function _get_path_to_translation( $domain, $reset = FALSE )
 {
 	static $available_translations = [];
 
-	if ( TRUE === $reset )
+	if ( TRUE === $reset ) {
 		$available_translations = [];
+	}
 
-	if ( ! isset( $available_translations[$domain] ) )
-		$available_translations[$domain] = _get_path_to_translation_from_lang_dir( $domain );
+	if ( ! isset( $available_translations[ $domain ] ) ) {
+		$available_translations[ $domain ] = _get_path_to_translation_from_lang_dir( $domain );
 // @NOW 011 -> wp-includes/l10n.php
+	}
 }
 
 /**
@@ -226,8 +233,9 @@ function _get_path_to_translation_from_lang_dir( $domain )
 		foreach ( $locations as $location ) {
 			$mofiles = glob( $location . '/*.mo' );
 
-			if ( $mofiles )
+			if ( $mofiles ) {
 				$cached_mofiles = array_merge( $cached_mofiles, $mofiles );
+			}
 		}
 	}
 
@@ -251,8 +259,8 @@ function get_translations_for_domain( $domain )
 {
 	global $l10n;
 
-	if ( isset( $l10n[$domain] )
-	  || ( _load_textdomain_just_in_time( $domain ) && isset( $l10n[$domain] ) ) ) {
+	if ( isset( $l10n[ $domain ] )
+	  || ( _load_textdomain_just_in_time( $domain ) && isset( $l10n[ $domain ] ) ) ) {
 // @NOW 009 -> wp-includes/l10n.php
 	}
 }

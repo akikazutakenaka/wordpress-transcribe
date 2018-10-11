@@ -47,14 +47,14 @@ require( ABSPATH . WPINC . '/option.php' );
  */
 function wp_die( $message = '', $title = '', $args = [] )
 {
-	if ( is_int( $args ) )
+	if ( is_int( $args ) ) {
 		$args = ['response' => $args];
-	elseif ( is_int( $title ) ) {
+	} elseif ( is_int( $title ) ) {
 		$args = ['response' => $title];
 		$title = '';
 	}
 
-	if ( wp_doing_ajax() )
+	if ( wp_doing_ajax() ) {
 		/**
 		 * Filters the callback for killing WordPress execution for Ajax requests.
 		 *
@@ -63,7 +63,7 @@ function wp_die( $message = '', $title = '', $args = [] )
 		 * @param callable $function Callback function name.
 		 */
 		$function = apply_filters( 'wp_die_ajax_handler', '_ajax_wp_die_handler' );
-	elseif ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
+	} elseif ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 		/**
 		 * Filters the callback for killing WordPress execution for XML-RPC requests.
 		 *
@@ -72,7 +72,7 @@ function wp_die( $message = '', $title = '', $args = [] )
 		 * @param callable $function Callback function name.
 		 */
 		$function = apply_filters( 'wp_die_xmlrpc_handler', '_xmlrpc_wp_die_handler' );
-	else
+	} else {
 		/**
 		 * Filters the callback for killing WordPress execution for all non-Ajax, non-XML-RPC requests.
 		 *
@@ -81,6 +81,7 @@ function wp_die( $message = '', $title = '', $args = [] )
 		 * @param callable $function Callback function name.
 		 */
 		$function = apply_filters( 'wp_die_handler', '_default_wp_die_handler' );
+	}
 
 	call_user_func( $function, $message, $title, $args );
 }

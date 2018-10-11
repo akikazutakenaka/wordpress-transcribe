@@ -32,53 +32,62 @@ function wp_initial_constants()
 
 	// Define memory limits.
 	if ( ! defined( 'WP_MEMORY_LIMIT' ) ) {
-		if ( FALSE === wp_is_ini_value_changeable( 'memory_limit' ) )
+		if ( FALSE === wp_is_ini_value_changeable( 'memory_limit' ) ) {
 			define( 'WP_MEMORY_LIMIT', $current_limit );
-		elseif ( is_multisite() )
+		} elseif ( is_multisite() ) {
 			define( 'WP_MEMORY_LIMIT', '64M' );
-		else
+		} else {
 			define( 'WP_MEMORY_LIMIT', '40M' );
+		}
 	}
 
 	if ( ! defined( 'WP_MAX_MEMORY_LIMIT' ) ) {
-		if ( FALSE === wp_is_ini_value_changeable( 'memory_limit' ) )
+		if ( FALSE === wp_is_ini_value_changeable( 'memory_limit' ) ) {
 			define( 'WP_MAX_MEMORY_LIMIT', $current_limit );
-		elseif ( -1 === $current_limit_int || $current_limit_int > 268435456 )
+		} elseif ( -1 === $current_limit_int || $current_limit_int > 268435456 ) {
 			define( 'WP_MAX_MEMORY_LIMIT', $current_limit );
-		else
+		} else {
 			define( 'WP_MAX_MEMORY_LIMIT', '256M' );
+		}
 	}
 
 	// Set memory limits.
 	$wp_limit_int = wp_convert_hr_to_bytes( WP_MEMORY_LIMIT );
 
 	if ( -1 !== $current_limit_int
-	  && ( -1 === $wp_limit_int || $wp_limit_int > $current_limit_int ) )
+	  && ( -1 === $wp_limit_int || $wp_limit_int > $current_limit_int ) ) {
 		@ini_set( 'memory_limit', WP_MEMORY_LIMIT );
+	}
 
-	if ( ! isset( $blog_id ) )
+	if ( ! isset( $blog_id ) ) {
 		$blog_id = 1;
+	}
 
-	if ( ! defined( 'WP_CONTENT_DIR' ) )
+	if ( ! defined( 'WP_CONTENT_DIR' ) ) {
 		define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' ); // No trailing slash, full paths only - WP_CONTENT_URL is defined further down
+	}
 
 	// Add define( 'WP_DEBUG', TRUE ); to wp-config.php to enable display of notices during development.
-	if ( ! defined( 'WP_DEBUG' ) )
+	if ( ! defined( 'WP_DEBUG' ) ) {
 		define( 'WP_DEBUG', FALSE );
+	}
 
 	/**
 	 * Add define( 'WP_DEBUG_DISPLAY', NULL ); to wp-config.php use the globally configured setting for display_errors and not force errors to be displayed.
 	 * Use false to force display_errors off.
 	 */
-	if ( ! defined( 'WP_DEBUG_DISPLAY' ) )
+	if ( ! defined( 'WP_DEBUG_DISPLAY' ) ) {
 		define( 'WP_DEBUG_DISPLAY', TRUE );
+	}
 
 	// Add define( 'WP_DEBUG_LOG', TRUE ); to enable error logging to wp-content/debug.log.
-	if ( ! defined( 'WP_DEBUG_LOG' ) )
+	if ( ! defined( 'WP_DEBUG_LOG' ) ) {
 		define( 'WP_DEBUG_LOG', FALSE );
+	}
 
-	if ( ! defined( 'WP_CACHE' ) )
+	if ( ! defined( 'WP_CACHE' ) ) {
 		define( 'WP_CACHE', FALSE );
+	}
 
 	// Add define( 'SCRIPT_DEBUG', TRUE ); to wp-config.php to enable loading of non-minified, non-concatenated scripts and stylesheets.
 	if ( ! defined( 'SCRIPT_DEBUG' ) ) {
@@ -90,11 +99,13 @@ function wp_initial_constants()
 	}
 
 	// Private
-	if ( ! defined( 'MEDIA_TRASH' ) )
+	if ( ! defined( 'MEDIA_TRASH' ) ) {
 		define( 'MEDIA_TRASH', FALSE );
+	}
 
-	if ( ! defined( 'SHORTINIT' ) )
+	if ( ! defined( 'SHORTINIT' ) ) {
 		define( 'SHORTINIT', FALSE );
+	}
 
 	// Constants for features added to WP that should short-circuit their plugin implementations.
 	define( 'WP_FEATURE_BETTER_PASSWORDS', TRUE );

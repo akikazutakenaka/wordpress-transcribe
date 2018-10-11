@@ -36,8 +36,9 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		 */
 		function set_headers( $headers )
 		{
-			foreach ( $headers as $header => $value )
+			foreach ( $headers as $header => $value ) {
 				$this->set_header( $header, $value );
+			}
 		}
 
 		/**
@@ -48,8 +49,9 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		 */
 		function merge_with( &$other )
 		{
-			foreach ( $other->entries as $entry )
-				$this->entries[$entry->key()] = $entry;
+			foreach ( $other->entries as $entry ) {
+				$this->entries[ $entry->key() ] = $entry;
+			}
 		}
 	}
 
@@ -70,10 +72,11 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 			foreach ( $lines as $line ) {
 				$parts = explode( ':', $line, 2 );
 
-				if ( ! isset( $parts[1] ) )
+				if ( ! isset( $parts[1] ) ) {
 					continue;
+				}
 
-				$headers[trim( $parts[0] )] = trim( $parts[1] );
+				$headers[ trim( $parts[0] ) ] = trim( $parts[1] );
 			}
 
 			return $headers;

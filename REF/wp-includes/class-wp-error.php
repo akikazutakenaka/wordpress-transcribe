@@ -54,12 +54,14 @@ class WP_Error
 	 */
 	public function __construct( $code = '', $message = '', $data = '' )
 	{
-		if ( empty( $code ) )
+		if ( empty( $code ) ) {
 			return;
+		}
 
 		$this->errors[$code][] = $message;
 
-		if ( ! empty( $data ) )
-			$this->error_data[$code] = $data;
+		if ( ! empty( $data ) ) {
+			$this->error_data[ $code ] = $data;
+		}
 	}
 }

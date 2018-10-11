@@ -13,92 +13,95 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 	{
 		var $endian = 'little';
 		var $_post = '';
-	}
 
-	/**
-	 * PHP5 constructor.
-	 */
-	function __construct()
-	{
-		$this->is_overloaded = ( ( ini_get( "mbstring.func_overload" ) & 2 ) != 0 ) && function_exists( 'mb_substr' );
-		$this->_pos = 0;
-	}
+		/**
+		 * PHP5 constructor.
+		 */
+		function __construct()
+		{
+			$this->is_overloaded = ( ( ini_get( "mbstring.func_overload" ) & 2 ) != 0 ) && function_exists( 'mb_substr' );
+			$this->_pos = 0;
+		}
 
-	/**
-	 * PHP4 constructor.
-	 */
-	public function POMO_Reader()
-	{
-		self::__construct();
-	}
+		/**
+		 * PHP4 constructor.
+		 */
+		public function POMO_Reader()
+		{
+			self::__construct();
+		}
 
-	/**
-	 * Sets the endianness of the file.
-	 *
-	 * @param string $endian 'big' or 'little'
-	 */
-	function setEndian( $endian )
-	{
-		$this->endian = $endian;
-	}
+		/**
+		 * Sets the endianness of the file.
+		 *
+		 * @param string $endian 'big' or 'little'
+		 */
+		function setEndian( $endian )
+		{
+			$this->endian = $endian;
+		}
 
-	/**
-	 * Reads a 32bit Integer from the Stream
-	 *
-	 * @return mixed The integer, corresponding to the next 32 bits from the stream or false if there are not enough bytes or on error.
-	 */
-	function readint32()
-	{
-		$bytes = $this->read( 4 );
+		/**
+		 * Reads a 32bit Integer from the Stream
+		 *
+		 * @return mixed The integer, corresponding to the next 32 bits from the stream or false if there are not enough bytes or on error.
+		 */
+		function readint32()
+		{
+			$bytes = $this->read( 4 );
 
-		if ( 4 != $this->strlen( $bytes ) )
-			return FALSE;
+			if ( 4 != $this->strlen( $bytes ) ) {
+				return FALSE;
+			}
 
-		$endian_letter = ( 'big' == $this->endian ) ? 'N' : 'V';
-		return unpack( $endian_letter . $count, $bytes );
-	}
+			$endian_letter = ( 'big' == $this->endian ) ? 'N' : 'V';
+			return unpack( $endian_letter . $count, $bytes );
+		}
 
-	/**
-	 * @param  string $string
-	 * @param  int    $start
-	 * @param  int    $length
-	 * @return string
-	 */
-	function substr( $string, $start, $length )
-	{
-		return ( $this->is_overloaded )
-			? mb_substr( $string, $start, $length, 'ascii' )
-			: substr( $string, $start, $length );
-	}
+		/**
+		 * @param  string $string
+		 * @param  int    $start
+		 * @param  int    $length
+		 * @return string
+		 */
+		function substr( $string, $start, $length )
+		{
+			return ( $this->is_overloaded )
+				? mb_substr( $string, $start, $length, 'ascii' )
+				: substr( $string, $start, $length );
+		}
 
-	/**
-	 * @param  string $string
-	 * @return int
-	 */
-	function strlen( $string )
-	{
-		return $this->is_overloaded
-			? mb_strlen( $string, 'ascii' )
-			: strlen( $string );
-	}
+		/**
+		 * @param  string $string
+		 * @return int
+		 */
+		function strlen( $string )
+		{
+			return $this->is_overloaded
+				? mb_strlen( $string, 'ascii' )
+				: strlen( $string );
+		}
 
-	/**
-	 * @param  string $string
-	 * @param  int    $chunk_size
-	 * @return array
-	 */
-	function str_split( $string, $chunk_size )
-	{
-		if ( ! function_exists( 'str_split' ) ) {
-			$length = $this->strlen( $string );
-			$out = [];
+		/**
+		 * @param  string $string
+		 * @param  int    $chunk_size
+		 * @return array
+		 */
+		function str_split( $string, $chunk_size )
+		{
+			if ( ! function_exists( 'str_split' ) ) {
+				$length = $this->strlen( $string );
+				$out = [];
 
-			for ( $i = 0; $i < $length; $i += $chunk_size )
-				$out[] = $this->substr( $string, $i, $chunk_size );
+				for ( $i = 0; $i < $length; $i += $chunk_size ) {
+					$out[] = $this->substr( $string, $i, $chunk_size );
+				}
 
-			return $out;
-		} else
-			return str_split( $string, $chunk_size );
+				return $out;
+			} else {
+				return str_split( $string, $chunk_size );
+			}
+		}
 	}
 }
 
@@ -136,8 +139,9 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		 */
 		function seekto( $pos )
 		{
-			if ( -1 == fseek( $this->_f, $pos, SEEK_SET ) )
+			if ( -1 == fseek( $this->_f, $pos, SEEK_SET ) ) {
 				return FALSE;
+			}
 
 			$this->_pos = $pos;
 			return TRUE;
@@ -174,8 +178,9 @@ if ( ! class_exists( 'POMO_FileReader', FALSE ) ) {
 		{
 			$all = '';
 
-			while ( ! $this->feof() )
+			while ( ! $this->feof() ) {
 				$all .= $this->read( 4096 );
+			}
 
 			return $all;
 		}

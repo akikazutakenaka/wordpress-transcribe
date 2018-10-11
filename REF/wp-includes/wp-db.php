@@ -616,15 +616,17 @@ class wpdb
 	{
 		register_shutdown_function( [$this, '__destruct'] );
 
-		if ( WP_DEBUG && WP_DEBUG_DISPLAY )
+		if ( WP_DEBUG && WP_DEBUG_DISPLAY ) {
 			$this->show_errors();
+		}
 
 		// Use ext/mysqli if it exists unless WP_USE_EXT_MYSQL is defined as true
 		if ( function_exists( 'mysqli_connect' ) ) {
 			$this->use_mysqli = TRUE;
 
-			if ( defined( 'WP_USE_EXT_MYSQL' ) )
+			if ( defined( 'WP_USE_EXT_MYSQL' ) ) {
 				$this->use_mysqli = ! WP_USE_EXT_MYSQL;
+			}
 		}
 
 		$this->dbuser = $dbuser;
@@ -633,8 +635,9 @@ class wpdb
 		$this->dbhost = $dbhost;
 
 		// wp-config.php creation will manually connect when ready.
-		if ( defined( 'WP_SETUP_CONFIG' ) )
+		if ( defined( 'WP_SETUP_CONFIG' ) ) {
 			return;
+		}
 
 		$this->db_connect();
 	}
@@ -665,11 +668,13 @@ class wpdb
 		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 			$charset = 'utf8';
 			$collate = ( defined( 'DB_COLLATE' ) && DB_COLLATE ) ? DB_COLLATE : 'utf8_general_ci';
-		} elseif ( defined( 'DB_COLLATE' ) )
+		} elseif ( defined( 'DB_COLLATE' ) ) {
 			$collate = DB_COLLATE;
+		}
 
-		if ( defined( 'DB_CHARSET' ) )
+		if ( defined( 'DB_CHARSET' ) ) {
 			$charset = DB_CHARSET;
+		}
 
 		$charset_collate = $this->determine_charset( $charset, $collate );
 		$this->charset = $charset_collate['charset'];
@@ -690,26 +695,30 @@ class wpdb
 	public function determine_charset( $charset, $collate )
 	{
 		if ( ( $this->use_mysqli && ! ( $this->dbh instanceof mysqli ) )
-		  || empty( $this->dbh ) )
+		  || empty( $this->dbh ) ) {
 			return compact( 'charset', 'collate' );
+		}
 
-		if ( 'utf8' === $charset && $this->has_cap( 'utf8mb4' ) )
+		if ( 'utf8' === $charset && $this->has_cap( 'utf8mb4' ) ) {
 			$charset = 'utf8mb4';
+		}
 
 		if ( 'utf8mb4' === $charset && ! $this->has_cap( 'utf8mb4' ) ) {
 			$charset = 'utf8';
 			$collate = str_replace( 'utf8mb4_', 'utf8_', $collate );
 		}
 
-		if ( 'utf8mb4' === $charset )
+		if ( 'utf8mb4' === $charset ) {
 			// _general_ is outdated, so we can upgrade it to _unicode_, instead.
 			$collate = ( ! $collate || 'utf8_general_ci' === $collate )
 				? 'utf8mb4_unicode_ci'
 				: str_replace( 'utf8_', 'utf8mb4_', $collate );
+		}
 
 		// _unicode_520_ is a better collation, we should use that when it's available.
-		if ( $this->has_cap( 'utf8mb4_520' ) && 'utf8mb4_unicode_ci' === $collate )
+		if ( $this->has_cap( 'utf8mb4_520' ) && 'utf8mb4_unicode_ci' === $collate ) {
 			$collate = 'utf8mb4_unicode_520_ci';
+		}
 
 		return compact( 'charset', 'collate' );
 	}
@@ -729,24 +738,28 @@ class wpdb
 	 */
 	public function set_charset( $dbh, $charset = NULL, $collate = NULL )
 	{
-		if ( ! isset( $charset ) )
+		if ( ! isset( $charset ) ) {
 			$charset = $this->charset;
+		}
 
-		if ( ! isset( $collate ) )
+		if ( ! isset( $collate ) ) {
 			$collate = $this->collate;
+		}
 
 		if ( $this->has_cap( 'collation' ) && ! empty( $charset ) ) {
 			$set_charset_succeeded = TRUE;
 
 			if ( $this->use_mysqli ) {
-				if ( function_exists( 'mysqli_set_charset' ) && $this->has_cap( 'set_charset' ) )
+				if ( function_exists( 'mysqli_set_charset' ) && $this->has_cap( 'set_charset' ) ) {
 					$set_charset_succeeded = mysqli_set_charset( $dbh, $charset );
+				}
 
 				if ( $set_charset_succeeded ) {
 					$query = $this->prepare( 'SET NAMES %s', $charset );
 
-					if ( ! empty( $collate ) )
+					if ( ! empty( $collate ) ) {
 						$query .= $this->prepare( ' COLLATE %s', $collate );
+					}
 
 					mysql_query( $query, $dbh );
 				}
@@ -771,21 +784,25 @@ class wpdb
 				? mysqli_query( $this->dbh, 'SELECT @@SESSION.sql_mode' )
 				: mysql_query( 'SELECT @@SESSION.sql_mode', $this->dbh );
 
-			if ( empty( $res ) )
+			if ( empty( $res ) ) {
 				return;
+			}
 
 			if ( $this->use_mysqli ) {
 				$modes_array = mysqli_fetch_array( $res );
 
-				if ( empty( $modes_array[0] ) )
+				if ( empty( $modes_array[0] ) ) {
 					return;
+				}
 
 				$modes_str = $modes_array[0];
-			} else
+			} else {
 				$modes_str = mysql_result( $res, 0 );
+			}
 
-			if ( empty( $modes_str ) )
+			if ( empty( $modes_str ) ) {
 				return;
+			}
 
 			$modes = explode( ',', $modes_str );
 		}
@@ -801,16 +818,19 @@ class wpdb
 		 */
 		$incompatible_modes = ( array ) apply_filters( 'incompatible_sql_modes', $this->incompatible_modes );
 
-		foreach ( $modes as $i => $mode )
-			if ( in_array( $mode, $incompatible_modes ) )
-				unset( $modes[$i] );
+		foreach ( $modes as $i => $mode ) {
+			if ( in_array( $mode, $incompatible_modes ) ) {
+				unset( $modes[ $i ] );
+			}
+		}
 
 		$modes_str = implode( ',', $modes );
 
-		if ( $this->use_mysqli )
+		if ( $this->use_mysqli ) {
 			mysqli_query( $this->dbh, "SET SESSION sql_mode='$modes_str'" );
-		else
+		} else {
 			mysql_query( "SET SESSION sql_mode='$modes_str'", $this->dbh );
+		}
 	}
 
 	/**
@@ -824,16 +844,18 @@ class wpdb
 	public function get_blog_prefix( $blog_id = NULL )
 	{
 		if ( is_multisite() ) {
-			if ( NULL === $blog_id )
+			if ( NULL === $blog_id ) {
 				$blog_id = $this->blogid;
+			}
 
 			$blog_id = ( int ) $blog_id;
 			return ( defined( 'MULTISITE' )
 			      && ( 0 == $blog_id || 1 == $blog_id ) )
 				? $this->base_prefix
 				: $this->base_prefix . $blog_id . '_';
-		} else
+		} else {
 			return $this->base_prefix;
+		}
 	}
 
 	/**
@@ -849,8 +871,9 @@ class wpdb
 	 */
 	public function select( $db, $dbh = NULL )
 	{
-		if ( is_null( $dbh ) )
+		if ( is_null( $dbh ) ) {
 			$dbh = $this->dbh;
+		}
 
 		$success = $this->use_mysqli ? mysqli_select_db( $dbh, $db ) : mysql_select_db( $db, $dbh );
 
@@ -884,15 +907,16 @@ class wpdb
 	 */
 	function _real_escape( $string )
 	{
-		if ( $this->dbh )
+		if ( $this->dbh ) {
 			$escaped = $this->use_mysqli ? mysqli_real_escape_string( $this->dbh, $string ) : mysql_real_escape_string( $string, $this->dbh );
-		else {
+		} else {
 			$class = get_class( $this );
 
-			if ( function_exists( '__' ) )
+			if ( function_exists( '__' ) ) {
 				_doing_it_wrong( $class, sprintf( __( '%s must set a database connection for use with escaping.' ), $class ), '3.6.0' );
-			else
+			} else {
 				_doing_it_wrong( $class, sprintf( '%s must set a database connection for use with escaping.', $class ), '3.6.0' );
+			}
 
 			$escaped = addslashes( $string );
 		}
@@ -910,8 +934,9 @@ class wpdb
 	 */
 	public function escape_by_ref( &$string )
 	{
-		if ( ! is_float( $string ) )
+		if ( ! is_float( $string ) ) {
 			$string = $this->_real_escape( $string );
+		}
 	}
 
 	/**
@@ -949,8 +974,9 @@ class wpdb
 	 */
 	public function prepare( $query, $args )
 	{
-		if ( is_null( $query ) )
+		if ( is_null( $query ) ) {
 			return;
+		}
 
 		// This is not meant to be foolproof -- but it will catch obviously incorrect usage.
 		if ( strpos( $query, '%' ) === FALSE ) {
@@ -969,11 +995,12 @@ class wpdb
 			$args = $args[0];
 		}
 
-		foreach ( $args as $arg )
+		foreach ( $args as $arg ) {
 			if ( ! is_scalar( $arg ) && ! is_null( $arg ) ) {
 				wp_load_translations_early();
 				_doing_it_wrong( 'wpdb::prepare', sprintf( __( 'Unsupported value type (%s).' ), gettype( $arg ) ), '4.8.2' );
 			}
+		}
 
 		/**
 		 * Specify the formatting allowed in a placeholder.
@@ -1072,21 +1099,24 @@ class wpdb
 			$socket = NULL;
 			$is_ipv6 = FALSE;
 
-			if ( $host_data = $this->parse_db_host( $this->dbhost ) )
+			if ( $host_data = $this->parse_db_host( $this->dbhost ) ) {
 				list( $host, $port, $socket, $is_ipv6 ) = $host_data;
+			}
 
 			/**
 			 * If using the `mysqlnd` library, the IPv6 address needs to be enclosed in square brackets, whereas it doesn't while using the `libmysqlclient` library.
 			 *
 			 * @see https://bugs.php.net/bug.php?id=67563
 			 */
-			if ( $is_ipv6 && extension_loaded( 'mysqlnd' ) )
+			if ( $is_ipv6 && extension_loaded( 'mysqlnd' ) ) {
 				$host = "[$host]";
+			}
 
-			if ( WP_DEBUG )
+			if ( WP_DEBUG ) {
 				mysqli_real_connect( $this->dbh, $host, $this->dbuser, $this->dbpassword, NULL, $port, $socket, $client_flags );
-			else
+			} else {
 				@mysqli_real_connect( $this->dbh, $host, $this->dbuser, $this->dbpassword, NULL, $port, $socket, $client_flags );
+			}
 
 			if ( $this->dbh->connect_errno ) {
 				$this->dbh = NULL;
@@ -1101,12 +1131,13 @@ class wpdb
 				 */
 				$attempt_fallback = TRUE;
 
-				if ( $this->has_connected )
+				if ( $this->has_connected ) {
 					$attempt_fallback = FALSE;
-				elseif ( defined( 'WP_USE_EXT_MYSQL' ) && ! WP_USE_EXT_MYSQL )
+				} elseif ( defined( 'WP_USE_EXT_MYSQL' ) && ! WP_USE_EXT_MYSQL ) {
 					$attempt_fallback = FALSE;
-				elseif ( ! function_exists( 'mysql_connect' ) )
+				} elseif ( ! function_exists( 'mysql_connect' ) ) {
 					$attempt_fallback = FALSE;
+				}
 
 				if ( $attempt_fallback ) {
 					$this->use_mysqli = FALSE;
@@ -1114,10 +1145,11 @@ class wpdb
 				}
 			}
 		} else {
-			if ( WP_DEBUG )
+			if ( WP_DEBUG ) {
 				$this->dbh = mysql_connect( $this->dbhost, $this->dbuser, $this->dbpassword, $new_link, $client_flags );
-			else
+			} else {
 				$this->dbh = @mysql_connect( $this->dbhost, $this->dbuser, $this->dbpassword, $new_link, $client_flags );
+			}
 		}
 
 		if ( ! $this->dbh && $allow_bail ) {
@@ -1140,8 +1172,9 @@ class wpdb
 			$this->bail( $message, 'db_connect_fail' );
 			return FALSE;
 		} elseif ( $this->dbh ) {
-			if ( ! $this->has_connected )
+			if ( ! $this->has_connected ) {
 				$this->init_charset();
+			}
 
 			$this->has_connected = TRUE;
 			$this->set_charset( $this->dbh );
@@ -1187,22 +1220,26 @@ class wpdb
 		if ( substr_count( $host, ':' ) > 1 ) {
 			$pattern = '#^(?:\[)?(?P<host>[0-9a-fA-F:]+)(?:\]:(?P<port>[\d]+))?#';
 			$is_ipv6 = TRUE;
-		} else
+		} else {
 			// We seem to be dealing with an IPv4 address.
 			$pattern = '#^(?P<host>[^:/]*)(?::(?P<port>[\d]+))?#';
+		}
 
 		$matches = [];
 		$result = preg_match( $pattern, $host, $matches );
 
-		if ( 1 !== $result )
+		if ( 1 !== $result ) {
 			// Couldn't parse the address, bail.
 			return FALSE;
+		}
 
 		$host = '';
 
-		foreach ( ['host', 'port'] as $component )
-			if ( ! empty( $matches[$component] ) )
-				$$component = $matches[$component];
+		foreach ( ['host', 'port'] as $component ) {
+			if ( ! empty( $matches[$component] ) ) {
+				$$component = $matches[ $component ];
+			}
+		}
 
 		return [$host, $port, $socket, $is_ipv6];
 	}
@@ -1232,8 +1269,9 @@ class wpdb
 		 * Add the filter to remove the placeholder escaper.
 		 * Uses priority 0, so that anything else attached to this filter will receive the query with the placeholder string removed.
 		 */
-		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) )
+		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) ) {
 			add_filter( 'query', [$this, 'remove_placeholder_escape'] );
+		}
 
 		return $placeholder;
 	}
@@ -1328,8 +1366,9 @@ class wpdb
 				if ( FALSE !== strpos( $client_version, 'mysqlnd' ) ) {
 					$client_version = preg_replace( '/^\D+([\d.]+).*/', '$1', $client_version );
 					return version_compare( $client_version, '5.0.9', '>=' );
-				} else
+				} else {
 					return version_compare( $client_version, '5.5.3', '>=' );
+				}
 
 			case 'utf8mb4_520': // @since 4.6.0
 				return version_compare( $version, '5.6', '>=' );

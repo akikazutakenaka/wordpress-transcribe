@@ -126,18 +126,20 @@ class WP_Object_Cache
 	 */
 	public function get( $key, $group = 'default', $force = FALSE, &$found = NULL )
 	{
-		if ( empty( $group ) )
+		if ( empty( $group ) ) {
 			$group = 'default';
+		}
 
-		if ( $this->multisite && ! isset( $this->global_groups[$group] ) )
+		if ( $this->multisite && ! isset( $this->global_groups[ $group ] ) ) {
 			$key = $this->blog_prefix . $key;
+		}
 
 		if ( $this->_exists( $key, $group ) ) {
 			$found = TRUE;
 			$this->cache_hits += 1;
-			return is_object( $this->cache[$group][$key] )
-				? clone $this->cache[$group][$key]
-				: $this->cache[$group][$key];
+			return is_object( $this->cache[ $group ][ $key ] )
+				? clone $this->cache[ $group ][ $key ]
+				: $this->cache[ $group ][ $key ];
 		}
 
 		$found = FALSE;
@@ -156,8 +158,8 @@ class WP_Object_Cache
 	 */
 	protected function _exists( $key, $group )
 	{
-		return isset( $this->cache[$group] )
-		    && ( isset( $this->cache[$group][$key] ) || array_key_exists( $key, $this->cache[$group] ) );
+		return isset( $this->cache[ $group ] )
+		    && ( isset( $this->cache[ $group ][ $key ] ) || array_key_exists( $key, $this->cache[ $group ] ) );
 	}
 
 	/**

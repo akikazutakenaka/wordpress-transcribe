@@ -27,13 +27,15 @@
  */
 function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 {
-	if ( ! $meta_type || ! is_numeric( $object_id ) )
+	if ( ! $meta_type || ! is_numeric( $object_id ) ) {
 		return FALSE;
+	}
 
 	$object_id = absint( $object_id );
 
-	if ( ! $object_id )
+	if ( ! $object_id ) {
 		return FALSE;
+	}
 
 	/**
 	 * Filters whether to retrieve metadata of a specific type.
@@ -50,13 +52,14 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 	 */
 	$check = apply_filters( "get_{$meta_type}_metadata", NULL, $object_id, $meta_key, $single );
 
-	if ( NULL !== $check )
+	if ( NULL !== $check ) {
 		return ( $single && is_array( $check ) ) ? $check[0] : $check;
+	}
 
 	$meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
 
 	if ( ! $meta_cache ) {
-		$meta_cache = update_meta_cache( $meta_type, [$object_id] );
+		$meta_cache = update_meta_cache( $meta_type, [ $object_id ] );
 // @NOW 019 -> wp-includes/meta.php
 	}
 }
@@ -75,13 +78,15 @@ function update_meta_cache( $meta_type, $object_ids )
 {
 	global $wpdb;
 
-	if ( ! $meta_type || ! $object_ids )
+	if ( ! $meta_type || ! $object_ids ) {
 		return FALSE;
+	}
 
 	$table = _get_meta_table( $meta_type );
 
-	if ( ! $table )
+	if ( ! $table ) {
 		return FALSE;
+	}
 
 	$column = sanitize_key( $meta_type . '_id' );
 // @NOW 020
@@ -101,8 +106,9 @@ function _get_meta_table( $type )
 	global $wpdb;
 	$table_name = $type . 'meta';
 
-	if ( empty( $wpdb->$table_name ) )
+	if ( empty( $wpdb->$table_name ) ) {
 		return FALSE;
+	}
 
 	return $wpdb->$table_name;
 }
