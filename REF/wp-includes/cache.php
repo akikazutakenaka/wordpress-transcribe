@@ -144,8 +144,24 @@ class WP_Object_Cache
 	public function add( $key, $data, $group = 'default', $expire = 0 )
 	{
 		if ( wp_suspend_cache_addition() ) {
-// @NOW 021
+			return FALSE;
 		}
+
+		if ( empty( $group ) ) {
+			$group = 'default';
+		}
+
+		$id = $key;
+
+		if ( $this->multisite && ! isset( $this->global_groups[$group] ) ) {
+			$id = $this->blog_prefix . $key;
+		}
+
+		if ( $this->_exists( $id, $group ) ) {
+			return FALSE;
+		}
+
+		return $this->set( $key, $data, $group, ( int ) $expire );
 	}
 
 	/**
@@ -194,6 +210,8 @@ class WP_Object_Cache
 		$this->cache_misses += 1;
 		return FALSE;
 	}
+
+// @NOW 021
 
 	/**
 	 * Serves as a utility function to determine whether a key exists in the cache.
