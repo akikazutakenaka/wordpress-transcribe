@@ -24,33 +24,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 	// refactored. public function add_filter( $tag, $function_to_add, $priority, $accepted_args ) {}
 	// refactored. private function resort_active_iterations( $new_priority = false, $priority_existed = false ) {}
 
-	/**
-	 * Unhooks a function or method from a specific filter action.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param string   $tag                The filter hook to which the function to be removed is hooked. Used
-	 *                                     for building the callback ID when SPL is not available.
-	 * @param callable $function_to_remove The callback to be removed from running when the filter is applied.
-	 * @param int      $priority           The exact priority used when adding the original filter callback.
-	 * @return bool Whether the callback existed before it was removed.
-	 */
-	public function remove_filter( $tag, $function_to_remove, $priority ) {
-		$function_key = _wp_filter_build_unique_id( $tag, $function_to_remove, $priority );
-
-		$exists = isset( $this->callbacks[ $priority ][ $function_key ] );
-		if ( $exists ) {
-			unset( $this->callbacks[ $priority ][ $function_key ] );
-			if ( ! $this->callbacks[ $priority ] ) {
-				unset( $this->callbacks[ $priority ] );
-				if ( $this->nesting_level > 0 ) {
-					$this->resort_active_iterations();
-				}
-			}
-		}
-		return $exists;
-	}
-
+	// refactored. public function remove_filter( $tag, $function_to_remove, $priority ) {}
 	// refactored. public function has_filter( $tag = '', $function_to_check = false ) {}
 	// refactored. public function has_filters() {}
 

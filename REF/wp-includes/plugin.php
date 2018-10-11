@@ -232,7 +232,7 @@ function remove_filter( $tag, $function_to_remove, $priority = 10 )
 
 	if ( isset( $wp_filter[ $tag ] ) ) {
 		$r = $wp_filter[ $tag ]->remove_filter( $tag, $function_to_remove, $priority );
-// @NOW 021 -> wp-includes/class-wp-hook.php
+// @NOW 021
 	}
 }
 
