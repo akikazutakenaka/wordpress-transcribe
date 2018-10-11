@@ -1217,7 +1217,36 @@ class wpdb
 		return $errors;
 	}
 
-// @NOW 026
+	/**
+	 * Kill cached query results.
+	 *
+	 * @since 0.71
+	 */
+	public function flush()
+	{
+		$this->last_result   = [];
+		$this->col_info      = NULL;
+		$this->last_query    = NULL;
+		$this->rows_affected = $this->num_rows = 0;
+		$this->last_error    = '';
+
+		if ( $this->use_mysqli && $this->result instanceof mysqli_result ) {
+			mysqli_free_result( $this->result );
+			$this->result = NULL;
+
+			// Sanity check before using the handle.
+			if ( empty( $this->dbh ) || ! ( $this->dbh instanceof mysqli ) ) {
+				return;
+			}
+
+			// Clear out any results from a multi-query.
+			while ( mysqli_more_results( $this->dbh ) ) {
+				mysqli_next_result( $this->dbh );
+			}
+		} elseif ( is_resource( $this->result ) ) {
+			mysql_free_result( $this->result );
+		}
+	}
 
 	/**
 	 * Connect to and select database.
@@ -1424,7 +1453,7 @@ class wpdb
 		$query = apply_filters( 'query', $query );
 
 		$this->flush();
-// @NOW 025 -> wp-includes/wp-db.php
+// @NOW 025
 	}
 
 	/**

@@ -410,37 +410,7 @@ class wpdb {
 	}
 
 	// refactored. public function suppress_errors( $suppress = true ) {}
-
-	/**
-	 * Kill cached query results.
-	 *
-	 * @since 0.71
-	 */
-	public function flush() {
-		$this->last_result = array();
-		$this->col_info    = null;
-		$this->last_query  = null;
-		$this->rows_affected = $this->num_rows = 0;
-		$this->last_error  = '';
-
-		if ( $this->use_mysqli && $this->result instanceof mysqli_result ) {
-			mysqli_free_result( $this->result );
-			$this->result = null;
-
-			// Sanity check before using the handle
-			if ( empty( $this->dbh ) || !( $this->dbh instanceof mysqli ) ) {
-				return;
-			}
-
-			// Clear out any results from a multi-query
-			while ( mysqli_more_results( $this->dbh ) ) {
-				mysqli_next_result( $this->dbh );
-			}
-		} elseif ( is_resource( $this->result ) ) {
-			mysql_free_result( $this->result );
-		}
-	}
-
+	// refactored. public function flush() {}
 	// refactored. public function db_connect( $allow_bail = true ) {}
 	// refactored. public function parse_db_host( $host ) {}
 
