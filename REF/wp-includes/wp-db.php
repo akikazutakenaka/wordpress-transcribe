@@ -1516,7 +1516,7 @@ class wpdb
 		// If we're writing to the database, make sure the query will write safely.
 		if ( $this->check_current_query && ! $this->check_ascii( $query ) ) {
 			$stripped_query = $this->strip_invalid_text_from_query( $query );
-// @NOW 025 -> wp-includes/wp-db.php
+// @NOW 025
 		}
 	}
 
@@ -2047,7 +2047,12 @@ class wpdb
 			'length'  => FALSE
 		];
 		$data = $this->strip_invalid_text( [ $data ] );
-// @NOW 026
+
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
+
+		return $data[0]['value'];
 	}
 
 	/**

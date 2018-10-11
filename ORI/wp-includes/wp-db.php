@@ -1264,51 +1264,7 @@ class wpdb {
 	// refactored. protected function check_ascii( $string ) {}
 	// refactored. protected function check_safe_collation( $query ) {}
 	// refactored. protected function strip_invalid_text( $data ) {}
-
-	/**
-	 * Strips any invalid characters from the query.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @param string $query Query to convert.
-	 * @return string|WP_Error The converted query, or a WP_Error object if the conversion fails.
-	 */
-	protected function strip_invalid_text_from_query( $query ) {
-		// We don't need to check the collation for queries that don't read data.
-		$trimmed_query = ltrim( $query, "\r\n\t (" );
-		if ( preg_match( '/^(?:SHOW|DESCRIBE|DESC|EXPLAIN|CREATE)\s/i', $trimmed_query ) ) {
-			return $query;
-		}
-
-		$table = $this->get_table_from_query( $query );
-		if ( $table ) {
-			$charset = $this->get_table_charset( $table );
-			if ( is_wp_error( $charset ) ) {
-				return $charset;
-			}
-
-			// We can't reliably strip text from tables containing binary/blob columns
-			if ( 'binary' === $charset ) {
-				return $query;
-			}
-		} else {
-			$charset = $this->charset;
-		}
-
-		$data = array(
-			'value'   => $query,
-			'charset' => $charset,
-			'ascii'   => false,
-			'length'  => false,
-		);
-
-		$data = $this->strip_invalid_text( array( $data ) );
-		if ( is_wp_error( $data ) ) {
-			return $data;
-		}
-
-		return $data[0]['value'];
-	}
+	// refactored. protected function strip_invalid_text_from_query( $query ) {}
 
 	/**
 	 * Strips any invalid characters from the string for a given table and column.
