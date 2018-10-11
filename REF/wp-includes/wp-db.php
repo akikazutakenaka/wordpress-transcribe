@@ -1799,6 +1799,12 @@ class wpdb
 
 			if ( $truncate_by_byte_length ) {
 				mbstring_binary_safe_encoding();
+
+				if ( FALSE !== $length && strlen( $value['value'] ) > $length ) {
+					$value['value'] = substr( $value['value'], 0, $length );
+				}
+
+				reset_mbstring_encoding();
 // @NOW 027
 			}
 		}
