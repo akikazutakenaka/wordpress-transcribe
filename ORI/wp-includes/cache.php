@@ -150,22 +150,7 @@ function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
 }
 
 // refactored. function wp_cache_switch_to_blog( $blog_id ) {}
-
-/**
- * Adds a group or set of groups to the list of global groups.
- *
- * @since 2.6.0
- *
- * @see WP_Object_Cache::add_global_groups()
- * @global WP_Object_Cache $wp_object_cache Object cache global instance.
- *
- * @param string|array $groups A group or an array of groups to add.
- */
-function wp_cache_add_global_groups( $groups ) {
-	global $wp_object_cache;
-
-	$wp_object_cache->add_global_groups( $groups );
-}
+// refactored. function wp_cache_add_global_groups( $groups ) {}
 
 /**
  * Adds a group or set of groups to the list of non-persistent groups.

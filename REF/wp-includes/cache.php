@@ -86,6 +86,21 @@ function wp_cache_switch_to_blog( $blog_id )
 }
 
 /**
+ * Adds a group or set of groups to the list of global groups.
+ *
+ * @since  2.6.0
+ * @see    WP_Object_Cache::add_global_groups()
+ * @global WP_Object_Cache $wp_object_cache Object cache global instance.
+ *
+ * @param string|array $groups A group or an array of groups to add.
+ */
+function wp_cache_add_global_groups( $groups )
+{
+	global $wp_object_cache;
+	$wp_object_cache->add_global_groups( $groups );
+}
+
+/**
  * Core class that implements an object cache.
  *
  * The WordPress Object Cache is used to save on trips to the database.
@@ -191,6 +206,8 @@ class WP_Object_Cache
 
 		return $this->set( $key, $data, $group, ( int ) $expire );
 	}
+
+// @NOW 019
 
 	/**
 	 * Retrieves the cache contents, if it exists.
