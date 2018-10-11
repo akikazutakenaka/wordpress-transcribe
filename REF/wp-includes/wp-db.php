@@ -1473,7 +1473,7 @@ class wpdb
 		$this->func_call = "\$db->get_results(\"$query\", $output)";
 
 		if ( $this->check_current_query && $this->check_safe_collation( $query ) ) {
-// @NOW 024 -> wp-includes/wp-db.php
+// @NOW 024
 		}
 	}
 
@@ -1641,7 +1641,31 @@ class wpdb
 
 		$this->checking_collation = TRUE;
 		$collation = $this->get_table_charset( $table );
-// @NOW 025
+		$this->checking_collation = FALSE;
+
+		// Tables with no collation, or latin1 only, don't need extra checking.
+		if ( FALSE === $collation || 'latin1' === $collation ) {
+			return TRUE;
+		}
+
+		$table = strtolower( $table );
+
+		if ( empty( $this->col_meta[ $table ] ) ) {
+			return FALSE;
+		}
+
+		// If any of the columns don't have one of these collations, it needs more sanity checking.
+		foreach ( $this->col_meta[ $table ] as $col ) {
+			if ( empty( $col->Collation ) ) {
+				continue;
+			}
+
+			if ( ! in_array( $col->Collation, ['utf8_general_ci', 'utf8_bin', 'utf8mb4_general_ci', 'utf8mb4_bin'], TRUE ) ) {
+				return FALSE;
+			}
+		}
+
+		return TRUE;
 	}
 
 	/**

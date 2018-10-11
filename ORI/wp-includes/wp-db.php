@@ -1400,63 +1400,7 @@ class wpdb {
 	}
 
 	// refactored. protected function check_ascii( $string ) {}
-
-	/**
-	 * Check if the query is accessing a collation considered safe on the current version of MySQL.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @param string $query The query to check.
-	 * @return bool True if the collation is safe, false if it isn't.
-	 */
-	protected function check_safe_collation( $query ) {
-		if ( $this->checking_collation ) {
-			return true;
-		}
-
-		// We don't need to check the collation for queries that don't read data.
-		$query = ltrim( $query, "\r\n\t (" );
-		if ( preg_match( '/^(?:SHOW|DESCRIBE|DESC|EXPLAIN|CREATE)\s/i', $query ) ) {
-			return true;
-		}
-
-		// All-ASCII queries don't need extra checking.
-		if ( $this->check_ascii( $query ) ) {
-			return true;
-		}
-
-		$table = $this->get_table_from_query( $query );
-		if ( ! $table ) {
-			return false;
-		}
-
-		$this->checking_collation = true;
-		$collation = $this->get_table_charset( $table );
-		$this->checking_collation = false;
-
-		// Tables with no collation, or latin1 only, don't need extra checking.
-		if ( false === $collation || 'latin1' === $collation ) {
-			return true;
-		}
-
-		$table = strtolower( $table );
-		if ( empty( $this->col_meta[ $table ] ) ) {
-			return false;
-		}
-
-		// If any of the columns don't have one of these collations, it needs more sanity checking.
-		foreach ( $this->col_meta[ $table ] as $col ) {
-			if ( empty( $col->Collation ) ) {
-				continue;
-			}
-
-			if ( ! in_array( $col->Collation, array( 'utf8_general_ci', 'utf8_bin', 'utf8mb4_general_ci', 'utf8mb4_bin' ), true ) ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
+	// refactored. protected function check_safe_collation( $query ) {}
 
 	/**
 	 * Strips any invalid characters based on value/charset pairs.
