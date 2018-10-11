@@ -409,22 +409,7 @@ class wpdb {
 		return $show;
 	}
 
-	/**
-	 * Whether to suppress database errors.
-	 *
-	 * By default database errors are suppressed, with a simple
-	 * call to this function they can be enabled.
-	 *
-	 * @since 2.5.0
-	 * @see wpdb::hide_errors()
-	 * @param bool $suppress Optional. New value. Defaults to true.
-	 * @return bool Old value
-	 */
-	public function suppress_errors( $suppress = true ) {
-		$errors = $this->suppress_errors;
-		$this->suppress_errors = (bool) $suppress;
-		return $errors;
-	}
+	// refactored. public function suppress_errors( $suppress = true ) {}
 
 	/**
 	 * Kill cached query results.

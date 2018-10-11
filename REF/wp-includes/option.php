@@ -109,6 +109,6 @@ function wp_load_alloptions()
 
 	if ( ! $alloptions ) {
 		$suppress = $wpdb->suppress_errors();
-// @NOW 023 -> wp-includes/wp-db.php
+// @NOW 023
 	}
 }
