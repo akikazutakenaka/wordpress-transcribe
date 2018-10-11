@@ -60,7 +60,7 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 
 	if ( ! $meta_cache ) {
 		$meta_cache = update_meta_cache( $meta_type, [ $object_id ] );
-// @NOW 019 -> wp-includes/meta.php
+// @NOW 019
 	}
 }
 
@@ -151,8 +151,9 @@ EOQ
 		}
 
 		wp_cache_add( $id, $cache[ $id ], $cache_key );
-// @NOW 020
 	}
+
+	return $cache;
 }
 
 /**
