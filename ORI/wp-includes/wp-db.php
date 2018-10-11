@@ -1736,20 +1736,6 @@ class wpdb {
 	}
 
 	// refactored. public function has_cap( $db_cap ) {}
-
-	/**
-	 * Retrieve the name of the function that called wpdb.
-	 *
-	 * Searches up the list of functions until it reaches
-	 * the one that would most logically had called this method.
-	 *
-	 * @since 2.5.0
-	 *
-	 * @return string|array The name of the calling function
-	 */
-	public function get_caller() {
-		return wp_debug_backtrace_summary( __CLASS__ );
-	}
-
+	// refactored. public function get_caller() {}
 	// refactored. public function db_version() {}
 }

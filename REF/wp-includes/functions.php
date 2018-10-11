@@ -280,6 +280,8 @@ function wp_suspend_cache_addition( $suspend = NULL )
 	return $_suspend;
 }
 
+// @NOW 029
+
 /**
  * Set the mbstring internal encoding to a binary safe encoding when func_overload is enabled.
  *

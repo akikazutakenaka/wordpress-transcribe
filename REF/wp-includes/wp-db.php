@@ -1208,7 +1208,7 @@ class wpdb
 		$error_str = ( $caller = $this->get_caller() )
 			? sprintf( __( 'WordPress database error %1$s for query %2$s made by %3$s' ), $str, $this->last_query, $caller )
 			: sprintf( __( 'WordPress database error %1$s for query %2$s' ), $str, $this->last_query );
-// @NOW 028 -> wp-includes/wp-db.php
+// @NOW 028 -> wp-includes/functions.php
 	}
 
 	/**
@@ -2160,7 +2160,19 @@ class wpdb
 		return FALSE;
 	}
 
-// @NOW 029
+	/**
+	 * Retrieve the name of the function that called wpdb.
+	 *
+	 * Searches up the list of functions until it reaches the one that would most logically had called this method.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return string|array The name of the calling function.
+	 */
+	public function get_caller()
+	{
+		return wp_debug_backtrace_summary( __CLASS__ );
+	}
 
 	/**
 	 * Retrieves the MySQL server version.
