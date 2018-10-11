@@ -833,7 +833,29 @@ class wpdb
 		}
 	}
 
-// @NOW 019
+	/**
+	 * Sets blog id.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param  int $blog_id
+	 * @param  int $network_id Optional.
+	 * @return int Previous blog id.
+	 */
+	public function set_blog_id( $blog_id, $network_id = 0 )
+	{
+		if ( ! empty( $network_id ) ) {
+			$this->siteid = $network_id;
+		}
+
+		$old_blog_id = $this->blogid;
+		$this->blogid = $blog_id;
+		$this->prefix = $this->get_blog_prefix();
+
+		foreach ( $this->tables( 'blog' ) as $table => $prefixed_table ) {
+// @NOW 019 -> wp-includes/wp-db.php
+		}
+	}
 
 	/**
 	 * Gets blog prefix.
@@ -859,6 +881,8 @@ class wpdb
 			return $this->base_prefix;
 		}
 	}
+
+// @NOW 020
 
 	/**
 	 * Selects a database using the current database connection.
