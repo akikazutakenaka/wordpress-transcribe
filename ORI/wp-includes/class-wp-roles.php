@@ -24,53 +24,12 @@
  * @since 2.0.0
  */
 class WP_Roles {
-	/**
-	 * List of roles and capabilities.
-	 *
-	 * @since 2.0.0
-	 * @var array
-	 */
-	public $roles;
-
-	/**
-	 * List of the role objects.
-	 *
-	 * @since 2.0.0
-	 * @var array
-	 */
-	public $role_objects = array();
-
-	/**
-	 * List of role names.
-	 *
-	 * @since 2.0.0
-	 * @var array
-	 */
-	public $role_names = array();
-
-	/**
-	 * Option name for storing role list.
-	 *
-	 * @since 2.0.0
-	 * @var string
-	 */
-	public $role_key;
-
-	/**
-	 * Whether to use the database for retrieval and storage.
-	 *
-	 * @since 2.1.0
-	 * @var bool
-	 */
-	public $use_db = true;
-
-	/**
-	 * The site ID the roles are initialized for.
-	 *
-	 * @since 4.9.0
-	 * @var int
-	 */
-	protected $site_id = 0;
+	// refactored. public $roles;
+	// refactored. public $role_objects = array();
+	// refactored. public $role_names = array();
+	// refactored. public $role_key;
+	// refactored. public $use_db = true;
+	// refactored. protected $site_id = 0;
 
 	/**
 	 * Constructor
