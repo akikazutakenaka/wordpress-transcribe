@@ -151,17 +151,7 @@ function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
 
 // refactored. function wp_cache_switch_to_blog( $blog_id ) {}
 // refactored. function wp_cache_add_global_groups( $groups ) {}
-
-/**
- * Adds a group or set of groups to the list of non-persistent groups.
- *
- * @since 2.6.0
- *
- * @param string|array $groups A group or an array of groups to add.
- */
-function wp_cache_add_non_persistent_groups( $groups ) {
-	// Default cache doesn't persist so nothing to do here.
-}
+// refactored. function wp_cache_add_non_persistent_groups( $groups ) {}
 
 /**
  * Reset internal cache keys and structures.

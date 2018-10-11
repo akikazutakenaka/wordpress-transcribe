@@ -74,8 +74,12 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 		if ( function_exists( 'wp_cache_add_global_groups' ) ) {
 			if ( is_array( $global_groups ) ) {
 				wp_cache_add_global_groups( $global_groups );
-// @NOW 018
+			} else {
+				wp_cache_add_global_groups( ['users', 'userlogins', 'usermeta', 'user_meta', 'useremail', 'userslugs', 'site-transient', 'site-options', 'blog-lookup', 'blog-details', 'rss', 'global-posts', 'blog-id-cache', 'networks', 'sites', 'site-details'] );
 			}
+
+			wp_cache_add_non_persistent_groups( ['counts', 'plugins'] );
+// @NOW 018
 		}
 	}
 }
