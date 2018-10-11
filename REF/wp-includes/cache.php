@@ -207,7 +207,19 @@ class WP_Object_Cache
 		return $this->set( $key, $data, $group, ( int ) $expire );
 	}
 
-// @NOW 019
+	/**
+	 * Sets the list of global cache groups.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $groups List of groups that are global.
+	 */
+	public function add_global_groups( $groups )
+	{
+		$groups = ( array ) $groups;
+		$groups = array_fill_keys( $groups, TRUE );
+		$this->global_groups = array_merge( $this->global_groups, $groups );
+	}
 
 	/**
 	 * Retrieves the cache contents, if it exists.

@@ -261,20 +261,7 @@ class WP_Object_Cache {
 	}
 
 	// refactored. public function add( $key, $data, $group = 'default', $expire = 0 ) {}
-
-	/**
-	 * Sets the list of global cache groups.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param array $groups List of groups that are global.
-	 */
-	public function add_global_groups( $groups ) {
-		$groups = (array) $groups;
-
-		$groups = array_fill_keys( $groups, true );
-		$this->global_groups = array_merge( $this->global_groups, $groups );
-	}
+	// refactored. public function add_global_groups( $groups ) {}
 
 	/**
 	 * Decrements numeric cache item's value.

@@ -74,7 +74,7 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 		if ( function_exists( 'wp_cache_add_global_groups' ) ) {
 			if ( is_array( $global_groups ) ) {
 				wp_cache_add_global_groups( $global_groups );
-// @NOW 018 -> wp-includes/cache.php
+// @NOW 018
 			}
 		}
 	}
