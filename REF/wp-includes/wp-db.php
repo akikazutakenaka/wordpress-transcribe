@@ -833,6 +833,8 @@ class wpdb
 		}
 	}
 
+// @NOW 019
+
 	/**
 	 * Gets blog prefix.
 	 *
