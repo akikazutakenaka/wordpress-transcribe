@@ -79,7 +79,12 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 			}
 
 			wp_cache_add_non_persistent_groups( ['counts', 'plugins'] );
-// @NOW 018
 		}
 	}
+
+	// This filter is documented in wp-includes/ms-blogs.php
+	do_action( 'switch_blog', $new_blog, $prev_blog_id );
+
+	$GLOBALS['switched'] = TRUE;
+	return TRUE;
 }

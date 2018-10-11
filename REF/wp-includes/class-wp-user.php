@@ -161,7 +161,7 @@ class WP_User
 		if ( is_multisite() && $this->site_id != get_current_blog_id() ) {
 			$switch_site = TRUE;
 			switch_to_blog( $this->site_id );
-// @NOW 017 -> wp-includes/ms-blogs.php
+// @NOW 017
 		}
 	}
 
