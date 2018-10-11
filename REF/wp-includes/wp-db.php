@@ -1477,7 +1477,28 @@ class wpdb
 		}
 	}
 
-// @NOW 026
+	/**
+	 * Check if a string is ASCII.
+	 *
+	 * The negative regex is faster for non-ASCII strings, as it allows the search to finish as soon as it encounters a non-ASCII character.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  string $string String to check.
+	 * @return bool   True if ASCII, false if not.
+	 */
+	protected function check_ascii( $string )
+	{
+		if ( function_exists( 'mb_check_encoding' ) ) {
+			if ( mb_check_encoding( $string, 'ASCII' ) ) {
+				return TRUE;
+			}
+		} elseif ( ! preg_match( '/[^\x00-\x7F]/', $string ) ) {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 
 	/**
 	 * Check if the query is accessing a collation considered safe on the current version of MySQL.
@@ -1502,7 +1523,7 @@ class wpdb
 
 		// All-ASCII queries don't need extra checking.
 		if ( $this->check_ascii( $query ) ) {
-// @NOW 025 -> wp-includes/wp-db.php
+// @NOW 025
 		}
 	}
 
