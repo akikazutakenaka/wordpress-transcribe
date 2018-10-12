@@ -88,7 +88,37 @@ function get_option( $option, $default = FALSE )
 		}
 
 		$alloptions = wp_load_alloptions();
+
+		if ( isset( $alloptions[ $option ] ) ) {
+			$value = $alloptions[ $option ];
+		} else {
+			$value = wp_cache_get( $option, 'options' );
+
+			if ( FALSE === $value ) {
+				$row = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT option_value
+FROM $wpdb->options
+WHERE option_name = %s
+LIMIT 1
+EOQ
+					, $option ) );
+
+				// Has to be get_row instead of get_var because of funkiness with 0, false, null values.
+				if ( is_object( $row ) ) {
+					$value = $row->option_value;
+					wp_cache_add( $option, $value, 'options' );
+				} else {
+					// Option does not exist, so we must cache its non-existence.
+					if ( ! is_array( $notoptions ) ) {
+						$notoptions = [];
+					}
+
+					$notoptions[ $option ] = TRUE;
+					wp_cache_set( 'notoptions', $notoptions, 'options' );
 // @NOW 022
+				}
+			}
+		}
 	}
 }
 
