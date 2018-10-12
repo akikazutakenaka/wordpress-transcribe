@@ -213,8 +213,14 @@ function status_header( $code, $description = '' )
 {
 	if ( ! $description ) {
 		$description = get_status_header_desc( $code );
-// @NOW 027
 	}
+
+	if ( empty( $description ) ) {
+		return;
+	}
+
+	$protocol = wp_get_server_protocol();
+// @NOW 027
 }
 
 /**
