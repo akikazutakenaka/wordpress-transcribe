@@ -147,8 +147,22 @@ EOQ
 
 	if ( in_array( $option, ['siteurl', 'home', 'category_base', 'tag_base'] ) ) {
 		$value = untrailingslashit( $value );
-// @NOW 022
 	}
+
+	/**
+	 * Filters the value of an existing option.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the option name.
+	 *
+	 * @since 1.5.0 As 'option_' . $setting
+	 * @since 3.0.0
+	 * @since 4.4.0 The `$option` parameter was added.
+	 *
+	 * @param mixed  $value  Value of the option.
+	 *                       If stored serialized, it will be unserialized prior to being returned.
+	 * @param string $option Option name.
+	 */
+	return apply_filters( "option_{$option}", maybe_unserialize( $value ), $option );
 }
 
 /**

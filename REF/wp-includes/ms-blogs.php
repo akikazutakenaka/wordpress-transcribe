@@ -35,7 +35,7 @@ function get_blog_option( $id, $option, $default = FALSE )
 
 	if ( get_current_blog_id() == $id ) {
 		return get_option( $option, $default );
-// @NOW 021 -> wp-includes/option.php
+// @NOW 021
 	}
 }
 
