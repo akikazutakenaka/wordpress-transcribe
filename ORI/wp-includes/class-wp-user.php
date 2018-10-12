@@ -98,20 +98,7 @@ class WP_User {
 		}
 	}
 
-	/**
-	 * Sets up object properties, including capabilities.
-	 *
-	 * @since  3.3.0
-	 *
-	 * @param object $data    User DB row object.
-	 * @param int    $site_id Optional. The site ID to initialize for.
-	 */
-	public function init( $data, $site_id = '' ) {
-		$this->data = $data;
-		$this->ID = (int) $data->ID;
-
-		$this->for_site( $site_id );
-	}
+	// refactored. public function init( $data, $site_id = '' ) {}
 
 	/**
 	 * Return only the main user fields
