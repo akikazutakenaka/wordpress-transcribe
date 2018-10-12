@@ -1164,22 +1164,7 @@ function wp_dropdown_languages( $args = array() ) {
 	return $output;
 }
 
-/**
- * Checks if current locale is RTL.
- *
- * @since 3.0.0
- *
- * @global WP_Locale $wp_locale
- *
- * @return bool Whether locale is RTL.
- */
-function is_rtl() {
-	global $wp_locale;
-	if ( ! ( $wp_locale instanceof WP_Locale ) ) {
-		return false;
-	}
-	return $wp_locale->is_rtl();
-}
+// refactored. function is_rtl() {}
 
 /**
  * Switches the translations according to the given locale.

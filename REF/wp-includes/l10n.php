@@ -264,3 +264,22 @@ function get_translations_for_domain( $domain )
 // @NOW 009 -> wp-includes/l10n.php
 	}
 }
+
+/**
+ * Checks if current locale is RTL.
+ *
+ * @since  3.0.0
+ * @global WP_Locale $wp_locale
+ *
+ * @return bool Whether locale is RTL.
+ */
+function is_rtl()
+{
+	global $wp_locale;
+
+	if ( ! ( $wp_locale instanceof WP_Locale ) ) {
+		return FALSE;
+	}
+
+	return $wp_locale->is_rtl();
+}

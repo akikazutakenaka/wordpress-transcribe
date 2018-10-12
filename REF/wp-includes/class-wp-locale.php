@@ -139,4 +139,6 @@ class WP_Locale
 		$this->weekday[0] = __( 'Sunday' );
 // @NOW 007 -> wp-includes/l10n.php
 	}
+
+// @NOW 027
 }

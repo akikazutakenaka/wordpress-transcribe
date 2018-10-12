@@ -419,7 +419,12 @@ function dead_db()
 	// Otherwise, be terse.
 	status_header( 500 );
 	nocache_headers();
-// @NOW 026
+	header( 'Content-Type: text/html; charset=utf-8' );
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"<?php if ( is_rtl() ) echo ' dir="rtl"'; ?>>
+<?php
+// @NOW 026 -> wp-includes/class-wp-locale.php
 }
 
 /**
