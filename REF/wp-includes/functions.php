@@ -426,8 +426,13 @@ function dead_db()
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php _e( 'Database Error' ); ?></title>
+</head>
+<body>
+	<h1><?php _e( 'Error establishing a database connection' ); ?></h1>
+</body>
+</html>
 <?php
-// @NOW 026
+	die();
 }
 
 /**

@@ -1630,7 +1630,7 @@ class wpdb
 
 		if ( empty( $this->dbh ) || 2006 == $mysql_errno ) {
 			if ( $this->check_connection() ) {
-// @NOW 025 -> wp-includes/functions.php
+// @NOW 025
 			}
 		}
 	}
