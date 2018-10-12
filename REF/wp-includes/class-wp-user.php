@@ -141,7 +141,7 @@ class WP_User
 		$this->data = $data;
 		$this->ID = ( int ) $data->ID;
 		$this->for_site( $site_id );
-// @NOW 016 -> wp-includes/class-wp-user.php
+// @NOW 016
 	}
 
 	/**
@@ -175,8 +175,16 @@ class WP_User
 
 		foreach ( ( array ) $this->roles as $role ) {
 			$the_role = $wp_roles->get_role( $role );
-// @NOW 017
+			$this->allcaps = array_merge( ( array ) $this->allcaps, ( array ) $the_role->capabilities );
 		}
+
+		$this->allcaps = array_merge( ( array ) $this->allcaps, ( array ) $this->caps );
+
+		if ( $switch_site ) {
+			restore_current_blog();
+		}
+
+		return $this->allcaps;
 	}
 
 	/**
