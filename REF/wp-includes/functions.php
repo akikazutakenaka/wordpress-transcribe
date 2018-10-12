@@ -239,6 +239,22 @@ function status_header( $code, $description = '' )
 	@header( $status_header, TRUE, $code );
 }
 
+// @NOW 028
+
+/**
+ * Set the headers to prevent caching for the different browsers.
+ *
+ * Different browsers support different nocache headers, so several headers must be sent so that all of them get the point that no caching should occur.
+ *
+ * @since 2.0.0
+ * @see   wp_get_nocache_headers()
+ */
+function nocache_headers()
+{
+	$headers = wp_get_nocache_headers();
+// @NOW 027 -> wp-includes/functions.php
+}
+
 /**
  * Kill WordPress execution and display HTML message with error message.
  *
@@ -350,7 +366,8 @@ function dead_db()
 
 	// Otherwise, be terse.
 	status_header( 500 );
-// @NOW 026
+	nocache_headers();
+// @NOW 026 -> wp-includes/functions.php
 }
 
 /**
