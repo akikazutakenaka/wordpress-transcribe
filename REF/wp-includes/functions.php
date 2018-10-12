@@ -192,6 +192,8 @@ function wp_die( $message = '', $title = '', $args = [] )
 	call_user_func( $function, $message, $title, $args );
 }
 
+// @NOW 026
+
 /**
  * Convert a value to non-negative integer.
  *
