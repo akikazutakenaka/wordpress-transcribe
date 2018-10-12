@@ -123,8 +123,21 @@ class WP_User
 
 		if ( $id instanceof WP_User ) {
 			$this->init( $id->data, $site_id );
-// @NOW 015
+			return;
+		} elseif ( is_object( $id ) ) {
+			$this->init( $id, $site_id );
+			return;
 		}
+
+		if ( ! empty( $id ) && ! is_numeric( $id ) ) {
+			$name = $id;
+			$id = 0;
+		}
+
+		$data = $id
+			? self::get_data_by( 'id', $id )
+			: self::get_data_by( 'login', $name );
+// @NOW 015 -> wp-includes/class-wp-user.php
 	}
 
 	/**
@@ -141,6 +154,68 @@ class WP_User
 		$this->data = $data;
 		$this->ID = ( int ) $data->ID;
 		$this->for_site( $site_id );
+	}
+
+	/**
+	 * Return only the main user fields.
+	 *
+	 * @since  3.3.0
+	 * @since  4.4.0 Added 'ID' as an alias of 'id' for the `$field` parameter.
+	 * @static
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  string       $field The field to query against: 'id', 'ID', 'slug', 'email' or 'login'.
+	 * @param  string|int   $value The field value.
+	 * @return object|false Raw user object.
+	 */
+	public static function get_data_by( $field, $value )
+	{
+		global $wpdb;
+
+		// 'ID' is an alias of 'id'.
+		if ( 'ID' === $field ) {
+			$field = 'id';
+		}
+
+		if ( 'id' == $field ) {
+			// Make sure the value is numeric to avoid casting objects, for example, to int 1.
+			if ( ! is_numeric( $value ) ) {
+				return FALSE;
+			}
+
+			$value = intval( $value );
+
+			if ( $value < 1 ) {
+				return FALSE;
+			}
+		} else {
+			$value = trim( $value );
+		}
+
+		if ( ! $value ) {
+			return FALSE;
+		}
+
+		switch ( $field ) {
+			case 'id':
+				$user_id = $value;
+				$db_field = 'ID';
+				break;
+
+			case 'slug':
+				$user_id = wp_cache_get( $value, 'userslugs' );
+				$db_field = 'user_nicename';
+				break;
+
+			case 'email':
+				$user_id = wp_cache_get( $value, 'useremail' );
+				$db_field = 'user_email';
+				break;
+
+			case 'login':
+				$value = sanitize_user( $value );
+// @NOW 016 -> wp-includes/formatting.php
+		}
 	}
 
 	/**

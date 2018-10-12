@@ -7,6 +7,8 @@
  * @package WordPress
  */
 
+// @NOW 017
+
 /**
  * Sanitizes a string key.
  *
