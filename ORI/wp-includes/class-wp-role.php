@@ -13,21 +13,8 @@
  * @since 2.0.0
  */
 class WP_Role {
-	/**
-	 * Role name.
-	 *
-	 * @since 2.0.0
-	 * @var string
-	 */
-	public $name;
-
-	/**
-	 * List of capabilities the role contains.
-	 *
-	 * @since 2.0.0
-	 * @var array
-	 */
-	public $capabilities;
+	// refactored. public $name;
+	// refactored. public $capabilities;
 
 	/**
 	 * Constructor - Set up object properties.
