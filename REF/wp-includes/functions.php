@@ -287,7 +287,24 @@ function wp_get_nocache_headers()
 function nocache_headers()
 {
 	$headers = wp_get_nocache_headers();
-// @NOW 027
+	unset( $headers['Last-Modified'] );
+
+	// In PHP 5.3+, make sure we are not sending a Last-Modified header.
+	if ( function_exists( 'header_remove' ) ) {
+		@header_remove( 'Last-Modified' );
+	} else {
+		// In PHP 5.2, send an empty Last-Modified header, but only as a last resort to override a header already sent. #WP23021
+		foreach ( headers_list() as $header ) {
+			if ( 0 === stripos( $header, 'Last-Modified' ) ) {
+				$headers['Last-Modified'] = '';
+				break;
+			}
+		}
+	}
+
+	foreach ( $headers as $name => $field_value ) {
+		@header( "{$name}: {$field_value}" );
+	}
 }
 
 /**
@@ -402,7 +419,7 @@ function dead_db()
 	// Otherwise, be terse.
 	status_header( 500 );
 	nocache_headers();
-// @NOW 026 -> wp-includes/functions.php
+// @NOW 026
 }
 
 /**
