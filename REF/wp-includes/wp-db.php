@@ -1630,9 +1630,65 @@ class wpdb
 
 		if ( empty( $this->dbh ) || 2006 == $mysql_errno ) {
 			if ( $this->check_connection() ) {
-// @NOW 025
+				$this->_do_query( $query );
+			} else {
+				$this->insert_id = 0;
+				return FALSE;
 			}
 		}
+
+		// If there is an error then take note of it.
+		$this->last_error = $this->use_mysqli
+			? ( ( $this->dbh instanceof mysqli )
+				? mysqli_error( $this->dbh )
+				: __( 'Unable to retrieve the error message from MySQL' ) )
+			: ( is_resource( $this->dbh )
+				? mysql_error( $this->dbh )
+				: __( 'Unable to retrieve the error message from MySQL' ) );
+
+		if ( $this->last_error ) {
+			// Clear insert_id on a subsequent failed insert.
+			if ( $this->insert_id && preg_match( '/^\s*(insert|replace)\s/i', $query ) ) {
+				$this->insert_id = 0;
+			}
+
+			$this->print_error();
+			return FALSE;
+		}
+
+		if ( preg_match( '/^\s*(create|alter|truncate|drop)\s/i', $query ) ) {
+			$return_val = $this->result;
+		} elseif ( preg_match( '/^\s*(insert|delete|update|replace)\s/i', $query ) ) {
+			$this->rows_affected = $this->use_mysqli ? mysqli_affected_rows( $this->dbh ) : mysql_affected_rows( $this->dbh );
+
+			// Take note of the insert_id.
+			if ( preg_match( '/^\s*(insert|replace)\s/i', $query ) ) {
+				$this->insert_id = $this->use_mysqli ? mysqli_insert_id( $this->dbh ) : mysql_insert_id( $this->dbh );
+			}
+
+			// Return number of rows affected.
+			$return_val = $this->rows_affected;
+		} else {
+			$num_rows = 0;
+
+			if ( $this->use_mysqli && $this->result instanceof mysqli_result ) {
+				while ( $row = mysqli_fetch_object( $this->result ) ) {
+					$this->last_result[ $num_rows ] = $row;
+					$num_rows++;
+				}
+			} elseif ( is_resource( $this->result ) ) {
+				while ( $row = mysql_fetch_object( $this->result ) ) {
+					$this->last_result[ $num_rows ] = $row;
+					$num_rows++;
+				}
+			}
+
+			// Log number of rows the query returned and return number of rows selected.
+			$this->num_rows = $num_rows;
+			$return_val     = $num_rows;
+		}
+
+		return $return_val;
 	}
 
 	/**
@@ -1796,7 +1852,7 @@ class wpdb
 
 		if ( $query ) {
 			$this->query( $query );
-// @NOW 024 -> wp-includes/wp-db.php
+// @NOW 024
 		}
 	}
 
