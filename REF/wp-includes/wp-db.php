@@ -1516,7 +1516,38 @@ class wpdb
 		// If we're writing to the database, make sure the query will write safely.
 		if ( $this->check_current_query && ! $this->check_ascii( $query ) ) {
 			$stripped_query = $this->strip_invalid_text_from_query( $query );
-// @NOW 025
+
+			// strip_invalid_text_from_query() can perform queries, so we need to flush again, just to make sure everything is clear.
+			$this->flush();
+
+			if ( $stripped_query !== $query ) {
+				$this->insert_id = 0;
+				return FALSE;
+			}
+		}
+
+		$this->check_current_query = TRUE;
+
+		// Keep track of the last query for debug.
+		$this->last_query = $query;
+
+		$this->_do_query( $query );
+// @NOW 025 -> wp-includes/wp-db.php
+	}
+
+	/**
+	 * Internal function to perform the mysql_query() call.
+	 *
+	 * @since 3.9.0
+	 * @see   wpdb::query()
+	 *
+	 * @param string $query The query to run.
+	 */
+	private function _do_query( $query )
+	{
+		if ( defined( 'SAVEQUERIES' ) && SAVEQUERIES ) {
+			$this->timer_start();
+// @NOW 026 -> wp-includes/wp-db.php
 		}
 	}
 
@@ -2123,6 +2154,8 @@ class wpdb
 
 		return FALSE;
 	}
+
+// @NOW 027
 
 	/**
 	 * Wraps errors in a nice header and footer and dies.
