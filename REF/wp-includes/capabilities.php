@@ -20,6 +20,6 @@ function wp_roles()
 
 	if ( ! isset( $wp_roles ) ) {
 		$wp_roles = new WP_Roles();
-// @NOW 018 -> wp-includes/class-wp-roles.php
+// @NOW 018
 	}
 }

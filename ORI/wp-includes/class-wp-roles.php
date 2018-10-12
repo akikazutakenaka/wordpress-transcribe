@@ -205,33 +205,7 @@ class WP_Roles {
 		return isset( $this->role_names[$role] );
 	}
 
-	/**
-	 * Initializes all of the available roles.
-	 *
-	 * @since 4.9.0
-	 */
-	public function init_roles() {
-		if ( empty( $this->roles ) ) {
-			return;
-		}
-
-		$this->role_objects = array();
-		$this->role_names =  array();
-		foreach ( array_keys( $this->roles ) as $role ) {
-			$this->role_objects[ $role ] = new WP_Role( $role, $this->roles[ $role ]['capabilities'] );
-			$this->role_names[ $role ] = $this->roles[ $role ]['name'];
-		}
-
-		/**
-		 * After the roles have been initialized, allow plugins to add their own roles.
-		 *
-		 * @since 4.7.0
-		 *
-		 * @param WP_Roles $this A reference to the WP_Roles object.
-		 */
-		do_action( 'wp_roles_init', $this );
-	}
-
+	// refactored. public function init_roles() {}
 	// refactored. public function for_site( $site_id = null ) {}
 
 	/**

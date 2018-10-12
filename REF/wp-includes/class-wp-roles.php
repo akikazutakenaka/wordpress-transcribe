@@ -111,8 +111,17 @@ class WP_Roles
 
 		foreach ( array_keys( $this->roles ) as $role ) {
 			$this->role_objects[ $role ] = new WP_Role( $role, $this->roles[ $role ]['capabilities'] );
-// @NOW 019
+			$this->role_names[ $role ] = $this->roles[ $role ]['name'];
 		}
+
+		/**
+		 * After the roles have been initialized, allow plugins to add their own roles.
+		 *
+		 * @since 4.7.0
+		 *
+		 * @param WP_Roles $this A reference to the WP_Roles object.
+		 */
+		do_action( 'wp_roles_init', $this );
 	}
 
 	/**
