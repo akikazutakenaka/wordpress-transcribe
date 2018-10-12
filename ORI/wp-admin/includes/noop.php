@@ -33,11 +33,7 @@ function get_option() {}
  */
 function is_lighttpd_before_150() {}
 
-/**
- * @ignore
- */
-function add_action() {}
-
+// refactored. function add_action() {}
 // refactored. function did_action() {}
 
 /**
