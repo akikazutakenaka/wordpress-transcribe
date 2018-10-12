@@ -220,7 +220,23 @@ function status_header( $code, $description = '' )
 	}
 
 	$protocol = wp_get_server_protocol();
-// @NOW 027
+	$status_header = "$protocol $code $description";
+
+	if ( function_exists( 'apply_filters' ) ) {
+		/**
+		 * Filters an HTTP status header.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param string $status_header HTTP status header.
+		 * @param int    $code          HTTP status code.
+		 * @param string $description   Description for the status code.
+		 * @param string $protocol      Server protocol.
+		 */
+		$status_header = apply_filters( 'status_header', $status_header, $code, $description, $protocol );
+	}
+
+	@header( $status_header, TRUE, $code );
 }
 
 /**
@@ -334,7 +350,7 @@ function dead_db()
 
 	// Otherwise, be terse.
 	status_header( 500 );
-// @NOW 026 -> wp-includes/functions.php
+// @NOW 026
 }
 
 /**

@@ -886,45 +886,7 @@ function wp( $query_vars = '' ) {
 }
 
 // refactored. function get_status_header_desc( $code ) {}
-
-/**
- * Set HTTP status header.
- *
- * @since 2.0.0
- * @since 4.4.0 Added the `$description` parameter.
- *
- * @see get_status_header_desc()
- *
- * @param int    $code        HTTP status code.
- * @param string $description Optional. A custom description for the HTTP status.
- */
-function status_header( $code, $description = '' ) {
-	if ( ! $description ) {
-		$description = get_status_header_desc( $code );
-	}
-
-	if ( empty( $description ) ) {
-		return;
-	}
-
-	$protocol = wp_get_server_protocol();
-	$status_header = "$protocol $code $description";
-	if ( function_exists( 'apply_filters' ) )
-
-		/**
-		 * Filters an HTTP status header.
-		 *
-		 * @since 2.2.0
-		 *
-		 * @param string $status_header HTTP status header.
-		 * @param int    $code          HTTP status code.
-		 * @param string $description   Description for the status code.
-		 * @param string $protocol      Server protocol.
-		 */
-		$status_header = apply_filters( 'status_header', $status_header, $code, $description, $protocol );
-
-	@header( $status_header, true, $code );
-}
+// refactored. function status_header( $code, $description = '' ) {}
 
 /**
  * Get the header information to prevent caching.
