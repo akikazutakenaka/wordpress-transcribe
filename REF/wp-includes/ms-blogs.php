@@ -40,7 +40,18 @@ function get_blog_option( $id, $option, $default = FALSE )
 	switch_to_blog( $id );
 	$value = get_option( $option, $default );
 	restore_current_blog();
-// @NOW 021
+
+	/**
+	 * Filters a blog option value.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the blog option name.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param string $value The option value.
+	 * @param int    $id    Blog ID.
+	 */
+	return apply_filters( "blog_option_{$option}", $value, $id );
 }
 
 /**

@@ -645,48 +645,7 @@ function get_sites( $args = array() ) {
 	return $query->query( $args );
 }
 
-/**
- * Retrieve option value for a given blog id based on name of option.
- *
- * If the option does not exist or does not have a value, then the return value
- * will be false. This is useful to check whether you need to install an option
- * and is commonly used during installation of plugin options and to test
- * whether upgrading is required.
- *
- * If the option was serialized then it will be unserialized when it is returned.
- *
- * @since MU (3.0.0)
- *
- * @param int    $id      A blog ID. Can be null to refer to the current blog.
- * @param string $option  Name of option to retrieve. Expected to not be SQL-escaped.
- * @param mixed  $default Optional. Default value to return if the option does not exist.
- * @return mixed Value set for the option.
- */
-function get_blog_option( $id, $option, $default = false ) {
-	$id = (int) $id;
-
-	if ( empty( $id ) )
-		$id = get_current_blog_id();
-
-	if ( get_current_blog_id() == $id )
-		return get_option( $option, $default );
-
-	switch_to_blog( $id );
-	$value = get_option( $option, $default );
-	restore_current_blog();
-
-	/**
-	 * Filters a blog option value.
-	 *
-	 * The dynamic portion of the hook name, `$option`, refers to the blog option name.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @param string  $value The option value.
-	 * @param int     $id    Blog ID.
-	 */
-	return apply_filters( "blog_option_{$option}", $value, $id );
-}
+// refactored. function get_blog_option( $id, $option, $default = false ) {}
 
 /**
  * Add a new option for a given blog id.
