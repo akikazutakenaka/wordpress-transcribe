@@ -71,6 +71,22 @@ function __( $text, $domain = 'default' )
 }
 
 /**
+ * Display translated text.
+ *
+ * @since 1.2.0
+ *
+ * @param string $text   Text to translate.
+ * @param string $domain Optional.
+ *                       Text domain.
+ *                       Unique identifier for retrieving translated strings.
+ *                       Default 'default'.
+ */
+function _e( $text, $domain = 'default' )
+{
+	echo translate( $text, $domain );
+}
+
+/**
  * Load a .mo file into the text domain $domain.
  *
  * If the text domain already exists, the translations will be merged.

@@ -221,18 +221,7 @@ function esc_html__( $text, $domain = 'default' ) {
 	return esc_html( translate( $text, $domain ) );
 }
 
-/**
- * Display translated text.
- *
- * @since 1.2.0
- *
- * @param string $text   Text to translate.
- * @param string $domain Optional. Text domain. Unique identifier for retrieving translated strings.
- *                       Default 'default'.
- */
-function _e( $text, $domain = 'default' ) {
-	echo translate( $text, $domain );
-}
+// refactored. function _e( $text, $domain = 'default' ) {}
 
 /**
  * Display translated text that has been escaped for safe use in an attribute.
