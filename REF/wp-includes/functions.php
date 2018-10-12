@@ -113,6 +113,8 @@ function is_serialized( $data, $strict = TRUE )
 	return FALSE;
 }
 
+// @NOW 027
+
 /**
  * Kill WordPress execution and display HTML message with error message.
  *
@@ -192,7 +194,40 @@ function wp_die( $message = '', $title = '', $args = [] )
 	call_user_func( $function, $message, $title, $args );
 }
 
-// @NOW 026
+/**
+ * Load custom DB error or display WordPress DB error.
+ *
+ * If a file exists in the wp-content directory named db-error.php, then it will be loaded instead of displaying the WordPress DB error.
+ * If it is not found, then the WordPress DB error will be displayed instead.
+ *
+ * The WordPress DB error sets the HTTP status header to 500 to try to prevent search engines from caching the message.
+ * Custom DB messages should do the same.
+ *
+ * This function was backported to WordPress 2.3.2, but originally was added in WordPress 2.5.0.
+ *
+ * @since  2.3.2
+ * @global wpdb $wpdb WordPress database abstraction object.
+ */
+function dead_db()
+{
+	global $wpdb;
+	wp_load_translations_early();
+
+	// Load custom DB error template, if present.
+	if ( file_exists( WP_CONTENT_DIR . '/db-error.php' ) ) {
+		require_once( WP_CONTENT_DIR . '/db-error.php' );
+		die();
+	}
+
+	// If installing or in the admin, provide the verbose message.
+	if ( wp_installing() || defined( 'WP_ADMIN' ) ) {
+		wp_die( $wpdb->error );
+	}
+
+	// Otherwise, be terse.
+	status_header( 500 );
+// @NOW 026 -> wp-includes/functions.php
+}
 
 /**
  * Convert a value to non-negative integer.
