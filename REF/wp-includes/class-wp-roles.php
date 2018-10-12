@@ -95,6 +95,8 @@ class WP_Roles
 		$this->for_site( $site_id );
 	}
 
+// @NOW 019
+
 	/**
 	 * Sets the site to operate on.
 	 * Defaults to the current site.
@@ -117,7 +119,7 @@ class WP_Roles
 			return;
 
 		$this->roles = $this->get_roles_data();
-// @NOW 019
+		$this->init_roles();
 	}
 
 	/**
