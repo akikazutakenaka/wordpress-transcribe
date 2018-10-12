@@ -95,7 +95,25 @@ class WP_Roles
 		$this->for_site( $site_id );
 	}
 
-// @NOW 019
+	/**
+	 * Initializes all of the available roles.
+	 *
+	 * @since 4.9.0
+	 */
+	public function init_roles()
+	{
+		if ( empty( $this->roles ) ) {
+			return;
+		}
+
+		$this->role_objects = [];
+		$this->role_names   = [];
+
+		foreach ( array_keys( $this->roles ) as $role ) {
+			$this->role_objects[ $role ] = new WP_Role( $role, $this->roles[ $role ]['capabilities'] );
+// @NOW 019 -> wp-includes/class-wp-role.php
+		}
+	}
 
 	/**
 	 * Sets the site to operate on.
