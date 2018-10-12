@@ -272,32 +272,5 @@ class WP_Roles {
 		return $this->site_id;
 	}
 
-	/**
-	 * Gets the available roles data.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @global array $wp_user_roles Used to set the 'roles' property value.
-	 *
-	 * @return array Roles array.
-	 */
-	protected function get_roles_data() {
-		global $wp_user_roles;
-
-		if ( ! empty( $wp_user_roles ) ) {
-			return $wp_user_roles;
-		}
-
-		if ( is_multisite() && $this->site_id != get_current_blog_id() ) {
-			remove_action( 'switch_blog', 'wp_switch_roles_and_user', 1 );
-
-			$roles = get_blog_option( $this->site_id, $this->role_key, array() );
-
-			add_action( 'switch_blog', 'wp_switch_roles_and_user', 1, 2 );
-
-			return $roles;
-		}
-
-		return get_option( $this->role_key, array() );
-	}
+	// refactored. protected function get_roles_data() {}
 }

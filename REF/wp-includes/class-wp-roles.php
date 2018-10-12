@@ -117,7 +117,7 @@ class WP_Roles
 			return;
 
 		$this->roles = $this->get_roles_data();
-// @NOW 019 -> wp-includes/class-wp-roles.php
+// @NOW 019
 	}
 
 	/**
@@ -140,7 +140,9 @@ class WP_Roles
 			remove_action( 'switch_blog', 'wp_switch_roles_and_user', 1 );
 			$roles = get_blog_option( $this->site_id, $this->role_key, [] );
 			add_action( 'switch_blog', 'wp_switch_roles_and_user', 1, 2 );
-// @NOW 020
+			return $roles;
 		}
+
+		return get_option( $this->role_key, [] );
 	}
 }
