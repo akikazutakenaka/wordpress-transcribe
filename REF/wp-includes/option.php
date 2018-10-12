@@ -116,7 +116,7 @@ FROM $wpdb->options
 WHERE autoload = 'yes'
 EOQ
 			) ) {
-// @NOW 023 -> wp-includes/wp-db.php
+// @NOW 023
 		}
 	}
 }

@@ -1852,8 +1852,44 @@ class wpdb
 
 		if ( $query ) {
 			$this->query( $query );
-// @NOW 024
+		} else {
+			return NULL;
 		}
+
+		$new_array = [];
+
+		if ( $output == OBJECT ) {
+			// Return an integer-keyed array of row objects.
+			return $this->last_result;
+		} elseif ( $output == OBJECT_K ) {
+			// Return an array of row objects with keys from column 1 (Duplicates are discarded).
+			foreach ( $this->last_result as $row ) {
+				$var_by_ref = get_object_vars( $row );
+				$key = array_shift( $var_by_ref );
+
+				if ( ! isset( $new_array[ $key ] ) ) {
+					$new_array[ $key ] = $row;
+				}
+			}
+
+			return $new_array;
+		} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
+			// Return an integer-keyed array of...
+			if ( $this->last_result ) {
+				foreach ( ( array ) $this->last_result as $row ) {
+					$new_array[] = ( $output == ARRAY_N )
+						? array_values( get_object_vars( $row ) ) // ...integer-keyed row arrays
+						: get_object_vars( $row ); // ...column name-keyed row arrays
+				}
+			}
+
+			return $new_array;
+		} elseif ( strtoupper( $output ) === OBJECT ) {
+			// Back compat for OBJECT being previously case insensitive.
+			return $this->last_result;
+		}
+
+		return NULL;
 	}
 
 	/**
