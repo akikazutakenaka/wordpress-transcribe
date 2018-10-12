@@ -1547,7 +1547,7 @@ class wpdb
 	{
 		if ( defined( 'SAVEQUERIES' ) && SAVEQUERIES ) {
 			$this->timer_start();
-// @NOW 026 -> wp-includes/wp-db.php
+// @NOW 026
 		}
 	}
 
@@ -2155,7 +2155,18 @@ class wpdb
 		return FALSE;
 	}
 
-// @NOW 027
+	/**
+	 * Starts the timer, for debugging purposes.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return true
+	 */
+	public function timer_start()
+	{
+		$this->timer_start = microtime( TRUE );
+		return TRUE;
+	}
 
 	/**
 	 * Wraps errors in a nice header and footer and dies.

@@ -1358,17 +1358,7 @@ class wpdb {
 		}
 	}
 
-	/**
-	 * Starts the timer, for debugging purposes.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return true
-	 */
-	public function timer_start() {
-		$this->time_start = microtime( true );
-		return true;
-	}
+	// refactored. public function timer_start() {}
 
 	/**
 	 * Stops the debugging timer.
