@@ -164,7 +164,7 @@ class WP_User
 		}
 
 		$wp_roles = wp_roles();
-// @NOW 017 -> wp-includes/capabilities.php
+// @NOW 017
 	}
 
 	/**
