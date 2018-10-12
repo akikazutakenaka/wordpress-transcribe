@@ -115,10 +115,39 @@ EOQ
 
 					$notoptions[ $option ] = TRUE;
 					wp_cache_set( 'notoptions', $notoptions, 'options' );
-// @NOW 022
+
+					// This filter is documented in wp-includes/option.php
+					return apply_filters( "default_option_{$option}", $default, $option, $passed_default );
 				}
 			}
 		}
+	} else {
+		$suppress = $wpdb->suppress_errors();
+		$row = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT option_value
+FROM $wpdb->options
+WHERE option_name = %s
+LIMIT 1
+EOQ
+			, $option ) );
+		$wpdb->suppress_errors( $suppress );
+
+		if ( is_object( $row ) ) {
+			$value = $row->option_value;
+		} else {
+			// This filter is documented in wp-includes/option.php
+			return apply_filters( "default_option_{$option}", $default, $option, $passed_default );
+		}
+	}
+
+	// If home is not set use siteurl.
+	if ( 'home' == $option && '' == $value ) {
+		return get_option( 'siteurl' );
+	}
+
+	if ( in_array( $option, ['siteurl', 'home', 'category_base', 'tag_base'] ) ) {
+		$value = untrailingslashit( $value );
+// @NOW 022
 	}
 }
 
