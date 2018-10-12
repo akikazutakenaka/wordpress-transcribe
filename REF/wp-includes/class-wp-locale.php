@@ -140,5 +140,15 @@ class WP_Locale
 // @NOW 007 -> wp-includes/l10n.php
 	}
 
-// @NOW 027
+	/**
+	 * Checks if current locale is RTL.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return bool Whether locale is RTL.
+	 */
+	public function is_rtl()
+	{
+		return 'rtl' == $this->text_direction;
+	}
 }

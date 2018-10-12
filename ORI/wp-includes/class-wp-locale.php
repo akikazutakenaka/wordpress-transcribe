@@ -286,15 +286,7 @@ class WP_Locale {
 		$GLOBALS['month_abbrev']    = $this->month_abbrev;
 	}
 
-	/**
-	 * Checks if current locale is RTL.
-	 *
-	 * @since 3.0.0
-	 * @return bool Whether locale is RTL.
-	 */
-	public function is_rtl() {
-		return 'rtl' == $this->text_direction;
-	}
+	// refactored. public function is_rtl() {}
 
 	/**
 	 * Register date/time format strings for general POT.

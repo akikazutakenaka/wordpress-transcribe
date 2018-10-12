@@ -424,7 +424,7 @@ function dead_db()
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"<?php if ( is_rtl() ) echo ' dir="rtl"'; ?>>
 <?php
-// @NOW 026 -> wp-includes/class-wp-locale.php
+// @NOW 026
 }
 
 /**
