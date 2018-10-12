@@ -1532,7 +1532,7 @@ class wpdb
 		$this->last_query = $query;
 
 		$this->_do_query( $query );
-// @NOW 025 -> wp-includes/wp-db.php
+// @NOW 025
 	}
 
 	/**
@@ -1547,7 +1547,18 @@ class wpdb
 	{
 		if ( defined( 'SAVEQUERIES' ) && SAVEQUERIES ) {
 			$this->timer_start();
-// @NOW 026
+		}
+
+		if ( ! empty( $this->dbh ) && $this->use_mysqli ) {
+			$this->result = mysqli_query( $this->dbh, $query );
+		} elseif ( ! empty( $this->dbh ) ) {
+			$this->result = mysql_query( $query, $this->dbh );
+		}
+
+		$this->num_queries++;
+
+		if ( defined( 'SAVEQUERIES' ) && SAVEQUERIES ) {
+			$this->queries[] = [$query, $this->timer_stop(), $this->get_caller()];
 		}
 	}
 
@@ -2166,6 +2177,18 @@ class wpdb
 	{
 		$this->timer_start = microtime( TRUE );
 		return TRUE;
+	}
+
+	/**
+	 * Stops the debugging timer.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return float Total time spent on the query, in seconds.
+	 */
+	public function timer_stop()
+	{
+		return ( microtime( TRUE ) - $this->timer_start );
 	}
 
 	/**

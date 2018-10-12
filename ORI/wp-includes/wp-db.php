@@ -582,32 +582,7 @@ class wpdb {
 		return $return_val;
 	}
 
-	/**
-	 * Internal function to perform the mysql_query() call.
-	 *
-	 * @since 3.9.0
-	 *
-	 * @see wpdb::query()
-	 *
-	 * @param string $query The query to run.
-	 */
-	private function _do_query( $query ) {
-		if ( defined( 'SAVEQUERIES' ) && SAVEQUERIES ) {
-			$this->timer_start();
-		}
-
-		if ( ! empty( $this->dbh ) && $this->use_mysqli ) {
-			$this->result = mysqli_query( $this->dbh, $query );
-		} elseif ( ! empty( $this->dbh ) ) {
-			$this->result = mysql_query( $query, $this->dbh );
-		}
-		$this->num_queries++;
-
-		if ( defined( 'SAVEQUERIES' ) && SAVEQUERIES ) {
-			$this->queries[] = array( $query, $this->timer_stop(), $this->get_caller() );
-		}
-	}
-
+	// refactored. private function _do_query( $query ) {}
 	// refactored. public function placeholder_escape() {}
 	// refactored. public function add_placeholder_escape( $query ) {}
 	// refactored. public function remove_placeholder_escape( $query ) {}
@@ -1359,18 +1334,7 @@ class wpdb {
 	}
 
 	// refactored. public function timer_start() {}
-
-	/**
-	 * Stops the debugging timer.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return float Total time spent on the query, in seconds
-	 */
-	public function timer_stop() {
-		return ( microtime( true ) - $this->time_start );
-	}
-
+	// refactored. public function timer_stop() {}
 	// refactored. public function bail( $message, $error_code = '500' ) {}
 
 	/**
