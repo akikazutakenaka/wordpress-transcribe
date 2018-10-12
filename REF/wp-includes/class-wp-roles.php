@@ -96,6 +96,19 @@ class WP_Roles
 	}
 
 	/**
+	 * Whether role name is currently in the list of available roles.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param  string $role Role name to look up.
+	 * @return bool
+	 */
+	public function is_role( $role )
+	{
+		return isset( $this->role_names[ $role ] );
+	}
+
+	/**
 	 * Initializes all of the available roles.
 	 *
 	 * @since 4.9.0

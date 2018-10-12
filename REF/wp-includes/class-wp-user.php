@@ -164,7 +164,12 @@ class WP_User
 		}
 
 		$wp_roles = wp_roles();
+
+		// Filter out caps that are not role names and assign to $this->roles.
+		if ( is_array( $this->caps ) ) {
+			$this->roles = array_filter( array_keys( $this->caps ), [$wp_roles, 'is_role'] );
 // @NOW 017
+		}
 	}
 
 	/**
