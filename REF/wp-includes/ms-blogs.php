@@ -35,8 +35,12 @@ function get_blog_option( $id, $option, $default = FALSE )
 
 	if ( get_current_blog_id() == $id ) {
 		return get_option( $option, $default );
-// @NOW 021
 	}
+
+	switch_to_blog( $id );
+	$value = get_option( $option, $default );
+	restore_current_blog();
+// @NOW 021
 }
 
 /**
@@ -118,6 +122,72 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 	do_action( 'switch_blog', $new_blog, $prev_blog_id );
 
 	$GLOBALS['switched'] = TRUE;
+	return TRUE;
+}
+
+/**
+ * Restore the current blog, after calling switch_to_blog().
+ *
+ * @see    switch_to_blog()
+ * @since  MU (3.0.0)
+ * @global wpdb            $wpdb
+ * @global array           $_wp_switched_stack
+ * @global int             $blog_id
+ * @global bool            $switched
+ * @global string          $table_prefix
+ * @global WP_Object_Cache $wp_object_cache
+ *
+ * @return bool True on success, false if we're already on the current blog.
+ */
+function restore_current_blog()
+{
+	global $wpdb;
+
+	if ( empty( $GLOBALS['_wp_switched_stack'] ) ) {
+		return FALSE;
+	}
+
+	$blog = array_pop( $GLOBALS['_wp_switched_stack'] );
+	$blog_id = get_current_blog_id();
+
+	if ( $blog_id == $blog ) {
+		// This filter is documented in wp-includes/ms-blogs.php
+		do_action( 'switch_blog', $blog, $blog );
+
+		// If we still have items in the switched stack, consider ourselves still 'switched'.
+		$GLOBALS['switched'] = ! empty( $GLOBALS['_wp_switched_stack'] );
+		return TRUE;
+	}
+
+	$wpdb->set_blog_id( $blog );
+	$prev_blog_id = $blog_id;
+	$GLOBALS['blog_id'] = $blog;
+	$GLOBALS['table_prefix'] = $wpdb->get_blog_prefix();
+
+	if ( function_exists( 'wp_cache_switch_to_blog' ) ) {
+		wp_cache_switch_to_blog( $blog );
+	} else {
+		global $wp_object_cache;
+		$global_groups = ( is_object( $wp_object_cache ) && isset( $wp_object_cache->global_groups ) ) ? $wp_object_cache->global_groups : FALSE;
+		wp_cache_init();
+
+		if ( function_exists( 'wp_cache_add_global_groups' ) ) {
+			if ( is_array( $global_groups ) ) {
+				wp_cache_add_global_groups( $global_groups );
+			} else {
+				wp_cache_add_global_groups( ['users', 'userlogins', 'usermeta', 'mser_meta', 'useremail', 'userslugs', 'site-transient', 'site-options', 'blog-lookup', 'blog-details', 'rss', 'global-posts', 'blog-id-cache', 'networks', 'sites', 'site-details'] );
+			}
+
+			wp_cache_add_non_persistent_groups( ['counts', 'plugins'] );
+		}
+	}
+
+	// This filter is documented in wp-includes/ms-blogs.php
+	do_action( 'switch_blog', $blog, $prev_blog_id );
+
+	// If we still have items in teh switched stack, consider ourselves still 'switched'.
+	$GLOBALS['switched'] = ! empty( $GLOBALS['_wp_switched_stack'] );
+
 	return TRUE;
 }
 
