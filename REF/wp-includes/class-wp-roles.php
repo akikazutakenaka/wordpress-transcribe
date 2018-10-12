@@ -111,7 +111,7 @@ class WP_Roles
 
 		foreach ( array_keys( $this->roles ) as $role ) {
 			$this->role_objects[ $role ] = new WP_Role( $role, $this->roles[ $role ]['capabilities'] );
-// @NOW 019 -> wp-includes/class-wp-role.php
+// @NOW 019
 		}
 	}
 

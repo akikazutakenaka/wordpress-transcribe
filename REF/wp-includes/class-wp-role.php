@@ -32,5 +32,19 @@ class WP_Role
 	 */
 	public $capabilities;
 
-// @NOW 020
+	/**
+	 * Constructor - Set up object properties.
+	 *
+	 * The list of capabilities, must have the key as the name of the capability and the value a boolean of whether it is granted to the role.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $role         Role name.
+	 * @param array  $capabilities List of capabilities.
+	 */
+	public function __construct( $role, $capabilities )
+	{
+		$this->name = $role;
+		$this->capabilities = $capabilities;
+	}
 }
