@@ -239,7 +239,42 @@ function status_header( $code, $description = '' )
 	@header( $status_header, TRUE, $code );
 }
 
-// @NOW 028
+/**
+ * Get the header information to prevent caching.
+ *
+ * The several different headers cover the different ways cache prevention is handled by different browsers.
+ *
+ * @since 2.8.0
+ *
+ * @return array The associative array of header names and field values.
+ */
+function wp_get_nocache_headers()
+{
+	$headers = [
+		'Expires'       => 'Wed, 11 Jan 1984 05:00:00 GMT',
+		'Cache-Control' => 'no-cache, must-revalidate, max-age=0'
+	];
+
+	if ( function_exists( 'apply_filters' ) ) {
+		/**
+		 * Filters the cache-controlling headers.
+		 *
+		 * @since 2.8.0
+		 * @see   wp_get_nocache_headers()
+		 *
+		 * @param array $headers {
+		 *     Header names and field values.
+		 *
+		 *     @type string $Expires       Expires header.
+		 *     @type string $Cache-Control Cache-Control header.
+		 * }
+		 */
+		$headers = ( array ) apply_filters( 'nocache_headers', $headers );
+	}
+
+	$headers['Last-Modified'] = FALSE;
+	return $headers;
+}
 
 /**
  * Set the headers to prevent caching for the different browsers.
@@ -252,7 +287,7 @@ function status_header( $code, $description = '' )
 function nocache_headers()
 {
 	$headers = wp_get_nocache_headers();
-// @NOW 027 -> wp-includes/functions.php
+// @NOW 027
 }
 
 /**
