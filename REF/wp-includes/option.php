@@ -88,7 +88,7 @@ function get_option( $option, $default = FALSE )
 		}
 
 		$alloptions = wp_load_alloptions();
-// @NOW 022 -> wp-includes/option.php
+// @NOW 022
 	}
 }
 
@@ -116,7 +116,39 @@ FROM $wpdb->options
 WHERE autoload = 'yes'
 EOQ
 			) ) {
-// @NOW 023
+			$alloptions_db = $wpdb->get_results( <<<EOQ
+SELECT option_name, option_value
+FROM $wpdb->options
+EOQ
+			);
+		}
+
+		$wpdb->suppress_errors( $suppress );
+		$alloptions = [];
+
+		foreach ( ( array ) $alloptions_db as $o ) {
+			$alloptions[ $o->option_name ] = $o->option_value;
+		}
+
+		if ( ! wp_installing() || ! is_multisite() ) {
+			/**
+			 * Filters all options before caching them.
+			 *
+			 * @since 4.9.0
+			 *
+			 * @param array $alloptions Array with all options.
+			 */
+			$alloptions = apply_filters( 'pre_cache_alloptions', $alloptions );
+			wp_cache_add( 'alloptions', $alloptions, 'options' );
 		}
 	}
+
+	/**
+	 * Filters all options after retrieving them.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param array $alloptions Array with all options.
+	 */
+	return apply_filters( 'alloptions', $alloptions );
 }

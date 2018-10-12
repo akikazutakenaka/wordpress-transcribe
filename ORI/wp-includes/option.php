@@ -174,58 +174,7 @@ function form_option( $option ) {
 	echo esc_attr( get_option( $option ) );
 }
 
-/**
- * Loads and caches all autoloaded options, if available or all options.
- *
- * @since 2.2.0
- *
- * @global wpdb $wpdb WordPress database abstraction object.
- *
- * @return array List of all options.
- */
-function wp_load_alloptions() {
-	global $wpdb;
-
-	if ( ! wp_installing() || ! is_multisite() ) {
-		$alloptions = wp_cache_get( 'alloptions', 'options' );
-	} else {
-		$alloptions = false;
-	}
-
-	if ( ! $alloptions ) {
-		$suppress = $wpdb->suppress_errors();
-		if ( ! $alloptions_db = $wpdb->get_results( "SELECT option_name, option_value FROM $wpdb->options WHERE autoload = 'yes'" ) ) {
-			$alloptions_db = $wpdb->get_results( "SELECT option_name, option_value FROM $wpdb->options" );
-		}
-		$wpdb->suppress_errors( $suppress );
-
-		$alloptions = array();
-		foreach ( (array) $alloptions_db as $o ) {
-			$alloptions[$o->option_name] = $o->option_value;
-		}
-
-		if ( ! wp_installing() || ! is_multisite() ) {
-			/**
-			 * Filters all options before caching them.
-			 *
-			 * @since 4.9.0
-			 *
-			 * @param array $alloptions Array with all options.
-			 */
-			$alloptions = apply_filters( 'pre_cache_alloptions', $alloptions );
-			wp_cache_add( 'alloptions', $alloptions, 'options' );
-		}
-	}
-
-	/**
-	 * Filters all options after retrieving them.
-	 *
-	 * @since 4.9.0
-	 *
-	 * @param array $alloptions Array with all options.
-	 */
-	return apply_filters( 'alloptions', $alloptions );
-}
+// refactored. function wp_load_alloptions() {}
 
 /**
  * Loads and caches certain often requested site options if is_multisite() and a persistent cache is not being used.
