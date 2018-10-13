@@ -4226,31 +4226,7 @@ function sanitize_option( $option, $value ) {
 }
 
 // refactored. function map_deep( $value, $callback ) {}
-
-/**
- * Parses a string into variables to be stored in an array.
- *
- * Uses {@link https://secure.php.net/parse_str parse_str()} and stripslashes if
- * {@link https://secure.php.net/magic_quotes magic_quotes_gpc} is on.
- *
- * @since 2.2.1
- *
- * @param string $string The string to be parsed.
- * @param array  $array  Variables will be stored in this array.
- */
-function wp_parse_str( $string, &$array ) {
-	parse_str( $string, $array );
-	if ( get_magic_quotes_gpc() )
-		$array = stripslashes_deep( $array );
-	/**
-	 * Filters the array of variables derived from a parsed string.
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param array $array The array populated with variables.
-	 */
-	$array = apply_filters( 'wp_parse_str', $array );
-}
+// refactored. function wp_parse_str( $string, &$array ) {}
 
 /**
  * Convert lone less than signs.

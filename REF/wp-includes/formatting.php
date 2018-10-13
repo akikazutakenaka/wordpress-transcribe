@@ -565,7 +565,7 @@ function map_deep( $value, $callback )
  * @since 2.2.1
  *
  * @param string $string The string to be parsed.
- * @param string $array  Variables will be stored in this array.
+ * @param array  $array  Variables will be stored in this array.
  */
 function wp_parse_str( $string, &$array )
 {
@@ -573,8 +573,16 @@ function wp_parse_str( $string, &$array )
 
 	if ( get_magic_quotes_gpc() ) {
 		$array = stripslashes_deep( $array );
-// @NOW 027
 	}
+
+	/**
+	 * Filters the array of variables derived from a parsed string.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $array The array populated with variables.
+	 */
+	$array = apply_filters( 'wp_parse_str', $array );
 }
 
 /**

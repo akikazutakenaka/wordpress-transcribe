@@ -408,7 +408,7 @@ function wp_parse_args( $args, $defaults = '' )
 		$r = &$args;
 	} else {
 		wp_parse_str( $args, $r );
-// @NOW 026 -> wp-includes/formatting.php
+// @NOW 026
 	}
 }
 
