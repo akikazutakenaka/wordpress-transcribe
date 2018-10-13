@@ -371,7 +371,7 @@ class WP_Network_Query
 	{
 		global $wpdb;
 		$like = '%' . $wpdb->esc_like( $string ) . '%';
-// @NOW 027 -> wp-includes/wp-db.php
+// @NOW 027
 	}
 
 	/**
