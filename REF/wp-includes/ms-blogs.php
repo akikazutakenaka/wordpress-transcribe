@@ -251,5 +251,5 @@ function get_network( $network = NULL )
 		: ( is_object( $network )
 			? new WP_Network( $network )
 			: WP_Network::get_instance( $network ) );
-// @NOW 022 -> wp-includes/class-wp-network.php
+// @NOW 022
 }

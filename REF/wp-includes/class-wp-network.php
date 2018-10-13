@@ -81,7 +81,45 @@ class WP_Network
 	 */
 	public $site_name = '';
 
-// @NOW 023
+	/**
+	 * Retrieve a network from the database by its ID.
+	 *
+	 * @since  4.4.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  int             $network_id The ID of the network to retrieve.
+	 * @return WP_Network|bool The network's object if found.
+	 *                         False if not.
+	 */
+	public static function get_instance( $network_id )
+	{
+		global $wpdb;
+		$network_id = ( int ) $network_id;
+
+		if ( ! $network_id ) {
+			return FALSE;
+		}
+
+		$_network = wp_cache_get( $network_id, 'networks' );
+
+		if ( ! $_network ) {
+			$_network = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT *
+FROM {$wpdb->site}
+WHERE id = %d
+LIMIT 1
+EOQ
+				, $network_id ) );
+
+			if ( empty( $_network ) || is_wp_error( $_network ) ) {
+				return FALSE;
+			}
+
+			wp_cache_add( $network_id, $_network, 'networks' );
+		}
+
+		return new WP_Network( $_network );
+	}
 
 	/**
 	 * Create a new WP_Network object.
