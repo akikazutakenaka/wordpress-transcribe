@@ -517,6 +517,36 @@ function stripslashes_deep( $value )
 // @NOW 028
 
 /**
+ * Maps a function to all non-iterable elements of an array or an object.
+ *
+ * This is similar to `array_walk_recursive()` but acts upon objects too.
+ *
+ * @since 4.4.0
+ *
+ * @param  mixed    $value    The array, object, or scalar.
+ * @param  callable $callback The function to map onto $value.
+ * @return mixed    The value with the callback applied to all non-arrays and non-objects inside it.
+ */
+function map_deep( $value, $callback )
+{
+	if ( is_array( $value ) ) {
+		foreach ( $value as $index => $item ) {
+			$value[ $index ] = map_deep( $item, $callback );
+		}
+	} elseif ( is_object( $value ) ) {
+		$object_vars = get_object_vars( $value );
+
+		foreach ( $object_vars as $property_name => $property_value ) {
+			$value->$property_name = map_deep( $property_value, $callback );
+		}
+	} else {
+		$value = call_user_func( $callback, $value );
+	}
+
+	return $value;
+}
+
+/**
  * Parses a string into variables to be stored in an array.
  *
  * Uses {@link https://secure.php.net/parse_str parse_str()} and stripslashes if {@link https://secure.php.net/magic_quotes magic_quotes_gpc} is on.
