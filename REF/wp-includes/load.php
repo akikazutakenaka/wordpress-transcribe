@@ -112,7 +112,7 @@ function get_current_network_id()
 	}
 
 	$current_network = get_network();
-// @NOW 021 -> wp-includes/ms-blogs.php
+// @NOW 021
 }
 
 /**

@@ -251,5 +251,19 @@ function get_network( $network = NULL )
 		: ( is_object( $network )
 			? new WP_Network( $network )
 			: WP_Network::get_instance( $network ) );
-// @NOW 022
+
+	if ( ! $_network ) {
+		return NULL;
+	}
+
+	/**
+	 * Fires after a network is retrieved.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param WP_Network $_network Network data.
+	 */
+	$_network = apply_filters( 'get_network', $_network );
+
+	return $_network;
 }
