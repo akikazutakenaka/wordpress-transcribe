@@ -177,6 +177,6 @@ class WP_Network_Query
 	public function query( $query )
 	{
 		$this->query_vars = wp_parse_args( $query );
-// @NOW 025 -> wp-includes/functions.php
+// @NOW 025
 	}
 }

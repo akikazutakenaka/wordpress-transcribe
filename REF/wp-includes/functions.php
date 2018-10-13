@@ -408,8 +408,9 @@ function wp_parse_args( $args, $defaults = '' )
 		$r = &$args;
 	} else {
 		wp_parse_str( $args, $r );
-// @NOW 026
 	}
+
+	return is_array( $defaults ) ? array_merge( $defaults, $r ) : $r;
 }
 
 /**
