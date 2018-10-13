@@ -1200,6 +1200,8 @@ class wpdb
 		return $this->add_placeholder_escape( $query );
 	}
 
+// @NOW 028
+
 	/**
 	 * Print SQL/DB error.
 	 *

@@ -329,8 +329,49 @@ class WP_Network_Query
 		// Parse network domain for an IN clause.
 		if ( is_array( $this->query_vars['domain__in'] ) ) {
 			$this->sql_clauses['where']['domain__in'] = "$wpdb->site.domain IN ( " . implode( "', '", $wpdb->_escape( $this->query_vars['domain__in'] ) ) . "' )";
-// @NOW 026
 		}
+
+		// Parse network domain for a NOT IN clause.
+		if ( is_array( $this->query_vars['domain__not_in'] ) ) {
+			$this->sql_clauses['where']['domain__not_in'] = "$wpdb->site.domain NOT IN ( '" . implode( "', '", $wpdb->_escape( $this->query_vars['domain__not_in'] ) ) . "' )";
+		}
+
+		if ( ! empty( $this->query_vars['path'] ) ) {
+			$this->sql_clauses['where']['path'] = $wpdb->prepare( "$wpdb->site.path = %s", $this->query_vars['path'] );
+		}
+
+		// Parse network path for an IN clause.
+		if ( is_array( $this->query_vars['path__in'] ) ) {
+			$this->sql_clauses['where']['path__in'] = "$wpdb->site.path IN ( '" . implode( "', '", $wpdb->_escape( $this->query_vars['path__in'] ) ) . "' )";
+		}
+
+		// Parse network path for a NOT IN clause.
+		if ( is_array( $this->query_vars['path__not_in'] ) ) {
+			$this->sql_clauses['where']['path__not_in'] = "$wpdb->site.path NOT IN ( '" . implode( "', '", $wpdb->_escape( $this->query_vars['path__not_in'] ) ) . "' )";
+		}
+
+		// Falsey search strings are ignored.
+		if ( strlen( $this->query_vars['search'] ) ) {
+			$this->sql_clauses['where']['search'] = $this->get_search_sql( $this->query_vars['search'], ["$wpdb->site.domain", "$wpdb->site.path"] );
+// @NOW 026 -> wp-includes/class-wp-network-query.php
+		}
+	}
+
+	/**
+	 * Used internally to generate an SQL string for searching across multiple columns.
+	 *
+	 * @since  4.6.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  string $string  Search string.
+	 * @param  array  $columns Columns to search.
+	 * @return string Search SQL.
+	 */
+	protected function get_search_sql( $string, $columns )
+	{
+		global $wpdb;
+		$like = '%' . $wpdb->esc_like( $string ) . '%';
+// @NOW 027 -> wp-includes/wp-db.php
 	}
 
 	/**
