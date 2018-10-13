@@ -81,6 +81,8 @@ class WP_Network
 	 */
 	public $site_name = '';
 
+// @NOW 023
+
 	/**
 	 * Create a new WP_Network object.
 	 *
@@ -97,7 +99,7 @@ class WP_Network
 		}
 
 		$this->_set_site_name();
-// @NOW 023
+		$this->_set_cookie_domain();
 	}
 
 	/**
@@ -113,5 +115,24 @@ class WP_Network
 
 		$default = ucfirst( $this->site_name );
 		$this->site_name = get_network_option( $this->id, 'site_name', $default );
+	}
+
+	/**
+	 * Set the cookie domain based on the network domain if one has not been populated.
+	 *
+	 * @todo  What if the domain of the network doesn't match the current site?
+	 * @since 4.4.0
+	 */
+	private function _set_cookie_domain()
+	{
+		if ( ! empty( $this->cookie_domain ) ) {
+			return;
+		}
+
+		$this->cookie_domain = $this->domain;
+
+		if ( 'www.' === substr( $this->cookie_domain, 0, 4 ) ) {
+			$this->cookie_domain = substr( $this->cookie_domain, 4 );
+		}
 	}
 }

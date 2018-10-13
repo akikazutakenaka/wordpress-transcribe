@@ -62,24 +62,7 @@ class WP_Network {
 		return new WP_Network( $_network );
 	}
 
-	/**
-	 * Create a new WP_Network object.
-	 *
-	 * Will populate object properties from the object provided and assign other
-	 * default properties based on that information.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param WP_Network|object $network A network object.
-	 */
-	public function __construct( $network ) {
-		foreach( get_object_vars( $network ) as $key => $value ) {
-			$this->$key = $value;
-		}
-
-		$this->_set_site_name();
-		$this->_set_cookie_domain();
-	}
+	// refactored. public function __construct( $network ) {}
 
 	/**
 	 * Getter.
@@ -221,25 +204,7 @@ class WP_Network {
 	}
 
 	// refactored. private function _set_site_name() {}
-
-	/**
-	 * Set the cookie domain based on the network domain if one has
-	 * not been populated.
-	 *
-	 * @todo What if the domain of the network doesn't match the current site?
-	 *
-	 * @since 4.4.0
-	 */
-	private function _set_cookie_domain() {
-		if ( ! empty( $this->cookie_domain ) ) {
-			return;
-		}
-
-		$this->cookie_domain = $this->domain;
-		if ( 'www.' === substr( $this->cookie_domain, 0, 4 ) ) {
-			$this->cookie_domain = substr( $this->cookie_domain, 4 );
-		}
-	}
+	// refactored. private function _set_cookie_domain() {}
 
 	/**
 	 * Retrieve the closest matching network for a domain and path.
