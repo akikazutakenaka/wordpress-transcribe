@@ -353,7 +353,7 @@ class WP_Network_Query
 		// Falsey search strings are ignored.
 		if ( strlen( $this->query_vars['search'] ) ) {
 			$this->sql_clauses['where']['search'] = $this->get_search_sql( $this->query_vars['search'], ["$wpdb->site.domain", "$wpdb->site.path"] );
-// @NOW 026 -> wp-includes/class-wp-network-query.php
+// @NOW 026
 		}
 	}
 
@@ -371,7 +371,13 @@ class WP_Network_Query
 	{
 		global $wpdb;
 		$like = '%' . $wpdb->esc_like( $string ) . '%';
-// @NOW 027
+		$searches = [];
+
+		foreach ( $columns as $column ) {
+			$searches[] = $wpdb->prepare( "$column LIKE %s", $like );
+		}
+
+		return '(' . implode( ' OR ', $searches ) . ')';
 	}
 
 	/**

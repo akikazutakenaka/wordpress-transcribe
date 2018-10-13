@@ -376,31 +376,7 @@ class WP_Network_Query {
 		}
 	}
 
-	/**
-	 * Used internally to generate an SQL string for searching across multiple columns.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @global wpdb  $wpdb WordPress database abstraction object.
-	 *
-	 * @param string $string  Search string.
-	 * @param array  $columns Columns to search.
-	 *
-	 * @return string Search SQL.
-	 */
-	protected function get_search_sql( $string, $columns ) {
-		global $wpdb;
-
-		$like = '%' . $wpdb->esc_like( $string ) . '%';
-
-		$searches = array();
-		foreach ( $columns as $column ) {
-			$searches[] = $wpdb->prepare( "$column LIKE %s", $like );
-		}
-
-		return '(' . implode( ' OR ', $searches ) . ')';
-	}
-
-	// refactored. protected function parse_orderby( $orderby ) {}
+	// refactored. protected function get_search_sql( $string, $columns ) {}
+	// :
 	// refactored. protected function parse_order( $order ) {}
 }
