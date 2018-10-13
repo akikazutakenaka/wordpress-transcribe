@@ -108,19 +108,7 @@ class WP_Network_Query {
 		do_action_ref_array( 'parse_network_query', array( &$this ) );
 	}
 
-	/**
-	 * Sets up the WordPress query for retrieving networks.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param string|array $query Array or URL query string of parameters.
-	 * @return array|int List of WP_Network objects, a list of network ids when 'fields' is set to 'ids',
-	 *                   or the number of networks when 'count' is passed as a query var.
-	 */
-	public function query( $query ) {
-		$this->query_vars = wp_parse_args( $query );
-		return $this->get_networks();
-	}
+	// refactored. public function query( $query ) {}
 
 	/**
 	 * Gets a list of networks matching the query vars.

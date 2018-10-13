@@ -177,6 +177,8 @@ class WP_Network_Query
 	public function query( $query )
 	{
 		$this->query_vars = wp_parse_args( $query );
-// @NOW 025
+		return $this->get_networks();
 	}
+
+// @NOW 025
 }
