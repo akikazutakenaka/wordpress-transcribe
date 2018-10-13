@@ -242,7 +242,7 @@ class WP_Network_Query
 
 		if ( FALSE === $cache_value ) {
 			$network_ids = $this->get_network_ids();
-// @NOW 025 -> wp-includes/class-wp-network-query.php
+// @NOW 025
 		}
 	}
 
@@ -406,7 +406,7 @@ class WP_Network_Query
 		}
 
 		$network_ids = $wpdb->get_col( $this->request );
-// @NOW 026
+		return array_map( 'intval', $network_ids );
 	}
 
 	/**
