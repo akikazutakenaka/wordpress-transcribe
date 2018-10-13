@@ -224,7 +224,22 @@ function wp_switch_roles_and_user( $new_site_id, $old_site_id )
 	wp_get_current_user()->for_site( $new_site_id );
 }
 
-// @NOW 023
+/**
+ * Retrieves a list of networks.
+ *
+ * @since 4.6.0
+ *
+ * @param  string|array $args Optional.
+ *                            Array or string of arguments.
+ *                            See WP_Network_Query::parse_query() for information on accepted arguments.
+ *                            Default empty array.
+ * @return array|int    List of WP_Network objects, a list of network ids when 'fields' is set to 'ids', or the number of networks when 'count' is passed as a query var.
+ */
+function get_networks( $args = [] )
+{
+	$query = new WP_Network_Query();
+// @NOW 023 -> wp-includes/class-wp-network-query.php
+}
 
 /**
  * Retrieves network data given a network ID or network object.
