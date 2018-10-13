@@ -386,6 +386,8 @@ function wp_die( $message = '', $title = '', $args = [] )
 	call_user_func( $function, $message, $title, $args );
 }
 
+// @NOW 026
+
 /**
  * Load custom DB error or display WordPress DB error.
  *
