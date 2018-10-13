@@ -224,4 +224,32 @@ function wp_switch_roles_and_user( $new_site_id, $old_site_id )
 	wp_get_current_user()->for_site( $new_site_id );
 }
 
-// @NOW 022
+/**
+ * Retrieves network data given a network ID or network object.
+ *
+ * Network data will be cached and returned after being passed through a filter.
+ * If the provided network is empty, the current network global will be used.
+ *
+ * @since  4.6.0
+ * @global WP_Network $current_site
+ *
+ * @param  WP_Network|int|null $network Optional.
+ *                                      Network to retrieve.
+ *                                      Default is the current network.
+ * @return WP_Network|null     The network object or null if not found.
+ */
+function get_network( $network = NULL )
+{
+	global $current_site;
+
+	if ( empty( $network ) && isset( $current_site ) ) {
+		$network = $current_site;
+	}
+
+	$_network = ( $network instanceof WP_Network )
+		? $network
+		: ( is_object( $network )
+			? new WP_Network( $network )
+			: WP_Network::get_instance( $network ) );
+// @NOW 022 -> wp-includes/class-wp-network.php
+}
