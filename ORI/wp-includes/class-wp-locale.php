@@ -15,14 +15,7 @@
  */
 class WP_Locale {
 	// refactored. public $weekday;
-	// refactored. public $weekday_initial;
-	// refactored. public $weekday_abbrev;
-	// refactored. public $start_of_week;
-	// refactored. public $month;
-	// refactored. public $month_genitive;
-	// refactored. public $month_abbrev;
-	// refactored. public $meridiem;
-	// refactored. public $text_direction = 'ltr';
+	// :
 	// refactored. public $number_format;
 
 	/**

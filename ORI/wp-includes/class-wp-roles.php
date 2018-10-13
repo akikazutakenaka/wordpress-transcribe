@@ -25,11 +25,7 @@
  */
 class WP_Roles {
 	// refactored. public $roles;
-	// refactored. public $role_objects = array();
-	// refactored. public $role_names = array();
-	// refactored. public $role_key;
-	// refactored. public $use_db = true;
-	// refactored. protected $site_id = 0;
+	// :
 	// refactored. public function __construct( $site_id = null ) {}
 
 	/**
@@ -181,7 +177,7 @@ class WP_Roles {
 	}
 
 	// refactored. public function is_role( $role ) {}
-	// refactored. public function init_roles() {}
+	// :
 	// refactored. public function for_site( $site_id = null ) {}
 
 	/**

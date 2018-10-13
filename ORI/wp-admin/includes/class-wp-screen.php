@@ -14,23 +14,7 @@
  */
 final class WP_Screen {
 	// refactored. public $action;
-	// refactored. public $base;
-	// refactored. private $columns = 0;
-	// refactored. public $id;
-	// refactored. protected $in_admin;
-	// refactored. public $is_network;
-	// refactored. public $is_user;
-	// refactored. public $parent_base;
-	// refactored. public $parent_file;
-	// refactored. public $post_type;
-	// refactored. public $taxonomy;
-	// refactored. private $_help_tabs = array();
-	// refactored. private $_help_sidebar = '';
-	// refactored. private $_screen_reader_content = array();
-	// refactored. private static $_old_compat_help = array();
-	// refactored. private $_options = array();
-	// refactored. private static $_registry = array();
-	// refactored. private $_show_screen_options;
+	// :
 	// refactored. private $_screen_settings;
 
 	/**

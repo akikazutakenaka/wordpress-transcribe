@@ -14,7 +14,7 @@
  */
 class WP_Role {
 	// refactored. public $name;
-	// refactored. public $capabilities;
+	// :
 	// refactored. public function __construct( $role, $capabilities ) {}
 
 	/**

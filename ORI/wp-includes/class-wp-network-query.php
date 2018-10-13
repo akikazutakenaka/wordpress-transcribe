@@ -16,11 +16,7 @@
  */
 class WP_Network_Query {
 	// refactored. public $request;
-	// refactored. protected $sql_clauses = array();
-	// refactored. public $query_vars;
-	// refactored. public $query_var_defaults;
-	// refactored. public $networks;
-	// refactored. public $found_networks = 0;
+	// :
 	// refactored. public $max_num_pages = 0;
 
 	/**

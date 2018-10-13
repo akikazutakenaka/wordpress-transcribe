@@ -40,7 +40,7 @@ if ( ! isset( $wp_current_filter ) )
 	$wp_current_filter = array();
 
 // refactored. function add_filter( $tag, $function_to_add, $priority = 10, $accepted_args = 1 ) {}
-// refactored. function has_filter($tag, $function_to_check = false) {}
+// :
 // refactored. function apply_filters( $tag, $value ) {}
 
 /**
@@ -180,8 +180,7 @@ function doing_action( $action = null ) {
 }
 
 // refactored. function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1) {}
-// refactored. function do_action($tag, $arg = '') {}
-// refactored. function did_action($tag) {}
+// :
 // refactored. function do_action_ref_array($tag, $args) {}
 
 /**

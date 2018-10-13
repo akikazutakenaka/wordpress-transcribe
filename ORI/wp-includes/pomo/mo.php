@@ -148,7 +148,7 @@ class MO extends Gettext_Translations {
 	}
 
 	// refactored. function get_byteorder($magic) {}
-	// refactored. function import_from_reader($reader) {}
+	// :
 	// refactored. function &make_entry($original, $translation) {}
 
 	/**

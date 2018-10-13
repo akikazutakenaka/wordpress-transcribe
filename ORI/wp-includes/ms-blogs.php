@@ -735,7 +735,7 @@ function update_blog_option( $id, $option, $value, $deprecated = null ) {
 }
 
 // refactored. function switch_to_blog( $new_blog, $deprecated = null ) {}
-// refactored. function restore_current_blog() {}
+// :
 // refactored. function wp_switch_roles_and_user( $new_site_id, $old_site_id ) {}
 
 /**

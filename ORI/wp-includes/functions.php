@@ -886,9 +886,7 @@ function wp( $query_vars = '' ) {
 }
 
 // refactored. function get_status_header_desc( $code ) {}
-// refactored. function status_header( $code, $description = '' ) {}
-// refactored. function wp_get_nocache_headers() {}
-
+// :
 // refactored. function nocache_headers() {}
 
 /**

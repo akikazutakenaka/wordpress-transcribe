@@ -34,7 +34,7 @@ function get_option() {}
 function is_lighttpd_before_150() {}
 
 // refactored. function add_action() {}
-// refactored. function did_action() {}
+// :
 // refactored. function do_action_ref_array() {}
 
 /**

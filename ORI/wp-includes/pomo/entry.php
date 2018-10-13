@@ -13,16 +13,7 @@ if ( ! class_exists( 'Translation_Entry', false ) ):
  */
 class Translation_Entry {
 	// refactored. var $is_plural = false;
-	// refactored. var $context = null;
-	// refactored. var $singular = null;
-	// refactored. var $plural = null;
-	// refactored. var $translations = array();
-	// refactored. var $translator_comments = '';
-	// refactored. var $extracted_comments = '';
-	// refactored. var $references = array();
-	// refactored. var $flags = array();
-	// refactored. function __construct( $args = array() ) {}
-	// refactored. public function Translation_Entry( $args = array() ) {}
+	// :
 	// refactored. function key() {}
 
 	/**

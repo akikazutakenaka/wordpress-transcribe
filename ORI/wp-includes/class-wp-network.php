@@ -23,12 +23,7 @@
  */
 class WP_Network {
 	// refactored. private $id;
-	// refactored. public $domain = '';
-	// refactored. public $path = '';
-	// refactored. private $blog_id = '0';
-	// refactored. public $cookie_domain = '';
-	// refactored. public $site_name = '';
-	// refactored. public static function get_instance( $network_id ) {}
+	// :
 	// refactored. public function __construct( $network ) {}
 
 	/**

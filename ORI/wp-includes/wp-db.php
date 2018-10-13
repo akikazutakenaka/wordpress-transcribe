@@ -49,64 +49,7 @@ define( 'ARRAY_N', 'ARRAY_N' );
  */
 class wpdb {
 	// refactored. var $show_errors = false;
-	// refactored. var $suppress_errors = false;
-	// refactored. public $last_error = '';
-	// refactored. public $num_queries = 0;
-	// refactored. public $num_rows = 0;
-	// refactored. var $rows_affected = 0;
-	// refactored. public $insert_id = 0;
-	// refactored. var $last_query;
-	// refactored. var $last_result;
-	// refactored. protected $result;
-	// refactored. protected $col_meta = array();
-	// refactored. protected $table_charset = array();
-	// refactored. protected $check_current_query = true;
-	// refactored. private $checking_collation = false;
-	// refactored. protected $col_info;
-	// refactored. var $queries;
-	// refactored. protected $reconnect_retries = 5;
-	// refactored. public $prefix = '';
-	// refactored. public $base_prefix;
-	// refactored. var $ready = false;
-	// refactored. public $blogid = 0;
-	// refactored. public $siteid = 0;
-	// refactored. var $tables = array( 'posts', 'comments', 'links', 'options', 'postmeta', 'terms', 'term_taxonomy', 'term_relationships', 'termmeta', 'commentmeta' );
-	// refactored. var $old_tables = array( 'categories', 'post2cat', 'link2cat' );
-	// refactored. var $global_tables = array( 'users', 'usermeta' );
-	// refactored. var $ms_global_tables = array( 'blogs', 'signups', 'site', 'sitemeta', 'sitecategories', 'registration_log', 'blog_versions' );
-	// refactored. public $comments;
-	// refactored. public $commentmeta;
-	// refactored. public $links;
-	// refactored. public $options;
-	// refactored. public $postmeta;
-	// refactored. public $posts;
-	// refactored. public $terms;
-	// refactored. public $term_relationships;
-	// refactored. public $term_taxonomy;
-	// refactored. public $termmeta;
-	// refactored. public $usermeta;
-	// refactored. public $users;
-	// refactored. public $blogs;
-	// refactored. public $blog_versions;
-	// refactored. public $registration_log;
-	// refactored. public $signups;
-	// refactored. public $site;
-	// refactored. public $sitecategories;
-	// refactored. public $sitemeta;
-	// refactored. public $field_types = array();
-	// refactored. public $charset;
-	// refactored. public $collate;
-	// refactored. protected $dbuser;
-	// refactored. protected $dbpassword;
-	// refactored. protected $dbname;
-	// refactored. protected $dbhost;
-	// refactored. protected $dbh;
-	// refactored. public $func_call;
-	// refactored. public $is_mysql = null;
-	// refactored. protected $incompatible_modes = array( 'NO_ZERO_DATE', 'ONLY_FULL_GROUP_BY', 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'TRADITIONAL' );
-	// refactored. private $use_mysqli = false;
-	// refactored. private $has_connected = false;
-	// refactored. public function __construct( $dbuser, $dbpassword, $dbname, $dbhost ) {}
+	// :
 	// refactored. public function __destruct() {}
 
 	/**
@@ -169,8 +112,7 @@ class wpdb {
 	}
 
 	// refactored. public function init_charset() {}
-	// refactored. public function determine_charset( $charset, $collate ) {}
-	// refactored. public function set_charset( $dbh, $charset = null, $collate = null ) {}
+	// :
 	// refactored. public function set_sql_mode( $modes = array() ) {}
 
 	/**
@@ -213,8 +155,7 @@ class wpdb {
 	}
 
 	// refactored. public function set_blog_id( $blog_id, $network_id = 0 ) {}
-	// refactored. public function get_blog_prefix( $blog_id = null ) {}
-	// refactored. public function tables( $scope = 'all', $prefix = true, $blog_id = 0 ) {}
+	// :
 	// refactored. public function select( $db, $dbh = null ) {}
 
 	/**
@@ -343,14 +284,7 @@ class wpdb {
 	}
 
 	// refactored. public function suppress_errors( $suppress = true ) {}
-	// refactored. public function flush() {}
-	// refactored. public function db_connect( $allow_bail = true ) {}
-	// refactored. public function parse_db_host( $host ) {}
-	// refactored. public function check_connection( $allow_bail = true ) {}
-	// refactored. public function query( $query ) {}
-	// refactored. private function _do_query( $query ) {}
-	// refactored. public function placeholder_escape() {}
-	// refactored. public function add_placeholder_escape( $query ) {}
+	// :
 	// refactored. public function remove_placeholder_escape( $query ) {}
 
 	/**
@@ -941,8 +875,7 @@ class wpdb {
 	}
 
 	// refactored. protected function check_ascii( $string ) {}
-	// refactored. protected function check_safe_collation( $query ) {}
-	// refactored. protected function strip_invalid_text( $data ) {}
+	// :
 	// refactored. protected function strip_invalid_text_from_query( $query ) {}
 
 	/**
@@ -1038,7 +971,7 @@ class wpdb {
 	}
 
 	// refactored. public function timer_start() {}
-	// refactored. public function timer_stop() {}
+	// :
 	// refactored. public function bail( $message, $error_code = '500' ) {}
 
 	/**
@@ -1124,6 +1057,6 @@ class wpdb {
 	}
 
 	// refactored. public function has_cap( $db_cap ) {}
-	// refactored. public function get_caller() {}
+	// :
 	// refactored. public function db_version() {}
 }

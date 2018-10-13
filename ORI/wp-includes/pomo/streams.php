@@ -11,10 +11,7 @@
 if ( ! class_exists( 'POMO_Reader', false ) ):
 class POMO_Reader {
 	// refactored. var $endian = 'little';
-	// refactored. var $_post = '';
-	// refactored. function __construct() {}
-	// refactored. public function POMO_Reader() {}
-	// refactored. function setEndian($endian) {}
+	// :
 	// refactored. function readint32() {}
 
 	/**
@@ -33,7 +30,7 @@ class POMO_Reader {
 	}
 
 	// refactored. function substr($string, $start, $length) {}
-	// refactored. function strlen($string) {}
+	// :
 	// refactored. function str_split($string, $chunk_size) {}
 
 	/**

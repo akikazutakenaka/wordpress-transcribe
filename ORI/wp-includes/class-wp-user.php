@@ -37,13 +37,7 @@
  */
 class WP_User {
 	// refactored. public $data;
-	// refactored. public $ID = 0;
-	// refactored. public $caps = array();
-	// refactored. public $cap_key;
-	// refactored. public $roles = array();
-	// refactored. public $allcaps = array();
-	// refactored. public $filter = null;
-	// refactored. private $site_id = 0;
+	// :
 	// refactored. private static $back_compat_keys;
 
 	/**

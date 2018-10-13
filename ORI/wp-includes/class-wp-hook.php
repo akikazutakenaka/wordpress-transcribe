@@ -17,15 +17,7 @@
  */
 final class WP_Hook implements Iterator, ArrayAccess {
 	// refactored. public $callbacks = array();
-	// refactored. private $iterations = array();
-	// refactored. private $current_priority = array();
-	// refactored. private $nesting_level = 0;
-	// refactored. private $doing_action = false;
-	// refactored. public function add_filter( $tag, $function_to_add, $priority, $accepted_args ) {}
-	// refactored. private function resort_active_iterations( $new_priority = false, $priority_existed = false ) {}
-
-	// refactored. public function remove_filter( $tag, $function_to_remove, $priority ) {}
-	// refactored. public function has_filter( $tag = '', $function_to_check = false ) {}
+	// :
 	// refactored. public function has_filters() {}
 
 	/**
@@ -52,7 +44,7 @@ final class WP_Hook implements Iterator, ArrayAccess {
 	}
 
 	// refactored. public function apply_filters( $value, $args ) {}
-	// refactored. public function do_action( $args ) {}
+	// :
 	// refactored. public function do_all_hook( &$args ) {}
 
 	/**

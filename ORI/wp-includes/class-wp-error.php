@@ -19,7 +19,7 @@
  */
 class WP_Error {
 	// refactored. public $errors = array();
-	// refactored. public $error_data = array();
+	// :
 	// refactored. public function __construct( $code = '', $message = '', $data = '' ) {}
 
 	/**

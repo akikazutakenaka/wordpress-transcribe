@@ -893,7 +893,7 @@ function is_ssl() {
 }
 
 // refactored. function wp_convert_hr_to_bytes( $value ) {}
-// refactored. function wp_is_ini_value_changeable( $setting ) {}
+// :
 // refactored. function wp_doing_ajax() {}
 
 /**
