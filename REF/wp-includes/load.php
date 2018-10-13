@@ -98,6 +98,8 @@ function get_current_blog_id()
 	return absint( $blog_id );
 }
 
+// @NOW 021
+
 /**
  * Attempt an early load of translations.
  *

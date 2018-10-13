@@ -248,4 +248,35 @@ function get_site_option( $option, $default = FALSE, $deprecated = TRUE )
 	return get_network_option( NULL, $option, $default );
 }
 
-// @NOW 020
+/**
+ * Retrieve a network's option value based on the option name.
+ *
+ * @since  4.4.0
+ * @see    get_option()
+ * @global wpdb $wpdb
+ *
+ * @param  int    $network_id ID of the network.
+ *                            Can be null to default to the current network ID.
+ * @param  string $option     Name of option to retrieve.
+ *                            Expected to not be SQL-escaped.
+ * @param  mixed  $default    Optional.
+ *                            Value to return if the option doesn't exist.
+ *                            Default false.
+ * @return mixed  Value set for the option.
+ */
+function get_network_option( $network_id, $option, $default = FALSE )
+{
+	global $wpdb;
+
+	if ( $network_id && ! is_numeric( $network_id ) ) {
+		return FALSE;
+	}
+
+	$network_id = ( int ) $network_id;
+
+	// Fallback to the current network if a network ID is not specified.
+	if ( ! $network_id ) {
+		$network_id = get_current_network_id();
+// @NOW 020 -> wp-includes/load.php
+	}
+}
