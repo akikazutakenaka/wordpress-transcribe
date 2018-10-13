@@ -1054,6 +1054,29 @@ class wpdb
 	}
 
 	/**
+	 * Escape data.
+	 * Works on arrays.
+	 *
+	 * @uses  wpdb::_real_escape()
+	 * @since 2.8.0
+	 *
+	 * @param  string|array $data
+	 * @param  string|array Escaped
+	 */
+	public function _escape( $data )
+	{
+		if ( is_array( $data ) ) {
+			foreach ( $data as $k => $v ) {
+				$data[ $k ] = is_array( $v ) ? $this->_escape( $v ) : $this->_real_escape( $v );
+			}
+		} else {
+			$data = $this->_real_escape( $data );
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Escapes content by reference for insertion into the database, for security.
 	 *
 	 * @uses  wpdb::_real_escape()
