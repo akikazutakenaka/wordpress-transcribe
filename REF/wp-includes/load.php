@@ -98,7 +98,22 @@ function get_current_blog_id()
 	return absint( $blog_id );
 }
 
-// @NOW 021
+/**
+ * Retrieves the current network ID.
+ *
+ * @since 4.6.0
+ *
+ * @return int The ID of the current network.
+ */
+function get_current_network_id()
+{
+	if ( ! is_multisite() ) {
+		return 1;
+	}
+
+	$current_network = get_network();
+// @NOW 021 -> wp-includes/ms-blogs.php
+}
 
 /**
  * Attempt an early load of translations.

@@ -223,3 +223,5 @@ function wp_switch_roles_and_user( $new_site_id, $old_site_id )
 	wp_roles()->for_site( $new_site_id );
 	wp_get_current_user()->for_site( $new_site_id );
 }
+
+// @NOW 022
