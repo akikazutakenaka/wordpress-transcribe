@@ -26,24 +26,8 @@ class WP_Network {
 	// refactored. public $domain = '';
 	// refactored. public $path = '';
 	// refactored. private $blog_id = '0';
-
-	/**
-	 * Domain used to set cookies for this network.
-	 *
-	 * @since 4.4.0
-	 * @var string
-	 */
-	public $cookie_domain = '';
-
-	/**
-	 * Name of this network.
-	 *
-	 * Named "site" vs. "network" for legacy reasons.
-	 *
-	 * @since 4.4.0
-	 * @var string
-	 */
-	public $site_name = '';
+	// refactored. public $cookie_domain = '';
+	// refactored. public $site_name = '';
 
 	/**
 	 * Retrieve a network from the database by its ID.
@@ -236,19 +220,7 @@ class WP_Network {
 		return (int) $this->blog_id;
 	}
 
-	/**
-	 * Set the site name assigned to the network if one has not been populated.
-	 *
-	 * @since 4.4.0
-	 */
-	private function _set_site_name() {
-		if ( ! empty( $this->site_name ) ) {
-			return;
-		}
-
-		$default = ucfirst( $this->domain );
-		$this->site_name = get_network_option( $this->id, 'site_name', $default );
-	}
+	// refactored. private function _set_site_name() {}
 
 	/**
 	 * Set the cookie domain based on the network domain if one has

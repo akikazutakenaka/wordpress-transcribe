@@ -97,8 +97,21 @@ class WP_Network
 		}
 
 		$this->_set_site_name();
-// @NOW 023 -> wp-includes/class-wp-network.php
+// @NOW 023
 	}
 
-// @NOW 024
+	/**
+	 * Set the site name assigned to the network if one has not been populated.
+	 *
+	 * @since 4.4.0
+	 */
+	private function _set_site_name()
+	{
+		if ( ! empty( $this->site_name ) ) {
+			return;
+		}
+
+		$default = ucfirst( $this->site_name );
+		$this->site_name = get_network_option( $this->id, 'site_name', $default );
+	}
 }
