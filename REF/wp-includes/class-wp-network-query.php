@@ -283,8 +283,39 @@ class WP_Network_Query
 				}
 
 				$parsed = $this->parse_orderby( $_orderby );
-// @NOW 026
+
+				if ( ! $parsed ) {
+					continue;
+				}
+
+				if ( 'network__in' === $_orderby ) {
+					$orderby_array[] = $parsed;
+					continue;
+				}
+
+				$orderby_array[] = $parsed . ' ' . $this->parse_order( $_order );
 			}
+
+			$orderby = implode( ', ', $orderby_array );
+		} else {
+			$orderby = "$wpdb->site.id $order";
+		}
+
+		$number = absint( $this->query_vars['number'] );
+		$offset = absint( $this->query_vars['offset'] );
+
+		if ( ! empty( $number ) ) {
+			$limits = $offset
+				. 'LIMIT ' . $offset . ',' . $number
+				: 'LIMIT ' . $number;
+		}
+
+		$fields = $this->query_vars['count'] ? 'COUNT(*)' : "$wpdb->site.id";
+
+		// Parse network IDs for an IN clause.
+		if ( ! empty( $this->query_vars['network__in'] ) ) {
+			$this->sql_clauses['where']['network__in'] = "$wpdb->site.id IN ( " . implode( ',', wp_parse_id_list( $this->query_vars['network__in'] ) ) . ')';
+// @NOW 026
 		}
 	}
 
