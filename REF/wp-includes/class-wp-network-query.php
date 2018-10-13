@@ -259,7 +259,62 @@ class WP_Network_Query
 	{
 		global $wpdb;
 		$order = $this->parse_order( $this->query_vars['order'] );
+
+		// Disable ORDER BY with 'none', an empty array, or boolean false.
+		if ( in_array( $this->query_vars['orderby'], ['none', [], FALSE], TRUE ) ) {
+			$orderby = '';
+		} elseif ( ! empty( $this->query_vars['orderby'] ) ) {
+			$ordersby = is_array( $this->query_vars['orderby'] )
+				? $this->query_vars['orderby']
+				: preg_split( '/[,\s]/', $this->query_vars['orderby'] );
+			$orderby_array = [];
+
+			foreach ( $ordersby as $_key => $_value ) {
+				if ( ! $_value ) {
+					continue;
+				}
+
+				if ( is_int( $_key ) ) {
+					$_orderby = $_value;
+					$_order = $order;
+				} else {
+					$_orderby = $_key;
+					$_order = $_value;
+				}
+
+				$parsed = $this->parse_orderby( $_orderby );
 // @NOW 026
+			}
+		}
+	}
+
+	/**
+	 * Parses and sanitizes 'orderby' keys passed to the network query.
+	 *
+	 * @since  4.6.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  string       $orderby Alias for the field to order by.
+	 * @return string|false Value to used in the ORDER clause.
+	 *                      False otherwise.
+	 */
+	protected function parse_orderby( $orderby )
+	{
+		global $wpdb;
+		$allowed_keys = ['id', 'domain', 'path'];
+		$parsed = FALSE;
+
+		if ( $orderby == 'network__in' ) {
+			$network__in = implode( ',', array_map( 'absint', $this->query_vars['network__in'] ) );
+			$parsed = "FIELD( {$wpdb->site}.id, $network__in )";
+		} elseif ( $orderby == 'domain_length' || $orderby == 'path_length' ) {
+			$field = substr( $orderby, 0, -7 );
+			$parsed = "CHAR_LENGTH($wpdb->site.$field)";
+		} elseif ( in_array( $orderby, $allowed_keys ) ) {
+			$parsed = "$wpdb->site.$orderby";
+		}
+
+		return $parsed;
 	}
 
 	/**

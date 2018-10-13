@@ -405,38 +405,6 @@ class WP_Network_Query {
 		return '(' . implode( ' OR ', $searches ) . ')';
 	}
 
-	/**
-	 * Parses and sanitizes 'orderby' keys passed to the network query.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @param string $orderby Alias for the field to order by.
-	 * @return string|false Value to used in the ORDER clause. False otherwise.
-	 */
-	protected function parse_orderby( $orderby ) {
-		global $wpdb;
-
-		$allowed_keys = array(
-			'id',
-			'domain',
-			'path',
-		);
-
-		$parsed = false;
-		if ( $orderby == 'network__in' ) {
-			$network__in = implode( ',', array_map( 'absint', $this->query_vars['network__in'] ) );
-			$parsed = "FIELD( {$wpdb->site}.id, $network__in )";
-		} elseif ( $orderby == 'domain_length' || $orderby == 'path_length' ) {
-			$field = substr( $orderby, 0, -7 );
-			$parsed = "CHAR_LENGTH($wpdb->site.$field)";
-		} elseif ( in_array( $orderby, $allowed_keys ) ) {
-			$parsed = "$wpdb->site.$orderby";
-		}
-
-		return $parsed;
-	}
-
+	// refactored. protected function parse_orderby( $orderby ) {}
 	// refactored. protected function parse_order( $order ) {}
 }
