@@ -41,49 +41,6 @@ if ( ! isset( $wp_current_filter ) )
 
 // refactored. function add_filter( $tag, $function_to_add, $priority = 10, $accepted_args = 1 ) {}
 // :
-// refactored. function apply_filters( $tag, $value ) {}
-
-/**
- * Execute functions hooked on a specific filter hook, specifying arguments in an array.
- *
- * @since 3.0.0
- *
- * @see apply_filters() This function is identical, but the arguments passed to the
- * functions hooked to `$tag` are supplied using an array.
- *
- * @global array $wp_filter         Stores all of the filters
- * @global array $wp_current_filter Stores the list of current filters with the current one last
- *
- * @param string $tag  The name of the filter hook.
- * @param array  $args The arguments supplied to the functions hooked to $tag.
- * @return mixed The filtered value after all hooked functions are applied to it.
- */
-function apply_filters_ref_array($tag, $args) {
-	global $wp_filter, $wp_current_filter;
-
-	// Do 'all' actions first
-	if ( isset($wp_filter['all']) ) {
-		$wp_current_filter[] = $tag;
-		$all_args = func_get_args();
-		_wp_call_all_hook($all_args);
-	}
-
-	if ( !isset($wp_filter[$tag]) ) {
-		if ( isset($wp_filter['all']) )
-			array_pop($wp_current_filter);
-		return $args[0];
-	}
-
-	if ( !isset($wp_filter['all']) )
-		$wp_current_filter[] = $tag;
-
-	$filtered = $wp_filter[ $tag ]->apply_filters( $args[0], $args );
-
-	array_pop( $wp_current_filter );
-
-	return $filtered;
-}
-
 // refactored. function remove_filter( $tag, $function_to_remove, $priority = 10 ) {}
 
 /**

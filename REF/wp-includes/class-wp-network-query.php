@@ -353,8 +353,22 @@ class WP_Network_Query
 		// Falsey search strings are ignored.
 		if ( strlen( $this->query_vars['search'] ) ) {
 			$this->sql_clauses['where']['search'] = $this->get_search_sql( $this->query_vars['search'], ["$wpdb->site.domain", "$wpdb->site.path"] );
-// @NOW 026
 		}
+
+		$join = '';
+		$where = implode( ' AND ', $this->sql_clauses['where'] );
+		$pieces = ['fields', 'join', 'where', 'orderby', 'limits', 'groupby'];
+
+		/**
+		 * Filters the network query clauses.
+		 *
+		 * @since 4.6.0
+		 *
+		 * @param array            $pieces A compacted array of network query clauses.
+		 * @param WP_Network_Query $this   Current instance of WP_Network_Query (passed by reference).
+		 */
+		$clauses = apply_filters_ref_array( 'networks_clauses', [compact( $pieces ), &$this] );
+// @NOW 026
 	}
 
 	/**
