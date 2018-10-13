@@ -501,7 +501,27 @@ function untrailingslashit( $string )
 	return rtrim( $string, '/\\' );
 }
 
-// @NOW 027
+// @NOW 028
+
+/**
+ * Parses a string into variables to be stored in an array.
+ *
+ * Uses {@link https://secure.php.net/parse_str parse_str()} and stripslashes if {@link https://secure.php.net/magic_quotes magic_quotes_gpc} is on.
+ *
+ * @since 2.2.1
+ *
+ * @param string $string The string to be parsed.
+ * @param string $array  Variables will be stored in this array.
+ */
+function wp_parse_str( $string, &$array )
+{
+	parse_str( $string, $array );
+
+	if ( get_magic_quotes_gpc() ) {
+		$array = stripslashes_deep( $array );
+// @NOW 027 -> wp-includes/formatting.php
+	}
+}
 
 /**
  * Properly strip all HTML tags including script and style.
