@@ -182,49 +182,7 @@ function doing_action( $action = null ) {
 // refactored. function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1) {}
 // refactored. function do_action($tag, $arg = '') {}
 // refactored. function did_action($tag) {}
-
-/**
- * Execute functions hooked on a specific action hook, specifying arguments in an array.
- *
- * @since 2.1.0
- *
- * @see do_action() This function is identical, but the arguments passed to the
- *                  functions hooked to $tag< are supplied using an array.
- * @global array $wp_filter         Stores all of the filters
- * @global array $wp_actions        Increments the amount of times action was triggered.
- * @global array $wp_current_filter Stores the list of current filters with the current one last
- *
- * @param string $tag  The name of the action to be executed.
- * @param array  $args The arguments supplied to the functions hooked to `$tag`.
- */
-function do_action_ref_array($tag, $args) {
-	global $wp_filter, $wp_actions, $wp_current_filter;
-
-	if ( ! isset($wp_actions[$tag]) )
-		$wp_actions[$tag] = 1;
-	else
-		++$wp_actions[$tag];
-
-	// Do 'all' actions first
-	if ( isset($wp_filter['all']) ) {
-		$wp_current_filter[] = $tag;
-		$all_args = func_get_args();
-		_wp_call_all_hook($all_args);
-	}
-
-	if ( !isset($wp_filter[$tag]) ) {
-		if ( isset($wp_filter['all']) )
-			array_pop($wp_current_filter);
-		return;
-	}
-
-	if ( !isset($wp_filter['all']) )
-		$wp_current_filter[] = $tag;
-
-	$wp_filter[ $tag ]->do_action( $args );
-
-	array_pop($wp_current_filter);
-}
+// refactored. function do_action_ref_array($tag, $args) {}
 
 /**
  * Check if any action has been registered for a hook.
