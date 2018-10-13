@@ -438,23 +438,5 @@ class WP_Network_Query {
 		return $parsed;
 	}
 
-	/**
-	 * Parses an 'order' query variable and cast it to 'ASC' or 'DESC' as necessary.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param string $order The 'order' query variable.
-	 * @return string The sanitized 'order' query variable.
-	 */
-	protected function parse_order( $order ) {
-		if ( ! is_string( $order ) || empty( $order ) ) {
-			return 'ASC';
-		}
-
-		if ( 'ASC' === strtoupper( $order ) ) {
-			return 'ASC';
-		} else {
-			return 'DESC';
-		}
-	}
+	// refactored. protected function parse_order( $order ) {}
 }

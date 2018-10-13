@@ -259,8 +259,23 @@ class WP_Network_Query
 	{
 		global $wpdb;
 		$order = $this->parse_order( $this->query_vars['order'] );
-// @NOW 026 -> wp-includes/class-wp-network-query.php
+// @NOW 026
 	}
 
-// @NOW 027
+	/**
+	 * Parses an 'order' query variable and cast it to 'ASC' or 'DESC' as necessary.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param  string $order The 'order' query variable.
+	 * @return string The sanitized 'order' query variable.
+	 */
+	protected function parse_order( $order )
+	{
+		return ( ! is_string( $order ) || empty( $order ) )
+			? 'ASC'
+			: ( 'ASC' === strtoupper( $order )
+				? 'ASC'
+				: 'DESC' );
+	}
 }
