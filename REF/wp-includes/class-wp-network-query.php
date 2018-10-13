@@ -190,7 +190,6 @@ class WP_Network_Query
 		 * @param WP_Network_Query $this The WP_Network_Query instance (passed by reference).
 		 */
 		do_action_ref_array( 'parse_network_query', [&$this] );
-// @NOW 026
 	}
 
 	/**
@@ -217,6 +216,6 @@ class WP_Network_Query
 	public function get_networks()
 	{
 		$this->parse_query();
-// @NOW 025 -> wp-includes/class-wp-network-query.php
+// @NOW 025
 	}
 }
