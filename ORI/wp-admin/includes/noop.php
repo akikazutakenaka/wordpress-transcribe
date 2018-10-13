@@ -35,11 +35,7 @@ function is_lighttpd_before_150() {}
 
 // refactored. function add_action() {}
 // refactored. function did_action() {}
-
-/**
- * @ignore
- */
-function do_action_ref_array() {}
+// refactored. function do_action_ref_array() {}
 
 /**
  * @ignore

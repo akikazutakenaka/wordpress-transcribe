@@ -348,6 +348,8 @@ function did_action( $tag )
 	return $wp_actions[ $tag ];
 }
 
+// @NOW 027
+
 /**
  * Removes a function from a specified action hook.
  *
