@@ -22,46 +22,10 @@
  * @property int $site_id
  */
 class WP_Network {
-
-	/**
-	 * Network ID.
-	 *
-	 * @since 4.4.0
-	 * @since 4.6.0 Converted from public to private to explicitly enable more intuitive
-	 *              access via magic methods. As part of the access change, the type was
-	 *              also changed from `string` to `int`.
-	 * @var int
-	 */
-	private $id;
-
-	/**
-	 * Domain of the network.
-	 *
-	 * @since 4.4.0
-	 * @var string
-	 */
-	public $domain = '';
-
-	/**
-	 * Path of the network.
-	 *
-	 * @since 4.4.0
-	 * @var string
-	 */
-	public $path = '';
-
-	/**
-	 * The ID of the network's main site.
-	 *
-	 * Named "blog" vs. "site" for legacy reasons. A main site is mapped to
-	 * the network when the network is created.
-	 *
-	 * A numeric string, for compatibility reasons.
-	 *
-	 * @since 4.4.0
-	 * @var string
-	 */
-	private $blog_id = '0';
+	// refactored. private $id;
+	// refactored. public $domain = '';
+	// refactored. public $path = '';
+	// refactored. private $blog_id = '0';
 
 	/**
 	 * Domain used to set cookies for this network.
