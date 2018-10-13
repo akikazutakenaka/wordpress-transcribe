@@ -81,5 +81,24 @@ class WP_Network
 	 */
 	public $site_name = '';
 
-// @NOW 023
+	/**
+	 * Create a new WP_Network object.
+	 *
+	 * Will populate object properties from the object provided and assign other default properties based on that information.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param WP_Network|object $network A network object.
+	 */
+	public function __construct( $network )
+	{
+		foreach ( get_object_vars( $network ) as $key => $value ) {
+			$this->$key = $value;
+		}
+
+		$this->_set_site_name();
+// @NOW 023 -> wp-includes/class-wp-network.php
+	}
+
+// @NOW 024
 }
