@@ -2361,18 +2361,7 @@ function addslashes_gpc($gpc) {
 }
 
 // refactored. function stripslashes_deep( $value ) {}
-
-/**
- * Callback function for `stripslashes_deep()` which strips slashes from strings.
- *
- * @since 4.4.0
- *
- * @param mixed $value The array or string to be stripped.
- * @return mixed $value The stripped value.
- */
-function stripslashes_from_strings_only( $value ) {
-	return is_string( $value ) ? stripslashes( $value ) : $value;
-}
+// refactored. function stripslashes_from_strings_only( $value ) {}
 
 /**
  * Navigates through an array, object, or scalar, and encodes the values to be used in a URL.

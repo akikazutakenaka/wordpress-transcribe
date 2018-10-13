@@ -514,7 +514,18 @@ function stripslashes_deep( $value )
 	return map_deep( $value, 'stripslashes_from_strings_only' );
 }
 
-// @NOW 028
+/**
+ * Callback function for `stripslashes_deep()` which strips slashed from strings.
+ *
+ * @since 4.4.0
+ *
+ * @param  mixed $value The array or string to be stripped.
+ * @return mixed $value The stripped value.
+ */
+function stripslashes_from_strings_only( $value )
+{
+	return is_string( $value ) ? stripslashes( $value ) : $value;
+}
 
 /**
  * Maps a function to all non-iterable elements of an array or an object.
@@ -562,7 +573,7 @@ function wp_parse_str( $string, &$array )
 
 	if ( get_magic_quotes_gpc() ) {
 		$array = stripslashes_deep( $array );
-// @NOW 027 -> wp-includes/formatting.php
+// @NOW 027
 	}
 }
 
