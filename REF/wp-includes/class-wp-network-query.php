@@ -237,6 +237,30 @@ class WP_Network_Query
 
 		$key = md5( serialize( $_args ) );
 		$last_changed = wp_cache_get_last_changed( 'networks' );
-// @NOW 025
+		$cache_key = "get_network_ids:$key:$last_changed";
+		$cache_value = wp_cache_get( $cache_key, 'networks' );
+
+		if ( FALSE === $cache_value ) {
+			$network_ids = $this->get_network_ids();
+// @NOW 025 -> wp-includes/class-wp-network-query.php
+		}
 	}
+
+	/**
+	 * Used internally to get a list of network IDs matching the query vars.
+	 *
+	 * @since  4.6.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @return int|array A single count of network IDs if a count query.
+	 *                   An array of network IDs if a full query.
+	 */
+	protected function get_network_ids()
+	{
+		global $wpdb;
+		$order = $this->parse_order( $this->query_vars['order'] );
+// @NOW 026 -> wp-includes/class-wp-network-query.php
+	}
+
+// @NOW 027
 }
