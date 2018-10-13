@@ -166,7 +166,32 @@ class WP_Network_Query
 		}
 	}
 
-// @NOW 026
+	/**
+	 * Parses arguments passed to the network query with default query parameters.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param string|array $query WP_Network_Query arguments.
+	 *                            See WP_Network_Query::__construct().
+	 */
+	public function parse_query( $query = '' )
+	{
+		if ( empty( $query ) ) {
+			$query = $this->query_vars;
+		}
+
+		$this->query_vars = wp_parse_args( $query, $this->query_var_defaults );
+
+		/**
+		 * Fires after the network query vars have been parsed.
+		 *
+		 * @since 4.6.0
+		 *
+		 * @param WP_Network_Query $this The WP_Network_Query instance (passed by reference).
+		 */
+		do_action_ref_array( 'parse_network_query', [&$this] );
+// @NOW 026 -> wp-admin/includes/noop.php, wp-includes/plugin.php
+	}
 
 	/**
 	 * Sets up the WordPress query for retrieving networks.
