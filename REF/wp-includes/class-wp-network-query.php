@@ -403,8 +403,10 @@ class WP_Network_Query
 
 		if ( $this->query_vars['count'] ) {
 			return intval( $wpdb->get_var( $this->request ) );
-// @NOW 026
 		}
+
+		$network_ids = $wpdb->get_col( $this->request );
+// @NOW 026
 	}
 
 	/**
