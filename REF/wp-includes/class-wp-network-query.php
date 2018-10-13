@@ -368,7 +368,43 @@ class WP_Network_Query
 		 * @param WP_Network_Query $this   Current instance of WP_Network_Query (passed by reference).
 		 */
 		$clauses = apply_filters_ref_array( 'networks_clauses', [compact( $pieces ), &$this] );
+
+		$fields  = isset( $clauses['fields'] )  ? $clauses['fields']  : '';
+		$join    = isset( $clauses['join'] )    ? $clauses['join']    : '';
+		$where   = isset( $clauses['where'] )   ? $clauses['where']   : '';
+		$orderby = isset( $clauses['orderby'] ) ? $clauses['orderby'] : '';
+		$limits  = isset( $clauses['limits'] )  ? $clauses['limits']  : '';
+		$groupby = isset( $clauses['groupby'] ) ? $clauses['groupby'] : '';
+
+		if ( $where ) {
+			$where = 'WHERE ' . $where;
+		}
+
+		if ( $groupby ) {
+			$groupby = 'GROUP BY ' . $groupby;
+		}
+
+		if ( $orderby ) {
+			$orderby = "ORDER BY $orderby";
+		}
+
+		$found_rows = '';
+
+		if ( ! $this->query_vars['no_found_rows'] ) {
+			$found_rows = 'SQL_CALC_FOUND_ROWS';
+		}
+
+		$this->sql_clauses['select']  = "SELECT $found_rows $fields";
+		$this->sql_clauses['from']    = "FROM $wpdb->site $join";
+		$this->sql_clauses['groupby'] = $groupby;
+		$this->sql_clauses['orderby'] = $orderby;
+		$this->sql_clauses['limits']  = $limits;
+		$this->request = "{$this->sql_clauses['select']} {$this->sql_clauses['from']} {$where} {$this->sql_clauses['groupby']} {$this->sql_clauses['orderby']} {$this->sql_clauses['limits']}";
+
+		if ( $this->query_vars['count'] ) {
+			return intval( $wpdb->get_var( $this->request ) );
 // @NOW 026
+		}
 	}
 
 	/**
