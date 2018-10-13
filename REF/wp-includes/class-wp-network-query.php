@@ -216,6 +216,21 @@ class WP_Network_Query
 	public function get_networks()
 	{
 		$this->parse_query();
+
+		/**
+		 * Fires before networks are retrieved.
+		 *
+		 * @since 4.6.0
+		 *
+		 * @param WP_Network_Query $this Current instance of WP_Network_Query (passed by reference).
+		 */
+		do_action_ref_array( 'pre_get_networks', [&$this] );
+
+		/**
+		 * $args can include anything.
+		 * Only use the args defined in the query_var_defaults to compute the key.
+		 */
+		$_args = wp_array_slice_assoc( $this->query_vars, array_keys( $this->query_var_defaults ) );
 // @NOW 025
 	}
 }

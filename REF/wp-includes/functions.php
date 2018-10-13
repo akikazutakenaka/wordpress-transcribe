@@ -414,6 +414,28 @@ function wp_parse_args( $args, $defaults = '' )
 }
 
 /**
+ * Extract a slice of an array, given a list of keys.
+ *
+ * @since 3.1.0
+ *
+ * @param  array $array The original array.
+ * @param  array $keys  The list of keys.
+ * @return array The array slice.
+ */
+function wp_array_slice_assoc( $array, $keys )
+{
+	$slice = [];
+
+	foreach ( $keys as $key ) {
+		if ( isset( $array[ $key ] ) ) {
+			$slice[ $key ] = $array[ $key ];
+		}
+	}
+
+	return $slice;
+}
+
+/**
  * Load custom DB error or display WordPress DB error.
  *
  * If a file exists in the wp-content directory named db-error.php, then it will be loaded instead of displaying the WordPress DB error.

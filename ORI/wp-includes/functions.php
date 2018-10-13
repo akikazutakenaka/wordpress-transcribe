@@ -3178,23 +3178,7 @@ function wp_parse_slug_list( $list ) {
 	return array_unique( $list );
 }
 
-/**
- * Extract a slice of an array, given a list of keys.
- *
- * @since 3.1.0
- *
- * @param array $array The original array.
- * @param array $keys  The list of keys.
- * @return array The array slice.
- */
-function wp_array_slice_assoc( $array, $keys ) {
-	$slice = array();
-	foreach ( $keys as $key )
-		if ( isset( $array[ $key ] ) )
-			$slice[ $key ] = $array[ $key ];
-
-	return $slice;
-}
+// refactored. function wp_array_slice_assoc( $array, $keys ) {}
 
 /**
  * Determines if the variable is a numeric-indexed array.
