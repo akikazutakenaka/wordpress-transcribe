@@ -166,6 +166,8 @@ class WP_Network_Query
 		}
 	}
 
+// @NOW 026
+
 	/**
 	 * Sets up the WordPress query for retrieving networks.
 	 *
@@ -180,5 +182,16 @@ class WP_Network_Query
 		return $this->get_networks();
 	}
 
-// @NOW 025
+	/**
+	 * Gets a list of networks matching the query vars.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @return array|int List of WP_Network objects, a list of network ids when 'fields' is set to 'ids', or the number of networks when 'count' is passed as a query var.
+	 */
+	public function get_networks()
+	{
+		$this->parse_query();
+// @NOW 025 -> wp-includes/class-wp-network-query.php
+	}
 }
