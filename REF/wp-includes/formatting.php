@@ -501,6 +501,8 @@ function untrailingslashit( $string )
 	return rtrim( $string, '/\\' );
 }
 
+// @NOW 027
+
 /**
  * Properly strip all HTML tags including script and style.
  *

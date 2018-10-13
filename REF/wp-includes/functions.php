@@ -386,7 +386,31 @@ function wp_die( $message = '', $title = '', $args = [] )
 	call_user_func( $function, $message, $title, $args );
 }
 
-// @NOW 026
+/**
+ * Merge user defined arguments into defaults array.
+ *
+ * This function is used throughout WordPress to allow for both string or array to be merged into another array.
+ *
+ * @since 2.2.0
+ * @since 2.3.0 `$args` can now also be an object.
+ *
+ * @param  string|array|object $args     Value to merge with $defaults.
+ * @param  array               $defaults Optional.
+ *                             Array that serves as the defaults.
+ *                             Default empty.
+ * @return array               Merged user defined values with defaults.
+ */
+function wp_parse_args( $args, $defaults = '' )
+{
+	if ( is_object( $args ) ) {
+		$r = get_object_vars( $args );
+	} elseif ( is_array( $args ) ) {
+		$r = &$args;
+	} else {
+		wp_parse_str( $args, $r );
+// @NOW 026 -> wp-includes/formatting.php
+	}
+}
 
 /**
  * Load custom DB error or display WordPress DB error.
