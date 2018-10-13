@@ -524,6 +524,35 @@ function wp_suspend_cache_addition( $suspend = NULL )
 }
 
 /**
+ * Get the main network ID.
+ *
+ * @since 4.3.0
+ *
+ * @return int The ID of the main network.
+ */
+function get_main_network_id()
+{
+	if ( ! is_multisite() ) {
+		return 1;
+	}
+
+	$current_network = get_network();
+
+	if ( defined( 'PRIMARY_NETWORK_ID' ) ) {
+		$main_network_id = PRIMARY_NETWORK_ID;
+	} elseif ( isset( $current_network->id ) && 1 === ( int ) $current_network->id ) {
+		// If the current network has an ID of 1, assume it is the main network.
+		$main_network_id = 1;
+	} else {
+		$_networks = get_networks( [
+				'fields' => 'ids',
+				'number' => 1
+			] );
+// @NOW 022 -> wp-includes/ms-blogs.php
+	}
+}
+
+/**
  * Return a comma-separated string of functions that have been called to get to the current point in code.
  *
  * @since 3.4.0

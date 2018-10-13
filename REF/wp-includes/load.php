@@ -112,7 +112,11 @@ function get_current_network_id()
 	}
 
 	$current_network = get_network();
-// @NOW 021
+
+	if ( ! isset( $current_network->id ) ) {
+		return get_main_network_id();
+// @NOW 021 -> wp-includes/functions.php
+	}
 }
 
 /**
