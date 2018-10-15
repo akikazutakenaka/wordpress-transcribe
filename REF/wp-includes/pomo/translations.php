@@ -104,6 +104,10 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 		function set_headers( $headers )
 		{}
 
-// @NOW 010
+		/**
+		 * @param object $other
+		 */
+		function merge_with( &$other )
+		{}
 	}
 }

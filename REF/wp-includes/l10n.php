@@ -379,7 +379,7 @@ function get_translations_for_domain( $domain )
 
 	if ( NULL === $noop_translations ) {
 		$noop_translations = new NOOP_Translations;
-// @NOW 009 -> wp-includes/pomo/translations.php
+// @NOW 009
 	}
 }
 

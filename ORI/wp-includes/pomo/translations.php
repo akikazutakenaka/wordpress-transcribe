@@ -295,10 +295,6 @@ class NOOP_Translations {
 			return 1 == $count? $singular : $plural;
 	}
 
-	/**
-	 * @param object $other
-	 */
-	function merge_with(&$other) {
-	}
+	// refactored. function merge_with(&$other) {}
 }
 endif;
