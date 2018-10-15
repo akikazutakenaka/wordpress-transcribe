@@ -277,6 +277,105 @@ function get_network_option( $network_id, $option, $default = FALSE )
 	// Fallback to the current network if a network ID is not specified.
 	if ( ! $network_id ) {
 		$network_id = get_current_network_id();
-// @NOW 020
 	}
+
+	/**
+	 * Filters an existing network option before it is retrieved.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the option name.
+	 *
+	 * Passing a truthy value to the filter will effectively short-circuit retrieval, returning the passed value instead.
+	 *
+	 * @since 2.9.0 As 'pre_site_option_' . $key
+	 * @since 3.0.0
+	 * @since 4.4.0 The `$option` parameter was added.
+	 * @since 4.7.0 The `$network_id` parameter was added.
+	 * @since 4.9.0 The `$default` parameter was added.
+	 *
+	 * @param mixed  $pre_option The value to return instead of the option value.
+	 *                           This differs from `$default`, which is used as the fallback value in the event the option doesn't exist elsewhere in get_network_option().
+	 *                           Default is false (to skip past the short-circuit).
+	 * @param string $option     Option name.
+	 * @param int    $network_id ID of the network.
+	 * @param mixed  $default    The fallback value to return if the option does not exist.
+	 *                           Default is false.
+	 */
+	$pre = apply_filters( "pre_site_option_{$option}", FALSE, $option, $network_id, $default );
+
+	if ( FALSE !== $pre ) {
+		return $pre;
+	}
+
+	// Prevent non-existent options from triggering multiple queries.
+	$notoptions_key = "$network_id:notoptions";
+	$notoptions = wp_cache_get( $notoptions_key, 'site-options' );
+
+	if ( isset( $notoptions[ $option ] ) ) {
+		/**
+		 * Filters a specific default network option.
+		 *
+		 * The dynamic portion of the hook name, `$option`, refers to the option name.
+		 *
+		 * @since 3.4.0
+		 * @since 4.4.0 The `$option` parameter was added.
+		 * @since 4.7.0 The `$network_id` parameter was added.
+		 *
+		 * @param mixed  $default    The value to return if the site option does not exist in the database.
+		 * @param string $option     Option name.
+		 * @param int    $network_id ID of the network.
+		 */
+		return apply_filters( "default_site_option_{$option}", $default, $option, $network_id );
+	}
+
+	if ( ! is_multisite() ) {
+		// This filter is documented in wp-includes/option.php
+		$default = apply_filters( 'default_site_option_' . $option, $default, $option, $network_id );
+		$value = get_option( $option, $default );
+	} else {
+		$cache_key = "$network_id:$option";
+		$value = wp_cache_get( $cache_key, 'site-options' );
+
+		if ( ! isset( $value ) || FALSE === $value ) {
+			$row = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT meta_value
+FROM $wpdb->sitemeta
+WHERE meta_key = %s
+  AND site_id = %d
+EOQ
+					, $option, $network_id ) );
+
+			// Has to be get_row instead of get_var because of funkiness with 0, false, null values.
+			if ( is_object( $row ) ) {
+				$value = $row->get_value;
+				$value = maybe_unserialize( $value );
+				wp_cache_set( $cache_key, $value, 'site-options' );
+			} else {
+				if ( ! is_array( $notoptions ) ) {
+					$notoptions = [];
+				}
+
+				$notoptions[ $option ] = TRUE;
+				wp_cache_set( $notoptions_key, $notoptions, 'site-options' );
+
+				// This filter is documented in wp-includes/option.php
+				$value = apply_filters( 'default_site_option_' . $option, $default, $option, $network_id );
+			}
+		}
+	}
+
+	/**
+	 * Filters the value of an existing network option.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the option name.
+	 *
+	 * @since 2.9.0 As 'site_option_' . $key
+	 * @since 3.0.0
+	 * @since 4.4.0 The `$option` parameter was added.
+	 * @since 4.7.0 The `$network_id` parameter was added.
+	 *
+	 * @param mixed  $value      Value of network option.
+	 * @param string $option     Option name.
+	 * @param int    $network_id ID of the network.
+	 */
+	return apply_filters( "site_option_{$option}", $value, $option, $network_id );
 }

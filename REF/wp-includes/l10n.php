@@ -52,7 +52,7 @@ function get_locale()
 		// Don't check blog option when installing.
 		if ( wp_installing() || ( FALSE === $ms_locale = get_option( 'WPLANG' ) ) ) {
 			$ms_locale = get_site_option( 'WPLANG' );
-// @NOW 019 -> wp-includes/option.php
+// @NOW 019
 		}
 	}
 }
