@@ -62,7 +62,7 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 					'context'  => $context
 				] );
 			$translated = $this->translate_entry( $entry );
-// @NOW 009 -> wp-includes/pomo/translations.php
+// @NOW 009
 		}
 
 		/**
@@ -128,7 +128,14 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 		function set_headers( $headers )
 		{}
 
-// @NOW 010
+		/**
+		 * @param  Translation_Entry $entry
+		 * @return false
+		 */
+		function translate_entry( &$entry )
+		{
+			return FALSE;
+		}
 
 		/**
 		 * @param object $other

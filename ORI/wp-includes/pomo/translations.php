@@ -247,13 +247,7 @@ class NOOP_Translations {
 		return false;
 	}
 
-	/**
-	 * @param Translation_Entry $entry
-	 * @return false
-	 */
-	function translate_entry(&$entry) {
-		return false;
-	}
+	// refactored. function translate_entry(&$entry) {}
 
 	/**
 	 * @param string $singular
