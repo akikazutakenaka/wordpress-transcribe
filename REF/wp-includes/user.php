@@ -77,7 +77,7 @@ function setup_userdata( $for_user_id = '' )
 	}
 
 	$user = get_userdata( $for_user_id );
-// @NOW 016 -> wp-includes/pluggable.php
+// @NOW 016
 }
 
 /**
