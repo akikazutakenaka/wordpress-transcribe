@@ -297,7 +297,7 @@ function _get_path_to_translation( $domain, $reset = FALSE )
 
 	if ( ! isset( $available_translations[ $domain ] ) ) {
 		$available_translations[ $domain ] = _get_path_to_translation_from_lang_dir( $domain );
-// @NOW 011 -> wp-includes/l10n.php
+// @NOW 011
 	}
 }
 
@@ -332,7 +332,20 @@ function _get_path_to_translation_from_lang_dir( $domain )
 	}
 
 	$locale = is_admin() ? get_user_locale() : get_locale();
-// @NOW 012
+	$mofile = "{$domain}-{$locale}.mo";
+	$path = WP_LANG_DIR . '/plugins/' . $mofile;
+
+	if ( in_array( $path, $cached_mofiles ) ) {
+		return $path;
+	}
+
+	$path = WP_LANG_DIR . '/themes/' . $mofile;
+
+	if ( in_array( $path, $cached_mofiles ) ) {
+		return $path;
+	}
+
+	return FALSE;
 }
 
 /**

@@ -691,53 +691,7 @@ function _get_path_to_translation( $domain, $reset = false ) {
 	return $available_translations[ $domain ];
 }
 
-/**
- * Gets the path to a translation file in the languages directory for the current locale.
- *
- * Holds a cached list of available .mo files to improve performance.
- *
- * @since 4.7.0
- * @access private
- *
- * @see _get_path_to_translation()
- *
- * @param string $domain Text domain. Unique identifier for retrieving translated strings.
- * @return string|false The path to the translation file or false if no translation file was found.
- */
-function _get_path_to_translation_from_lang_dir( $domain ) {
-	static $cached_mofiles = null;
-
-	if ( null === $cached_mofiles ) {
-		$cached_mofiles = array();
-
-		$locations = array(
-			WP_LANG_DIR . '/plugins',
-			WP_LANG_DIR . '/themes',
-		);
-
-		foreach ( $locations as $location ) {
-			$mofiles = glob( $location . '/*.mo' );
-			if ( $mofiles ) {
-				$cached_mofiles = array_merge( $cached_mofiles, $mofiles );
-			}
-		}
-	}
-
-	$locale = is_admin() ? get_user_locale() : get_locale();
-	$mofile = "{$domain}-{$locale}.mo";
-
-	$path = WP_LANG_DIR . '/plugins/' . $mofile;
-	if ( in_array( $path, $cached_mofiles ) ) {
-		return $path;
-	}
-
-	$path = WP_LANG_DIR . '/themes/' . $mofile;
-	if ( in_array( $path, $cached_mofiles ) ) {
-		return $path;
-	}
-
-	return false;
-}
+// refactored. function _get_path_to_translation_from_lang_dir( $domain ) {}
 
 /**
  * Return the Translations instance for a text domain.
