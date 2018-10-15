@@ -3936,39 +3936,7 @@ function is_main_network( $network_id = null ) {
 	return ( $network_id === get_main_network_id() );
 }
 
-/**
- * Get the main network ID.
- *
- * @since 4.3.0
- *
- * @return int The ID of the main network.
- */
-function get_main_network_id() {
-	if ( ! is_multisite() ) {
-		return 1;
-	}
-
-	$current_network = get_network();
-
-	if ( defined( 'PRIMARY_NETWORK_ID' ) ) {
-		$main_network_id = PRIMARY_NETWORK_ID;
-	} elseif ( isset( $current_network->id ) && 1 === (int) $current_network->id ) {
-		// If the current network has an ID of 1, assume it is the main network.
-		$main_network_id = 1;
-	} else {
-		$_networks = get_networks( array( 'fields' => 'ids', 'number' => 1 ) );
-		$main_network_id = array_shift( $_networks );
-	}
-
-	/**
-	 * Filters the main network ID.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param int $main_network_id The ID of the main network.
-	 */
-	return (int) apply_filters( 'get_main_network_id', $main_network_id );
-}
+// refactored. function get_main_network_id() {}
 
 /**
  * Determine whether global terms are enabled.

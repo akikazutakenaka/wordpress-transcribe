@@ -614,8 +614,17 @@ function get_main_network_id()
 				'fields' => 'ids',
 				'number' => 1
 			] );
-// @NOW 022
+		$main_network_id = array_shift( $_networks );
 	}
+
+	/**
+	 * Filters the main network ID.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int $main_network_id The ID of the main network.
+	 */
+	return ( int ) apply_filters( 'get_main_network_id', $main_network_id );
 }
 
 /**
