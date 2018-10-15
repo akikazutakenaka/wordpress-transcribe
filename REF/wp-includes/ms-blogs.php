@@ -238,7 +238,7 @@ function wp_switch_roles_and_user( $new_site_id, $old_site_id )
 function get_networks( $args = [] )
 {
 	$query = new WP_Network_Query();
-// @NOW 023
+	return $query->query( $args );
 }
 
 /**

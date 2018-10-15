@@ -614,7 +614,7 @@ function get_main_network_id()
 				'fields' => 'ids',
 				'number' => 1
 			] );
-// @NOW 022 -> wp-includes/ms-blogs.php
+// @NOW 022
 	}
 }
 
