@@ -139,7 +139,14 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 			return FALSE;
 		}
 
-// @NOW 009
+		/**
+		 * @param string $singular
+		 * @param string $context
+		 */
+		function translate( $singular, $context = NULL )
+		{
+			return $singular;
+		}
 
 		/**
 		 * @param object $other

@@ -125,7 +125,7 @@ function translate( $text, $domain = 'default' )
 {
 	$translations = get_translations_for_domain( $domain );
 	$translation  = $translations->translate( $text );
-// @NOW 008 -> wp-includes/pomo/translations.php
+// @NOW 008
 }
 
 /**

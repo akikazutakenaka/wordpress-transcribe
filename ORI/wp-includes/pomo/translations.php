@@ -238,14 +238,7 @@ class NOOP_Translations {
 	}
 
 	// refactored. function translate_entry(&$entry) {}
-
-	/**
-	 * @param string $singular
-	 * @param string $context
-	 */
-	function translate($singular, $context=null) {
-		return $singular;
-	}
+	// refactored. function translate($singular, $context=null) {}
 
 	/**
 	 *
