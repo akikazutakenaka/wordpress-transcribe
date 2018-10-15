@@ -962,27 +962,7 @@ function update_network_cache( $networks ) {
 	}
 }
 
-/**
- * Adds any networks from the given IDs to the cache that do not already exist in cache.
- *
- * @since 4.6.0
- * @access private
- *
- * @see update_network_cache()
- * @global wpdb $wpdb WordPress database abstraction object.
- *
- * @param array $network_ids Array of network IDs.
- */
-function _prime_network_caches( $network_ids ) {
-	global $wpdb;
-
-	$non_cached_ids = _get_non_cached_ids( $network_ids, 'networks' );
-	if ( !empty( $non_cached_ids ) ) {
-		$fresh_networks = $wpdb->get_results( sprintf( "SELECT $wpdb->site.* FROM $wpdb->site WHERE id IN (%s)", join( ",", array_map( 'intval', $non_cached_ids ) ) ) );
-
-		update_network_cache( $fresh_networks );
-	}
-}
+// refactored. function _prime_network_caches( $network_ids ) {}
 
 /**
  * Handler for updating the site's last updated date when a post is published or

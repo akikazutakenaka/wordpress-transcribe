@@ -285,6 +285,8 @@ function get_network( $network = NULL )
 	return $_network;
 }
 
+// @NOW 026
+
 /**
  * Adds any networks from the given IDs to the cache that do not already exist in cache.
  *
@@ -299,5 +301,14 @@ function _prime_network_caches( $network_ids )
 {
 	global $wpdb;
 	$non_cached_ids = _get_non_cached_ids( $network_ids, 'networks' );
-// @NOW 026
+
+	if ( ! empty( $non_cached_ids ) ) {
+		$fresh_networks = $wpdb->get_results( sprintf( <<<EOQ
+SELECT $wpdb->site.*
+FROM $wpdb->site
+WHERE id IN (%s)
+EOQ
+				, join( ",", array_map( 'intval', $non_cached_ids ) ) ) );
+		update_network_cache( $fresh_networks );
+	}
 }
