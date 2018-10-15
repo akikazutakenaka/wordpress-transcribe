@@ -499,7 +499,34 @@ function sanitize_user( $username, $strict = FALSE )
 	$raw_username = $username;
 	$username = wp_strip_all_tags( $username );
 	$username = remove_accents( $username );
-// @NOW 017
+
+	// Kill octets.
+	$username = preg_replace( '|%([a-fA-F0-9][a-fA-F0-9])|', '', $username );
+
+	// Kill entities.
+	$username = preg_replace( '/&.+?;/', '', $username );
+
+	// If strict, reduce to ASCII for max portability.
+	if ( $strict ) {
+		$username = preg_replace( '|[^a-z0-9 _.\-@]|i', '', $username );
+	}
+
+	$username = trim( $username );
+
+	// Consolidate contiguous whitespace
+	$username = preg_replace( '|\s+|', ' ', $username );
+
+	/**
+	 * Filters a sanitized username string.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param string $username     Sanitized username.
+	 * @param string $raw_username The username prior to sanitization.
+	 * @param bool   $strict       Whether to limit the sanitization to specific characters.
+	 *                             Default false.
+	 */
+	return apply_filters( 'sanitize_user', $username, $raw_username, $strict );
 }
 
 /**

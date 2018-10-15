@@ -214,7 +214,7 @@ class WP_User
 
 			case 'login':
 				$value = sanitize_user( $value );
-// @NOW 016 -> wp-includes/formatting.php
+// @NOW 016
 		}
 	}
 
