@@ -91,6 +91,13 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 		var $entries = [];
 		var $headers = [];
 
+		/**
+		 * @param string $header
+		 * @param string $value
+		 */
+		function set_header( $header, $value )
+		{}
+
 // @NOW 010
 	}
 }

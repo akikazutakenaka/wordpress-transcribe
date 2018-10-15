@@ -242,13 +242,7 @@ class NOOP_Translations {
 		return true;
 	}
 
-	/**
-	 *
-	 * @param string $header
-	 * @param string $value
-	 */
-	function set_header($header, $value) {
-	}
+	// refactored. function set_header($header, $value) {}
 
 	/**
 	 *
