@@ -25,6 +25,8 @@ function get_user_meta( $user_id, $key = '', $single = FALSE )
 	return get_metadata( 'user', $user_id, $key, $single );
 }
 
+// @NOW 016
+
 /**
  * Update all user caches.
  *
@@ -71,7 +73,15 @@ function _wp_get_current_user()
 
 	if ( ! empty( $current_user ) ) {
 		if ( $current_user instanceof WP_User ) {
-// @NOW 014
+			return $current_user;
+		}
+
+		// Upgrade stdClass to WP_User
+		if ( is_object( $current_user ) && isset( $current_user->ID ) ) {
+			$cur_id = $current_user->ID;
+			$current_user = NULL;
+			wp_set_current_user( $cur_id );
+// @NOW 014 -> wp-includes/pluggable.php
 		}
 	}
 }
