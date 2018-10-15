@@ -299,5 +299,5 @@ function _prime_network_caches( $network_ids )
 {
 	global $wpdb;
 	$non_cached_ids = _get_non_cached_ids( $network_ids, 'networks' );
-// @NOW 026 -> wp-includes/functions.php
+// @NOW 026
 }

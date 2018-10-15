@@ -665,7 +665,30 @@ function wp_debug_backtrace_summary( $ignore_class = NULL, $skip_frames = 0, $pr
 		: $caller;
 }
 
-// @NOW 027
+/**
+ * Retrieve ids that are not already present in the cache.
+ *
+ * @since  3.4.0
+ * @access private
+ *
+ * @param  array  $object_ids ID list.
+ * @param  string $cache_key  The cache bucket to check against.
+ * @return array  List of ids not present in the cache.
+ */
+function _get_non_cached_ids( $object_ids, $cache_key )
+{
+	$clean = [];
+
+	foreach ( $object_ids as $id ) {
+		$id = ( int ) $id;
+
+		if ( ! wp_cache_get( $id, $cache_key ) ) {
+			$clean[] = $id;
+		}
+	}
+
+	return $clean;
+}
 
 /**
  * Set the mbstring internal encoding to a binary safe encoding when func_overload is enabled.
