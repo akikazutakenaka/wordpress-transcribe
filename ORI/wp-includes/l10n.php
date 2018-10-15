@@ -629,41 +629,8 @@ function load_child_theme_textdomain( $domain, $path = false ) {
 	return load_theme_textdomain( $domain, $path );
 }
 
-/**
- * Loads plugin and theme textdomains just-in-time.
- *
- * When a textdomain is encountered for the first time, we try to load
- * the translation file from `wp-content/languages`, removing the need
- * to call load_plugin_texdomain() or load_theme_texdomain().
- *
- * @since 4.6.0
- * @access private
- *
- * @see get_translations_for_domain()
- * @global array $l10n_unloaded An array of all text domains that have been unloaded again.
- *
- * @param string $domain Text domain. Unique identifier for retrieving translated strings.
- * @return bool True when the textdomain is successfully loaded, false otherwise.
- */
-function _load_textdomain_just_in_time( $domain ) {
-	global $l10n_unloaded;
-
-	$l10n_unloaded = (array) $l10n_unloaded;
-
-	// Short-circuit if domain is 'default' which is reserved for core.
-	if ( 'default' === $domain || isset( $l10n_unloaded[ $domain ] ) ) {
-		return false;
-	}
-
-	$translation_path = _get_path_to_translation( $domain );
-	if ( false === $translation_path ) {
-		return false;
-	}
-
-	return load_textdomain( $domain, $translation_path );
-}
-
-// refactored. function _get_path_to_translation( $domain, $reset = false ) {}
+// refactored. function _load_textdomain_just_in_time( $domain ) {}
+// :
 // refactored. function _get_path_to_translation_from_lang_dir( $domain ) {}
 
 /**

@@ -269,7 +269,12 @@ function _load_textdomain_just_in_time( $domain )
 	}
 
 	$translation_path = _get_path_to_translation( $domain );
-// @NOW 010
+
+	if ( FALSE === $translation_path ) {
+		return FALSE;
+	}
+
+	return load_textdomain( $domain, $translation_path );
 }
 
 /**
@@ -367,7 +372,7 @@ function get_translations_for_domain( $domain )
 
 	if ( isset( $l10n[ $domain ] )
 	  || ( _load_textdomain_just_in_time( $domain ) && isset( $l10n[ $domain ] ) ) ) {
-// @NOW 009 -> wp-includes/l10n.php
+// @NOW 009
 	}
 }
 
