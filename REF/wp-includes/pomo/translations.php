@@ -41,7 +41,14 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 			}
 		}
 
-// @NOW 010
+		/**
+		 * @param Translation_Entry $entry
+		 */
+		function translate_entry( &$entry )
+		{
+			$key = $entry->key();
+			return isset( $this->entries[ $key ] ) ? $this->entries[ $key ] : FALSE;
+		}
 
 		/**
 		 * @param  string $singular
@@ -120,6 +127,8 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 		 */
 		function set_headers( $headers )
 		{}
+
+// @NOW 010
 
 		/**
 		 * @param object $other
