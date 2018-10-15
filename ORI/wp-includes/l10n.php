@@ -631,33 +631,7 @@ function load_child_theme_textdomain( $domain, $path = false ) {
 
 // refactored. function _load_textdomain_just_in_time( $domain ) {}
 // :
-// refactored. function _get_path_to_translation_from_lang_dir( $domain ) {}
-
-/**
- * Return the Translations instance for a text domain.
- *
- * If there isn't one, returns empty Translations instance.
- *
- * @since 2.8.0
- *
- * @global array $l10n
- *
- * @param string $domain Text domain. Unique identifier for retrieving translated strings.
- * @return Translations|NOOP_Translations A Translations instance.
- */
-function get_translations_for_domain( $domain ) {
-	global $l10n;
-	if ( isset( $l10n[ $domain ] ) || ( _load_textdomain_just_in_time( $domain ) && isset( $l10n[ $domain ] ) ) ) {
-		return $l10n[ $domain ];
-	}
-
-	static $noop_translations = null;
-	if ( null === $noop_translations ) {
-		$noop_translations = new NOOP_Translations;
-	}
-
-	return $noop_translations;
-}
+// refactored. function get_translations_for_domain( $domain ) {}
 
 /**
  * Whether there are translations for the text domain.

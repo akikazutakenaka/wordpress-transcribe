@@ -124,7 +124,7 @@ function get_user_locale( $user_id = 0 )
 function translate( $text, $domain = 'default' )
 {
 	$translations = get_translations_for_domain( $domain );
-// @NOW 008 -> wp-includes/l10n.php
+// @NOW 008
 }
 
 /**
@@ -379,8 +379,9 @@ function get_translations_for_domain( $domain )
 
 	if ( NULL === $noop_translations ) {
 		$noop_translations = new NOOP_Translations;
-// @NOW 009
 	}
+
+	return $noop_translations;
 }
 
 /**
