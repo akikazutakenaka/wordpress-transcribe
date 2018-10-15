@@ -665,6 +665,8 @@ function wp_debug_backtrace_summary( $ignore_class = NULL, $skip_frames = 0, $pr
 		: $caller;
 }
 
+// @NOW 027
+
 /**
  * Set the mbstring internal encoding to a binary safe encoding when func_overload is enabled.
  *

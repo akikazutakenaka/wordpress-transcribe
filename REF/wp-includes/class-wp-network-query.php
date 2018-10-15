@@ -245,8 +245,38 @@ class WP_Network_Query
 
 			if ( $network_ids ) {
 				$this->set_found_networks();
-// @NOW 025
 			}
+
+			$cache_value = [
+				'network_ids'    => $network_ids,
+				'found_networks' => $this->found_networks
+			];
+			wp_cache_add( $cache_key, $cache_value, 'networks' );
+		} else {
+			$network_ids = $cache_value['network_ids'];
+			$this->found_networks = $cache_value['found_networks'];
+		}
+
+		if ( $this->found_networks && $this->query_vars['number'] ) {
+			$this->max_num_pages = ceil( $this->found_networks / $this->query_vars['number'] );
+		}
+
+		// If querying for a count only, there's nothing more to do.
+		if ( $this->query_vars['count'] ) {
+			// $network_ids is actually a count in this case.
+			return intval( $network_ids );
+		}
+
+		$network_ids = array_map( 'intval', $network_ids );
+
+		if ( 'ids' == $this->query_vars['fields'] ) {
+			$this->networks = $network_ids;
+			return $this->networks;
+		}
+
+		if ( $this->query_vars['update_network_cache'] ) {
+			_prime_network_caches( $network_ids );
+// @NOW 025 -> wp-includes/ms-blogs.php
 		}
 	}
 
