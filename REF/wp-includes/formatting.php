@@ -432,8 +432,53 @@ function remove_accents( $string )
 
 		// Used for locale-specific rules.
 		$locale = get_locale();
-// @NOW 018
+
+		if ( 'de_DE' == $locale || 'de_DE_formal' == $locale || 'de_CH' == $locale || 'de_CH_informal' == $locale ) {
+			$chars['Ä'] = 'Ae';
+			$chars['ä'] = 'ae';
+			$chars['Ö'] = 'Oe';
+			$chars['ö'] = 'oe';
+			$chars['Ü'] = 'Ue';
+			$chars['ü'] = 'ue';
+			$chars['ß'] = 'ss';
+		} elseif ( 'da_DK' === $locale ) {
+			$chars['Æ'] = 'Ae';
+ 			$chars['æ'] = 'ae';
+			$chars['Ø'] = 'Oe';
+			$chars['ø'] = 'oe';
+			$chars['Å'] = 'Aa';
+			$chars['å'] = 'aa';
+		} elseif ( 'ca' === $locale ) {
+			$chars['l·l'] = 'll';
+		} elseif ( 'sr_RS' === $locale || 'bs_BA' === $locale ) {
+			$chars['Đ'] = 'DJ';
+			$chars['đ'] = 'dj';
+		}
+
+		$string = strtr( $string, $chars );
+	} else {
+		$chars = [];
+
+		// Assume ISO-8859-1 if not UTF-8
+		$chars['in'] = "\x80\x83\x8a\x8e\x9a\x9e"
+			. "\x9f\xa2\xa5\xb5\xc0\xc1\xc2"
+			. "\xc3\xc4\xc5\xc7\xc8\xc9\xca"
+			. "\xcb\xcc\xcd\xce\xcf\xd1\xd2"
+			. "\xd3\xd4\xd5\xd6\xd8\xd9\xda"
+			. "\xdb\xdc\xdd\xe0\xe1\xe2\xe3"
+			. "\xe4\xe5\xe7\xe8\xe9\xea\xeb"
+			. "\xec\xed\xee\xef\xf1\xf2\xf3"
+			. "\xf4\xf5\xf6\xf8\xf9\xfa\xfb"
+			. "\xfc\xfd\xff";
+		$chars['out'] = "EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy";
+		$string = strtr( $string, $chars['in'], $chars['out'] );
+		$double_chars = [];
+		$double_chars['in'] = ["\x8c", "\x9c", "\xc6", "\xd0", "\xde", "\xdf", "\xe6", "\xf0", "\xfe"];
+		$double_chars['out'] = ['OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th'];
+		$string = str_replace( $double_chars['in'], $double_chars['out'], $string );
 	}
+
+	return $string;
 }
 
 /**
@@ -454,7 +499,7 @@ function sanitize_user( $username, $strict = FALSE )
 	$raw_username = $username;
 	$username = wp_strip_all_tags( $username );
 	$username = remove_accents( $username );
-// @NOW 017 -> wp-includes/formatting.php
+// @NOW 017
 }
 
 /**
