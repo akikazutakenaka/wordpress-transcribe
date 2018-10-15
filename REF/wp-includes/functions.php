@@ -514,6 +514,8 @@ function absint( $maybeint )
 	return abs( intval( $maybeint ) );
 }
 
+// @NOW 009
+
 /**
  * Mark something as being incorrectly called.
  *
