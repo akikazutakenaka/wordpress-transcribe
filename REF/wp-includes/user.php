@@ -6,6 +6,8 @@
  * @subpackage Users
  */
 
+// @NOW 017
+
 /**
  * Retrieve user meta field for a user.
  *
@@ -25,7 +27,37 @@ function get_user_meta( $user_id, $key = '', $single = FALSE )
 	return get_metadata( 'user', $user_id, $key, $single );
 }
 
-// @NOW 016
+//
+// Private helper functions
+//
+
+/**
+ * Set up global user vars.
+ *
+ * Used by wp_set_current_user() for back compat.
+ * Might be deprecated in the future.
+ *
+ * @since  2.0.4
+ * @global string  $user_login    The user username for logging in.
+ * @global WP_User $userdata      User data.
+ * @global int     $user_level    The level of the user.
+ * @global int     $user_ID       The ID of the user.
+ * @global string  $user_email    The email address of the user.
+ * @global string  $user_url      The url in the user's profile.
+ * @global string  $user_identity The display name of the user.
+ *
+ * @param int $for_user_id Optional.
+ *                         User ID to set up global data.
+ */
+function setup_userdata( $for_user_id = '' )
+{
+	global $user_login, $userdata, $user_level, $user_ID, $user_email, $user_url, $user_identity;
+
+	if ( '' == $for_user_id ) {
+		$for_user_id = get_current_user_id();
+// @NOW 016 -> wp-includes/user.php
+	}
+}
 
 /**
  * Update all user caches.
