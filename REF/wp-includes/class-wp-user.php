@@ -137,7 +137,12 @@ class WP_User
 		$data = $id
 			? self::get_data_by( 'id', $id )
 			: self::get_data_by( 'login', $name );
-// @NOW 015
+
+		if ( $data ) {
+			$this->init( $data, $site_id );
+		} else {
+			$this->data = new stdClass;
+		}
 	}
 
 	/**

@@ -38,61 +38,6 @@
 class WP_User {
 	// refactored. public $data;
 	// :
-	// refactored. private static $back_compat_keys;
-
-	/**
-	 * Constructor.
-	 *
-	 * Retrieves the userdata and passes it to WP_User::init().
-	 *
-	 * @since 2.0.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @param int|string|stdClass|WP_User $id User's ID, a WP_User object, or a user object from the DB.
-	 * @param string $name Optional. User's username
-	 * @param int $site_id Optional Site ID, defaults to current site.
-	 */
-	public function __construct( $id = 0, $name = '', $site_id = '' ) {
-		if ( ! isset( self::$back_compat_keys ) ) {
-			$prefix = $GLOBALS['wpdb']->prefix;
-			self::$back_compat_keys = array(
-				'user_firstname' => 'first_name',
-				'user_lastname' => 'last_name',
-				'user_description' => 'description',
-				'user_level' => $prefix . 'user_level',
-				$prefix . 'usersettings' => $prefix . 'user-settings',
-				$prefix . 'usersettingstime' => $prefix . 'user-settings-time',
-			);
-		}
-
-		if ( $id instanceof WP_User ) {
-			$this->init( $id->data, $site_id );
-			return;
-		} elseif ( is_object( $id ) ) {
-			$this->init( $id, $site_id );
-			return;
-		}
-
-		if ( ! empty( $id ) && ! is_numeric( $id ) ) {
-			$name = $id;
-			$id = 0;
-		}
-
-		if ( $id ) {
-			$data = self::get_data_by( 'id', $id );
-		} else {
-			$data = self::get_data_by( 'login', $name );
-		}
-
-		if ( $data ) {
-			$this->init( $data, $site_id );
-		} else {
-			$this->data = new stdClass;
-		}
-	}
-
-	// refactored. public function init( $data, $site_id = '' ) {}
 	// refactored. public static function get_data_by( $field, $value ) {}
 
 	/**

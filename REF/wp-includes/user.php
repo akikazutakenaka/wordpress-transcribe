@@ -71,7 +71,7 @@ function _wp_get_current_user()
 
 	if ( ! empty( $current_user ) ) {
 		if ( $current_user instanceof WP_User ) {
-// @NOW 014 -> wp-includes/class-wp-user.php
+// @NOW 014
 		}
 	}
 }
