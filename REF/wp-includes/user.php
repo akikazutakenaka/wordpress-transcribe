@@ -26,6 +26,23 @@ function get_user_meta( $user_id, $key = '', $single = FALSE )
 }
 
 /**
+ * Update all user caches.
+ *
+ * @since 3.0.0
+ *
+ * @param  WP_User   $user User object to be cached.
+ * @return bool|null Returns false on failure.
+ */
+function update_user_caches( $user )
+{
+	if ( $user instanceof WP_User ) {
+		if ( ! $user->exists() ) {
+// @NOW 017 -> wp-includes/class-wp-user.php
+		}
+	}
+}
+
+/**
  * Retrieves the current user object.
  *
  * Will set the current user, if the current user is not set.

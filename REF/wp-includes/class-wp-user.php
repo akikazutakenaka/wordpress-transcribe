@@ -214,9 +214,34 @@ class WP_User
 
 			case 'login':
 				$value = sanitize_user( $value );
-// @NOW 016
+				$user_id = wp_cache_get( $value, 'userlogins' );
+				$db_field = 'user_login';
+				break;
+
+			default:
+				return FALSE;
 		}
+
+		if ( FALSE !== $user_id ) {
+			if ( $user = wp_cache_get( $user_id, 'users' ) ) {
+				return $user;
+			}
+		}
+
+		if ( ! $user = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT *
+FROM $wpdb->users
+WHERE $db_field = %s
+EOQ
+					, $value ) ) ) {
+			return FALSE;
+		}
+
+		update_user_caches( $user );
+// @NOW 016 -> wp-includes/user.php
 	}
+
+// @NOW 018
 
 	/**
 	 * Retrieve all of the role capabilities and merge with individual capabilities.
