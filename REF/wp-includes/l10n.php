@@ -52,9 +52,25 @@ function get_locale()
 		// Don't check blog option when installing.
 		if ( wp_installing() || ( FALSE === $ms_locale = get_option( 'WPLANG' ) ) ) {
 			$ms_locale = get_site_option( 'WPLANG' );
-// @NOW 019
+		}
+
+		if ( $ms_locale !== FALSE ) {
+			$locale = $ms_locale;
+		}
+	} else {
+		$db_locale = get_option( 'WPLANG' );
+
+		if ( $db_locale !== FALSE ) {
+			$locale = $db_locale;
 		}
 	}
+
+	if ( empty( $locale ) ) {
+		$locale = 'en_US';
+	}
+
+	// This filter is documented in wp-includes/l10n.php
+	return apply_filters( 'locale', $locale );
 }
 
 /**

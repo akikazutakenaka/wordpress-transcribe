@@ -432,7 +432,7 @@ function remove_accents( $string )
 
 		// Used for locale-specific rules.
 		$locale = get_locale();
-// @NOW 018 -> wp-includes/l10n.php
+// @NOW 018
 	}
 }
 
