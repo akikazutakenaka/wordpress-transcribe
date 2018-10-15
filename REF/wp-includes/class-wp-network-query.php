@@ -162,7 +162,7 @@ class WP_Network_Query
 
 		if ( ! empty( $query ) ) {
 			$this->query( $query );
-// @NOW 024 -> wp-includes/class-wp-network-query.php
+// @NOW 024
 		}
 	}
 
@@ -276,8 +276,31 @@ class WP_Network_Query
 
 		if ( $this->query_vars['update_network_cache'] ) {
 			_prime_network_caches( $network_ids );
-// @NOW 025
 		}
+
+		// Fetch full network objects from the primed cache.
+		$_networks = [];
+
+		foreach ( $network_ids as $network_id ) {
+			if ( $_network = get_network( $network_id ) ) {
+				$_networks[] = $_network;
+			}
+		}
+
+		/**
+		 * Filters the network query results.
+		 *
+		 * @since 4.6.0
+		 *
+		 * @param array            $_networks An array of WP_Network objects.
+		 * @param WP_Network_Query $this      Current instance of WP_Network_Query (passed by reference).
+		 */
+		$_networks = apply_filters_ref_array( 'the_networks', [$_networks, &$this] );
+
+		// Convert to WP_Network instances
+		$this->networks = array_map( 'get_network', $_networks );
+
+		return $this->networks;
 	}
 
 	/**
