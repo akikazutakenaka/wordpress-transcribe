@@ -50,23 +50,8 @@ function wp_set_current_user($id, $name = '') {
 }
 endif;
 
-if ( !function_exists('wp_get_current_user') ) :
 // refactored. function wp_get_current_user() {}
-endif;
-
-if ( !function_exists('get_userdata') ) :
-/**
- * Retrieve user info by user ID.
- *
- * @since 0.71
- *
- * @param int $user_id User ID
- * @return WP_User|false WP_User object on success, false on failure.
- */
-function get_userdata( $user_id ) {
-	return get_user_by( 'id', $user_id );
-}
-endif;
+// refactored. function get_userdata( $user_id ) {}
 
 if ( !function_exists('get_user_by') ) :
 /**

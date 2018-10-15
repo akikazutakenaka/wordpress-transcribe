@@ -74,8 +74,10 @@ function setup_userdata( $for_user_id = '' )
 
 	if ( '' == $for_user_id ) {
 		$for_user_id = get_current_user_id();
-// @NOW 016
 	}
+
+	$user = get_userdata( $for_user_id );
+// @NOW 016 -> wp-includes/pluggable.php
 }
 
 /**

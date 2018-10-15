@@ -56,9 +56,7 @@ class POMO_Reader {
 }
 endif;
 
-if ( ! class_exists( 'POMO_FileReader', false ) ):
 // refactored. class POMO_FileReader extends POMO_Reader {}
-endif;
 
 if ( ! class_exists( 'POMO_StringReader', false ) ):
 /**
