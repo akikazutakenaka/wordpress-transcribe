@@ -146,7 +146,7 @@ class WP_Locale
 
 		// The first letter of each day.
 		$this->weekday_initial[ __( 'Sunday' ) ] = _x( 'S', 'Sunday initial' );
-// @NOW 007 -> wp-includes/l10n.php
+// @NOW 007
 	}
 
 	/**
