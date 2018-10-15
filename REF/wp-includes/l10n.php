@@ -174,6 +174,8 @@ function _e( $text, $domain = 'default' )
 	echo translate( $text, $domain );
 }
 
+// @NOW 008
+
 /**
  * Load a .mo file into the text domain $domain.
  *

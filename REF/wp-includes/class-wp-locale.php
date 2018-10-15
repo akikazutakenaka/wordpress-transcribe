@@ -135,9 +135,18 @@ class WP_Locale
 	 */
 	public function init()
 	{
-		// The Weekdays
+		// The Weekdays.
 		$this->weekday[0] = __( 'Sunday' );
-// @NOW 007
+		$this->weekday[1] = __( 'Monday' );
+		$this->weekday[2] = __( 'Tuesday' );
+		$this->weekday[3] = __( 'Wednesday' );
+		$this->weekday[4] = __( 'Thursday' );
+		$this->weekday[5] = __( 'Friday' );
+		$this->weekday[6] = __( 'Saturday' );
+
+		// The first letter of each day.
+		$this->weekday_initial[ __( 'Sunday' ) ] = _x( 'S', 'Sunday initial' );
+// @NOW 007 -> wp-includes/l10n.php
 	}
 
 	/**

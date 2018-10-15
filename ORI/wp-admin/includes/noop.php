@@ -8,12 +8,7 @@
  */
 
 // refactored. function __() {}
-
-/**
- * @ignore
- */
-function _x() {}
-
+// :
 // refactored. function add_filter() {}
 
 /**
