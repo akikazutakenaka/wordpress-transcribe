@@ -8,37 +8,8 @@
  */
 
 // refactored. function get_locale() {}
-// refactored. function get_user_locale( $user_id = 0 ) {}
-
-/**
- * Retrieve the translation of $text.
- *
- * If there is no translation, or the text domain isn't loaded, the original text is returned.
- *
- * *Note:* Don't use translate() directly, use __() or related functions.
- *
- * @since 2.2.0
- *
- * @param string $text   Text to translate.
- * @param string $domain Optional. Text domain. Unique identifier for retrieving translated strings.
- *                       Default 'default'.
- * @return string Translated text
- */
-function translate( $text, $domain = 'default' ) {
-	$translations = get_translations_for_domain( $domain );
-	$translation  = $translations->translate( $text );
-
-	/**
-	 * Filters text with its translation.
-	 *
-	 * @since 2.0.11
-	 *
-	 * @param string $translation  Translated text.
-	 * @param string $text         Text to translate.
-	 * @param string $domain       Text domain. Unique identifier for retrieving translated strings.
-	 */
-	return apply_filters( 'gettext', $translation, $text, $domain );
-}
+// :
+// refactored. function translate( $text, $domain = 'default' ) {}
 
 /**
  * Remove last item on a pipe-delimited string.

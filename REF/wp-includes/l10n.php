@@ -125,7 +125,18 @@ function translate( $text, $domain = 'default' )
 {
 	$translations = get_translations_for_domain( $domain );
 	$translation  = $translations->translate( $text );
-// @NOW 008
+
+	/**
+	 * Filters text with its translation.
+	 *
+	 * @since 2.0.11
+	 *
+	 * @param string $translation Translated text.
+	 * @param string $text        Text to translate.
+	 * @param string $domain      Text domain.
+	 *                            Unique identifier for retrieving translated strings.
+	 */
+	return apply_filters( 'gettext', $translation, $text, $domain );
 }
 
 /**
