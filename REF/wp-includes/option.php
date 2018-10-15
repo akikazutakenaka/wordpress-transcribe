@@ -277,6 +277,6 @@ function get_network_option( $network_id, $option, $default = FALSE )
 	// Fallback to the current network if a network ID is not specified.
 	if ( ! $network_id ) {
 		$network_id = get_current_network_id();
-// @NOW 020 -> wp-includes/load.php
+// @NOW 020
 	}
 }

@@ -115,8 +115,9 @@ function get_current_network_id()
 
 	if ( ! isset( $current_network->id ) ) {
 		return get_main_network_id();
-// @NOW 021
 	}
+
+	return absint( $current_network->id );
 }
 
 /**

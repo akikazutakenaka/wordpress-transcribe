@@ -755,28 +755,8 @@ function is_user_admin() {
 }
 
 // refactored. function is_multisite() {}
-// refactored. function get_current_blog_id() {}
-
-/**
- * Retrieves the current network ID.
- *
- * @since 4.6.0
- *
- * @return int The ID of the current network.
- */
-function get_current_network_id() {
-	if ( ! is_multisite() ) {
-		return 1;
-	}
-
-	$current_network = get_network();
-
-	if ( ! isset( $current_network->id ) ) {
-		return get_main_network_id();
-	}
-
-	return absint( $current_network->id );
-}
+// :
+// refactored. function get_current_network_id() {}
 
 /**
  * Attempt an early load of translations.
