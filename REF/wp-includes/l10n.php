@@ -269,7 +269,7 @@ function _load_textdomain_just_in_time( $domain )
 	}
 
 	$translation_path = _get_path_to_translation( $domain );
-// @NOW 010 -> wp-includes/l10n.php
+// @NOW 010
 }
 
 /**
@@ -297,8 +297,9 @@ function _get_path_to_translation( $domain, $reset = FALSE )
 
 	if ( ! isset( $available_translations[ $domain ] ) ) {
 		$available_translations[ $domain ] = _get_path_to_translation_from_lang_dir( $domain );
-// @NOW 011
 	}
+
+	return $available_translations[ $domain ];
 }
 
 /**
