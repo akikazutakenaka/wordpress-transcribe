@@ -91,8 +91,18 @@ function get_user_locale( $user_id = 0 )
 
 	if ( 0 === $user_id && function_exists( 'wp_get_current_user' ) ) {
 		$user = wp_get_current_user();
-// @NOW 013
+	} elseif ( $user_id instanceof WP_User ) {
+		$user = $user_id;
+	} elseif ( $user_id && is_numeric( $user_id ) ) {
+		$user = get_user_by( 'id', $user_id );
 	}
+
+	if ( ! $user ) {
+		return get_locale();
+	}
+
+	$locale = $user->locale;
+	return $locale ? $locale : get_locale();
 }
 
 /**
@@ -322,7 +332,7 @@ function _get_path_to_translation_from_lang_dir( $domain )
 	}
 
 	$locale = is_admin() ? get_user_locale() : get_locale();
-// @NOW 012 -> wp-includes/l10n.php
+// @NOW 012
 }
 
 /**
