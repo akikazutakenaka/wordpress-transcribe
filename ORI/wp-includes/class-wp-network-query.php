@@ -176,34 +176,6 @@ class WP_Network_Query {
 	}
 
 	// refactored. protected function get_network_ids() {}
-
-	/**
-	 * Populates found_networks and max_num_pages properties for the current query
-	 * if the limit clause was used.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 */
-	private function set_found_networks() {
-		global $wpdb;
-
-		if ( $this->query_vars['number'] && ! $this->query_vars['no_found_rows'] ) {
-			/**
-			 * Filters the query used to retrieve found network count.
-			 *
-			 * @since 4.6.0
-			 *
-			 * @param string           $found_networks_query SQL query. Default 'SELECT FOUND_ROWS()'.
-			 * @param WP_Network_Query $network_query        The `WP_Network_Query` instance.
-			 */
-			$found_networks_query = apply_filters( 'found_networks_query', 'SELECT FOUND_ROWS()', $this );
-
-			$this->found_networks = (int) $wpdb->get_var( $found_networks_query );
-		}
-	}
-
-	// refactored. protected function get_search_sql( $string, $columns ) {}
 	// :
 	// refactored. protected function parse_order( $order ) {}
 }

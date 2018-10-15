@@ -242,7 +242,37 @@ class WP_Network_Query
 
 		if ( FALSE === $cache_value ) {
 			$network_ids = $this->get_network_ids();
+
+			if ( $network_ids ) {
+				$this->set_found_networks();
 // @NOW 025
+			}
+		}
+	}
+
+	/**
+	 * Populates found_networks and max_num_pages properties for the current query if the limit clause was used.
+	 *
+	 * @since  4.6.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 */
+	private function set_found_networks()
+	{
+		global $wpdb;
+
+		if ( $this->query_vars['number'] && ! $this->query_vars['no_found_rows'] ) {
+			/**
+			 * Filters the query used to retrieve found network count.
+			 *
+			 * @since 4.6.0
+			 *
+			 * @param string           $found_networks_query SQL query.
+			 *                                               Default 'SELECT FOUND_ROWS()'.
+			 * @param WP_Network_Query $network_query        The `WP_Network_Query` instance.
+			 */
+			$found_networks_query = apply_filters( 'found_networks_query', 'SELECT FOUND_ROWS()', $this );
+
+			$this->found_networks = ( int ) $wpdb->get_var( $found_networks_query );
 		}
 	}
 
