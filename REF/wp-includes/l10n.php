@@ -372,7 +372,14 @@ function get_translations_for_domain( $domain )
 
 	if ( isset( $l10n[ $domain ] )
 	  || ( _load_textdomain_just_in_time( $domain ) && isset( $l10n[ $domain ] ) ) ) {
-// @NOW 009
+		return $l10n[ $domain ];
+	}
+
+	static $noop_translations = NULL;
+
+	if ( NULL === $noop_translations ) {
+		$noop_translations = new NOOP_Translations;
+// @NOW 009 -> wp-includes/pomo/translations.php
 	}
 }
 

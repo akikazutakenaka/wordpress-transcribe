@@ -83,3 +83,14 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		}
 	}
 }
+
+if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
+	// Provides the same interface as Translations, but doesn't do anything.
+	class NOOP_Translations
+	{
+		var $entries = [];
+		var $headers = [];
+
+// @NOW 010
+	}
+}

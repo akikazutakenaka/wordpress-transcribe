@@ -235,8 +235,8 @@ if ( ! class_exists( 'NOOP_Translations', false ) ):
  * Provides the same interface as Translations, but doesn't do anything
  */
 class NOOP_Translations {
-	var $entries = array();
-	var $headers = array();
+	// refactored. var $entries = array();
+	// refactored. var $headers = array();
 
 	function add_entry($entry) {
 		return true;
