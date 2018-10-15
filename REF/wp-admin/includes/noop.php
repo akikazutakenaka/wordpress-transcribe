@@ -52,6 +52,12 @@ function do_action_ref_array()
 /**
  * @ignore
  */
+function get_bloginfo()
+{}
+
+/**
+ * @ignore
+ */
 function is_admin()
 {
 	return TRUE;
