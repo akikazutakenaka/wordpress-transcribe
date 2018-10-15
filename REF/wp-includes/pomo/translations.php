@@ -98,6 +98,12 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 		function set_header( $header, $value )
 		{}
 
+		/**
+		 * @param array $headers
+		 */
+		function set_headers( $headers )
+		{}
+
 // @NOW 010
 	}
 }
