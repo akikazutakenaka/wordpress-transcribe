@@ -238,7 +238,7 @@ EOQ
 		}
 
 		update_user_caches( $user );
-// @NOW 016 -> wp-includes/user.php
+// @NOW 016
 	}
 
 	/**

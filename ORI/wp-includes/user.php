@@ -1246,28 +1246,7 @@ function sanitize_user_field($field, $value, $user_id, $context) {
 	return $value;
 }
 
-/**
- * Update all user caches
- *
- * @since 3.0.0
- *
- * @param WP_User $user User object to be cached
- * @return bool|null Returns false on failure.
- */
-function update_user_caches( $user ) {
-	if ( $user instanceof WP_User ) {
-		if ( ! $user->exists() ) {
-			return false;
-		}
-
-		$user = $user->data;
-	}
-
-	wp_cache_add($user->ID, $user, 'users');
-	wp_cache_add($user->user_login, $user->ID, 'userlogins');
-	wp_cache_add($user->user_email, $user->ID, 'useremail');
-	wp_cache_add($user->user_nicename, $user->ID, 'userslugs');
-}
+// refactored. function update_user_caches( $user ) {}
 
 /**
  * Clean all user caches
