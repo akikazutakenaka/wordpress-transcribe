@@ -59,17 +59,7 @@ class Translations {
 	}
 
 	// refactored. function translate_entry(&$entry) {}
-
-	/**
-	 * @param string $singular
-	 * @param string $context
-	 * @return string
-	 */
-	function translate($singular, $context=null) {
-		$entry = new Translation_Entry(array('singular' => $singular, 'context' => $context));
-		$translated = $this->translate_entry($entry);
-		return ($translated && !empty($translated->translations))? $translated->translations[0] : $singular;
-	}
+	// refactored. function translate($singular, $context=null) {}
 
 	/**
 	 * Given the number of items, returns the 0-based index of the plural form to use

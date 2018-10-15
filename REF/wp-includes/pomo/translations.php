@@ -62,7 +62,9 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 					'context'  => $context
 				] );
 			$translated = $this->translate_entry( $entry );
-// @NOW 009
+			return ( $translated && ! empty( $translated->translations ) )
+				? $translated->translations[0]
+				: $singular;
 		}
 
 		/**
@@ -136,6 +138,8 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 		{
 			return FALSE;
 		}
+
+// @NOW 009
 
 		/**
 		 * @param object $other
