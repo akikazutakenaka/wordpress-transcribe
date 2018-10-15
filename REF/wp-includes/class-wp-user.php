@@ -241,7 +241,17 @@ EOQ
 // @NOW 016 -> wp-includes/user.php
 	}
 
-// @NOW 018
+	/**
+	 * Determine whether the user exists in the database.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return bool True if user exists in the database, false if not.
+	 */
+	public function exists()
+	{
+		return ! empty( $this->ID );
+	}
 
 	/**
 	 * Retrieve all of the role capabilities and merge with individual capabilities.

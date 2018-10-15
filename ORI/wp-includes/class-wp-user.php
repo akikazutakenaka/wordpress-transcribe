@@ -286,16 +286,7 @@ class WP_User {
 		}
 	}
 
-	/**
-	 * Determine whether the user exists in the database.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @return bool True if user exists in the database, false if not.
-	 */
-	public function exists() {
-		return ! empty( $this->ID );
-	}
+	// refactored. public function exists() {}
 
 	/**
 	 * Retrieve the value of a property or meta key.

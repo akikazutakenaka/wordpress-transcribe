@@ -37,7 +37,7 @@ function update_user_caches( $user )
 {
 	if ( $user instanceof WP_User ) {
 		if ( ! $user->exists() ) {
-// @NOW 017 -> wp-includes/class-wp-user.php
+// @NOW 017
 		}
 	}
 }
