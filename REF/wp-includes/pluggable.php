@@ -33,7 +33,15 @@ if ( ! function_exists( 'wp_set_current_user' ) ) {
 
 		$current_user = new WP_User( $id, $name );
 		setup_userdata( $current_user->ID );
-// @NOW 015
+
+		/**
+		 * Fires after the current user is set.
+		 *
+		 * @since 2.0.1
+		 */
+		do_action( 'set_current_user' );
+
+		return $current_user;
 	}
 }
 

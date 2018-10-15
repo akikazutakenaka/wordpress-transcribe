@@ -149,7 +149,7 @@ function _wp_get_current_user()
 			$cur_id = $current_user->ID;
 			$current_user = NULL;
 			wp_set_current_user( $cur_id );
-// @NOW 014 -> wp-includes/pluggable.php
+// @NOW 014
 		}
 	}
 }
