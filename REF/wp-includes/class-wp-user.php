@@ -137,7 +137,7 @@ class WP_User
 		$data = $id
 			? self::get_data_by( 'id', $id )
 			: self::get_data_by( 'login', $name );
-// @NOW 015 -> wp-includes/class-wp-user.php
+// @NOW 015
 	}
 
 	/**
@@ -238,7 +238,7 @@ EOQ
 		}
 
 		update_user_caches( $user );
-// @NOW 016
+		return $user;
 	}
 
 	/**
