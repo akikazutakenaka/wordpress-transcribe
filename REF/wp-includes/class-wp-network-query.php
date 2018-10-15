@@ -276,7 +276,7 @@ class WP_Network_Query
 
 		if ( $this->query_vars['update_network_cache'] ) {
 			_prime_network_caches( $network_ids );
-// @NOW 025 -> wp-includes/ms-blogs.php
+// @NOW 025
 		}
 	}
 
