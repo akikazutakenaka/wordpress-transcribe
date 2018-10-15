@@ -149,7 +149,41 @@ function _wp_get_current_user()
 			$cur_id = $current_user->ID;
 			$current_user = NULL;
 			wp_set_current_user( $cur_id );
-// @NOW 014
+			return $current_user;
 		}
+
+		/**
+		 * $current_user has a junk value.
+		 * Force to WP_User with ID 0.
+		 */
+		$current_user = NULL;
+		wp_set_current_user( 0 );
+		return $current_user;
 	}
+
+	if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+		wp_set_current_user( 0 );
+		return $current_user;
+	}
+
+	/**
+	 * Filters the current user.
+	 *
+	 * The default filters use this to determine the current user from the request's cookies, if available.
+	 *
+	 * Returning a value of false will effectively short-circuit setting the current user.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param int|bool $user_id User ID if one has been determined, false otherwise.
+	 */
+	$user_id = apply_filters( 'determine_current_user', FALSE );
+
+	if ( ! $user_id ) {
+		wp_set_current_user( 0 );
+		return $current_user;
+	}
+
+	wp_set_current_user( $user_id );
+	return $current_user;
 }
