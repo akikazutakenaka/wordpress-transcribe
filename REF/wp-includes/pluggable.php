@@ -33,7 +33,7 @@ if ( ! function_exists( 'wp_set_current_user' ) ) {
 
 		$current_user = new WP_User( $id, $name );
 		setup_userdata( $current_user->ID );
-// @NOW 015 -> wp-includes/user.php
+// @NOW 015
 	}
 }
 

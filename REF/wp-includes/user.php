@@ -77,7 +77,22 @@ function setup_userdata( $for_user_id = '' )
 	}
 
 	$user = get_userdata( $for_user_id );
-// @NOW 016
+
+	if ( ! $user ) {
+		$user_ID    = 0;
+		$user_level = 0;
+		$userdata   = NULL;
+		$user_login = $user_email = $user_url = $user_identity = '';
+		return;
+	}
+
+	$user_ID       = ( int ) $user->ID;
+	$user_level    = ( int ) $user->user_level;
+	$userdata      = $user;
+	$user_login    = $user->user_login;
+	$user_email    = $user->user_email;
+	$user_url      = $user->user_url;
+	$user_identity = $user->display_name;
 }
 
 /**
