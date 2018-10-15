@@ -124,7 +124,8 @@ function get_user_locale( $user_id = 0 )
 function translate( $text, $domain = 'default' )
 {
 	$translations = get_translations_for_domain( $domain );
-// @NOW 008
+	$translation  = $translations->translate( $text );
+// @NOW 008 -> wp-includes/pomo/translations.php
 }
 
 /**

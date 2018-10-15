@@ -41,6 +41,23 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 			}
 		}
 
+// @NOW 010
+
+		/**
+		 * @param  string $singular
+		 * @param  string $context
+		 * @return string
+		 */
+		function translate( $singular, $context = NULL )
+		{
+			$entry = new Translation_Entry( [
+					'singular' => $singular,
+					'context'  => $context
+				] );
+			$translated = $this->translate_entry( $entry );
+// @NOW 009 -> wp-includes/pomo/translations.php
+		}
+
 		/**
 		 * Merge $other in the current object.
 		 *
