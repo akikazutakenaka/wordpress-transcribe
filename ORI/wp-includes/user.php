@@ -420,19 +420,7 @@ function count_many_users_posts( $users, $post_type = 'post', $public_only = fal
 // User option functions
 //
 
-/**
- * Get the current user's ID
- *
- * @since MU (3.0.0)
- *
- * @return int The current user's ID, or 0 if no user is logged in.
- */
-function get_current_user_id() {
-	if ( ! function_exists( 'wp_get_current_user' ) )
-		return 0;
-	$user = wp_get_current_user();
-	return ( isset( $user->ID ) ? (int) $user->ID : 0 );
-}
+// refactored. function get_current_user_id() {}
 
 /**
  * Retrieve user option that can be either per Site or per Network.
