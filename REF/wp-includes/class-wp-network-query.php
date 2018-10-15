@@ -162,7 +162,6 @@ class WP_Network_Query
 
 		if ( ! empty( $query ) ) {
 			$this->query( $query );
-// @NOW 024
 		}
 	}
 
