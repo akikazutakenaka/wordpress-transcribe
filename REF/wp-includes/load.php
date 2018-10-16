@@ -253,6 +253,8 @@ function wp_installing( $is_installing = NULL )
 	return ( bool ) $installing;
 }
 
+// @NOW 010
+
 /**
  * Converts a shorthand byte value to an integer byte value.
  *
