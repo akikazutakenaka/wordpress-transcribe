@@ -1566,13 +1566,5 @@ class WP_Rewrite {
 		}
 	}
 
-	/**
-	 * Constructor - Calls init(), which runs setup.
-	 *
-	 * @since 1.5.0
-	 *
-	 */
-	public function __construct() {
-		$this->init();
-	}
+	// refactored. public function __construct() {}
 }

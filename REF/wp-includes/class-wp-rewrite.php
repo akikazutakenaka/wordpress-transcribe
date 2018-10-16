@@ -319,4 +319,14 @@ class WP_Rewrite
 	public $feeds = array( 'feed', 'rdf', 'rss', 'rss2', 'atom' );
 
 	// @NOW 010
+
+	/**
+	 * Constructor - Calls init(), which runs setup.
+	 *
+	 * @since 1.5.0
+	 */
+	public function __construct()
+	{
+		$this->init();
+	}
 }
