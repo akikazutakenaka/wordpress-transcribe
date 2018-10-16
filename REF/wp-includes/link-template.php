@@ -64,7 +64,7 @@ function get_home_url( $blog_id = NULL, $path = '', $scheme = NULL )
 	}
 
 	$url = set_url_scheme( $url, $scheme );
-// @NOW 009 -> wp-includes/link-template.php
+// @NOW 009
 }
 
 /**
@@ -92,6 +92,38 @@ function set_url_scheme( $url, $scheme = NULL )
 		$scheme = is_ssl() || force_ssl_admin()
 			? 'https'
 			: 'http';
-// @NOW 010
+	} elseif ( $scheme !== 'http' && $scheme !== 'https' && $scheme !== 'relative' ) {
+		$scheme = is_ssl()
+			? 'https'
+			: 'http';
 	}
+
+	$url = trim( $url );
+
+	if ( substr( $url, 0, 2 ) === '//' ) {
+		$url = 'http:' . $url;
+	}
+
+	if ( 'relative' == $scheme ) {
+		$url = ltrim( preg_replace( '#^\w+://[^/]*#', '', $url ) );
+
+		if ( $url !== '' && $url[0] === '/' ) {
+			$url = '/' . ltrim( $url, "/ \t\n\r\0\x0B" );
+		}
+	} else {
+		$url = preg_replace( '#^\w+://#', $scheme . '://', $url );
+	}
+
+	/**
+	 * Filters the resulting URL after setting the scheme.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param string      $url         The complete URL including scheme and path.
+	 * @param string      $scheme      Scheme applied to the URL.
+	 *                                 One of 'http', 'https', or 'relative'.
+	 * @param string|null $orig_scheme Scheme requested for the URL.
+	 *                                 One of 'http', 'https', 'login', 'login_post', 'admin', 'relative', 'rest', 'rpc', or null.
+	 */
+	return apply_filters( 'set_url_scheme', $url, $scheme, $orig_scheme );
 }
