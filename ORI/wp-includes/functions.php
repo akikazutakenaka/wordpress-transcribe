@@ -3709,27 +3709,7 @@ function validate_file( $file, $allowed_files = array() ) {
 	return 0;
 }
 
-/**
- * Whether to force SSL used for the Administration Screens.
- *
- * @since 2.6.0
- *
- * @staticvar bool $forced
- *
- * @param string|bool $force Optional. Whether to force SSL in admin screens. Default null.
- * @return bool True if forced, false if not forced.
- */
-function force_ssl_admin( $force = null ) {
-	static $forced = false;
-
-	if ( !is_null( $force ) ) {
-		$old_forced = $forced;
-		$forced = $force;
-		return $old_forced;
-	}
-
-	return $forced;
-}
+// refactored. function force_ssl_admin( $force = null ) {}
 
 /**
  * Guess the URL for the site.

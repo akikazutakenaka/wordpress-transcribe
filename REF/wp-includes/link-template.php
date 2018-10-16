@@ -92,6 +92,6 @@ function set_url_scheme( $url, $scheme = NULL )
 		$scheme = is_ssl() || force_ssl_admin()
 			? 'https'
 			: 'http';
-// @NOW 010 -> wp-includes/functions.php
+// @NOW 010
 	}
 }
