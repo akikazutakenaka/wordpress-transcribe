@@ -84,6 +84,8 @@ function get_home_url( $blog_id = NULL, $path = '', $scheme = NULL )
 	return apply_filters( 'home_url', $url, $path, $orig_scheme, $blog_id );
 }
 
+// @NOW 009
+
 /**
  * Sets the scheme for a URL.
  *

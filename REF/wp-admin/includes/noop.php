@@ -66,5 +66,11 @@ function is_admin()
 /**
  * @ignore
  */
+function site_url()
+{}
+
+/**
+ * @ignore
+ */
 function home_url()
 {}

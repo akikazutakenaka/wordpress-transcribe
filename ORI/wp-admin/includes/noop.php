@@ -30,12 +30,7 @@ function is_lighttpd_before_150() {}
 
 // refactored. function add_action() {}
 // :
-// refactored. function is_admin() {}
-
-/**
- * @ignore
- */
-function site_url() {}
+// refactored. function site_url() {}
 
 /**
  * @ignore
