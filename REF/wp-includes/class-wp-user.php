@@ -314,9 +314,11 @@ EOQ
 	public function for_site( $site_id = '' )
 	{
 		global $wpdb;
+
 		$this->site_id = ! empty( $site_id )
 			? absint( $site_id )
 			: get_current_blog_id();
+
 		$this->cap_key = $wpdb->get_blog_prefix( $this->site_id ) . 'capabilities';
 		$this->caps = $this->get_caps_data();
 		$this->get_role_caps();

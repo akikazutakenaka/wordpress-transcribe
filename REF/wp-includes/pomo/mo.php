@@ -52,11 +52,11 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 			$magic_little_64 = ( int ) 2500072158;
 
 			// 0xde120495
-			$magic_big = ( ( int ) -569244523 ) & 0xFFFFFFFF;
+			$magic_big = ( int ) -569244523 & 0xFFFFFFFF;
 
-			return ( $magic_little == $magic || $magic_little_64 == $magic )
+			return $magic_little == $magic || $magic_little_64 == $magic
 				? 'little'
-				: ( ( $magic_big == $magic )
+				: ( $magic_big == $magic
 					? 'big'
 					: FALSE );
 		}
@@ -73,7 +73,11 @@ if ( ! class_exists( 'MO', FALSE ) ) {
 			}
 
 			$reader->setEndian( $endian_string );
-			$endian = ( 'big' == $endian_string ) ? 'N' : 'V';
+
+			$endian = 'big' == $endian_string
+				? 'N'
+				: 'V';
+
 			$header = $reader->read( 24 );
 
 			if ( $reader->strlen( $header ) != 24 ) {

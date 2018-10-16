@@ -28,7 +28,7 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		 */
 		function set_header( $header, $value )
 		{
-			$this->headers[$header] = $value;
+			$this->headers[ $header ] = $value;
 		}
 
 		/**
@@ -47,7 +47,10 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		function translate_entry( &$entry )
 		{
 			$key = $entry->key();
-			return isset( $this->entries[ $key ] ) ? $this->entries[ $key ] : FALSE;
+
+			return isset( $this->entries[ $key ] )
+				? $this->entries[ $key ]
+				: FALSE;
 		}
 
 		/**
@@ -62,7 +65,8 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 					'context'  => $context
 				] );
 			$translated = $this->translate_entry( $entry );
-			return ( $translated && ! empty( $translated->translations ) )
+
+			return $translated && ! empty( $translated->translations )
 				? $translated->translations[0]
 				: $singular;
 		}

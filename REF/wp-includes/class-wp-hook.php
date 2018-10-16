@@ -75,8 +75,8 @@ final class WP_Hook implements Iterator, ArrayAccess
 	public function add_filter( $tag, $function_to_add, $priority, $accepted_args )
 	{
 		$idx = _wp_filter_build_unique_id( $tag, $function_to_add, $priority );
-		$priority_existed = isset( $this->callbacks[$priority] );
-		$this->callbacks[$priority][$idx] = [
+		$priority_existed = isset( $this->callbacks[ $priority ] );
+		$this->callbacks[ $priority ][ $idx ] = [
 			'function'      => $function_to_add,
 			'accepted_args' => $accepted_args
 		];
@@ -140,9 +140,9 @@ final class WP_Hook implements Iterator, ArrayAccess
 			}
 
 			// If we have a new priority that didn't exist, but ::apply_filters() or ::do_action() thinks it's the current priority...
-			if ( $new_priority === $this->current_priority[$index] && ! $priority_existed ) {
+			if ( $new_priority === $this->current_priority[ $index ] && ! $priority_existed ) {
 				// ...and the new priority is the same as what $this->iterations thinks is the previous priority, we need to move back to it.
-				$prev = ( FALSE === current( $iteration ) )
+				$prev = FALSE === current( $iteration )
 					? end( $iteration ) // If we've already moved off the end of the array, go back to the last element.
 					: prev( $iteration ); // Otherwise, just go back to the previous element.
 
@@ -277,9 +277,9 @@ final class WP_Hook implements Iterator, ArrayAccess
 				}
 
 				// Avoid the array_slice if possible.
-				$value = ( $the_['accepted_args'] == 0 )
+				$value = $the_['accepted_args'] == 0
 					? call_user_func_array( $the_['function'], [] )
-					: ( ( $the_['accepted_args'] >= $num_args )
+					: ( $the_['accepted_args'] >= $num_args
 						? call_user_func_array( $the_['function'], $args )
 						: call_user_func_array( $the_['function'], array_slice( $args, 0, ( int ) $the_['accepted_args'] ) ) );
 			}

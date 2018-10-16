@@ -53,7 +53,9 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 	$check = apply_filters( "get_{$meta_type}_metadata", NULL, $object_id, $meta_key, $single );
 
 	if ( NULL !== $check ) {
-		return ( $single && is_array( $check ) ) ? $check[0] : $check;
+		return $single && is_array( $check )
+			? $check[0]
+			: $check;
 	}
 
 	$meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
@@ -73,7 +75,9 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 			: array_map( 'maybe_unserialize', $meta_cache[ $meta_key ] );
 	}
 
-	return $single ? '' : [];
+	return $single
+		? ''
+		: [];
 }
 
 /**
@@ -128,7 +132,11 @@ function update_meta_cache( $meta_type, $object_ids )
 
 	// Get meta info
 	$id_list = join( ',', $ids );
-	$id_column = 'user' == $meta_type ? 'umeta_id' : 'meta_id';
+
+	$id_column = 'user' == $meta_type
+		? 'umeta_id'
+		: 'meta_id';
+
 	$meta_list = $wpdb->get_results( <<<EOQ
 SELECT $column, meta_key, meta_value
 FROM $table

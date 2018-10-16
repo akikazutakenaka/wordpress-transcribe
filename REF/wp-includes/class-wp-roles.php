@@ -105,7 +105,9 @@ class WP_Roles
 	 */
 	public function get_role( $role )
 	{
-		return isset( $this->role_objects[ $role ] ) ? $this->role_objects[ $role ] : NULL;
+		return isset( $this->role_objects[ $role ] )
+			? $this->role_objects[ $role ]
+			: NULL;
 	}
 
 	/**
@@ -163,13 +165,16 @@ class WP_Roles
 	public function for_site( $site_id = NULL )
 	{
 		global $wpdb;
+
 		$this->site_id = ! empty( $site_id )
 			? absint( $site_id )
 			: get_current_blog_id();
+
 		$this->role_key = $wpdb->get_blog_prefix( $this->site_id ) . 'user_roles';
 
-		if ( ! empty( $this->roles ) && ! $this->use_db )
+		if ( ! empty( $this->roles ) && ! $this->use_db ) {
 			return;
+		}
 
 		$this->roles = $this->get_roles_data();
 		$this->init_roles();

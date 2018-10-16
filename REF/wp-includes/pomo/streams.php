@@ -19,7 +19,7 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 		 */
 		function __construct()
 		{
-			$this->is_overloaded = ( ( ini_get( "mbstring.func_overload" ) & 2 ) != 0 ) && function_exists( 'mb_substr' );
+			$this->is_overloaded = ini_get( "mbstring.func_overload" ) & 2 != 0 && function_exists( 'mb_substr' );
 			$this->_pos = 0;
 		}
 
@@ -54,7 +54,10 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 				return FALSE;
 			}
 
-			$endian_letter = ( 'big' == $this->endian ) ? 'N' : 'V';
+			$endian_letter = 'big' == $this->endian
+				? 'N'
+				: 'V';
+
 			return unpack( $endian_letter . $count, $bytes );
 		}
 

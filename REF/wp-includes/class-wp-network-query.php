@@ -349,6 +349,7 @@ class WP_Network_Query
 			$ordersby = is_array( $this->query_vars['orderby'] )
 				? $this->query_vars['orderby']
 				: preg_split( '/[,\s]/', $this->query_vars['orderby'] );
+
 			$orderby_array = [];
 
 			foreach ( $ordersby as $_key => $_value ) {
@@ -388,11 +389,13 @@ class WP_Network_Query
 
 		if ( ! empty( $number ) ) {
 			$limits = $offset
-				. 'LIMIT ' . $offset . ',' . $number
+				? 'LIMIT ' . $offset . ',' . $number
 				: 'LIMIT ' . $number;
 		}
 
-		$fields = $this->query_vars['count'] ? 'COUNT(*)' : "$wpdb->site.id";
+		$fields = $this->query_vars['count']
+			? 'COUNT(*)'
+			: "$wpdb->site.id";
 
 		// Parse network IDs for an IN clause.
 		if ( ! empty( $this->query_vars['network__in'] ) ) {
@@ -451,12 +454,29 @@ class WP_Network_Query
 		 */
 		$clauses = apply_filters_ref_array( 'networks_clauses', [compact( $pieces ), &$this] );
 
-		$fields  = isset( $clauses['fields'] )  ? $clauses['fields']  : '';
-		$join    = isset( $clauses['join'] )    ? $clauses['join']    : '';
-		$where   = isset( $clauses['where'] )   ? $clauses['where']   : '';
-		$orderby = isset( $clauses['orderby'] ) ? $clauses['orderby'] : '';
-		$limits  = isset( $clauses['limits'] )  ? $clauses['limits']  : '';
-		$groupby = isset( $clauses['groupby'] ) ? $clauses['groupby'] : '';
+		$fields  = isset( $clauses['fields'] )
+			? $clauses['fields']
+			: '';
+
+		$join    = isset( $clauses['join'] )
+			? $clauses['join']
+			: '';
+
+		$where   = isset( $clauses['where'] )
+			? $clauses['where']
+			: '';
+
+		$orderby = isset( $clauses['orderby'] )
+			? $clauses['orderby']
+			: '';
+
+		$limits  = isset( $clauses['limits'] )
+			? $clauses['limits']
+			: '';
+
+		$groupby = isset( $clauses['groupby'] )
+			? $clauses['groupby']
+			: '';
 
 		if ( $where ) {
 			$where = 'WHERE ' . $where;

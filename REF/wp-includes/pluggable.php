@@ -27,7 +27,7 @@ if ( ! function_exists( 'wp_set_current_user' ) ) {
 		global $current_user;
 
 		// If `$id` matches the user who's already current, there's nothing to do.
-		if ( isset( $current_user ) && ( $current_user instanceof WP_User ) && ( $id == $current_user->ID ) && ( NULL !== $id ) ) {
+		if ( isset( $current_user ) && $current_user instanceof WP_User && $id == $current_user->ID && NULL !== $id ) {
 			return $current_user;
 		}
 

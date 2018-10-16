@@ -89,7 +89,9 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 			}
 
 			// Prepend context and EOT, like in MO files
-			$key = ! $this->context ? $this->singular : $this->context . chr( 4 ) . $this->singular;
+			$key = ! $this->context
+				? $this->singular
+				: $this->context . chr( 4 ) . $this->singular;
 
 			// Standardize on \n line endings
 			$key = str_replace( ["\r\n", "\r"], "\n", $key );

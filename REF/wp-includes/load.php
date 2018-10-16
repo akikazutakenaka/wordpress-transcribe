@@ -353,5 +353,5 @@ function wp_doing_ajax()
  */
 function is_wp_error( $thing )
 {
-	return ( $thing instanceof WP_Error );
+	return $thing instanceof WP_Error;
 }

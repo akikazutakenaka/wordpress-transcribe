@@ -227,6 +227,6 @@ final class WP_Screen
 	{
 		return empty( $admin )
 			? ( bool ) $this->in_admin
-			: ( $admin == $this->in_admin );
+			: $admin == $this->in_admin;
 	}
 }

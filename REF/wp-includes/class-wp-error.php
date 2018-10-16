@@ -58,7 +58,7 @@ class WP_Error
 			return;
 		}
 
-		$this->errors[$code][] = $message;
+		$this->errors[ $code ][] = $message;
 
 		if ( ! empty( $data ) ) {
 			$this->error_data[ $code ] = $data;

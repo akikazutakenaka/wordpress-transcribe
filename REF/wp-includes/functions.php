@@ -106,7 +106,10 @@ function is_serialized( $data, $strict = TRUE )
 		case 'b':
 		case 'i':
 		case 'd':
-			$end = $strict ? '$' : '';
+			$end = $strict
+				? '$'
+				: '';
+
 			return ( bool ) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
 	}
 
@@ -195,7 +198,9 @@ function get_status_header_desc( $code )
 		];
 	}
 
-	return isset( $wp_header_to_desc[ $code ] ) ? $wp_header_to_desc[ $code ] : '';
+	return isset( $wp_header_to_desc[ $code ] )
+		? $wp_header_to_desc[ $code ]
+		: '';
 }
 
 /**
@@ -410,7 +415,9 @@ function wp_parse_args( $args, $defaults = '' )
 		wp_parse_str( $args, $r );
 	}
 
-	return is_array( $defaults ) ? array_merge( $defaults, $r ) : $r;
+	return is_array( $defaults )
+		? array_merge( $defaults, $r )
+		: $r;
 }
 
 /**
@@ -613,11 +620,17 @@ function _doing_it_wrong( $function, $message, $version )
 	 */
 	if ( WP_DEBUG && apply_filters( 'doing_it_wrong_trigger_error', TRUE ) ) {
 		if ( function_exists( '__' ) ) {
-			$version = is_null( $version ) ? '' : sprintf( __( '(This message was added in version %s.)' ), $version );
+			$version = is_null( $version )
+				? ''
+				: sprintf( __( '(This message was added in version %s.)' ), $version );
+
 			$message .= ' ' . sprintf( __( 'Please see <a href="%s">Debugging in WordPress</a> for more information.' ), __( 'https://codex.wordpress.org/Debugging_in_WordPress' ) );
 			trigger_error( sprintf( __( '%1$s was called <strong>incorrectly</strong>. %2$s %3$s' ), $function, $message, $version ) );
 		} else {
-			$version = is_null( $version ) ? '' : sprintf( '(This message was added in version %s.)', $version );
+			$version = is_null( $version )
+				? ''
+				: sprintf( '(This message was added in version %s.)', $version );
+
 			$message .= sprintf( ' Please see <a href="%s">Debugging in WordPress</a> for more information.', 'https://codex.wordpress.org/Debugging_in_WordPress' );
 			trigger_error( sprintf( '%1$s was called <strong>incorrectly</strong>. %2$s %3$s', $function, $message, $version ) );
 		}
@@ -708,7 +721,10 @@ function get_main_network_id()
  */
 function wp_debug_backtrace_summary( $ignore_class = NULL, $skip_frames = 0, $pretty = TRUE )
 {
-	$trace = version_compare( PHP_VERSION, '5.2.5', '>=' ) ? debug_backtrace( FALSE ) : debug_backtrace();
+	$trace = version_compare( PHP_VERSION, '5.2.5', '>=' )
+		? debug_backtrace( FALSE )
+		: debug_backtrace();
+
 	$caller = [];
 	$check_class = ! is_null( $ignore_class );
 	$skip_frames++; // Skip this function.

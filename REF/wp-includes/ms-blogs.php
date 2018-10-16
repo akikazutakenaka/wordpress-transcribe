@@ -113,9 +113,11 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 		wp_cache_switch_to_blog( $new_blog );
 	} else {
 		global $wp_object_cache;
-		$global_groups = ( is_object( $wp_object_cache ) && isset( $wp_object_cache->global_groups ) )
+
+		$global_groups = is_object( $wp_object_cache ) && isset( $wp_object_cache->global_groups )
 			? $wp_object_cache->global_groups
 			: FALSE;
+
 		wp_cache_init();
 
 		if ( function_exists( 'wp_cache_add_global_groups' ) ) {
@@ -179,7 +181,11 @@ function restore_current_blog()
 		wp_cache_switch_to_blog( $blog );
 	} else {
 		global $wp_object_cache;
-		$global_groups = ( is_object( $wp_object_cache ) && isset( $wp_object_cache->global_groups ) ) ? $wp_object_cache->global_groups : FALSE;
+
+		$global_groups = is_object( $wp_object_cache ) && isset( $wp_object_cache->global_groups )
+			? $wp_object_cache->global_groups
+			: FALSE;
+
 		wp_cache_init();
 
 		if ( function_exists( 'wp_cache_add_global_groups' ) ) {
@@ -263,7 +269,7 @@ function get_network( $network = NULL )
 		$network = $current_site;
 	}
 
-	$_network = ( $network instanceof WP_Network )
+	$_network = $network instanceof WP_Network
 		? $network
 		: ( is_object( $network )
 			? new WP_Network( $network )

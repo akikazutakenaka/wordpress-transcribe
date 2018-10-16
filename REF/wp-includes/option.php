@@ -176,19 +176,20 @@ EOQ
 function wp_load_alloptions()
 {
 	global $wpdb;
-	$alloptions = ( ! wp_installing() || ! is_multisite() )
+
+	$alloptions = ! wp_installing() || ! is_multisite()
 		? wp_cache_get( 'alloptions', 'options' )
 		: FALSE;
 
 	if ( ! $alloptions ) {
 		$suppress = $wpdb->suppress_errors();
 
-		if ( ! $alloptions_db = $wpdb->get_results( <<<EOQ
+		if ( ! ( $alloptions_db = $wpdb->get_results( <<<EOQ
 SELECT option_name, option_value
 FROM $wpdb->options
 WHERE autoload = 'yes'
 EOQ
-			) ) {
+				) ) ) {
 			$alloptions_db = $wpdb->get_results( <<<EOQ
 SELECT option_name, option_value
 FROM $wpdb->options

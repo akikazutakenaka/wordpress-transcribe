@@ -134,7 +134,7 @@ function has_filter( $tag, $function_to_check = FALSE )
 		return FALSE;
 	}
 
-	return $wp_filter[$tag]->has_filter( $tag, $function_to_check );
+	return $wp_filter[ $tag ]->has_filter( $tag, $function_to_check );
 }
 
 /**
@@ -354,11 +354,9 @@ function do_action( $tag, $arg = '' )
 
 	$args = [];
 
-	if ( is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] ) ) {
-		$args[] = &$arg[0];
-	} else {
-		$args[] = $arg;
-	}
+	$args[] = is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] )
+		? &$arg[0]
+		: $arg;
 
 	for ( $a = 2, $num = func_num_args(); $a < $num; $a++ ) {
 		$args[] = func_get_arg( $a );
@@ -523,7 +521,10 @@ function _wp_filter_build_unique_id( $tag, $function, $priority )
 					return FALSE;
 				}
 
-				$obj_idx .= isset( $wp_filter[ $tag ][ $priority ] ) ? count( ( array ) $wp_filter[ $tag ][ $priority ] ) : $filter_id_count;
+				$obj_idx .= isset( $wp_filter[ $tag ][ $priority ] )
+					? count( ( array ) $wp_filter[ $tag ][ $priority ] )
+					: $filter_id_count;
+
 				$function[0]->wp_filter_id = $filter_id_count;
 				++$filter_id_count;
 			} else {

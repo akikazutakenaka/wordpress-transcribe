@@ -667,7 +667,10 @@ class wpdb
 
 		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 			$charset = 'utf8';
-			$collate = ( defined( 'DB_COLLATE' ) && DB_COLLATE ) ? DB_COLLATE : 'utf8_general_ci';
+
+			$collate = defined( 'DB_COLLATE' ) && DB_COLLATE
+				? DB_COLLATE
+				: 'utf8_general_ci';
 		} elseif ( defined( 'DB_COLLATE' ) ) {
 			$collate = DB_COLLATE;
 		}
@@ -694,7 +697,7 @@ class wpdb
 	 */
 	public function determine_charset( $charset, $collate )
 	{
-		if ( ( $this->use_mysqli && ! ( $this->dbh instanceof mysqli ) )
+		if ( ( $this->use_mysqli && ! $this->dbh instanceof mysqli )
 		  || empty( $this->dbh ) ) {
 			return compact( 'charset', 'collate' );
 		}
@@ -710,7 +713,7 @@ class wpdb
 
 		if ( 'utf8mb4' === $charset ) {
 			// _general_ is outdated, so we can upgrade it to _unicode_, instead.
-			$collate = ( ! $collate || 'utf8_general_ci' === $collate )
+			$collate = ! $collate || 'utf8_general_ci' === $collate
 				? 'utf8mb4_unicode_ci'
 				: str_replace( 'utf8_', 'utf8mb4_', $collate );
 		}
@@ -879,8 +882,9 @@ class wpdb
 			}
 
 			$blog_id = ( int ) $blog_id;
-			return ( defined( 'MULTISITE' )
-			      && ( 0 == $blog_id || 1 == $blog_id ) )
+
+			return defined( 'MULTISITE' )
+			    && ( 0 == $blog_id || 1 == $blog_id )
 				? $this->base_prefix
 				: $this->base_prefix . $blog_id . '_';
 		} else {
@@ -972,6 +976,7 @@ class wpdb
 				$tables[ $table ] = in_array( $table, $global_tables )
 					? $base_prefix . $table
 					: $blog_prefix . $table;
+
 				unset( $tables[ $k ] );
 			}
 
@@ -1004,7 +1009,9 @@ class wpdb
 			$dbh = $this->dbh;
 		}
 
-		$success = $this->use_mysqli ? mysqli_select_db( $dbh, $db ) : mysql_select_db( $db, $dbh );
+		$success = $this->use_mysqli
+			? mysqli_select_db( $dbh, $db )
+			: mysql_select_db( $db, $dbh );
 
 		if ( ! $success ) {
 			$this->ready = FALSE;
@@ -1037,7 +1044,9 @@ class wpdb
 	function _real_escape( $string )
 	{
 		if ( $this->dbh ) {
-			$escaped = $this->use_mysqli ? mysqli_real_escape_string( $this->dbh, $string ) : mysql_real_escape_string( $string, $this->dbh );
+			$escaped = $this->use_mysqli
+				? mysqli_real_escape_string( $this->dbh, $string )
+				: mysql_real_escape_string( $string, $this->dbh );
 		} else {
 			$class = get_class( $this );
 
@@ -1067,7 +1076,9 @@ class wpdb
 	{
 		if ( is_array( $data ) ) {
 			foreach ( $data as $k => $v ) {
-				$data[ $k ] = is_array( $v ) ? $this->_escape( $v ) : $this->_real_escape( $v );
+				$data[ $k ] = is_array( $v )
+					? $this->_escape( $v )
+					: $this->_real_escape( $v );
 			}
 		} else {
 			$data = $this->_real_escape( $data );
@@ -1244,7 +1255,9 @@ class wpdb
 		global $EZSQL_ERROR;
 
 		if ( ! $str ) {
-			$str = $this->use_mysqli ? mysqli_error( $this->dbh ) : mysql_error( $this->dbh );
+			$str = $this->use_mysqli
+				? mysqli_error( $this->dbh )
+				: mysql_error( $this->dbh );
 		}
 
 		$EZSQL_ERROR[] = [
@@ -1344,7 +1357,7 @@ class wpdb
 			$this->result = NULL;
 
 			// Sanity check before using the handle.
-			if ( empty( $this->dbh ) || ! ( $this->dbh instanceof mysqli ) ) {
+			if ( empty( $this->dbh ) || ! $this->dbh instanceof mysqli ) {
 				return;
 			}
 
@@ -1378,8 +1391,13 @@ class wpdb
 		 * Deprecated in 3.9+ when using MySQLi.
 		 * No equivalent $new_link parameter exists for mysqli_* functions.
 		 */
-		$new_link = defined( 'MYSQL_NEW_LINK' ) ? MYSQL_NEW_LINK : TRUE;
-		$client_flags = defined( 'MYSQL_CLIENT_FLAGS' ) ? MYSQL_CLIENT_FLAGS : 0;
+		$new_link = defined( 'MYSQL_NEW_LINK' )
+			? MYSQL_NEW_LINK
+			: TRUE;
+
+		$client_flags = defined( 'MYSQL_CLIENT_FLAGS' )
+			? MYSQL_CLIENT_FLAGS
+			: 0;
 
 		if ( $this->use_mysqli ) {
 			$this->dbh = mysqli_init();
@@ -1525,7 +1543,7 @@ class wpdb
 		$host = '';
 
 		foreach ( ['host', 'port'] as $component ) {
-			if ( ! empty( $matches[$component] ) ) {
+			if ( ! empty( $matches[ $component ] ) ) {
 				$$component = $matches[ $component ];
 			}
 		}
@@ -1677,8 +1695,12 @@ class wpdb
 
 		if ( ! empty( $this->dbh ) ) {
 			$mysql_errno = $this->use_mysqli
-				? ( ( $this->dbh instanceof mysqli ) ? mysqli_errno( $this->dbh ) : 2006 )
-				: ( is_resource( $this->dbh ) ? mysql_errno( $this->dbh ) : 2006 );
+				? ( $this->dbh instanceof mysqli
+					? mysqli_errno( $this->dbh )
+					: 2006 )
+				: ( is_resource( $this->dbh )
+					? mysql_errno( $this->dbh )
+					: 2006 );
 		}
 
 		if ( empty( $this->dbh ) || 2006 == $mysql_errno ) {
@@ -1692,7 +1714,7 @@ class wpdb
 
 		// If there is an error then take note of it.
 		$this->last_error = $this->use_mysqli
-			? ( ( $this->dbh instanceof mysqli )
+			? ( $this->dbh instanceof mysqli
 				? mysqli_error( $this->dbh )
 				: __( 'Unable to retrieve the error message from MySQL' ) )
 			: ( is_resource( $this->dbh )
@@ -1712,11 +1734,15 @@ class wpdb
 		if ( preg_match( '/^\s*(create|alter|truncate|drop)\s/i', $query ) ) {
 			$return_val = $this->result;
 		} elseif ( preg_match( '/^\s*(insert|delete|update|replace)\s/i', $query ) ) {
-			$this->rows_affected = $this->use_mysqli ? mysqli_affected_rows( $this->dbh ) : mysql_affected_rows( $this->dbh );
+			$this->rows_affected = $this->use_mysqli
+				? mysqli_affected_rows( $this->dbh )
+				: mysql_affected_rows( $this->dbh );
 
 			// Take note of the insert_id.
 			if ( preg_match( '/^\s*(insert|replace)\s/i', $query ) ) {
-				$this->insert_id = $this->use_mysqli ? mysqli_insert_id( $this->dbh ) : mysql_insert_id( $this->dbh );
+				$this->insert_id = $this->use_mysqli
+					? mysqli_insert_id( $this->dbh )
+					: mysql_insert_id( $this->dbh );
 			}
 
 			// Return number of rows affected.
@@ -1784,10 +1810,14 @@ class wpdb
 
 		if ( ! $placeholder ) {
 			// If ext/hash is not present, compat.php's hash_hmac() does not support sha256.
-			$algo = function_exists( 'hash' ) ? 'sha256' : 'sha1';
+			$algo = function_exists( 'hash' )
+				? 'sha256'
+				: 'sha1';
 
 			// Old WP installs may not have AUTH_SALT defined.
-			$salt = defined( 'AUTH_SALT' ) && AUTH_SALT ? AUTH_SALT : ( string ) rand();
+			$salt = defined( 'AUTH_SALT' ) && AUTH_SALT
+				? AUTH_SALT
+				: ( string ) rand();
 
 			$placeholder = '{' . hash_hmac( $algo, uniqid( $salt, TRUE ), $salt ) . '}';
 		}
@@ -1868,7 +1898,9 @@ class wpdb
 		}
 
 		// If there is a value return it else return null.
-		return ( isset( $values[ $x ] ) && $values[ $x ] !== '' ) ? $values[ $x ] : NULL;
+		return isset( $values[ $x ] ) && $values[ $x ] !== ''
+			? $values[ $x ]
+			: NULL;
 	}
 
 	/**
@@ -1907,14 +1939,22 @@ class wpdb
 		}
 
 		if ( $output == OBJECT ) {
-			return $this->last_result[ $y ] ? $this->last_result[ $y ] : NULL;
+			return $this->last_result[ $y ]
+				? $this->last_result[ $y ]
+				: NULL;
 		} elseif ( $output == ARRAY_A ) {
-			return $this->last_result[ $y ] ? get_object_vars( $this->last_result[ $y ] ) : NULL;
+			return $this->last_result[ $y ]
+				? get_object_vars( $this->last_result[ $y ] )
+				: NULL;
 		} elseif ( $output == ARRAY_N ) {
-			return $this->last_result[ $y ] ? array_values( get_object_vars( $this->last_result[ $y ] ) ) : NULL;
+			return $this->last_result[ $y ]
+				? array_values( get_object_vars( $this->last_result[ $y ] ) )
+				: NULL;
 		} elseif ( strtoupper( $output ) === OBJECT ) {
 			// Back compat for OBJECT being previously case insensitive.
-			return $this->last_result[ $y ] ? $this->last_result[ $y ] : NULL;
+			return $this->last_result[ $y ]
+				? $this->last_result[ $y ]
+				: NULL;
 		} else {
 			$this->print_error( " \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N" );
 		}
@@ -2009,7 +2049,7 @@ class wpdb
 			// Return an integer-keyed array of...
 			if ( $this->last_result ) {
 				foreach ( ( array ) $this->last_result as $row ) {
-					$new_array[] = ( $output == ARRAY_N )
+					$new_array[] = $output == ARRAY_N
 						? array_values( get_object_vars( $row ) ) // ...integer-keyed row arrays
 						: get_object_vars( $row ); // ...column name-keyed row arrays
 				}
@@ -2115,16 +2155,11 @@ class wpdb
 			unset( $charsets['latin1'] );
 			$count = count( $charsets );
 
-			if ( 1 === $count ) {
-				// Only one charset (besides latin1).
-				$charset = key( $charsets );
-			} elseif ( 2 === $count && isset( $charsets['utf8'], $charsets['utf8mb4'] ) ) {
-				// Two charsets, but they're utf8 and utf8mb4, use utf8.
-				$charset = 'utf8';
-			} else {
-				// Two mixed character sets, ascii.
-				$charset = 'ascii';
-			}
+			$charset = 1 === $count
+				? key( $charsets ) // Only one charset (besides latin1).
+				: ( 2 === $count && isset( $charsets['utf8'], $charsets['utf8mb4'] )
+					? 'utf8' // Two charsets, but they're utf8 and utf8mb4, use utf8.
+					: 'ascii' ); // Two mixed character sets, ascii.
 		}
 
 		$this->table_charset[ $tablekey ] = $charset;
@@ -2323,7 +2358,7 @@ class wpdb
 			foreach ( $data as $col => $value ) {
 				if ( ! empty( $value['db'] ) ) {
 					// We're going to need to truncate by characters or bytes, depending on the length value we have.
-					$charset = ( 'byte' === $value['length']['type'] )
+					$charset = 'byte' === $value['length']['type']
 						? 'binary' // Using binary causes LEFT() to truncate by bytes.
 						: $value['charset'];
 
@@ -2512,7 +2547,7 @@ class wpdb
 	 */
 	public function timer_stop()
 	{
-		return ( microtime( TRUE ) - $this->timer_start );
+		return microtime( TRUE ) - $this->timer_start;
 	}
 
 	/**
@@ -2569,7 +2604,9 @@ class wpdb
 				if ( version_compare( $version, '5.5.3', '<' ) )
 					return FALSE;
 
-				$client_version = $this->use_mysqli ? mysqli_get_client_info() : mysql_get_client_info();
+				$client_version = $this->use_mysqli
+					? mysqli_get_client_info()
+					: mysql_get_client_info();
 
 				/**
 				 * libmysql has supported utf8mb4 since 5.5.3, same as the MySQL server.
@@ -2615,6 +2652,7 @@ class wpdb
 		$server_info = $this->use_mysqli
 			? mysqli_get_server_info( $this->dbh )
 			: mysql_get_server_info( $this->dbh );
+
 		return preg_replace( '/[^0-9.].*/', '', $server_info );
 	}
 }

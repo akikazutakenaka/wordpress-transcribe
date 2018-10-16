@@ -234,7 +234,7 @@ class WP_Object_Cache
 
 		$id = $key;
 
-		if ( $this->multisite && ! isset( $this->global_groups[$group] ) ) {
+		if ( $this->multisite && ! isset( $this->global_groups[ $group ] ) ) {
 			$id = $this->blog_prefix . $key;
 		}
 
@@ -356,7 +356,10 @@ class WP_Object_Cache
 	public function switch_to_blog( $blog_id )
 	{
 		$blog_id = ( int ) $blog_id;
-		$this->blog_prefix = $this->multisite ? $blog_id . ':' : '';
+
+		$this->blog_prefix = $this->multisite
+			? $blog_id . ':'
+			: '';
 	}
 
 	/**
@@ -382,7 +385,10 @@ class WP_Object_Cache
 	public function __construct()
 	{
 		$this->multisite = is_multisite();
-		$this->blog_prefix = $this->multisite ? get_current_blog_id() . ':' : '';
+
+		$this->blog_prefix = $this->multisite
+			? get_current_blog_id() . ':'
+			: '';
 
 		/**
 		 * @todo This should be moved to the PHP4 style constructor, PHP5 already calls __destruct()
