@@ -61,6 +61,37 @@ function get_home_url( $blog_id = NULL, $path = '', $scheme = NULL )
 		$scheme = is_ssl() && ! is_admin() && 'wp-login.php' !== $pagenow
 			? 'https'
 			: parse_url( $url, PHP_URL_SCHEME );
-// @NOW 009
+	}
+
+	$url = set_url_scheme( $url, $scheme );
+// @NOW 009 -> wp-includes/link-template.php
+}
+
+/**
+ * Sets the scheme for a URL.
+ *
+ * @since 3.4.0
+ * @since 4.4.0 The 'rest' scheme was added.
+ *
+ * @param  string      $url    Absolute URL that includes a scheme.
+ * @param  string|null $scheme Optional.
+ *                             Scheme to give $url.
+ *                             Currently 'http', 'https', 'login', 'login_post', 'admin', 'relative', 'rest', 'rpc', or null.
+ *                             Default null.
+ * @return string      $url    URL with chosen scheme.
+ */
+function set_url_scheme( $url, $scheme = NULL )
+{
+	$orig_scheme = $scheme;
+
+	if ( ! $scheme ) {
+		$scheme = is_ssl()
+			? 'https'
+			: 'http';
+	} elseif ( $scheme === 'admin' || $scheme === 'login' || $scheme === 'login_post' || $scheme === 'rpc' ) {
+		$scheme = is_ssl() || force_ssl_admin()
+			? 'https'
+			: 'http';
+// @NOW 010 -> wp-includes/functions.php
 	}
 }

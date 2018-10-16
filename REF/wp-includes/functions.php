@@ -637,6 +637,8 @@ function _doing_it_wrong( $function, $message, $version )
 	}
 }
 
+// @NOW 011
+
 /**
  * Temporarily suspend cache additions.
  *
