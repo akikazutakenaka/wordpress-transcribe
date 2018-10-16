@@ -69,6 +69,14 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 
 		case 'wpurl':
 			$output = site_url();
-// @NOW 008
+			break;
+
+		case 'description':
+			$output = get_option( 'blogdescription' );
+			break;
+
+		case 'rdf_url':
+			$output = get_feed_link( 'rdf' );
+// @NOW 008 -> wp-includes/link-template.php
 	}
 }

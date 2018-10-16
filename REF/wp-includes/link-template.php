@@ -1,5 +1,30 @@
 <?php
 /**
+ * WordPress Link Template Functions
+ *
+ * @package    WordPress
+ * @subpackage Template
+ */
+
+/**
+ * Retrieves the permalink for the feed type.
+ *
+ * @since  1.5.0
+ * @global WP_Rewrite $wp_rewrite
+ *
+ * @param  string $feed Optional.
+ *                      Feed type.
+ *                      Default empty.
+ * @return string The feed permalink.
+ */
+function get_feed_link( $feed = '' )
+{
+	global $wp_rewrite;
+	$permalink = $wp_rewrite->get_feed_permastruct();
+// @NOW 009 -> wp-includes/class-wp-rewrite.php
+}
+
+/**
  * Retrieves the URL for the current site where the front end is accessible.
  *
  * Returns the 'home' option with the appropriate protocol.
