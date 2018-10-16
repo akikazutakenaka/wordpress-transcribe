@@ -145,7 +145,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	protected $col_meta = [];
+	protected $col_meta = array();
 
 	/**
 	 * Calculated character sets on tables
@@ -154,7 +154,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	protected $table_charset = [];
+	protected $table_charset = array();
 
 	/**
 	 * Whether text fields in the current query need to be sanity checked.
@@ -259,7 +259,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	var $tables = ['posts', 'comments', 'links', 'options', 'postmeta', 'terms', 'term_taxonomy', 'term_relationships', 'termmeta', 'commentmeta'];
+	var $tables = array( 'posts', 'comments', 'links', 'options', 'postmeta', 'terms', 'term_taxonomy', 'term_relationships', 'termmeta', 'commentmeta' );
 
 	/**
 	 * List of deprecated WordPress tables.
@@ -271,7 +271,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	var $old_tables = ['categories', 'post2cat', 'link2cat'];
+	var $old_tables = array( 'categories', 'post2cat', 'link2cat' );
 
 	/**
 	 * List of WordPress global tables.
@@ -281,7 +281,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	var $global_tables = ['users', 'usermeta'];
+	var $global_tables = array( 'users', 'usermeta' );
 
 	/**
 	 * List of Multisite global tables.
@@ -291,7 +291,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	var $ms_global_tables = ['blogs', 'signups', 'site', 'sitemeta', 'sitecategories', 'registration_log', 'blog_versions'];
+	var $ms_global_tables = array( 'blogs', 'signups', 'site', 'sitemeta', 'sitecategories', 'registration_log', 'blog_versions' );
 
 	/**
 	 * WordPress Comments table.
@@ -483,7 +483,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	public $field_types = [];
+	public $field_types = array();
 
 	/**
 	 * Database table columns charset.
@@ -577,7 +577,7 @@ class wpdb
 	 *
 	 * @var array
 	 */
-	protected $incompatible_modes = ['NO_ZERO_DATE', 'ONLY_FULL_GROUP_BY', 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'TRADITIONAL'];
+	protected $incompatible_modes = array( 'NO_ZERO_DATE', 'ONLY_FULL_GROUP_BY', 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'TRADITIONAL' );
 
 	/**
 	 * Whether to use mysqli over mysql.
@@ -614,7 +614,7 @@ class wpdb
 	 */
 	public function __construct( $dbuser, $dbpassword, $dbname, $dbhost )
 	{
-		register_shutdown_function( [$this, '__destruct'] );
+		register_shutdown_function( array( $this, '__destruct' ) );
 
 		if ( WP_DEBUG && WP_DEBUG_DISPLAY ) {
 			$this->show_errors();
@@ -780,7 +780,7 @@ class wpdb
 	 * @param array $modes Optional.
 	 *                     A list of SQL modes to set.
 	 */
-	public function set_sql_mode( $modes = [] )
+	public function set_sql_mode( $modes = array() )
 	{
 		if ( empty( $modes ) ) {
 			$res = $this->use_mysqli
@@ -960,7 +960,7 @@ class wpdb
 				break;
 
 			default:
-				return [];
+				return array();
 		}
 
 		if ( $prefix ) {
@@ -1124,7 +1124,7 @@ class wpdb
 	 * A combination of the two is not supported.
 	 *
 	 * Examples:
-	 *     $wpdb->prepare( "SELECT * FROM `table` WHERE `column` = %s AND `field` = %d OR `other_field` LIKE %s", ['foo', 1337, '%bar'] );
+	 *     $wpdb->prepare( "SELECT * FROM `table` WHERE `column` = %s AND `field` = %d OR `other_field` LIKE %s", array( 'foo', 1337, '%bar' ) );
 	 *     $wpdb->prepare( "SELECT DATE_FORMAT( `field`, '%%c' ) FROM `table` WHERE `column` = %s", 'foo' );
 	 *
 	 * @link  https://secure.php.net/sprintf Description of syntax.
@@ -1206,7 +1206,7 @@ class wpdb
 			}
 		}
 
-		array_walk( $args, [$this, 'escape_by_ref'] );
+		array_walk( $args, array( $this, 'escape_by_ref' ) );
 		$query = @vsprintf( $query, $args );
 		return $this->add_placeholder_escape( $query );
 	}
@@ -1260,10 +1260,10 @@ class wpdb
 				: mysql_error( $this->dbh );
 		}
 
-		$EZSQL_ERROR[] = [
+		$EZSQL_ERROR[] = array(
 			'query'     => $this->last_query,
 			'error_str' => $str
-		];
+		);
 
 		if ( $this->suppress_errors ) {
 			return FALSE;
@@ -1346,7 +1346,7 @@ class wpdb
 	 */
 	public function flush()
 	{
-		$this->last_result   = [];
+		$this->last_result   = array();
 		$this->col_info      = NULL;
 		$this->last_query    = NULL;
 		$this->rows_affected = $this->num_rows = 0;
@@ -1532,7 +1532,7 @@ class wpdb
 			$pattern = '#^(?P<host>[^:/]*)(?::(?P<port>[\d]+))?#';
 		}
 
-		$matches = [];
+		$matches = array();
 		$result = preg_match( $pattern, $host, $matches );
 
 		if ( 1 !== $result ) {
@@ -1542,13 +1542,13 @@ class wpdb
 
 		$host = '';
 
-		foreach ( ['host', 'port'] as $component ) {
+		foreach ( array( 'host', 'port' ) as $component ) {
 			if ( ! empty( $matches[ $component ] ) ) {
 				$$component = $matches[ $component ];
 			}
 		}
 
-		return [$host, $port, $socket, $is_ipv6];
+		return array( $host, $port, $socket, $is_ipv6 );
 	}
 
 	/**
@@ -1793,7 +1793,7 @@ class wpdb
 		$this->num_queries++;
 
 		if ( defined( 'SAVEQUERIES' ) && SAVEQUERIES ) {
-			$this->queries[] = [$query, $this->timer_stop(), $this->get_caller()];
+			$this->queries[] = array( $query, $this->timer_stop(), $this->get_caller() );
 		}
 	}
 
@@ -1826,8 +1826,8 @@ class wpdb
 		 * Add the filter to remove the placeholder escaper.
 		 * Uses priority 0, so that anything else attached to this filter will receive the query with the placeholder string removed.
 		 */
-		if ( ! has_filter( 'query', [$this, 'remove_placeholder_escape'] ) ) {
-			add_filter( 'query', [$this, 'remove_placeholder_escape'] );
+		if ( ! has_filter( 'query', array( $this, 'remove_placeholder_escape' ) ) ) {
+			add_filter( 'query', array( $this, 'remove_placeholder_escape' ) );
 		}
 
 		return $placeholder;
@@ -1988,7 +1988,7 @@ class wpdb
 			$this->query( $query );
 		}
 
-		$new_array = [];
+		$new_array = array();
 
 		// Extract the column values.
 		for ( $i = 0, $j = count( $this->last_result ); $i < $j; $i++ ) {
@@ -2028,7 +2028,7 @@ class wpdb
 			return NULL;
 		}
 
-		$new_array = [];
+		$new_array = array();
 
 		if ( $output == OBJECT ) {
 			// Return an integer-keyed array of row objects.
@@ -2097,7 +2097,7 @@ class wpdb
 			return $this->table_charset[ $tablekey ];
 		}
 
-		$charsets = columns = [];
+		$charsets = columns = array();
 		$table_parts = explode( '.', $table );
 		$table = '`' . implode( '`.`', $table_parts ) . '`';
 		$results = $this->get_results( "SHOW FULL COLUMNS FROM $table" );
@@ -2127,7 +2127,7 @@ class wpdb
 			list( $type ) = explode( '(', $column->Type );
 
 			// A binary/blob means the whole query gets treated like this.
-			if ( in_array( strtoupper( $type ), ['BINARY', 'VARBINARY', 'TINYBLOB', 'MEDIUMBLOB', 'BLOB', 'LONGBLOB'] ) ) {
+			if ( in_array( strtoupper( $type ), array( 'BINARY', 'VARBINARY', 'TINYBLOB', 'MEDIUMBLOB', 'BLOB', 'LONGBLOB' ) ) ) {
 				$this->table_charset[ $tablekey ] = 'binary';
 				return 'binary';
 			}
@@ -2242,7 +2242,7 @@ class wpdb
 				continue;
 			}
 
-			if ( ! in_array( $col->Collation, ['utf8_general_ci', 'utf8_bin', 'utf8mb4_general_ci', 'utf8mb4_bin'], TRUE ) ) {
+			if ( ! in_array( $col->Collation, array( 'utf8_general_ci', 'utf8_bin', 'utf8mb4_general_ci', 'utf8mb4_bin' ), TRUE ) ) {
 				return FALSE;
 			}
 		}
@@ -2353,7 +2353,7 @@ class wpdb
 		unset( $value ); // Remove by reference.
 
 		if ( $db_check_string ) {
-			$queries = [];
+			$queries = array();
 
 			foreach ( $data as $col => $value ) {
 				if ( ! empty( $value['db'] ) ) {
@@ -2380,7 +2380,7 @@ class wpdb
 				}
 			}
 
-			$sql = [];
+			$sql = array();
 
 			foreach ( $queries as $column => $query ) {
 				if ( ! $query ) {
@@ -2441,12 +2441,12 @@ class wpdb
 			$charset = $this->charset;
 		}
 
-		$data = [
+		$data = array(
 			'value'   => $query,
 			'charset' => $charset,
 			'ascii'   => FALSE,
 			'length'  => FALSE
-		];
+		);
 		$data = $this->strip_invalid_text( [ $data ] );
 
 		if ( is_wp_error( $data ) ) {

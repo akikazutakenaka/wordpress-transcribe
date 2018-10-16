@@ -140,7 +140,7 @@ final class WP_Screen
 	 *
 	 * @var array
 	 */
-	private $_help_tabs = [];
+	private $_help_tabs = array();
 
 	/**
 	 * The help sidebar data associated with screen, if any.
@@ -158,7 +158,7 @@ final class WP_Screen
 	 *
 	 * @var array
 	 */
-	private $_screen_reader_content = [];
+	private $_screen_reader_content = array();
 
 	/**
 	 * Stores old string-based help.
@@ -167,7 +167,7 @@ final class WP_Screen
 	 *
 	 * @var array
 	 */
-	private static $_old_compat_help = [];
+	private static $_old_compat_help = array();
 
 	/**
 	 * The screen options associated with screen, if any.
@@ -176,7 +176,7 @@ final class WP_Screen
 	 *
 	 * @var array
 	 */
-	private $_options = [];
+	private $_options = array();
 
 	/**
 	* The screen object registry.
@@ -186,7 +186,7 @@ final class WP_Screen
 	*
 	* @var array
 	*/
-	private static $_registry = [];
+	private static $_registry = array();
 
 	/**
 	 * Stores the result of the public show_screen_options function.

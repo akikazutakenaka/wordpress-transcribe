@@ -223,7 +223,7 @@ class WP_Locale
 
 		$thousands_sep = version_compare( PHP_VERSION, '5.4', '>=' )
 			? str_replace( ' ', '&nbsp;', $thousands_sep )              // Replace space with a non-breaking space to avoid wrapping.
-			: str_replace( ['&nbsp;', '&#160;'], ' ', $thousands_sep ); // PHP < 5.4.0 does not support multiple bytes in thousands separator.
+			: str_replace( array( '&nbsp;', '&#160;' ), ' ', $thousands_sep ); // PHP < 5.4.0 does not support multiple bytes in thousands separator.
 
 		$this->number_format['thousands_sep'] = ( 'number_format_thousands_sep' === $thousands_sep )
 			? ','

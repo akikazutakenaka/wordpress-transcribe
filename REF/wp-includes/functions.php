@@ -131,7 +131,7 @@ function get_status_header_desc( $code )
 	$code = absint( $code );
 
 	if ( ! isset( $wp_header_to_desc ) ) {
-		$wp_header_to_desc = [
+		$wp_header_to_desc = array(
 			100 => 'Continue',
 			101 => 'Switching Protocols',
 			102 => 'Processing',
@@ -195,7 +195,7 @@ function get_status_header_desc( $code )
 			507 => 'Insufficient Storage',
 			510 => 'Not Extended',
 			511 => 'Network Authentication Required'
-		];
+		);
 	}
 
 	return isset( $wp_header_to_desc[ $code ] )
@@ -255,10 +255,10 @@ function status_header( $code, $description = '' )
  */
 function wp_get_nocache_headers()
 {
-	$headers = [
+	$headers = array(
 		'Expires'       => 'Wed, 11 Jan 1984 05:00:00 GMT',
 		'Cache-Control' => 'no-cache, must-revalidate, max-age=0'
-	];
+	);
 
 	if ( function_exists( 'apply_filters' ) ) {
 		/**
@@ -350,12 +350,12 @@ function nocache_headers()
  *                                  Default is the value of is_rtl().
  * }
  */
-function wp_die( $message = '', $title = '', $args = [] )
+function wp_die( $message = '', $title = '', $args = array() )
 {
 	if ( is_int( $args ) ) {
-		$args = ['response' => $args];
+		$args = array( 'response' => $args );
 	} elseif ( is_int( $title ) ) {
-		$args = ['response' => $title];
+		$args = array( 'response' => $title );
 		$title = '';
 	}
 
@@ -448,7 +448,7 @@ function wp_parse_id_list( $list )
  */
 function wp_array_slice_assoc( $array, $keys )
 {
-	$slice = [];
+	$slice = array();
 
 	foreach ( $keys as $key ) {
 		if ( isset( $array[ $key ] ) ) {
@@ -709,10 +709,10 @@ function get_main_network_id()
 		// If the current network has an ID of 1, assume it is the main network.
 		$main_network_id = 1;
 	} else {
-		$_networks = get_networks( [
+		$_networks = get_networks( array(
 				'fields' => 'ids',
 				'number' => 1
-			] );
+			) );
 		$main_network_id = array_shift( $_networks );
 	}
 
@@ -749,7 +749,7 @@ function wp_debug_backtrace_summary( $ignore_class = NULL, $skip_frames = 0, $pr
 		? debug_backtrace( FALSE )
 		: debug_backtrace();
 
-	$caller = [];
+	$caller = array();
 	$check_class = ! is_null( $ignore_class );
 	$skip_frames++; // Skip this function.
 
@@ -788,7 +788,7 @@ function wp_debug_backtrace_summary( $ignore_class = NULL, $skip_frames = 0, $pr
  */
 function _get_non_cached_ids( $object_ids, $cache_key )
 {
-	$clean = [];
+	$clean = array();
 
 	foreach ( $object_ids as $id ) {
 		$id = ( int ) $id;
@@ -821,7 +821,7 @@ function _get_non_cached_ids( $object_ids, $cache_key )
  */
 function mbstring_binary_safe_encoding( $reset = FALSE )
 {
-	static $encodings = [];
+	static $encodings = array();
 	static $overloaded = NULL;
 
 	if ( is_null( $overloaded ) ) {

@@ -23,7 +23,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 	 *
 	 * @var   array
 	 */
-	public $callbacks = [];
+	public $callbacks = array();
 
 	/**
 	 * The priority keys of actively running iterations of a hook.
@@ -32,7 +32,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 	 *
 	 * @var   array
 	 */
-	private $iterations = [];
+	private $iterations = array();
 
 	/**
 	 * The current priority of actively running iterations of a hook.
@@ -41,7 +41,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 	 *
 	 * @var   array
 	 */
-	private $current_priority = [];
+	private $current_priority = array();
 
 	/**
 	 * Number of levels this hook can be recursively called.
@@ -76,10 +76,10 @@ final class WP_Hook implements Iterator, ArrayAccess
 	{
 		$idx = _wp_filter_build_unique_id( $tag, $function_to_add, $priority );
 		$priority_existed = isset( $this->callbacks[ $priority ] );
-		$this->callbacks[ $priority ][ $idx ] = [
+		$this->callbacks[ $priority ][ $idx ] = array(
 			'function'      => $function_to_add,
 			'accepted_args' => $accepted_args
-		];
+		);
 
 		// If we're adding a new priority to the list, put them in sorted order
 		if ( ! $priority_existed && count( $this->callbacks ) > 1 ) {
@@ -278,7 +278,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 
 				// Avoid the array_slice if possible.
 				$value = $the_['accepted_args'] == 0
-					? call_user_func_array( $the_['function'], [] )
+					? call_user_func_array( $the_['function'], array() )
 					: ( $the_['accepted_args'] >= $num_args
 						? call_user_func_array( $the_['function'], $args )
 						: call_user_func_array( $the_['function'], array_slice( $args, 0, ( int ) $the_['accepted_args'] ) ) );
@@ -348,7 +348,7 @@ final class WP_Hook implements Iterator, ArrayAccess
 		/**
 		 * @var WP_Hook[] $normalized
 		 */
-		$normalized = [];
+		$normalized = array();
 
 		foreach ( $filters as $tag => $callback_groups ) {
 			if ( is_object( $callback_groups ) && $callback_groups instanceof WP_Hook ) {

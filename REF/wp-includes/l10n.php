@@ -367,10 +367,10 @@ function _load_textdomain_just_in_time( $domain )
  */
 function _get_path_to_translation( $domain, $reset = FALSE )
 {
-	static $available_translations = [];
+	static $available_translations = array();
 
 	if ( TRUE === $reset ) {
-		$available_translations = [];
+		$available_translations = array();
 	}
 
 	if ( ! isset( $available_translations[ $domain ] ) ) {
@@ -398,8 +398,8 @@ function _get_path_to_translation_from_lang_dir( $domain )
 	static $cached_mofiles = NULL;
 
 	if ( NULL === $cached_mofiles ) {
-		$cached_mofiles = [];
-		$locations = [WP_LANG_DIR . '/plugins', WP_LANG_DIR . '/themes'];
+		$cached_mofiles = array();
+		$locations = array( WP_LANG_DIR . '/plugins', WP_LANG_DIR . '/themes' );
 
 		foreach ( $locations as $location ) {
 			$mofiles = glob( $location . '/*.mo' );

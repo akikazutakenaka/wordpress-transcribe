@@ -17,7 +17,7 @@ function wp_get_server_protocol()
 {
 	$protocol = $_SERVER['SERVER_PROTOCOL'];
 
-	if ( ! in_array( $protocol, ['HTTP/1.1', 'HTTP/2', 'HTTP/2.0'] ) ) {
+	if ( ! in_array( $protocol, array( 'HTTP/1.1', 'HTTP/2', 'HTTP/2.0' ) ) ) {
 		$protocol = 'HTTP/1.0';
 	}
 
@@ -159,7 +159,7 @@ function wp_load_translations_early()
 	// General libraries
 	require_once ABSPATH . WPINC . '/plugin.php';
 
-	$locales = $locations = [];
+	$locales = $locations = array();
 
 	while ( TRUE ) {
 		if ( defined( 'WPLANG' ) ) {

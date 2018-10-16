@@ -23,11 +23,11 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 		var $context = NULL;
 		var $singular = NULL;
 		var $plural = NULL;
-		var $translations = [];
+		var $translations = array();
 		var $translator_comments = '';
 		var $extracted_comments = '';
-		var $references = [];
-		var $flags = [];
+		var $references = array();
+		var $flags = array();
 
 		/**
 		 * @param array $args Associative array, support following keys:
@@ -40,7 +40,7 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 		 *     - references (array)           Places in the code this strings is used, in relative_to_root_path/file.php:linum form.
 		 *     - flags (array)                Flags like php-format.
 		 */
-		function __construct( $args = [] )
+		function __construct( $args = array() )
 		{
 			// if no singular, empty object
 			if ( ! isset( $args['singular'] ) ) {
@@ -57,22 +57,22 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 			}
 
 			if ( ! is_array( $this->translations ) ) {
-				$this->translations = [];
+				$this->translations = array();
 			}
 
 			if ( ! is_array( $this->references ) ) {
-				$this->references = [];
+				$this->references = array();
 			}
 
 			if ( ! is_array( $this->flags ) ) {
-				$this->flags = [];
+				$this->flags = array();
 			}
 		}
 
 		/**
 		 * PHP4 constructor.
 		 */
-		public function Translation_Entry( $args = [] )
+		public function Translation_Entry( $args = array() )
 		{
 			self::__construct( $args );
 		}
@@ -94,7 +94,7 @@ if ( ! class_exists( 'Translation_Entry', FALSE ) ) {
 				: $this->context . chr( 4 ) . $this->singular;
 
 			// Standardize on \n line endings
-			$key = str_replace( ["\r\n", "\r"], "\n", $key );
+			$key = str_replace( array( "\r\n", "\r" ), "\n", $key );
 
 			return $key;
 		}

@@ -13,8 +13,8 @@ require_once dirname( __FILE__ ) . '/entry.php';
 if ( ! class_exists( 'Translations', FALSE ) ) {
 	class Translations
 	{
-		var $entries = [];
-		var $headers = [];
+		var $entries = array();
+		var $headers = array();
 
 		/**
 		 * Sets $header PO header to $value
@@ -60,10 +60,10 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		 */
 		function translate( $singular, $context = NULL )
 		{
-			$entry = new Translation_Entry( [
+			$entry = new Translation_Entry( array(
 					'singular' => $singular,
 					'context'  => $context
-				] );
+				) );
 			$translated = $this->translate_entry( $entry );
 
 			return $translated && ! empty( $translated->translations )
@@ -93,7 +93,7 @@ if ( ! class_exists( 'Translations', FALSE ) ) {
 		 */
 		function make_headers( $translation )
 		{
-			$headers = [];
+			$headers = array();
 
 			// Sometimes \ns are used instead of real new lines
 			$translation = str_replace( '\n', "\n", $translation );
@@ -118,8 +118,8 @@ if ( ! class_exists( 'NOOP_Translations', FALSE ) ) {
 	// Provides the same interface as Translations, but doesn't do anything.
 	class NOOP_Translations
 	{
-		var $entries = [];
-		var $headers = [];
+		var $entries = array();
+		var $headers = array();
 
 		/**
 		 * @param string $header

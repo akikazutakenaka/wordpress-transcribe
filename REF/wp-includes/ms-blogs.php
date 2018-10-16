@@ -124,10 +124,10 @@ function switch_to_blog( $new_blog, $deprecated = NULL )
 			if ( is_array( $global_groups ) ) {
 				wp_cache_add_global_groups( $global_groups );
 			} else {
-				wp_cache_add_global_groups( ['users', 'userlogins', 'usermeta', 'user_meta', 'useremail', 'userslugs', 'site-transient', 'site-options', 'blog-lookup', 'blog-details', 'rss', 'global-posts', 'blog-id-cache', 'networks', 'sites', 'site-details'] );
+				wp_cache_add_global_groups( array( 'users', 'userlogins', 'usermeta', 'user_meta', 'useremail', 'userslugs', 'site-transient', 'site-options', 'blog-lookup', 'blog-details', 'rss', 'global-posts', 'blog-id-cache', 'networks', 'sites', 'site-details' ) );
 			}
 
-			wp_cache_add_non_persistent_groups( ['counts', 'plugins'] );
+			wp_cache_add_non_persistent_groups( array( 'counts', 'plugins' ) );
 		}
 	}
 
@@ -192,10 +192,10 @@ function restore_current_blog()
 			if ( is_array( $global_groups ) ) {
 				wp_cache_add_global_groups( $global_groups );
 			} else {
-				wp_cache_add_global_groups( ['users', 'userlogins', 'usermeta', 'mser_meta', 'useremail', 'userslugs', 'site-transient', 'site-options', 'blog-lookup', 'blog-details', 'rss', 'global-posts', 'blog-id-cache', 'networks', 'sites', 'site-details'] );
+				wp_cache_add_global_groups( array( 'users', 'userlogins', 'usermeta', 'mser_meta', 'useremail', 'userslugs', 'site-transient', 'site-options', 'blog-lookup', 'blog-details', 'rss', 'global-posts', 'blog-id-cache', 'networks', 'sites', 'site-details' ) );
 			}
 
-			wp_cache_add_non_persistent_groups( ['counts', 'plugins'] );
+			wp_cache_add_non_persistent_groups( array( 'counts', 'plugins' ) );
 		}
 	}
 
@@ -241,7 +241,7 @@ function wp_switch_roles_and_user( $new_site_id, $old_site_id )
  *                            Default empty array.
  * @return array|int    List of WP_Network objects, a list of network ids when 'fields' is set to 'ids', or the number of networks when 'count' is passed as a query var.
  */
-function get_networks( $args = [] )
+function get_networks( $args = array() )
 {
 	$query = new WP_Network_Query();
 	return $query->query( $args );

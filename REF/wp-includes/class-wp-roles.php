@@ -13,12 +13,12 @@
  * The role option is simple, the structure is organized by role name that store the name in value of the 'name' key.
  * The capabilities are stored as an array in the value of the 'capability' key.
  *
- *     [
- *         'rolename' => [
+ *     array(
+ *         'rolename' => array(
  *             'name'         => 'rolename',
- *             'capabilities' => []
- *         ]
- *     ]
+ *             'capabilities' => array()
+ *         )
+ *     )
  *
  * @since 2.0.0
  */
@@ -40,7 +40,7 @@ class WP_Roles
 	 *
 	 * @var array
 	 */
-	public $role_objects = [];
+	public $role_objects = array();
 
 	/**
 	 * List of role names.
@@ -49,7 +49,7 @@ class WP_Roles
 	 *
 	 * @var array
 	 */
-	public $role_names = [];
+	public $role_names = array();
 
 	/**
 	 * Option name for storing role list.
@@ -134,8 +134,8 @@ class WP_Roles
 			return;
 		}
 
-		$this->role_objects = [];
-		$this->role_names   = [];
+		$this->role_objects = array();
+		$this->role_names   = array();
 
 		foreach ( array_keys( $this->roles ) as $role ) {
 			$this->role_objects[ $role ] = new WP_Role( $role, $this->roles[ $role ]['capabilities'] );
@@ -198,11 +198,11 @@ class WP_Roles
 
 		if ( is_multisite() && $this->site_id != get_current_blog_id() ) {
 			remove_action( 'switch_blog', 'wp_switch_roles_and_user', 1 );
-			$roles = get_blog_option( $this->site_id, $this->role_key, [] );
+			$roles = get_blog_option( $this->site_id, $this->role_key, array() );
 			add_action( 'switch_blog', 'wp_switch_roles_and_user', 1, 2 );
 			return $roles;
 		}
 
-		return get_option( $this->role_key, [] );
+		return get_option( $this->role_key, array() );
 	}
 }

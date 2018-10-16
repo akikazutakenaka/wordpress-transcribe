@@ -86,7 +86,7 @@ function remove_accents( $string )
 	}
 
 	if ( seems_utf8( $string ) ) {
-		$chars = [
+		$chars = array(
 			// Decompositions for Latin-1 Supplement
 			'ª' => 'a',
 			'º' => 'o',
@@ -428,7 +428,7 @@ function remove_accents( $string )
 			// grave accent
 			'Ǜ' => 'U',
 			'ǜ' => 'u'
-		];
+		);
 
 		// Used for locale-specific rules.
 		$locale = get_locale();
@@ -457,7 +457,7 @@ function remove_accents( $string )
 
 		$string = strtr( $string, $chars );
 	} else {
-		$chars = [];
+		$chars = array();
 
 		// Assume ISO-8859-1 if not UTF-8
 		$chars['in'] = "\x80\x83\x8a\x8e\x9a\x9e"
@@ -472,9 +472,9 @@ function remove_accents( $string )
 			. "\xfc\xfd\xff";
 		$chars['out'] = "EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy";
 		$string = strtr( $string, $chars['in'], $chars['out'] );
-		$double_chars = [];
-		$double_chars['in'] = ["\x8c", "\x9c", "\xc6", "\xd0", "\xde", "\xdf", "\xe6", "\xf0", "\xfe"];
-		$double_chars['out'] = ['OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th'];
+		$double_chars = array();
+		$double_chars['in'] = array( "\x8c", "\x9c", "\xc6", "\xd0", "\xde", "\xdf", "\xe6", "\xf0", "\xfe" );
+		$double_chars['out'] = array( 'OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th' );
 		$string = str_replace( $double_chars['in'], $double_chars['out'], $string );
 	}
 

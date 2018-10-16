@@ -25,7 +25,7 @@ class WP_Error
 	 *
 	 * @var array
 	 */
-	public $errors = [];
+	public $errors = array();
 
 	/**
 	 * Stores the list of data for error codes.
@@ -34,7 +34,7 @@ class WP_Error
 	 *
 	 * @var array
 	 */
-	public $error_data = [];
+	public $error_data = array();
 
 	/**
 	 * Initialize the error.

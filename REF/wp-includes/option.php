@@ -110,7 +110,7 @@ EOQ
 				} else {
 					// Option does not exist, so we must cache its non-existence.
 					if ( ! is_array( $notoptions ) ) {
-						$notoptions = [];
+						$notoptions = array();
 					}
 
 					$notoptions[ $option ] = TRUE;
@@ -145,7 +145,7 @@ EOQ
 		return get_option( 'siteurl' );
 	}
 
-	if ( in_array( $option, ['siteurl', 'home', 'category_base', 'tag_base'] ) ) {
+	if ( in_array( $option, array( 'siteurl', 'home', 'category_base', 'tag_base' ) ) ) {
 		$value = untrailingslashit( $value );
 	}
 
@@ -198,7 +198,7 @@ EOQ
 		}
 
 		$wpdb->suppress_errors( $suppress );
-		$alloptions = [];
+		$alloptions = array();
 
 		foreach ( ( array ) $alloptions_db as $o ) {
 			$alloptions[ $o->option_name ] = $o->option_value;
@@ -352,7 +352,7 @@ EOQ
 				wp_cache_set( $cache_key, $value, 'site-options' );
 			} else {
 				if ( ! is_array( $notoptions ) ) {
-					$notoptions = [];
+					$notoptions = array();
 				}
 
 				$notoptions[ $option ] = TRUE;

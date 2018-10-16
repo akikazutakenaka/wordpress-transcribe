@@ -94,7 +94,7 @@ if ( ! class_exists( 'POMO_Reader', FALSE ) ) {
 		{
 			if ( ! function_exists( 'str_split' ) ) {
 				$length = $this->strlen( $string );
-				$out = [];
+				$out = array();
 
 				for ( $i = 0; $i < $length; $i += $chunk_size ) {
 					$out[] = $this->substr( $string, $i, $chunk_size );

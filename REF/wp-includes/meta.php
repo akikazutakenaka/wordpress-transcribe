@@ -77,7 +77,7 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 
 	return $single
 		? ''
-		: [];
+		: array();
 }
 
 /**
@@ -113,8 +113,8 @@ function update_meta_cache( $meta_type, $object_ids )
 
 	$object_ids = array_map( 'intval', $object_ids );
 	$cache_key = $meta_type . '_meta';
-	$ids = [];
-	$cache = [];
+	$ids = array();
+	$cache = array();
 
 	foreach ( $object_ids as $id ) {
 		$cached_object = wp_cache_get( $id, $cache_key );
@@ -153,11 +153,11 @@ EOQ
 
 			// Force subkeys to be array type:
 			if ( ! isset( $cache[ $mpid ] ) || ! is_array( $cache[ $mpid ] ) ) {
-				$cache[ $mpid ] = [];
+				$cache[ $mpid ] = array();
 			}
 
 			if ( ! isset( $cache[ $mpid ][ $mkey ] ) || ! is_array( $cache[ $mpid ][ $mkey ] ) ) {
-				$cache[ $mpid ][ $mkey ] = [];
+				$cache[ $mpid ][ $mkey ] = array();
 			}
 
 			// Add a value to the current pid/key:
@@ -167,7 +167,7 @@ EOQ
 
 	foreach ( $ids as $id ) {
 		if ( ! isset( $cache[ $id ] ) ) {
-			$cache[ $id ] = [];
+			$cache[ $id ] = array();
 		}
 
 		wp_cache_add( $id, $cache[ $id ], $cache_key );

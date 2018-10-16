@@ -57,7 +57,7 @@ function get_home_url( $blog_id = NULL, $path = '', $scheme = NULL )
 		restore_current_blog();
 	}
 
-	if ( ! in_array( $scheme, ['http', 'https', 'relative'] ) ) {
+	if ( ! in_array( $scheme, array( 'http', 'https', 'relative' ) ) ) {
 		$scheme = is_ssl() && ! is_admin() && 'wp-login.php' !== $pagenow
 			? 'https'
 			: parse_url( $url, PHP_URL_SCHEME );

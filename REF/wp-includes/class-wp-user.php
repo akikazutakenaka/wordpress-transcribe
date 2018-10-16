@@ -39,7 +39,7 @@ class WP_User
 	 *
 	 * @var array
 	 */
-	public $caps = [];
+	public $caps = array();
 
 	/**
 	 * User metadata option name.
@@ -57,7 +57,7 @@ class WP_User
 	 *
 	 * @var array
 	 */
-	public $roles = [];
+	public $roles = array();
 
 	/**
 	 * All capabilities the user has, including individual and role based.
@@ -66,7 +66,7 @@ class WP_User
 	 *
 	 * @var array
 	 */
-	public $allcaps = [];
+	public $allcaps = array();
 
 	/**
 	 * The filter context applied to user data fields.
@@ -111,14 +111,14 @@ class WP_User
 	{
 		if ( ! isset( self::$back_compat_keys ) ) {
 			$prefix = $GLOBALS['wpdb']->prefix;
-			self::$back_compat_keys = [
+			self::$back_compat_keys = array(
 				'user_firstname'             => 'first_name',
 				'user_lastname'              => 'last_name',
 				'user_description'           => 'description',
 				'user_level'                 => $prefix . 'user_level',
 				$prefix . 'usersettings'     => $prefix . 'user-settings',
 				$prefix . 'usersettingstime' => $prefix . 'user-settings-time'
-			];
+			);
 		}
 
 		if ( $id instanceof WP_User ) {
@@ -281,11 +281,11 @@ EOQ
 
 		// Filter out caps that are not role names and assign to $this->roles.
 		if ( is_array( $this->caps ) ) {
-			$this->roles = array_filter( array_keys( $this->caps ), [$wp_roles, 'is_role'] );
+			$this->roles = array_filter( array_keys( $this->caps ), array( $wp_roles, 'is_role' ) );
 		}
 
 		// Build $allcaps from role caps, overlay user's $caps.
-		$this->allcaps = [];
+		$this->allcaps = array();
 
 		foreach ( ( array ) $this->roles as $role ) {
 			$the_role = $wp_roles->get_role( $role );
@@ -336,7 +336,7 @@ EOQ
 		$caps = get_user_meta( $this->ID, $this->cap_key, TRUE );
 
 		if ( ! is_array( $caps ) ) {
-			return [];
+			return array();
 		}
 
 		return $caps;

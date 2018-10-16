@@ -27,14 +27,14 @@ global $wp_filter, $wp_actions, $wp_current_filter;
 
 $wp_filter = $wp_filter
 	? WP_Hook::build_preinitialized_hooks( $wp_filter )
-	: [];
+	: array();
 
 if ( ! isset( $wp_actions ) ) {
-	$wp_actions = [];
+	$wp_actions = array();
 }
 
 if ( ! isset( $wp_current_filter ) ) {
-	$wp_current_filter = [];
+	$wp_current_filter = array();
 }
 
 /**
@@ -172,7 +172,7 @@ function has_filter( $tag, $function_to_check = FALSE )
 function apply_filters( $tag, $value )
 {
 	global $wp_filter, $wp_current_filter;
-	$args = [];
+	$args = array();
 
 	// Do 'all' actions first.
 	if ( isset( $wp_filter['all'] ) ) {
@@ -352,7 +352,7 @@ function do_action( $tag, $arg = '' )
 		$wp_current_filter[] = $tag;
 	}
 
-	$args = [];
+	$args = array();
 
 	$args[] = is_array( $arg ) && 1 == count( $arg ) && isset( $arg[0] ) && is_object( $arg[0] )
 		? &$arg[0]
@@ -506,7 +506,7 @@ function _wp_filter_build_unique_id( $tag, $function, $priority )
 	}
 
 	$function = is_object( $function )
-		? [$function, ''] // Closures are currently implemented as objects
+		? array( $function, '' ) // Closures are currently implemented as objects
 		: ( array ) $function;
 
 	if ( is_object( $function[0] ) ) {

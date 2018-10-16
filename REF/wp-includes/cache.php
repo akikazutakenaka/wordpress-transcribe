@@ -158,7 +158,7 @@ class WP_Object_Cache
 	 *
 	 * @var array
 	 */
-	private $cache = [];
+	private $cache = array();
 
 	/**
 	 * The amount of times the cache data was already stored in the cache.
@@ -185,7 +185,7 @@ class WP_Object_Cache
 	 *
 	 * @var array
 	 */
-	protected $global_groups = [];
+	protected $global_groups = array();
 
 	/**
 	 * The blog prefix to prepend to keys in non-global groups.
@@ -393,7 +393,7 @@ class WP_Object_Cache
 		/**
 		 * @todo This should be moved to the PHP4 style constructor, PHP5 already calls __destruct()
 		 */
-		register_shutdown_function( [$this, '__destruct'] );
+		register_shutdown_function( array( $this, '__destruct' ) );
 	}
 
 	/**
