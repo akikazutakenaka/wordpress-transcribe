@@ -65,6 +65,6 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 
 		case 'url':
 			$output = home_url();
-// @NOW 008 -> wp-includes/link-template.php
+// @NOW 008
 	}
 }

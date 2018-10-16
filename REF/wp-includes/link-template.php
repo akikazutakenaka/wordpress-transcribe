@@ -64,7 +64,24 @@ function get_home_url( $blog_id = NULL, $path = '', $scheme = NULL )
 	}
 
 	$url = set_url_scheme( $url, $scheme );
-// @NOW 009
+
+	if ( $path && is_string( $path ) ) {
+		$url .= '/' . ltrim( $path, '/' );
+	}
+
+	/**
+	 * Filters the home URL.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string      $url         The complete home URL including scheme and path.
+	 * @param string      $path        Path relative to the home URL.
+	 *                                 Blank string if no path is specified.
+	 * @param string|null $orig_scheme Scheme to give the home URL context.
+	 *                                 Accepts 'http', 'https', 'relative', 'rest', or null.
+	 * @param int|null    $blog_id     Site ID, or null for the current site.
+	 */
+	return apply_filters( 'home_url', $url, $path, $orig_scheme, $blog_id );
 }
 
 /**
