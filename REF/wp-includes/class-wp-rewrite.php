@@ -318,7 +318,19 @@ class WP_Rewrite
 	 */
 	public $feeds = array( 'feed', 'rdf', 'rss', 'rss2', 'atom' );
 
-// @NOW 011
+	/**
+	 * Determines whether permalinks are being used.
+	 *
+	 * This can be either rewrite module or permalink in the HTTP query string.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return bool True, if permalinks are enabled.
+	 */
+	public function using_permalinks()
+	{
+		return ! empty( $this->permalink_structure );
+	}
 
 	/**
 	 * Sets up the object's properties.
@@ -335,7 +347,7 @@ class WP_Rewrite
 		$this->root = '';
 
 		if ( $this->using_index_permalinks() ) {
-// @NOW 010 -> wp-includes/class-wp-rewrite.php
+// @NOW 010
 		}
 	}
 

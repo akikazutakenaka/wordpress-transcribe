@@ -25,20 +25,7 @@
 class WP_Rewrite {
 	// refactored. public $permalink_structure;
 	// :
-	// refactored. public $feeds = array( 'feed', 'rdf', 'rss', 'rss2', 'atom' );
-
-	/**
-	 * Determines whether permalinks are being used.
-	 *
-	 * This can be either rewrite module or permalink in the HTTP query string.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return bool True, if permalinks are enabled.
-	 */
-	public function using_permalinks() {
-		return ! empty($this->permalink_structure);
-	}
+	// refactored. public function using_permalinks() {}
 
 	/**
 	 * Determines whether permalinks are being used and rewrite module is not enabled.
