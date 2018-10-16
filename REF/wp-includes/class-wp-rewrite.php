@@ -318,7 +318,26 @@ class WP_Rewrite
 	 */
 	public $feeds = array( 'feed', 'rdf', 'rss', 'rss2', 'atom' );
 
-	// @NOW 010
+// @NOW 011
+
+	/**
+	 * Sets up the object's properties.
+	 *
+	 * The 'use_verbose_page_rules' object property will be set to true if the permalink structure begins with one of the following: '%postname%', '%category%', '%tag%', or '%author%'.
+	 *
+	 * @since 1.5.0
+	 */
+	public function init()
+	{
+		$this->extra_rules = $this->non_wp_rules = $this->endpoints = array();
+		$this->permalink_structure = get_option( 'permalink_structure' );
+		$this->front = substr( $this->permalink_structure, 0, strpos( $this->permalink_structure, '%' ) );
+		$this->root = '';
+
+		if ( $this->using_index_permalinks() ) {
+// @NOW 010 -> wp-includes/class-wp-rewrite.php
+		}
+	}
 
 	/**
 	 * Constructor - Calls init(), which runs setup.
