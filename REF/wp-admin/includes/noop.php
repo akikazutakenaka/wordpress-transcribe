@@ -62,3 +62,9 @@ function is_admin()
 {
 	return TRUE;
 }
+
+/**
+ * @ignore
+ */
+function home_url()
+{}

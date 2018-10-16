@@ -42,10 +42,7 @@ function site_url() {}
  */
 function admin_url() {}
 
-/**
- * @ignore
- */
-function home_url() {}
+// refactored. function home_url() {}
 
 /**
  * @ignore
