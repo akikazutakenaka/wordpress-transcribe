@@ -2901,52 +2901,7 @@ function the_comments_pagination( $args = array() ) {
 
 // refactored. function home_url( $path = '', $scheme = null ) {}
 // :
-// refactored. function site_url( $path = '', $scheme = null ) {}
-
-/**
- * Retrieves the URL for a given site where WordPress application files
- * (e.g. wp-blog-header.php or the wp-admin/ folder) are accessible.
- *
- * Returns the 'site_url' option with the appropriate protocol, 'https' if
- * is_ssl() and 'http' otherwise. If `$scheme` is 'http' or 'https',
- * `is_ssl()` is overridden.
- *
- * @since 3.0.0
- *
- * @param int    $blog_id Optional. Site ID. Default null (current site).
- * @param string $path    Optional. Path relative to the site URL. Default empty.
- * @param string $scheme  Optional. Scheme to give the site URL context. Accepts
- *                        'http', 'https', 'login', 'login_post', 'admin', or
- *                        'relative'. Default null.
- * @return string Site URL link with optional path appended.
- */
-function get_site_url( $blog_id = null, $path = '', $scheme = null ) {
-	if ( empty( $blog_id ) || !is_multisite() ) {
-		$url = get_option( 'siteurl' );
-	} else {
-		switch_to_blog( $blog_id );
-		$url = get_option( 'siteurl' );
-		restore_current_blog();
-	}
-
-	$url = set_url_scheme( $url, $scheme );
-
-	if ( $path && is_string( $path ) )
-		$url .= '/' . ltrim( $path, '/' );
-
-	/**
-	 * Filters the site URL.
-	 *
-	 * @since 2.7.0
-	 *
-	 * @param string      $url     The complete site URL including scheme and path.
-	 * @param string      $path    Path relative to the site URL. Blank string if no path is specified.
-	 * @param string|null $scheme  Scheme to give the site URL context. Accepts 'http', 'https', 'login',
-	 *                             'login_post', 'admin', 'relative' or null.
-	 * @param int|null    $blog_id Site ID, or null for the current site.
-	 */
-	return apply_filters( 'site_url', $url, $path, $scheme, $blog_id );
-}
+// refactored. function get_site_url( $blog_id = null, $path = '', $scheme = null ) {}
 
 /**
  * Retrieves the URL to the admin area for the current site.
