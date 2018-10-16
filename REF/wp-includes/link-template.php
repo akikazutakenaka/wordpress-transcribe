@@ -61,6 +61,6 @@ function get_home_url( $blog_id = NULL, $path = '', $scheme = NULL )
 		$scheme = is_ssl() && ! is_admin() && 'wp-login.php' !== $pagenow
 			? 'https'
 			: parse_url( $url, PHP_URL_SCHEME );
-// @NOW 009 -> wp-includes/load.php
+// @NOW 009
 	}
 }

@@ -848,31 +848,6 @@ function wp_load_translations_early() {
 }
 
 // refactored. function wp_installing( $is_installing = null ) {}
-
-/**
- * Determines if SSL is used.
- *
- * @since 2.6.0
- * @since 4.6.0 Moved from functions.php to load.php.
- *
- * @return bool True if SSL, otherwise false.
- */
-function is_ssl() {
-	if ( isset( $_SERVER['HTTPS'] ) ) {
-		if ( 'on' == strtolower( $_SERVER['HTTPS'] ) ) {
-			return true;
-		}
-
-		if ( '1' == $_SERVER['HTTPS'] ) {
-			return true;
-		}
-	} elseif ( isset($_SERVER['SERVER_PORT'] ) && ( '443' == $_SERVER['SERVER_PORT'] ) ) {
-		return true;
-	}
-	return false;
-}
-
-// refactored. function wp_convert_hr_to_bytes( $value ) {}
 // :
 // refactored. function wp_doing_ajax() {}
 

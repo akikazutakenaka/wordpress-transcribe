@@ -253,7 +253,26 @@ function wp_installing( $is_installing = NULL )
 	return ( bool ) $installing;
 }
 
-// @NOW 010
+/**
+ * Determines if SSL is used.
+ *
+ * @since 2.6.0
+ * @since 4.6.0 Moved from functions.php to load.php.
+ *
+ * @return bool True if SSL, otherwise false.
+ */
+function is_ssl()
+{
+	return isset( $_SERVER['HTTPS'] )
+		? ( 'on' == strtolower( $_SERVER['HTTPS'] )
+			? TRUE
+			: ( '1' == $_SERVER['HTTPS']
+				? TRUE
+				: FALSE ) )
+		: ( isset( $_SERVER['SERVER_POST'] ) && '443' == $_SERVER['SERVER_PORT']
+			? TRUE
+			: FALSE );
+}
 
 /**
  * Converts a shorthand byte value to an integer byte value.
