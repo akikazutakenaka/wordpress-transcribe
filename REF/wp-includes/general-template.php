@@ -62,6 +62,6 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 		case 'home': // DEPRECATED
 		case 'siteurl': // DEPRECATED
 			_deprecated_argument( __FUNCTION__, '2.2.0', sprintf( __( 'The %1$s option is deprecated for the family of %2$s functions. Use the %3$s option instead.' ), '<code>' . $show . '</code>', '<code>bloginfo()</code>', '<code>url</code>' ) );
-// @NOW 008 -> wp-includes/functions.php
+// @NOW 008
 	}
 }

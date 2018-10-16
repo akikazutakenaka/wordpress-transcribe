@@ -3530,70 +3530,8 @@ function _deprecated_file( $file, $version, $replacement = null, $message = '' )
 		}
 	}
 }
-/**
- * Mark a function argument as deprecated and inform when it has been used.
- *
- * This function is to be used whenever a deprecated function argument is used.
- * Before this function is called, the argument must be checked for whether it was
- * used by comparing it to its default value or evaluating whether it is empty.
- * For example:
- *
- *     if ( ! empty( $deprecated ) ) {
- *         _deprecated_argument( __FUNCTION__, '3.0.0' );
- *     }
- *
- *
- * There is a hook deprecated_argument_run that will be called that can be used
- * to get the backtrace up to what file and function used the deprecated
- * argument.
- *
- * The current behavior is to trigger a user error if WP_DEBUG is true.
- *
- * @since 3.0.0
- * @access private
- *
- * @param string $function The function that was called.
- * @param string $version  The version of WordPress that deprecated the argument used.
- * @param string $message  Optional. A message regarding the change. Default null.
- */
-function _deprecated_argument( $function, $version, $message = null ) {
 
-	/**
-	 * Fires when a deprecated argument is called.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param string $function The function that was called.
-	 * @param string $message  A message regarding the change.
-	 * @param string $version  The version of WordPress that deprecated the argument used.
-	 */
-	do_action( 'deprecated_argument_run', $function, $message, $version );
-
-	/**
-	 * Filters whether to trigger an error for deprecated arguments.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param bool $trigger Whether to trigger the error for deprecated arguments. Default true.
-	 */
-	if ( WP_DEBUG && apply_filters( 'deprecated_argument_trigger_error', true ) ) {
-		if ( function_exists( '__' ) ) {
-			if ( ! is_null( $message ) ) {
-				/* translators: 1: PHP function name, 2: version number, 3: optional message regarding the change */
-				trigger_error( sprintf( __('%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s'), $function, $version, $message ) );
-			} else {
-				/* translators: 1: PHP function name, 2: version number */
-				trigger_error( sprintf( __('%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function, $version ) );
-			}
-		} else {
-			if ( ! is_null( $message ) ) {
-				trigger_error( sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s', $function, $version, $message ) );
-			} else {
-				trigger_error( sprintf( '%1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.', $function, $version ) );
-			}
-		}
-	}
-}
+// refactored. function _deprecated_argument( $function, $version, $message = null ) {}
 
 /**
  * Marks a deprecated action or filter hook as deprecated and throws a notice.
