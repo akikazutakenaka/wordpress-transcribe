@@ -300,7 +300,7 @@ EOQ
 			}
 		} else {
 			wp_cache_delete( $option, 'options' );
-// @NOW 016 -> wp-includes/cache.php
+// @NOW 016
 		}
 	}
 }

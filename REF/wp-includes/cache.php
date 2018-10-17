@@ -278,7 +278,39 @@ class WP_Object_Cache
 		$this->global_groups = array_merge( $this->global_groups, $groups );
 	}
 
-// @NOW 017
+	/**
+	 * Removes the contents of the cache key in the group.
+	 *
+	 * If the cache key does not exist in the group, then nothing will happen.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param  int|string $key        What the contents in the cache are called.
+	 * @param  string     $group      Optional.
+	 *                                Where the cache contents are grouped.
+	 *                                Default 'default'.
+	 * @param  bool       $deprecated Optional.
+	 *                                Unused.
+	 *                                Default false.
+	 * @return bool       False if the contents weren't deleted and true on success.
+	 */
+	public function delete( $key, $group = 'default', $deprecated = FALSE )
+	{
+		if ( empty( $group ) ) {
+			$group = 'default';
+		}
+
+		if ( $this->multisite && ! isset( $this->global_groups[ $group ] ) ) {
+			$key = $this->blog_prefix . $key;
+		}
+
+		if ( ! $this->_exists( $key, $group ) ) {
+			return FALSE;
+		}
+
+		unset( $this->cache[ $group ][ $key ] );
+		return TRUE;
+	}
 
 	/**
 	 * Retrieves the cache contents, if it exists.
