@@ -179,7 +179,6 @@ function wp_protect_special_option( $option )
 {
 	if ( 'alloptions' === $option || 'notoptions' === $option ) {
 		wp_die( sprintf( __( '%s is a protected WP option and may not be modified' ), esc_html( $option ) ) );
-// @NOW 017
 	}
 }
 
@@ -267,7 +266,7 @@ function delete_option( $option )
 	}
 
 	wp_protect_special_option( $option );
-// @NOW 016 -> wp-includes/option.php
+// @NOW 016
 }
 
 /**
