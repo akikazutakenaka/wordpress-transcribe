@@ -332,6 +332,8 @@ class WP_Rewrite
 		return ! empty( $this->permalink_structure );
 	}
 
+// @NOW 010
+
 	/**
 	 * Sets up the object's properties.
 	 *
@@ -347,8 +349,19 @@ class WP_Rewrite
 		$this->root = '';
 
 		if ( $this->using_index_permalinks() ) {
-// @NOW 010
+			$this->root = $this->index . '/';
 		}
+
+		unset( $this->author_structure );
+		unset( $this->date_structure );
+		unset( $this->page_structure );
+		unset( $this->search_structure );
+		unset( $this->feed_structure );
+		unset( $this->comment_feed_structure );
+		$this->use_trailing_slashes = '/' == substr( $this->permalink_structure, -1, 1 );
+
+		// Enable generic rules for pages if permalink structure doesn't begin with a wildcard.
+		$this->use_verbose_page_rules = preg_match( "/^[^%]*%(?:postname|category|tag|author)%/", $this->permalink_structure );
 	}
 
 	/**
