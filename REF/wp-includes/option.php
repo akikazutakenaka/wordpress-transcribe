@@ -289,7 +289,20 @@ EOQ
 	do_action( 'delete_option', $option );
 
 	$result = $wpdb->delete( $wpdb->options, array( 'option_name' => $option ) );
-// @NOW 016
+
+	if ( ! wp_installing() ) {
+		if ( 'yes' == $row->autoload ) {
+			$alloptions = wp_load_alloptions();
+
+			if ( is_array( $alloptions ) && isset( $alloptions[ $option ] ) ) {
+				unset( $alloptions[ $option ] );
+				wp_cache_set( 'alloptions', $alloptions, 'options' );
+			}
+		} else {
+			wp_cache_delete( $option, 'options' );
+// @NOW 016 -> wp-includes/cache.php
+		}
+	}
 }
 
 /**

@@ -32,6 +32,25 @@ function wp_cache_add( $key, $data, $group = '', $expire = 0 )
 }
 
 /**
+ * Removes the cache contents matching key and group.
+ *
+ * @since  2.0.0
+ * @see    WP_Object_Cache::delete()
+ * @global WP_Object_Cache $wp_object_cache Object cache global instance.
+ *
+ * @param  int|string $key   What the contents in the cache are called.
+ * @param  string     $group Optional.
+ *                           Where the cache contents are grouped.
+ *                           Default empty.
+ * @return bool       True on successful removal, false on failure.
+ */
+function wp_cache_delete( $key, $group = '' )
+{
+	global $wp_object_cache;
+	return $wp_object_cache->delete( $key, $group );
+}
+
+/**
  * Retrieves the cache contents from the cache by key and group.
  *
  * @since  2.0.0
@@ -258,6 +277,8 @@ class WP_Object_Cache
 		$groups = array_fill_keys( $groups, TRUE );
 		$this->global_groups = array_merge( $this->global_groups, $groups );
 	}
+
+// @NOW 017
 
 	/**
 	 * Retrieves the cache contents, if it exists.

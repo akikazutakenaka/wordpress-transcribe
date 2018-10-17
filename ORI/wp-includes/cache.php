@@ -46,23 +46,7 @@ function wp_cache_decr( $key, $offset = 1, $group = '' ) {
 	return $wp_object_cache->decr( $key, $offset, $group );
 }
 
-/**
- * Removes the cache contents matching key and group.
- *
- * @since 2.0.0
- *
- * @see WP_Object_Cache::delete()
- * @global WP_Object_Cache $wp_object_cache Object cache global instance.
- *
- * @param int|string $key   What the contents in the cache are called.
- * @param string     $group Optional. Where the cache contents are grouped. Default empty.
- * @return bool True on successful removal, false on failure.
- */
-function wp_cache_delete( $key, $group = '' ) {
-	global $wp_object_cache;
-
-	return $wp_object_cache->delete($key, $group);
-}
+// refactored. function wp_cache_delete( $key, $group = '' ) {}
 
 /**
  * Removes all cache items.
