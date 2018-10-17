@@ -250,6 +250,23 @@ function get_site_option( $option, $default = FALSE, $deprecated = TRUE )
 }
 
 /**
+ * Removes a option by name for the current network.
+ *
+ * @since 2.8.0
+ * @since 4.4.0 Modified into wrapper for delete_network_option().
+ * @see   delete_network_option()
+ *
+ * @param  string $option Name of option to remove.
+ *                        Expected to not be SQL-escaped.
+ * @return bool   True, if succeed.
+ *                False, if failure.
+ */
+function delete_site_option( $option )
+{
+	return delete_network_option( NULL, $option );
+}
+
+/**
  * Retrieve a network's option value based on the option name.
  *
  * @since  4.4.0
@@ -381,6 +398,8 @@ EOQ
 	return apply_filters( "site_option_{$option}", $value, $option, $network_id );
 }
 
+// @NOW 015
+
 /**
  * Get the value of a site transient.
  *
@@ -416,6 +435,23 @@ function get_site_transient( $transient )
 	}
 
 	if ( wp_using_ext_object_cache() ) {
-// @NOW 014
+		$value = wp_cache_get( $transient, 'site-transient' );
+	} else {
+		/**
+		 * Core transients that do not have a timeout.
+		 * Listed here so querying timeouts can be avoided.
+		 */
+		$no_timeout = array( 'update_core', 'update_plugins', 'update_themes' );
+		$transient_option = '_site_transient_' . $transient;
+
+		if ( ! in_array( $transient, $no_timeout ) ) {
+			$transient_timeout = '_site_transient_timeout_' . $transient;
+			$timeout = get_site_option( $transient_timeout );
+
+			if ( FALSE !== $timeout && $timeout < time() ) {
+				delete_site_option( $transient_option );
+// @NOW 014 -> wp-includes/option.php
+			}
+		}
 	}
 }

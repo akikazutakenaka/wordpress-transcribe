@@ -920,20 +920,7 @@ function add_site_option( $option, $value ) {
 	return add_network_option( null, $option, $value );
 }
 
-/**
- * Removes a option by name for the current network.
- *
- * @since 2.8.0
- * @since 4.4.0 Modified into wrapper for delete_network_option()
- *
- * @see delete_network_option()
- *
- * @param string $option Name of option to remove. Expected to not be SQL-escaped.
- * @return bool True, if succeed. False, if failure.
- */
-function delete_site_option( $option ) {
-	return delete_network_option( null, $option );
-}
+// refactored. function delete_site_option( $option ) {}
 
 /**
  * Update the value of an option that was already added for the current network.
