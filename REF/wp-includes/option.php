@@ -165,6 +165,8 @@ EOQ
 	return apply_filters( "option_{$option}", maybe_unserialize( $value ), $option );
 }
 
+// @NOW 017
+
 /**
  * Loads and caches all autoloaded options, if available or all options.
  *
@@ -227,7 +229,30 @@ EOQ
 	return apply_filters( 'alloptions', $alloptions );
 }
 
-// @NOW 016
+/**
+ * Removes option by name.
+ * Prevents removal of protected WordPress options.
+ *
+ * @since  1.2.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  string $option Name of option to remove.
+ *                        Expected to not be SQL-escaped.
+ * @return bool   True, if option is successfully deleted.
+ *                False on failure.
+ */
+function delete_option( $option )
+{
+	global $wpdb;
+	$option = trim( $option );
+
+	if ( empty( $option ) ) {
+		return FALSE;
+	}
+
+	wp_protect_special_option( $option );
+// @NOW 016 -> wp-includes/option.php
+}
 
 /**
  * Retrieve an option value for the current network based on name of option.
