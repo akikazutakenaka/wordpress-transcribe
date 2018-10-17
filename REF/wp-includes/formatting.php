@@ -54,6 +54,8 @@ function seems_utf8( $str )
 	return TRUE;
 }
 
+// @NOW 019
+
 /**
  * Converts all accent characters to ASCII characters.
  *
@@ -620,7 +622,19 @@ function stripslashes_from_strings_only( $value )
 		: $value;
 }
 
-// @NOW 018
+/**
+ * Escaping for HTML blocks.
+ *
+ * @since 2.8.0
+ *
+ * @param  string $text
+ * @return string
+ */
+function esc_html( $text )
+{
+	$safe_text = wp_check_invalid_utf8( $text );
+// @NOW 018 -> wp-includes/formatting.php
+}
 
 /**
  * Maps a function to all non-iterable elements of an array or an object.
