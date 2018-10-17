@@ -59,7 +59,25 @@ function get_stylesheet_uri()
 // @NOW 009 -> wp-includes/theme.php
 }
 
-// @NOW 013
+/**
+ * Retrieve theme roots.
+ *
+ * @since  2.9.0
+ * @global array $wp_theme_directories
+ *
+ * @return array|string An array of theme roots keyed by template/stylesheet or a single theme root if all themes have the same root.
+ */
+function get_theme_roots()
+{
+	global $wp_theme_directories;
+
+	if ( ! is_array( $wp_theme_directories ) || count( $wp_theme_directories ) <= 1 ) {
+		return '/themes';
+	}
+
+	$theme_roots = get_site_transient( 'theme_roots' );
+// @NOW 013 -> wp-includes/option.php
+}
 
 /**
  * Retrieve URI for themes directory.
