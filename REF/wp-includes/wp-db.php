@@ -1918,7 +1918,7 @@ class wpdb
 		}
 
 		$data = $this->process_field_charsets( $data, $table );
-// @NOW 018 -> wp-includes/wp-db.php
+// @NOW 018
 	}
 
 	/**
@@ -1976,9 +1976,16 @@ class wpdb
 				$value['charset'] = FALSE;
 			} else {
 				$value['charset'] = $this->get_col_charset( $table, $field );
-// @NOW 019
+
+				if ( is_wp_error( $value['charset'] ) ) {
+					return FALSE;
+				}
 			}
+
+			$data[ $field ] = $value;
 		}
+
+		return $data;
 	}
 
 	/**
