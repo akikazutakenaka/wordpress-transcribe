@@ -133,8 +133,16 @@ function _wp_specialchars( $string, $quote_style = ENT_NOQUOTES, $charset = FALS
 		 * This is required for PHP < 5.4.0 because ENT_HTML401 flag is unavailable.
 		 */
 		$string = wp_kses_normalize_entities( $string );
-// @NOW 019
 	}
+
+	$string = @htmlspecialchars( $string, $quote_style, $charset, $double_encode );
+
+	// Back-compat.
+	if ( 'single' === $_quote_style ) {
+		$string = str_replace( "'", '&#039;', $string );
+	}
+
+	return $string;
 }
 
 /**
@@ -772,7 +780,7 @@ function esc_html( $text )
 {
 	$safe_text = wp_check_invalid_utf8( $text );
 	$safe_text = _wp_specialchars( $safe_text, ENT_QUOTES );
-// @NOW 018 -> wp-includes/formatting.php
+// @NOW 018
 }
 
 /**
