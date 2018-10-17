@@ -447,7 +447,7 @@ function wp_kses_normalize_entities( $string )
 	// Change back the allowed entities in our entity whitelist.
 	$string = preg_replace_callback( '/&amp;([A-Za-z]{2,8}[0-9]{0,2});/', 'wp_kses_named_entities', $string );
 	$string = preg_replace_callback( '/&amp;#(0*[0-9]{1,7});/', 'wp_kses_normalize_entities2', $string );
-// @NOW 020 -> wp-includes/kses.php
+// @NOW 020
 }
 
 /**
@@ -496,8 +496,13 @@ function wp_kses_normalize_entities2( $matches )
 	$i = $matches[1];
 
 	if ( valid_unicode( $i ) ) {
-// @NOW 021
+		$i = str_pad( ltrim( $i, '0' ), 3, '0', STR_PAD_LEFT );
+		$i = "&#$i;";
+	} else {
+		$i = "&amp;#$i;";
 	}
+
+	return $i;
 }
 
 /**
