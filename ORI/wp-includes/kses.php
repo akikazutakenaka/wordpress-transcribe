@@ -55,7 +55,7 @@ if ( ! CUSTOM_TAGS ) {
 	// refactored. $allowedposttags = array_map( '_wp_add_global_attributes', $allowedposttags );
 } else {
 	// refactored. $allowedtags = wp_kses_array_lc( $allowedtags );
-	$allowedposttags = wp_kses_array_lc( $allowedposttags );
+	// refactored. $allowedposttags = wp_kses_array_lc( $allowedposttags );
 }
 
 /**

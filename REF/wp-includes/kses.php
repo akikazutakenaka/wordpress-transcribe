@@ -400,7 +400,7 @@ if ( ! CUSTOM_TAGS ) {
 	$allowedposttags = array_map( '_wp_add_global_attributes', $allowedposttags );
 } else {
 	$allowedtags = wp_kses_array_lc( $allowedtags );
-// @NOW 020
+	$allowedposttags = wp_kses_array_lc( $allowedposttags );
 }
 
 /**
@@ -427,6 +427,29 @@ function wp_kses_array_lc( $inarray )
 
 	return $outarray;
 }
+
+/**
+ * Converts and fixes HTML entities.
+ *
+ * This function normalizes HTML entities.
+ * It will convert `AT&T` to the correct `AT&amp;T`, `&#00058;` to `&#58;`, `&#XYZZY;` to `&amp;#XYZZY;` and so on.
+ *
+ * @since 1.0.0
+ *
+ * @param  string $string Content to normalize entities.
+ * @return string Content with normalized entities.
+ */
+function wp_kses_normalize_entities( $string )
+{
+	// Disarm all entities by converting & to &amp;
+	$string = str_replace( '&', '&amp;', $string );
+
+	// Change back the allowed entities in our entity whitelist.
+	$string = preg_replace_callback( '/&amp;([A-Za-z]{2,8}[0-9]{0,2});/', 'wp_kses_named_entities', $string );
+// @NOW 020 -> wp-includes/kses.php
+}
+
+// @NOW 021
 
 /**
  * Helper function to add global attributes to a tag in the allowed html list.
