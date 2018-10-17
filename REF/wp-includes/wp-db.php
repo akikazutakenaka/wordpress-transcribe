@@ -1976,7 +1976,7 @@ class wpdb
 				$value['charset'] = FALSE;
 			} else {
 				$value['charset'] = $this->get_col_charset( $table, $field );
-// @NOW 019 -> wp-includes/wp-db.php
+// @NOW 019
 			}
 		}
 	}
@@ -2287,7 +2287,72 @@ class wpdb
 		return $charset;
 	}
 
-// @NOW 020
+	/**
+	 * Retrieves the character set for the given column.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  string                $table  Table name.
+	 * @param  string                $column Column name.
+	 * @return string|false|WP_Error Column character set as a string.
+	 *                               False if the column has no character set.
+	 *                               WP_Error object if there was an error.
+	 */
+	public function get_col_charset( $table, $column )
+	{
+		$tablekey = strtolower( $table );
+		$columnkey = strtolower( $column );
+
+		/**
+		 * Filters the column charset value before the DB is checked.
+		 *
+		 * Passing a non-null value to the filter will short-circuit checking the DB for the charset, returning that value instead.
+		 *
+		 * @since 4.2.0
+		 *
+		 * @param string $charset The character set to use.
+		 *                        Default null.
+		 * @param string $table   The name of the table being checked.
+		 * @param string $column  The name of the column being checked.
+		 */
+		$charset = apply_filters( 'pre_get_col_charset', NULL, $table, $column );
+
+		if ( NULL !== $charset ) {
+			return $charset;
+		}
+
+		// Skip this entirely if this isn't a MySQL database.
+		if ( empty( $this->is_mysql ) ) {
+			return FALSE;
+		}
+
+		if ( empty( $this->table_charset[ $tablekey ] ) ) {
+			// This primes column information for us.
+			$table_charset = $this->get_table_charset( $table );
+
+			if ( is_wp_error( $table_charset ) ) {
+				return $table_charset;
+			}
+		}
+
+		// If still no column information, return the table charset.
+		if ( empty( $this->col_meta[ $tablekey ] ) ) {
+			return $this->table_charset[ $tablekey ];
+		}
+
+		// If this column doesn't exist, return the table charset.
+		if ( empty( $this->col_meta[ $tablekey ][ $columnkey ] ) ) {
+			return $this->table_charset[ $tablekey ];
+		}
+
+		// Return false when it's not a string column.
+		if ( empty( $this->col_meta[ $tablekey ][ $columnkey ]->Collation ) ) {
+			return FALSE;
+		}
+
+		list( $charset ) = explode( '_', $this->col_meta[ $tablekey ][ $columnkey ]->Collation );
+		return $charset;
+	}
 
 	/**
 	 * Check if a string is ASCII.
