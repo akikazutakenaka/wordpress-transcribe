@@ -77,6 +77,34 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 
 		case 'rdf_url':
 			$output = get_feed_link( 'rdf' );
-// @NOW 008
+			break;
+
+		case 'rss_url':
+			$output = get_feed_link( 'rss' );
+			break;
+
+		case 'rss2_url':
+			$output = get_feed_link( 'rss2' );
+			break;
+
+		case 'atom_url':
+			$output = get_feed_link( 'atom' );
+			break;
+
+		case 'comments_atom_url':
+			$output = get_feed_link( 'comments_atom' );
+			break;
+
+		case 'comments_rss2_url':
+			$output = get_feed_link( 'comments_rss2' );
+			break;
+
+		case 'pingback_url':
+			$output = site_url( 'xmlrpc.php' );
+			break;
+
+		case 'stylesheet_uri':
+			$output = get_stylesheet_uri();
+// @NOW 008 -> wp-includes/theme.php
 	}
 }
