@@ -1912,10 +1912,43 @@ class wpdb
 	protected function process_fields( $table, $data, $format )
 	{
 		$data = $this->process_field_formats( $data, $format );
-// @NOW 018 -> wp-includes/wp-db.php
+// @NOW 018
 	}
 
-// @NOW 019
+	/**
+	 * Prepares arrays of value/format pairs as passed to wpdb CRUD methods.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  array $data   Array of fields to value.
+	 * @param  mixed $format Formats to be mapped to the values in $data.
+	 * @return array Array, keyed by field names with values being an array of 'value' and 'format' keys.
+	 */
+	protected function process_field_formats( $data, $format )
+	{
+		$formats = $original_formats = ( array ) $format;
+
+		foreach ( $data as $field => $value ) {
+			$value = array(
+				'value'  => $value,
+				'format' => '%s'
+			);
+
+			if ( ! empty( $format ) ) {
+				$value['format'] = array_shift( $formats );
+
+				if ( ! $value['format'] ) {
+					$value['format'] = reset( $original_formats );
+				}
+			} elseif ( isset( $this->field_types[ $field ] ) ) {
+				$value['format'] = $this->field_types[ $field ];
+			}
+
+			$data[ $field ] = $value;
+		}
+
+		return $data;
+	}
 
 	/**
 	 * Retrieve one variable from the database.
