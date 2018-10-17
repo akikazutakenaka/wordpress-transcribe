@@ -557,6 +557,8 @@ function sanitize_key( $key )
 	return apply_filters( 'sanitize_key', $key, $raw_key );
 }
 
+// @NOW 011
+
 /**
  * Removes trailing forward slashes and backslashes if they exist.
  *
