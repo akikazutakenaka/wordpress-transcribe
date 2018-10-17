@@ -496,11 +496,27 @@ function wp_kses_normalize_entities2( $matches )
 	$i = $matches[1];
 
 	if ( valid_unicode( $i ) ) {
-// @NOW 021 -> wp-includes/kses.php
+// @NOW 021
 	}
 }
 
-// @NOW 022
+/**
+ * Helper function to determine if a Unicode value is valid.
+ *
+ * @since 2.7.0
+ *
+ * @param  int  $i Unicode value.
+ * @return bool True if the value was a valid Unicode number.
+ */
+function valid_unicode( $i )
+{
+	return $i == 0x9
+	    || $i == 0xa
+	    || $i == 0xd
+	    || ( $i >= 0x20 && $i <= 0xd7ff )
+	    || ( $i >= 0xe000 && $i <= 0xfffd )
+	    || ( $i >= 0x10000 && $i <= 0x10ffff );
+}
 
 /**
  * Helper function to add global attributes to a tag in the allowed html list.
