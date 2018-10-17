@@ -133,7 +133,7 @@ function _wp_specialchars( $string, $quote_style = ENT_NOQUOTES, $charset = FALS
 		 * This is required for PHP < 5.4.0 because ENT_HTML401 flag is unavailable.
 		 */
 		$string = wp_kses_normalize_entities( $string );
-// @NOW 019 -> wp-includes/kses.php
+// @NOW 019
 	}
 }
 
