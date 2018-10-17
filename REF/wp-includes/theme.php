@@ -6,7 +6,20 @@
  * @subpackage Theme
  */
 
-// @NOW 010
+// @NOW 011
+
+/**
+ * Retrieve stylesheet directory URI.
+ *
+ * @since 1.5.0
+ *
+ * @return string
+ */
+function get_stylesheet_directory_uri()
+{
+	$stylesheet = str_replace( '%2F', '/', rawurlencode( get_stylesheet() ) );
+// @NOW 010 -> wp-includes/theme.php
+}
 
 /**
  * Retrieves the URI of current theme stylesheet.
