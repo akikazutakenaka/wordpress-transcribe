@@ -289,7 +289,7 @@ EOQ
 	do_action( 'delete_option', $option );
 
 	$result = $wpdb->delete( $wpdb->options, array( 'option_name' => $option ) );
-// @NOW 016 -> wp-includes/wp-db.php
+// @NOW 016
 }
 
 /**

@@ -1890,7 +1890,30 @@ class wpdb
 		}
 
 		$where = $this->process_fields( $table, $where, $where_format );
-// @NOW 017
+
+		if ( FALSE === $where ) {
+			return FALSE;
+		}
+
+		$conditions = $values = array();
+
+		foreach ( $where as $field => $value ) {
+			if ( is_null( $value['value'] ) ) {
+				$conditions[] = "`$field` IS NULL";
+				continue;
+			}
+
+			$conditions[] = "`$field` = " . $value['format'];
+			$values[] = $value['value'];
+		}
+
+		$conditions = implode( ' AND ', $conditions );
+		$sql = <<<EOQ
+DELETE FROM `$table`
+WHERE $conditions
+EOQ;
+		$this->check_current_query = FALSE;
+		return $this->query( $this->prepare( $sql, $values ) );
 	}
 
 	/**
