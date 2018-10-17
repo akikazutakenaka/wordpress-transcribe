@@ -1893,7 +1893,29 @@ class wpdb
 // @NOW 017 -> wp-includes/wp-db.php
 	}
 
-// @NOW 018
+	/**
+	 * Processes arrays of field/value pairs and field formats.
+	 *
+	 * This is a helper method for wpdb's CRUD methods, which take field/value pairs for inserts, updates, and where clauses.
+	 * This method first pairs each value with a format.
+	 * Then it determines the charset of that field, using that to determine if any invalid text would be stripped.
+	 * If text is stripped, then field processing is rejected and the query fails.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param  string      $table  Table name.
+	 * @param  array       $data   Field/value pair.
+	 * @param  mixed       $format Format for each field.
+	 * @return array|false Returns an array of fields that contain paired values and formats.
+	 *                     Returns false for invalid values.
+	 */
+	protected function process_fields( $table, $data, $format )
+	{
+		$data = $this->process_field_formats( $data, $format );
+// @NOW 018 -> wp-includes/wp-db.php
+	}
+
+// @NOW 019
 
 	/**
 	 * Retrieve one variable from the database.
