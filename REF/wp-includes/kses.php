@@ -446,7 +446,8 @@ function wp_kses_normalize_entities( $string )
 
 	// Change back the allowed entities in our entity whitelist.
 	$string = preg_replace_callback( '/&amp;([A-Za-z]{2,8}[0-9]{0,2});/', 'wp_kses_named_entities', $string );
-// @NOW 020
+	$string = preg_replace_callback( '/&amp;#(0*[0-9]{1,7});/', 'wp_kses_normalize_entities2', $string );
+// @NOW 020 -> wp-includes/kses.php
 }
 
 /**
@@ -474,6 +475,32 @@ function wp_kses_named_entities( $matches )
 		? "&amp;$i;"
 		: "&$i;";
 }
+
+/**
+ * Callback for wp_kses_normalize_entities() regular expression.
+ *
+ * This function helps wp_kses_normalize_entities() to only accept 16-bit values and nothing more for `&#number;` entities.
+ *
+ * @access private
+ * @since  1.0.0
+ *
+ * @param  array  $matches preg_replace_callback() matches array.
+ * @return string Correctly encoded entity.
+ */
+function wp_kses_normalize_entities2( $matches )
+{
+	if ( empty( $matches[1] ) ) {
+		return '';
+	}
+
+	$i = $matches[1];
+
+	if ( valid_unicode( $i ) ) {
+// @NOW 021 -> wp-includes/kses.php
+	}
+}
+
+// @NOW 022
 
 /**
  * Helper function to add global attributes to a tag in the allowed html list.
