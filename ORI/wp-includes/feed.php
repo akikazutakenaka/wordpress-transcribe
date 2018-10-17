@@ -65,28 +65,7 @@ function bloginfo_rss($show = '') {
 	echo apply_filters( 'bloginfo_rss', get_bloginfo_rss( $show ), $show );
 }
 
-/**
- * Retrieve the default feed.
- *
- * The default feed is 'rss2', unless a plugin changes it through the
- * {@see 'default_feed'} filter.
- *
- * @since 2.5.0
- *
- * @return string Default feed, or for example 'rss2', 'atom', etc.
- */
-function get_default_feed() {
-	/**
-	 * Filters the default feed type.
-	 *
-	 * @since 2.5.0
-	 *
-	 * @param string $feed_type Type of default feed. Possible values include 'rss2', 'atom'.
-	 *                          Default 'rss2'.
-	 */
-	$default_feed = apply_filters( 'default_feed', 'rss2' );
-	return 'rss' == $default_feed ? 'rss2' : $default_feed;
-}
+// refactored. function get_default_feed() {}
 
 /**
  * Retrieve the blog title for the feed title.

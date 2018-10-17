@@ -29,7 +29,7 @@ function get_feed_link( $feed = '' )
 		}
 
 		if ( get_default_feed() == $feed ) {
-// @NOW 009 -> wp-includes/feed.php
+// @NOW 009
 		}
 	}
 }
