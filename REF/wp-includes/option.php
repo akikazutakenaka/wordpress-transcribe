@@ -227,6 +227,8 @@ EOQ
 	return apply_filters( 'alloptions', $alloptions );
 }
 
+// @NOW 016
+
 /**
  * Retrieve an option value for the current network based on name of option.
  *
@@ -398,7 +400,54 @@ EOQ
 	return apply_filters( "site_option_{$option}", $value, $option, $network_id );
 }
 
-// @NOW 015
+/**
+ * Removes a network option by name.
+ *
+ * @since  4.4.0
+ * @see    delete_option()
+ * @global wpdb $wpdb
+ *
+ * @param  int    $network_id ID of the network.
+ *                            Can be null to default to the current network ID.
+ * @param  string $option     Name of option to remove.
+ *                            Expected to not be SQL-escaped.
+ * @return bool   True, if succeed.
+ *                False, if failure.
+ */
+function delete_network_option( $network_id, $option )
+{
+	global $wpdb;
+
+	if ( $network_id && ! is_numeric( $network_id ) ) {
+		return FALSE;
+	}
+
+	$network_id ( int ) $network_id;
+
+	// Fallback to the current network if a network ID is not specified.
+	if ( ! $network_id ) {
+		$network_id = get_current_network_id();
+	}
+
+	/**
+	 * Fires immediately before a specific network option is deleted.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the option name.
+	 *
+	 * @since 3.0.0
+	 * @since 4.4.0 The `$option` parameter was added.
+	 * @since 4.7.0 The `$network_id` parameter was added.
+	 *
+	 * @param string $option     Option name.
+	 * @param int    $network_id ID of the network.
+	 */
+	do_action( "pre_delete_site_option_{$option}", $option, $network_id );
+
+	if ( ! is_multisite() ) {
+		$result = delete_option( $option );
+// @NOW 015 -> wp-includes/option.php
+	}
+}
 
 /**
  * Get the value of a site transient.
