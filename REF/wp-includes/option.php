@@ -300,9 +300,34 @@ EOQ
 			}
 		} else {
 			wp_cache_delete( $option, 'options' );
-// @NOW 016
 		}
 	}
+
+	if ( $result ) {
+		/**
+		 * Fires after a specific option has been deleted.
+		 *
+		 * The dynamic portion of the hook name, `$option`, refers to the option name.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $option Name of the deleted option.
+		 */
+		do_action( "delete_option_{$option}", $option );
+
+		/**
+		 * Fires after an option has been deleted.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param string $option Name of the deleted option.
+		 */
+		do_action( 'deleted_option', $option );
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /**
@@ -521,7 +546,7 @@ function delete_network_option( $network_id, $option )
 
 	if ( ! is_multisite() ) {
 		$result = delete_option( $option );
-// @NOW 015 -> wp-includes/option.php
+// @NOW 015
 	}
 }
 
