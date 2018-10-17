@@ -21,7 +21,7 @@ function get_feed_link( $feed = '' )
 {
 	global $wp_rewrite;
 	$permalink = $wp_rewrite->get_feed_permastruct();
-// @NOW 009 -> wp-includes/class-wp-rewrite.php
+// @NOW 009
 }
 
 /**
