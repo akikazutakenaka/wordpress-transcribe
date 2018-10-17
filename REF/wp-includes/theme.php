@@ -39,7 +39,8 @@ function get_stylesheet()
 function get_stylesheet_directory_uri()
 {
 	$stylesheet = str_replace( '%2F', '/', rawurlencode( get_stylesheet() ) );
-// @NOW 010
+	$theme_root_uri = get_theme_root_uri( $stylesheet );
+// @NOW 010 -> wp-includes/theme.php
 }
 
 /**
@@ -57,3 +58,30 @@ function get_stylesheet_uri()
 	$stylesheet_dir_uri = get_stylesheet_directory_uri();
 // @NOW 009 -> wp-includes/theme.php
 }
+
+/**
+ * Retrieve URI for themes directory.
+ *
+ * Does not have trailing slash.
+ *
+ * @since  1.5.0
+ * @global array $wp_theme_directories
+ *
+ * @param  string $stylesheet_or_template Optional.
+ *                                        The stylesheet or template name of the theme.
+ *                                        Default is to leverage the main theme root.
+ * @param  string $theme_root             Optional.
+ *                                        The theme root for which calculations will be based, preventing the need for a get_raw_theme_root() call.
+ * @return string Themes URI.
+ */
+function get_theme_root_uri( $stylesheet_or_template = FALSE, $theme_root = FALSE )
+{
+	global $wp_theme_directories;
+
+	if ( $stylesheet_or_template && ! $theme_root ) {
+		$theme_root = get_raw_theme_root( $stylesheet_or_template );
+// @NOW 011 -> wp-includes/theme.php
+	}
+}
+
+// @NOW 012
