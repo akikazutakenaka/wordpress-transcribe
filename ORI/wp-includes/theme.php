@@ -136,29 +136,7 @@ function is_child_theme() {
 	return ( TEMPLATEPATH !== STYLESHEETPATH );
 }
 
-/**
- * Retrieve name of the current stylesheet.
- *
- * The theme name that the administrator has currently set the front end theme
- * as.
- *
- * For all intents and purposes, the template name and the stylesheet name are
- * going to be the same for most cases.
- *
- * @since 1.5.0
- *
- * @return string Stylesheet name.
- */
-function get_stylesheet() {
-	/**
-	 * Filters the name of current stylesheet.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $stylesheet Name of the current stylesheet.
-	 */
-	return apply_filters( 'stylesheet', get_option( 'stylesheet' ) );
-}
+// refactored. function get_stylesheet() {}
 
 /**
  * Retrieve stylesheet directory path for current theme.
