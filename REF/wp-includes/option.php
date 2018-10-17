@@ -165,7 +165,23 @@ EOQ
 	return apply_filters( "option_{$option}", maybe_unserialize( $value ), $option );
 }
 
-// @NOW 017
+/**
+ * Protect WordPress special option from being modified.
+ *
+ * Will die if $option is in protected list.
+ * Protected options are 'alloptions' and 'notoptions' options.
+ *
+ * @since 2.2.0
+ *
+ * @param string $option Option name.
+ */
+function wp_protect_special_option( $option )
+{
+	if ( 'alloptions' === $option || 'notoptions' === $option ) {
+		wp_die( sprintf( __( '%s is a protected WP option and may not be modified' ), esc_html( $option ) ) );
+// @NOW 017 -> wp-includes/formatting.php
+	}
+}
 
 /**
  * Loads and caches all autoloaded options, if available or all options.

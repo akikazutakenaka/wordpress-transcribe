@@ -620,6 +620,8 @@ function stripslashes_from_strings_only( $value )
 		: $value;
 }
 
+// @NOW 018
+
 /**
  * Maps a function to all non-iterable elements of an array or an object.
  *
