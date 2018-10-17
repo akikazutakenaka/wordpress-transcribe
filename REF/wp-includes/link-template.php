@@ -29,7 +29,17 @@ function user_trailingslashit( $string, $type_of_url = '' )
 	$string = $wp_rewrite->use_trailing_slashes
 		? trailingslashit( $string )
 		: untrailingslashit( $string );
-// @NOW 010
+
+	/**
+	 * Filters the trailing-slashed string, depending on whether the site is set to use trailing slashes.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param string $string      URL with or without a trailing slash.
+	 * @param string $type_of_url The type of URL being considered.
+	 *                            Accepts 'single', 'single_trackback', 'single_feed', 'single_paged', 'commentpaged', 'paged', 'home', 'feed', 'category', 'page', 'year', 'month', 'day', 'post_type_archive'.
+	 */
+	return apply_filters( 'user_trailingslashit', $string, $type_of_url );
 }
 
 /**
@@ -61,7 +71,7 @@ function get_feed_link( $feed = '' )
 		$permalink = str_replace( '%feed%', $feed, $permalink );
 		$permalink = preg_replace( '#/+#', '/', "/$permalink" );
 		$output = home_url( user_trailingslashit( $permalink, 'feed' ) );
-// @NOW 009 -> wp-includes/link-template.php
+// @NOW 009
 	}
 }
 
