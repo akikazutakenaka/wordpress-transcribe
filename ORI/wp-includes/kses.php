@@ -927,28 +927,7 @@ function wp_kses_normalize_entities($string) {
 	return $string;
 }
 
-/**
- * Callback for wp_kses_normalize_entities() regular expression.
- *
- * This function only accepts valid named entity references, which are finite,
- * case-sensitive, and highly scrutinized by HTML and XML validators.
- *
- * @since 3.0.0
- *
- * @global array $allowedentitynames
- *
- * @param array $matches preg_replace_callback() matches array
- * @return string Correctly encoded entity
- */
-function wp_kses_named_entities($matches) {
-	global $allowedentitynames;
-
-	if ( empty($matches[1]) )
-		return '';
-
-	$i = $matches[1];
-	return ( ! in_array( $i, $allowedentitynames ) ) ? "&amp;$i;" : "&$i;";
-}
+// refactored. function wp_kses_named_entities($matches) {}
 
 /**
  * Callback for wp_kses_normalize_entities() regular expression.

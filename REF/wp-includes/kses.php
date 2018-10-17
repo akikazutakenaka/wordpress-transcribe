@@ -446,10 +446,34 @@ function wp_kses_normalize_entities( $string )
 
 	// Change back the allowed entities in our entity whitelist.
 	$string = preg_replace_callback( '/&amp;([A-Za-z]{2,8}[0-9]{0,2});/', 'wp_kses_named_entities', $string );
-// @NOW 020 -> wp-includes/kses.php
+// @NOW 020
 }
 
-// @NOW 021
+/**
+ * Callback for wp_kses_normalize_entities() regular expression.
+ *
+ * This function only accepts valid named entity references, which are finite, case-sensitive, and highly scrutinized by HTML and XML validators.
+ *
+ * @since  3.0.0
+ * @global array $allowedentitynames
+ *
+ * @param  array  $matches preg_replace_callback() matches array.
+ * @return string Correctly encoded entity.
+ */
+function wp_kses_named_entities( $matches )
+{
+	global $allowedentitynames;
+
+	if ( empty( $matches[1] ) ) {
+		return '';
+	}
+
+	$i = $matches[1];
+
+	return ! in_array( $i, $allowedentitynames )
+		? "&amp;$i;"
+		: "&$i;";
+}
 
 /**
  * Helper function to add global attributes to a tag in the allowed html list.
