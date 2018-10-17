@@ -1918,7 +1918,13 @@ class wpdb
 		}
 
 		$data = $this->process_field_charsets( $data, $table );
-// @NOW 018
+
+		if ( FALSE === $data ) {
+			return FALSE;
+		}
+
+		$data = $this->process_field_lengths( $data, $table );
+// @NOW 018 -> wp-includes/wp-db.php
 	}
 
 	/**
@@ -1986,6 +1992,31 @@ class wpdb
 		}
 
 		return $data;
+	}
+
+	/**
+	 * For string fields, record the maximum string length that field can safely save.
+	 *
+	 * @since 4.2.1
+	 *
+	 * @param  array       $data  As it comes from the wpdb::process_field_charsets() method.
+	 * @param  string      $table Table name.
+	 * @return array|false The same array as $data with additional 'length' keys, or false if any of the values were too long for their corresponding field.
+	 */
+	protected function process_field_lengths( $data, $table )
+	{
+		foreach ( $data as $field => $value ) {
+			if ( '%d' === $value['format'] || '%f' === $value['format'] ) {
+				/**
+				 * We can skip this field if we know it isn't a string.
+				 * This checks %d/%f versus ! %s because its sprintf() could take more.
+				 */
+				$value['length'] = FALSE;
+			} else {
+				$value['length'] = $this->get_col_length( $table, $field );
+// @NOW 019 -> wp-includes/wp-db.php
+			}
+		}
 	}
 
 	/**
@@ -2360,6 +2391,8 @@ class wpdb
 		list( $charset ) = explode( '_', $this->col_meta[ $tablekey ][ $columnkey ]->Collation );
 		return $charset;
 	}
+
+// @NOW 020
 
 	/**
 	 * Check if a string is ASCII.
