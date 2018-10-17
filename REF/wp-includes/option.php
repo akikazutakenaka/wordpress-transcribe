@@ -381,4 +381,41 @@ EOQ
 	return apply_filters( "site_option_{$option}", $value, $option, $network_id );
 }
 
-// @NOW 014
+/**
+ * Get the value of a site transient.
+ *
+ * If the transient does not exist, does not have a value, or has expired, then the return value will be false.
+ *
+ * @since 2.9.0
+ * @see   get_transient()
+ *
+ * @param  string $transient Transient name.
+ *                           Expected to not be SQL-escaped.
+ * @return mixed  Value of transient.
+ */
+function get_site_transient( $transient )
+{
+	/**
+	 * Filters the value of an existing site transient.
+	 *
+	 * The dynamic portion of the hook name, `$transient`, refers to the transient name.
+	 *
+	 * Passing a truthy value to the filter will effectively short-circuit retrieval, returning the passed value instead.
+	 *
+	 * @since 2.9.0
+	 * @since 4.4.0 The `$transient` parameter was added.
+	 *
+	 * @param mixed  $pre_site_transient The default value to return if the site transient does not exist.
+	 *                                   Any value other than false will short-circuit the retrieval of the transient, and return the returned value.
+	 * @param string $transient          Transient name.
+	 */
+	$pre = apply_filters( "pre_site_transient_{$transient}", FALSE, $transient );
+
+	if ( FALSE !== $pre ) {
+		return $pre;
+	}
+
+	if ( wp_using_ext_object_cache() ) {
+// @NOW 014 -> wp-includes/load.php
+	}
+}

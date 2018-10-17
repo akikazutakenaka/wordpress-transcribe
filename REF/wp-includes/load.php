@@ -45,6 +45,8 @@ function wp_check_php_mysql_version()
 	}
 }
 
+// @NOW 015
+
 /**
  * Whether the current request is for an administrative interface page,
  *
