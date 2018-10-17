@@ -21,7 +21,14 @@ function get_feed_link( $feed = '' )
 {
 	global $wp_rewrite;
 	$permalink = $wp_rewrite->get_feed_permastruct();
+
+	if ( '' != $permalink ) {
+		if ( FALSE !== strpos( $feed, 'comments_' ) ) {
+			$feed = str_replace( 'comments_', '', $feed );
+			$permalink = $wp_rewrite->get_comment_feed_permastruct();
 // @NOW 009
+		}
+	}
 }
 
 /**

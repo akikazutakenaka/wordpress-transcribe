@@ -393,31 +393,7 @@ class WP_Rewrite {
 	}
 
 	// refactored. public function get_feed_permastruct() {}
-
-	/**
-	 * Retrieves the comment feed permalink structure.
-	 *
-	 * The permalink structure is root property, comment base property, feed
-	 * base and finally '/%feed%'. Will set the comment_feed_structure property
-	 * and then return it without attempting to set the value again.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return string|false False if not found. Permalink structure string.
-	 */
-	public function get_comment_feed_permastruct() {
-		if ( isset($this->comment_feed_structure) )
-			return $this->comment_feed_structure;
-
-		if (empty($this->permalink_structure)) {
-			$this->comment_feed_structure = '';
-			return false;
-		}
-
-		$this->comment_feed_structure = $this->root . $this->comments_base . '/' . $this->feed_base . '/%feed%';
-
-		return $this->comment_feed_structure;
-	}
+	// refactored. public function get_comment_feed_permastruct() {}
 
 	/**
 	 * Adds or updates existing rewrite tags (e.g. %postname%).
