@@ -45,7 +45,26 @@ function wp_check_php_mysql_version()
 	}
 }
 
-// @NOW 015
+/**
+ * Toggle `$_wp_using_ext_object_cache` on and off without directly touching global.
+ *
+ * @since  3.7.0
+ * @global bool $_wp_using_ext_object_cache
+ *
+ * @param  bool $using Whether external object cache is being used.
+ * @return bool The current 'using' setting.
+ */
+function wp_using_ext_object_cache( $using = NULL )
+{
+	global $_wp_using_ext_object_cache;
+	$current_using = $_wp_using_ext_object_cache;
+
+	if ( NULL !== $using ) {
+		$_wp_using_ext_object_cache = $using;
+	}
+
+	return $current_using;
+}
 
 /**
  * Whether the current request is for an administrative interface page,

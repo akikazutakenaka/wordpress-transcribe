@@ -416,6 +416,6 @@ function get_site_transient( $transient )
 	}
 
 	if ( wp_using_ext_object_cache() ) {
-// @NOW 014 -> wp-includes/load.php
+// @NOW 014
 	}
 }

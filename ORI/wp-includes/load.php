@@ -430,24 +430,7 @@ function wp_set_wpdb_vars() {
 	}
 }
 
-/**
- * Toggle `$_wp_using_ext_object_cache` on and off without directly
- * touching global.
- *
- * @since 3.7.0
- *
- * @global bool $_wp_using_ext_object_cache
- *
- * @param bool $using Whether external object cache is being used.
- * @return bool The current 'using' setting.
- */
-function wp_using_ext_object_cache( $using = null ) {
-	global $_wp_using_ext_object_cache;
-	$current_using = $_wp_using_ext_object_cache;
-	if ( null !== $using )
-		$_wp_using_ext_object_cache = $using;
-	return $current_using;
-}
+// refactored. function wp_using_ext_object_cache( $using = null ) {}
 
 /**
  * Start the WordPress object cache.
