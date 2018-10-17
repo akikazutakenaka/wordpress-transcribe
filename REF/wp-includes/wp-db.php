@@ -1924,7 +1924,7 @@ class wpdb
 		}
 
 		$data = $this->process_field_lengths( $data, $table );
-// @NOW 018 -> wp-includes/wp-db.php
+// @NOW 018
 	}
 
 	/**
@@ -2014,9 +2014,16 @@ class wpdb
 				$value['length'] = FALSE;
 			} else {
 				$value['length'] = $this->get_col_length( $table, $field );
-// @NOW 019
+
+				if ( is_wp_error( $value['length'] ) ) {
+					return FALSE;
+				}
 			}
+
+			$data[ $field ] = $value;
 		}
+
+		return $data;
 	}
 
 	/**
