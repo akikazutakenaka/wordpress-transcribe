@@ -77,6 +77,6 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 
 		case 'rdf_url':
 			$output = get_feed_link( 'rdf' );
-// @NOW 008 -> wp-includes/link-template.php
+// @NOW 008
 	}
 }

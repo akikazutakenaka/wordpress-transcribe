@@ -539,52 +539,7 @@ function the_feed_link( $anchor, $feed = '' ) {
 	echo apply_filters( 'the_feed_link', $link, $feed );
 }
 
-/**
- * Retrieves the permalink for the feed type.
- *
- * @since 1.5.0
- *
- * @global WP_Rewrite $wp_rewrite
- *
- * @param string $feed Optional. Feed type. Default empty.
- * @return string The feed permalink.
- */
-function get_feed_link( $feed = '' ) {
-	global $wp_rewrite;
-
-	$permalink = $wp_rewrite->get_feed_permastruct();
-	if ( '' != $permalink ) {
-		if ( false !== strpos($feed, 'comments_') ) {
-			$feed = str_replace('comments_', '', $feed);
-			$permalink = $wp_rewrite->get_comment_feed_permastruct();
-		}
-
-		if ( get_default_feed() == $feed )
-			$feed = '';
-
-		$permalink = str_replace('%feed%', $feed, $permalink);
-		$permalink = preg_replace('#/+#', '/', "/$permalink");
-		$output =  home_url( user_trailingslashit($permalink, 'feed') );
-	} else {
-		if ( empty($feed) )
-			$feed = get_default_feed();
-
-		if ( false !== strpos($feed, 'comments_') )
-			$feed = str_replace('comments_', 'comments-', $feed);
-
-		$output = home_url("?feed={$feed}");
-	}
-
-	/**
-	 * Filters the feed type permalink.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $output The feed permalink.
-	 * @param string $feed   Feed type.
-	 */
-	return apply_filters( 'feed_link', $output, $feed );
-}
+// refactored. function get_feed_link( $feed = '' ) {}
 
 /**
  * Retrieves the permalink for the post comments feed.

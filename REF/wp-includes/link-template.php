@@ -71,8 +71,27 @@ function get_feed_link( $feed = '' )
 		$permalink = str_replace( '%feed%', $feed, $permalink );
 		$permalink = preg_replace( '#/+#', '/', "/$permalink" );
 		$output = home_url( user_trailingslashit( $permalink, 'feed' ) );
-// @NOW 009
+	} else {
+		if ( empty( $feed ) ) {
+			$feed = get_default_feed();
+		}
+
+		if ( FALSE !== strpos( $feed, 'comments_' ) ) {
+			$feed = str_replace( 'comments_', 'comments-', $feed );
+		}
+
+		$output = home_url( "?feed{$feed}" );
 	}
+
+	/**
+	 * Filters the feed type permalink.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $output The feed permalink.
+	 * @param string $feed   Feed type.
+	 */
+	return apply_filters( 'feed_link', $output, $feed );
 }
 
 /**
