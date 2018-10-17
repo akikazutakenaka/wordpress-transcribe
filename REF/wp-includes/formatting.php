@@ -54,7 +54,62 @@ function seems_utf8( $str )
 	return TRUE;
 }
 
-// @NOW 019
+/**
+ * Checks for invalid UTF8 in a string.
+ *
+ * @since     2.8.0
+ * @staticvar bool $is_utf8
+ * @staticvar bool $utf8_pcre
+ *
+ * @param  string $string The text which is to be checked.
+ * @param  bool   $strip  Optional.
+ *                        Whether to attempt to strip out invalid UTF8.
+ *                        Default is false.
+ * @return string The checked text.
+ */
+function wp_check_invalid_utf8( $string, $strip = FALSE )
+{
+	$string = ( string ) $string;
+
+	if ( 0 === strlen( $string ) ) {
+		return '';
+	}
+
+	// Store the site charset as a static to avoid multiple calls to get_option().
+	static $is_utf8 = NULL;
+
+	if ( ! isset( $is_utf8 ) ) {
+		$is_utf8 = in_array( get_option( 'blog_charset' ), array( 'utf8', 'utf-8', 'UTF8', 'UTF-8' ) );
+	}
+
+	if ( ! $is_utf8 ) {
+		return $string;
+	}
+
+	// Check for support for utf8 in the installed PCRE library once and store the result in a static.
+	static $utf8_pcre = NULL;
+
+	if ( ! isset( $utf8_pcre ) ) {
+		$utf8_pcre = @preg_match( '/^./u', 'a' );
+	}
+
+	// We can't demand utf8 in the PCRE installation, so just return the string in those cases.
+	if ( ! $utf8_pcre ) {
+		return $string;
+	}
+
+	// preg_match fails when it encounters invalid UTF8 in $string.
+	if ( 1 === @preg_match( '/^./us', $string ) ) {
+		return $string;
+	}
+
+	// Attempt to strip the bad chars if requested (not recommended).
+	if ( $strip && function_exists( 'iconv' ) ) {
+		return iconv( 'utf-8', 'utf-8', $string );
+	}
+
+	return '';
+}
 
 /**
  * Converts all accent characters to ASCII characters.
@@ -633,7 +688,7 @@ function stripslashes_from_strings_only( $value )
 function esc_html( $text )
 {
 	$safe_text = wp_check_invalid_utf8( $text );
-// @NOW 018 -> wp-includes/formatting.php
+// @NOW 018
 }
 
 /**
