@@ -52,11 +52,9 @@ global $allowedposttags, $allowedtags, $allowedentitynames;
 if ( ! CUSTOM_TAGS ) {
 	// refactored. $allowedposttags = array();
 	// :
-	// refactored. $allowedentitynames = array();
-
-	$allowedposttags = array_map( '_wp_add_global_attributes', $allowedposttags );
+	// refactored. $allowedposttags = array_map( '_wp_add_global_attributes', $allowedposttags );
 } else {
-	$allowedtags = wp_kses_array_lc( $allowedtags );
+	// refactored. $allowedtags = wp_kses_array_lc( $allowedtags );
 	$allowedposttags = wp_kses_array_lc( $allowedposttags );
 }
 
@@ -827,29 +825,7 @@ function wp_kses_stripslashes($string) {
 	return preg_replace('%\\\\"%', '"', $string);
 }
 
-/**
- * Goes through an array and changes the keys to all lower case.
- *
- * @since 1.0.0
- *
- * @param array $inarray Unfiltered array
- * @return array Fixed array with all lowercase keys
- */
-function wp_kses_array_lc($inarray) {
-	$outarray = array ();
-
-	foreach ( (array) $inarray as $inkey => $inval) {
-		$outkey = strtolower($inkey);
-		$outarray[$outkey] = array ();
-
-		foreach ( (array) $inval as $inkey2 => $inval2) {
-			$outkey2 = strtolower($inkey2);
-			$outarray[$outkey][$outkey2] = $inval2;
-		} // foreach $inval
-	} // foreach $inarray
-
-	return $outarray;
-}
+// refactored. function wp_kses_array_lc($inarray) {}
 
 /**
  * Handles parsing errors in wp_kses_hair().
