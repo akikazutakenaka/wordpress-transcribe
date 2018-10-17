@@ -266,7 +266,30 @@ function delete_option( $option )
 	}
 
 	wp_protect_special_option( $option );
-// @NOW 016
+
+	// Get the ID, if no ID then return.
+	$row = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT autoload
+FROM $wpdb->options
+WHERE option_name = %s
+EOQ
+			, $option ) );
+
+	if ( is_null( $row ) ) {
+		return FALSE;
+	}
+
+	/**
+	 * Fires immediately before an option is deleted.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $option Name of the option to delete.
+	 */
+	do_action( 'delete_option', $option );
+
+	$result = $wpdb->delete( $wpdb->options, array( 'option_name' => $option ) );
+// @NOW 016 -> wp-includes/wp-db.php
 }
 
 /**

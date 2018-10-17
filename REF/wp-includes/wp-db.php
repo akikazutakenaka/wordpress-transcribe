@@ -1861,6 +1861,41 @@ class wpdb
 	}
 
 	/**
+	 * Delete a row in the table.
+	 *
+	 *     wpdb::delete( 'table', array( 'ID' => 1 ) );
+	 *     wpdb::delete( 'table', array( 'ID' => 1 ), array( '%d' ) );
+	 *
+	 * @since 3.4.0
+	 * @see   wpdb::prepare()
+	 * @see   wpdb::$field_types
+	 * @see   wp_set_wpdb_vars()
+	 *
+	 * @param  string       $table        Table name.
+	 * @param  array        $where        A named array of WHERE clauses (in column => value pairs).
+	 *                                    Multiple clauses will be joined with ANDs.
+	 *                                    Both $where columns and $where values should be "raw".
+	 *                                    Sending a null value will create an IS NULL comparison - the corresponding format will be ignored in this case.
+	 * @param  array|string $where_format Optional.
+	 *                                    An array of formats to be mapped to each of the values in $where.
+	 *                                    If string, that format will be used for all of the items in $where.
+	 *                                    A format is one of '%d', '%f', '%s' (integer, float, string).
+	 *                                    If omitted, all values in $where will be treated as strings unless otherwise specified in wpdb::$field_types.
+	 * @return int|false    The number of rows updated, or false on error.
+	 */
+	public function delete( $table, $where, $where_format = NULL )
+	{
+		if ( ! is_array( $where ) ) {
+			return FALSE;
+		}
+
+		$where = $this->process_fields( $table, $where, $where_format );
+// @NOW 017 -> wp-includes/wp-db.php
+	}
+
+// @NOW 018
+
+	/**
 	 * Retrieve one variable from the database.
 	 *
 	 * Executes a SQL query and returns the value from the SQL result.
