@@ -29,7 +29,7 @@ function user_trailingslashit( $string, $type_of_url = '' )
 	$string = $wp_rewrite->use_trailing_slashes
 		? trailingslashit( $string )
 		: untrailingslashit( $string );
-// @NOW 010 -> wp-includes/formatting.php
+// @NOW 010
 }
 
 /**
