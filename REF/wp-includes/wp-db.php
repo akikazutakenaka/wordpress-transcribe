@@ -1890,7 +1890,7 @@ class wpdb
 		}
 
 		$where = $this->process_fields( $table, $where, $where_format );
-// @NOW 017 -> wp-includes/wp-db.php
+// @NOW 017
 	}
 
 	/**
@@ -1924,7 +1924,18 @@ class wpdb
 		}
 
 		$data = $this->process_field_lengths( $data, $table );
-// @NOW 018
+
+		if ( FALSE === $data ) {
+			return FALSE;
+		}
+
+		$converted_data = $this->strip_invalid_text( $data );
+
+		if ( $data !== $converted_data ) {
+			return FALSE;
+		}
+
+		return $data;
 	}
 
 	/**

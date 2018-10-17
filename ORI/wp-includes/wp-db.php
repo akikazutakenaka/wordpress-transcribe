@@ -461,49 +461,7 @@ class wpdb {
 		return $this->query( $this->prepare( $sql, $values ) );
 	}
 
-	/**
-	 * Processes arrays of field/value pairs and field formats.
-	 *
-	 * This is a helper method for wpdb's CRUD methods, which take field/value
-	 * pairs for inserts, updates, and where clauses. This method first pairs
-	 * each value with a format. Then it determines the charset of that field,
-	 * using that to determine if any invalid text would be stripped. If text is
-	 * stripped, then field processing is rejected and the query fails.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @param string $table  Table name.
-	 * @param array  $data   Field/value pair.
-	 * @param mixed  $format Format for each field.
-	 * @return array|false Returns an array of fields that contain paired values
-	 *                    and formats. Returns false for invalid values.
-	 */
-	protected function process_fields( $table, $data, $format ) {
-		$data = $this->process_field_formats( $data, $format );
-		if ( false === $data ) {
-			return false;
-		}
-
-		$data = $this->process_field_charsets( $data, $table );
-		if ( false === $data ) {
-			return false;
-		}
-
-		$data = $this->process_field_lengths( $data, $table );
-		if ( false === $data ) {
-			return false;
-		}
-
-		$converted_data = $this->strip_invalid_text( $data );
-
-		if ( $data !== $converted_data ) {
-			return false;
-		}
-
-		return $data;
-	}
-
-	// refactored. protected function process_field_formats( $data, $format ) {}
+	// refactored. protected function process_fields( $table, $data, $format ) {}
 	// :
 	// refactored. protected function strip_invalid_text_from_query( $query ) {}
 
