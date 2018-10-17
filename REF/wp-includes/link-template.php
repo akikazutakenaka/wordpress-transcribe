@@ -26,7 +26,10 @@ function get_feed_link( $feed = '' )
 		if ( FALSE !== strpos( $feed, 'comments_' ) ) {
 			$feed = str_replace( 'comments_', '', $feed );
 			$permalink = $wp_rewrite->get_comment_feed_permastruct();
-// @NOW 009
+		}
+
+		if ( get_default_feed() == $feed ) {
+// @NOW 009 -> wp-includes/feed.php
 		}
 	}
 }
