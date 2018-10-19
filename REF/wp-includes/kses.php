@@ -433,6 +433,62 @@ function wp_kses( $string, $allowed_html, $allowed_protocols = array() )
 }
 
 /**
+ * Return a list of allowed tags and attributes for a given context.
+ *
+ * @since  3.5.0
+ * @global array $allowedposttags
+ * @global array $allowedtags
+ * @global array $allowedentitynames
+ *
+ * @param  string|array $context The context for which to retrieve tags.
+ *                               Allowed values are post, strip, data, entities, or the name of a field filter such as pre_user_description.
+ * @return array        List of allowed tags and their allowed attributes.
+ */
+function wp_kses_allowed_html( $context = '' )
+{
+	global $allowedposttags, $allowedtags, $allowedentitynames;
+
+	if ( is_array( $context ) ) {
+		/**
+		 * Filters HTML elements allowed for a given context.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param array  $context      Context to judge allowed tags by.
+		 * @param array  $context_type Context type (explicit).
+		 */
+		return apply_filters( 'wp_kses_allowed_html', $context, 'explicit' );
+	}
+
+	switch ( $context ) {
+		case 'post':
+			// This filter is documented in wp-includes/kses.php
+			return apply_filters( 'wp_kses_allowed_html', $allowedposttags, $context );
+
+		case 'user_description':
+		case 'pre_user_description':
+			$tags = $allowedtags;
+			$tags['a']['rel'] = TRUE;
+
+			// This filter is documented in wp-includes/kses.php
+			return apply_filters( 'wp_kses_allowed_html', $tags, $context );
+
+		case 'strip':
+			// This filter is documented in wp-includes/kses.php
+			return apply_filters( 'wp_kses_allowed_html', array(), $context );
+
+		case 'entities':
+			// This filter is documented in wp-includes/kses.php
+			return apply_filters( 'wp_kses_allowed_html', $allowedentitynames, $context );
+
+		case 'data':
+		default:
+			// This filter is documented in wp-includes/kses.php
+			return apply_filters( 'wp_kses_allowed_html', $allowedtags, $context );
+	}
+}
+
+/**
  * You add any kses hooks here.
  *
  * There is currently only one kses WordPress hook, {@see 'pre_kses'}, and it is called here.
@@ -518,7 +574,44 @@ function _wp_kses_split_callback( $match )
 function wp_kses_split2( $string, $allowed_html, $allowed_protocols )
 {
 	$string = wp_kses_stripslashes( $string );
+
+	if ( substr( $string, 0, 1 ) != '<' ) {
+		return '&gt;'; // It matched a ">" character.
+	}
+
+	// Allow HTML comments.
+	if ( '<!--' == substr( $string, 0, 4 ) ) {
+		$string = str_replace( array( '<!--', '-->' ), '', $string );
+
+		while ( $string != ( $newstring = wp_kses( $string, $allowed_html, $allowed_protocols ) ) ) {
+			$string = $newstring;
+		}
+
+		if ( $string == '' ) {
+			return '';
+		}
+
+		// Prevent multiple dashes in comments.
+		$string = preg_replace( '/--+/', '-', $string );
+
+		// Prevent three dashes closing a comment.
+		$string = preg_replace( '/-$/', '', $string );
+
+		return "<!--{$string}-->";
+	}
+
+	if ( ! preg_match( '%^<\s*(/\s*)?([a-zA-Z0-9-]+)([^>]*)>?$%', $string, $matches ) ) {
+		return ''; // It's seriously malformed.
+	}
+
+	$slash = trim( $matches[1] );
+	$elem = $matches[2];
+	$attrlist = $matches[3];
+
+	if ( ! is_array( $allowed_html ) ) {
+		$allowed_html = wp_kses_allowed_html( $allowed_html );
 // @NOW 019
+	}
 }
 
 /**

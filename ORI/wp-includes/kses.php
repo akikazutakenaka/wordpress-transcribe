@@ -134,62 +134,7 @@ function wp_kses_one_attr( $string, $element ) {
 	return $lead . $string . $trail;
 }
 
-/**
- * Return a list of allowed tags and attributes for a given context.
- *
- * @since 3.5.0
- *
- * @global array $allowedposttags
- * @global array $allowedtags
- * @global array $allowedentitynames
- *
- * @param string|array $context The context for which to retrieve tags.
- *                              Allowed values are post, strip, data, entities, or
- *                              the name of a field filter such as pre_user_description.
- * @return array List of allowed tags and their allowed attributes.
- */
-function wp_kses_allowed_html( $context = '' ) {
-	global $allowedposttags, $allowedtags, $allowedentitynames;
-
-	if ( is_array( $context ) ) {
-		/**
-		 * Filters HTML elements allowed for a given context.
-		 *
-		 * @since 3.5.0
-		 *
-		 * @param array  $context      Context to judge allowed tags by.
-		 * @param string $context_type Context type (explicit).
-		 */
-		return apply_filters( 'wp_kses_allowed_html', $context, 'explicit' );
-	}
-
-	switch ( $context ) {
-		case 'post':
-			/** This filter is documented in wp-includes/kses.php */
-			return apply_filters( 'wp_kses_allowed_html', $allowedposttags, $context );
-
-		case 'user_description':
-		case 'pre_user_description':
-			$tags = $allowedtags;
-			$tags['a']['rel'] = true;
-			/** This filter is documented in wp-includes/kses.php */
-			return apply_filters( 'wp_kses_allowed_html', $tags, $context );
-
-		case 'strip':
-			/** This filter is documented in wp-includes/kses.php */
-			return apply_filters( 'wp_kses_allowed_html', array(), $context );
-
-		case 'entities':
-			/** This filter is documented in wp-includes/kses.php */
-			return apply_filters( 'wp_kses_allowed_html', $allowedentitynames, $context);
-
-		case 'data':
-		default:
-			/** This filter is documented in wp-includes/kses.php */
-			return apply_filters( 'wp_kses_allowed_html', $allowedtags, $context );
-	}
-}
-
+// refactored. function wp_kses_allowed_html( $context = '' ) {}
 // refactored. function wp_kses_hook( $string, $allowed_html, $allowed_protocols ) {}
 
 /**
