@@ -518,7 +518,7 @@ function _wp_kses_split_callback( $match )
 function wp_kses_split2( $string, $allowed_html, $allowed_protocols )
 {
 	$string = wp_kses_stripslashes( $string );
-// @NOW 019 -> wp-includes/kses.php
+// @NOW 019
 }
 
 /**
@@ -548,7 +548,22 @@ function wp_kses_no_null( $string, $options = NULL )
 	return $string;
 }
 
-// @NOW 020
+/**
+ * Strips slashes from in front of quotes.
+ *
+ * This function changes the character sequence \" to just ".
+ * It leaves all other slashes alone.
+ * It's really weird, but the quoting from preg_replace(//e) seems to require this.
+ *
+ * @since 1.0.0
+ *
+ * @param  string $string String to strip slashes.
+ * @return string Fixed string with quoted slashes.
+ */
+function wp_kses_stripslashes( $string )
+{
+	return preg_replace( '%\\\\"%', '"', $string );
+}
 
 /**
  * Goes through an array and changes the keys to all lower case.
