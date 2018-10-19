@@ -546,8 +546,57 @@ function delete_network_option( $network_id, $option )
 
 	if ( ! is_multisite() ) {
 		$result = delete_option( $option );
-// @NOW 015
+	} else {
+		$row = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT meta_id
+FROM {$wpdb->sitemeta}
+WHERE meta_key = %s
+  AND site_id = %d
+EOQ
+				, $option, $network_id ) );
+
+		if ( is_null( $row ) || ! $row->meta_id ) {
+			return FALSE;
+		}
+
+		$cache_key = "$network_id:$option";
+		wp_cache_delete( $cache_key, 'site-options' );
+		$result = $wpdb->delete( $wpdb->sitemeta, array(
+				'meta_key' => $option,
+				'site_id'  => $network_id
+			) );
 	}
+
+	if ( $result ) {
+		/**
+		 * Fires after a specific network option has been deleted.
+		 *
+		 * The dynamic portion of the hook name, `$option`, refers to the option name.
+		 *
+		 * @since 2.9.0 As "delete_site_option_{$key}"
+		 * @since 3.0.0
+		 * @since 4.7.0 The `$network_id` parameter was added.
+		 *
+		 * @param string $option     Name of the network option.
+		 * @param int    $network_id ID of the network.
+		 */
+		do_action( "delete_site_option_{$option}", $option, $network_id );
+
+		/**
+		 * Fires after a network option has been deleted.
+		 *
+		 * @since 3.0.0
+		 * @since 4.7.0 The `$network_id` parameter was added.
+		 *
+		 * @param string $option     Name of the network option.
+		 * @param int    $network_id ID of the network.
+		 */
+		do_action( 'delete_site_option', $option, $network_id );
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /**
@@ -600,7 +649,7 @@ function get_site_transient( $transient )
 
 			if ( FALSE !== $timeout && $timeout < time() ) {
 				delete_site_option( $transient_option );
-// @NOW 014 -> wp-includes/option.php
+// @NOW 014
 			}
 		}
 	}
