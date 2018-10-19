@@ -244,6 +244,8 @@ EOQ
 	return apply_filters( 'alloptions', $alloptions );
 }
 
+// @NOW 017
+
 /**
  * Removes option by name.
  * Prevents removal of protected WordPress options.
@@ -523,7 +525,63 @@ EOQ
 	return apply_filters( "site_option_{$option}", $value, $option, $network_id );
 }
 
-// @NOW 016
+/**
+ * Add a new network option.
+ *
+ * Existing options will not be updated.
+ *
+ * @since  4.4.0
+ * @see    add_option()
+ * @global wpdb $wpdb
+ *
+ * @param  int    $network_id ID of the network.
+ *                            Can be null to default to the current network ID.
+ * @param  string $option     Name of option to add.
+ *                            Expected to not be SQL-escaped.
+ * @param  mixed  $value      Option value, can be anything.
+ *                            Expected to not be SQL-escaped.
+ * @return bool   False if option was not added and true if option was added.
+ */
+function add_network_option( $network_id, $option, $value )
+{
+	global $wpdb;
+
+	if ( $network_id && ! is_numeric( $network_id ) ) {
+		return FALSE;
+	}
+
+	$network_id = ( int ) $network_id;
+
+	// Fallback to the current network if a network ID is not specified.
+	if ( ! $network_id ) {
+		$network_id = get_current_network_id();
+	}
+
+	wp_protect_special_option( $option );
+
+	/**
+	 * Filters the value of a specific network option before it is added.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the option name.
+	 *
+	 * @since 2.9.0 As 'pre_add_site_option_' . $key
+	 * @since 3.0.0
+	 * @since 4.4.0 The `$option` parameter was added.
+	 * @since 4.7.0 The `$network_id` parameter was added.
+	 *
+	 * @param mixed  $value      Value of network option.
+	 * @param string $option     Option name.
+	 * @param int    $network_id ID of the network.
+	 */
+	$value = apply_filters( "pre_add_site_option_{$option}", $value, $option, $network_id );
+
+	$notoptions_key = "$network_id:notoptions";
+
+	if ( ! is_multisite() ) {
+		$result = add_option( $option, $value, '', 'no' );
+// @NOW 016 -> wp-includes/option.php
+	}
+}
 
 /**
  * Removes a network option by name.
