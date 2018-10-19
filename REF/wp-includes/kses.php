@@ -610,8 +610,17 @@ function wp_kses_split2( $string, $allowed_html, $allowed_protocols )
 
 	if ( ! is_array( $allowed_html ) ) {
 		$allowed_html = wp_kses_allowed_html( $allowed_html );
-// @NOW 019
 	}
+
+	if ( ! isset( $allowed_html[ strtolower( $elem ) ] ) ) {
+		return ''; // They are using a not allowed HTML element.
+	}
+
+	if ( $slash != '' ) {
+		return "</$elem>"; // No attributes are allowed for closing elements.
+	}
+
+	return wp_kses_attr( $elem, $attrlist, $allowed_html, $allowed_protocols );
 }
 
 /**

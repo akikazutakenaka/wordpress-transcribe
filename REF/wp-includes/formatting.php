@@ -1122,7 +1122,7 @@ function sanitize_option( $option, $value )
 			} else {
 				$value = strip_tags( $value );
 				$value = wp_kses_data( $value );
-// @NOW 018 -> wp-includes/kses.php
+// @NOW 018 -> wp-includes/plugin.php
 			}
 	}
 }

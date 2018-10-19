@@ -281,6 +281,8 @@ function remove_filter( $tag, $function_to_remove, $priority = 10 )
 	return $r;
 }
 
+// @NOW 019
+
 /**
  * Hooks a function on to a specific action.
  *
