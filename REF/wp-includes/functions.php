@@ -726,6 +726,8 @@ function get_main_network_id()
 	return ( int ) apply_filters( 'get_main_network_id', $main_network_id );
 }
 
+// @NOW 020
+
 /**
  * Return a comma-separated string of functions that have been called to get to the current point in code.
  *
