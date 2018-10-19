@@ -969,7 +969,57 @@ function sanitize_email( $email )
 	return apply_filters( 'sanitize_email', $email, $email, NULL );
 }
 
-// @NOW 019
+/**
+ * Checks and cleans a URL.
+ *
+ * A number of characters are removed from the URL.
+ * If the URL is for displaying (the default behaviour) ampersands are also replaced.
+ * The {@see 'clean_url'} filter is applied to the returned cleaned URL.
+ *
+ * @since 2.8.0
+ *
+ * @param  string $url       The URL to be cleaned.
+ * @param  array  $protocols Optional.
+ *                           An array of acceptable protocols.
+ *                           Defaults to return value of wp_allowed_protocols().
+ * @param  string $_context  Private.
+ *                           Use esc_url_raw() for database usage.
+ * @return string The cleaned $url after the {@see 'clean_url'} filter is applied.
+ */
+function esc_url( $url, $protocols = NULL, $_context = 'display' )
+{
+	$original_url = $url;
+
+	if ( '' == $url ) {
+		return $url;
+	}
+
+	$url = str_replace( ' ', '%20', $url );
+	$url = preg_replace( '|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url );
+
+	if ( '' === $url ) {
+		return $url;
+	}
+
+	$url = str_replace( ';//', '://', $url );
+
+	// If the URL doesn't appear to contain a scheme, we presume it needs http:// prepended (unless a relative link starting with /, # or ? or a php file).
+	if ( strpos( $url, ':' ) === FALSE && ! in_array( $url[0], array( '/', '#', '?' ) ) && ! preg_match( '/^[a-z0-9-]+?\.php/i', $url ) ) {
+		$url = 'http://' . $url;
+	}
+
+	// Replace ampersands and single quotes only when displaying.
+	if ( 'display' == $_context ) {
+		$url = wp_kses_normalize_entities( $url );
+		$url = str_replace( '&amp;', '&#038;', $url );
+		$url = str_replace( "'", '&#039;', $url );
+	}
+
+	if ( FALSE !== strpos( $url, '[' ) || FALSE !== strpos( $url, ']' ) ) {
+		$parsed = wp_parse_url( $url );
+// @NOW 019 -> wp-includes/http.php
+	}
+}
 
 /**
  * Performs esc_url() for database usage.
