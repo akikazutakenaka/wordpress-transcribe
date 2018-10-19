@@ -204,22 +204,7 @@ function wp_kses_version() {
 }
 
 // refactored. function wp_kses_split( $string, $allowed_html, $allowed_protocols ) {}
-
-/**
- * Callback for wp_kses_split.
- *
- * @since 3.1.0
- * @access private
- *
- * @global array $pass_allowed_html
- * @global array $pass_allowed_protocols
- *
- * @return string
- */
-function _wp_kses_split_callback( $match ) {
-	global $pass_allowed_html, $pass_allowed_protocols;
-	return wp_kses_split2( $match[0], $pass_allowed_html, $pass_allowed_protocols );
-}
+// refactored. function _wp_kses_split_callback( $match ) {}
 
 /**
  * Callback for wp_kses_split for fixing malformed HTML tags.
