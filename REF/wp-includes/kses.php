@@ -429,7 +429,7 @@ function wp_kses( $string, $allowed_html, $allowed_protocols = array() )
 	$string = wp_kses_no_null( $string, array( 'slash_zero' => 'keep' ) );
 	$string = wp_kses_normalize_entities( $string );
 	$string = wp_kses_hook( $string, $allowed_html, $allowed_protocols ); // WP changed the order of these funcs and added args to wp_kses_hook.
-// @NOW 019
+	return wp_kses_split( $string, $allowed_html, $allowed_protocols );
 }
 
 /**
@@ -458,6 +458,8 @@ function wp_kses_hook( $string, $allowed_html, $allowed_protocols )
 	 */
 	return apply_filters( 'pre_kses', $string, $allowed_html, $allowed_protocols );
 }
+
+// @NOW 019
 
 /**
  * Removes any invalid control characters in $string.
