@@ -20,23 +20,7 @@
 class WP_Error {
 	// refactored. public $errors = array();
 	// :
-	// refactored. public function get_error_codes() {}
-
-	/**
-	 * Retrieve first error code available.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @return string|int Empty string, if no error codes.
-	 */
-	public function get_error_code() {
-		$codes = $this->get_error_codes();
-
-		if ( empty($codes) )
-			return '';
-
-		return $codes[0];
-	}
+	// refactored. public function get_error_code() {}
 
 	/**
 	 * Retrieve all error messages or error messages matching code.

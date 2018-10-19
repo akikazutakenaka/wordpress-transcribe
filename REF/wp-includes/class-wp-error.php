@@ -91,7 +91,12 @@ class WP_Error
 	public function get_error_code()
 	{
 		$codes = $this->get_error_codes();
-// @NOW 020
+
+		if ( empty( $codes ) ) {
+			return '';
+		}
+
+		return $codes[0];
 	}
 
 	/**
@@ -110,7 +115,7 @@ class WP_Error
 	{
 		if ( empty( $code ) ) {
 			$code = $this->get_error_code();
-// @NOW 019 -> wp-includes/class-wp-error.php
+// @NOW 019
 		}
 	}
 }
