@@ -76,7 +76,7 @@ function get_theme_roots()
 	}
 
 	$theme_roots = get_site_transient( 'theme_roots' );
-// @NOW 013 -> wp-includes/option.php
+// @NOW 013
 }
 
 /**

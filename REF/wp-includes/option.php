@@ -649,8 +649,26 @@ function get_site_transient( $transient )
 
 			if ( FALSE !== $timeout && $timeout < time() ) {
 				delete_site_option( $transient_option );
-// @NOW 014
+				delete_site_option( $transient_timeout );
+				$value = FALSE;
 			}
 		}
+
+		if ( ! isset( $value ) ) {
+			$value = get_site_option( $transient_option );
+		}
 	}
+
+	/**
+	 * Filters the value of an existing site transient.
+	 *
+	 * The dynamic portion of the hook name, `$transient`, refers to the transient name.
+	 *
+	 * @since 2.9.0
+	 * @since 4.4.0 The `$transient` parameter was added.
+	 *
+	 * @param mixed  $value     Value of site transient.
+	 * @param string $transient Transient name.
+	 */
+	return apply_filters( "site_transient_{$transient}", $value, $transient );
 }
