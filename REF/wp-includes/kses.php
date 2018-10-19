@@ -424,8 +424,37 @@ function wp_kses( $string, $allowed_html, $allowed_protocols = array() )
 {
 	if ( empty( $allowed_protocols ) ) {
 		$allowed_protocols = wp_allowed_protocols();
-// @NOW 019
 	}
+
+	$string = wp_kses_no_null( $string, array( 'slash_zero' => 'keep' ) );
+// @NOW 019
+}
+
+/**
+ * Removes any invalid control characters in $string.
+ *
+ * Also removes any instance of the '\0' string.
+ *
+ * @since 1.0.0
+ *
+ * @param  string $string
+ * @param  array  $options Set 'slash_zero' => 'keep' when '\0' is allowed.
+ *                         Default is 'remove'.
+ * @return string
+ */
+function wp_kses_no_null( $string, $options = NULL )
+{
+	if ( ! isset( $options['slash_zero'] ) ) {
+		$options = array( 'slash_zero' => 'remove' );
+	}
+
+	$string = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $string );
+
+	if ( 'remove' == $options['slash_zero'] ) {
+		$string = preg_replace( '/\\\\+0+/', '', $string );
+	}
+
+	return $string;
 }
 
 /**
