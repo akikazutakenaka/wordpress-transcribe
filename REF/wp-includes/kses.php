@@ -424,7 +424,7 @@ function wp_kses( $string, $allowed_html, $allowed_protocols = array() )
 {
 	if ( empty( $allowed_protocols ) ) {
 		$allowed_protocols = wp_allowed_protocols();
-// @NOW 019 -> wp-includes/functions.php
+// @NOW 019
 	}
 }
 
