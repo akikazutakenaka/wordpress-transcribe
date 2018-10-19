@@ -2813,6 +2813,8 @@ EOQ;
 		return $data[0]['value'];
 	}
 
+// @NOW 019
+
 	/**
 	 * Find the first table name referenced in a query.
 	 *
