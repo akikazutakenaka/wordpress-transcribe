@@ -672,3 +672,5 @@ function get_site_transient( $transient )
 	 */
 	return apply_filters( "site_transient_{$transient}", $value, $transient );
 }
+
+// @NOW 015

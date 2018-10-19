@@ -1136,7 +1136,7 @@ function delete_site_transient( $transient ) {
 	return $result;
 }
 
-function get_site_transient( $transient ) {}
+// refactored. function get_site_transient( $transient ) {}
 
 /**
  * Set/update the value of a site transient.
