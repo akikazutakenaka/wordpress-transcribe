@@ -203,27 +203,7 @@ function wp_kses_version() {
 	return '0.2.2';
 }
 
-/**
- * Searches for HTML tags, no matter how malformed.
- *
- * It also matches stray ">" characters.
- *
- * @since 1.0.0
- *
- * @global array $pass_allowed_html
- * @global array $pass_allowed_protocols
- *
- * @param string $string            Content to filter
- * @param array  $allowed_html      Allowed HTML elements
- * @param array  $allowed_protocols Allowed protocols to keep
- * @return string Content with fixed HTML tags
- */
-function wp_kses_split( $string, $allowed_html, $allowed_protocols ) {
-	global $pass_allowed_html, $pass_allowed_protocols;
-	$pass_allowed_html = $allowed_html;
-	$pass_allowed_protocols = $allowed_protocols;
-	return preg_replace_callback( '%(<!--.*?(-->|$))|(<[^>]*(>|$)|>)%', '_wp_kses_split_callback', $string );
-}
+// refactored. function wp_kses_split( $string, $allowed_html, $allowed_protocols ) {}
 
 /**
  * Callback for wp_kses_split.
