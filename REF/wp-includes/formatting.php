@@ -794,6 +794,8 @@ function esc_html( $text )
 	return apply_filters( 'esc_html', $safe_text, $text );
 }
 
+// @NOW 018
+
 /**
  * Maps a function to all non-iterable elements of an array or an object.
  *

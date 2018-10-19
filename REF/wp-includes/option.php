@@ -244,7 +244,58 @@ EOQ
 	return apply_filters( 'alloptions', $alloptions );
 }
 
-// @NOW 017
+/**
+ * Add a new option.
+ *
+ * You do not need to serialize values.
+ * If the value needs to be serialized, then it will be serialized before it is inserted into the database.
+ * Remember, resources can not be serialized or added as an option.
+ *
+ * You can create options without values and then update the values later.
+ * Existing options will not be updated and checks are performed to ensure that you aren't adding a protected WordPress option.
+ * Care should be taken to not name options the same as the ones which are protected.
+ *
+ * @since  1.0.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  string      $option     Name of option to add.
+ *                                 Expected to not be SQL-escaped.
+ * @param  mixed       $value      Optional.
+ *                                 Option value.
+ *                                 Must be serializable if non-scalar.
+ *                                 Expected to not be SQL-escaped.
+ * @param  string      $deprecated Optional.
+ *                                 Description.
+ *                                 Not used anymore.
+ * @param  string|bool $autoload   Optional.
+ *                                 Whether to load the option when WordPress starts up.
+ *                                 Default is enabled.
+ *                                 Accepts 'no' to disable for legacy reasons.
+ * @return bool        False if option was not added and true if option was added.
+ */
+function add_option( $option, $value = '', $deprecated = '', $autoload = 'yes' )
+{
+	global $wpdb;
+
+	if ( ! empty( $deprecated ) ) {
+		_deprecated_argument( __FUNCTION__, '2.3.0' );
+	}
+
+	$option = trim( $option );
+
+	if ( empty( $option ) ) {
+		return FALSE;
+	}
+
+	wp_protect_special_option( $option );
+
+	if ( is_object( $value ) ) {
+		$value = clone $value;
+	}
+
+	$value = sanitize_option( $option, $value );
+// @NOW 017 -> wp-includes/formatting.php
+}
 
 /**
  * Removes option by name.
