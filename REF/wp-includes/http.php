@@ -83,7 +83,34 @@ function _get_component_from_parsed_url_array( $url_parts, $component = -1 )
 	}
 
 	$key = _wp_translate_php_url_constant_to_key( $component );
-// @NOW 020 -> wp-includes/http.php
+// @NOW 020
 }
 
-// @NOW 021
+/**
+ * Translate a PHP_URL_* constant to the named array keys PHP uses.
+ *
+ * @internal
+ * @since    4.7.0
+ * @access   private
+ * @link     https://secure.php.net/manual/en/url.constants.php
+ *
+ * @param  int         $constant PHP_URL_* constant.
+ * @return string|bool The named key or false.
+ */
+function _wp_translate_php_url_constant_to_key( $constant )
+{
+	$translation = array(
+		PHP_URL_SCHEME   => 'scheme',
+		PHP_URL_HOST     => 'host',
+		PHP_URL_PORT     => 'port',
+		PHP_URL_USER     => 'user',
+		PHP_URL_PASS     => 'pass',
+		PHP_URL_PATH     => 'path',
+		PHP_URL_QUERY    => 'query',
+		PHP_URL_FRAGMENT => 'fragment'
+	);
+
+	return isset( $translation[ $constant ] )
+		? $translation[ $constant ]
+		: FALSE;
+}
