@@ -281,7 +281,19 @@ function remove_filter( $tag, $function_to_remove, $priority = 10 )
 	return $r;
 }
 
-// @NOW 019
+/**
+ * Retrieve the nameof the current filter or action.
+ *
+ * @since  2.5.0
+ * @global array $wp_current_filter Stores the list of current filters with the current one last.
+ *
+ * @return string Hook name of the current filter or action.
+ */
+function current_filter()
+{
+	global $wp_current_filter;
+	return end( $wp_current_filter );
+}
 
 /**
  * Hooks a function on to a specific action.
