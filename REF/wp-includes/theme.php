@@ -162,7 +162,7 @@ function search_theme_directories( $force = FALSE )
 	// Loop the registered theme directories and extract all themes.
 	foreach ( $wp_theme_directories as $theme_root ) {
 		// Start with directories in the root of the current theme directory.
-		$dirs = @scandir( $theme_root );
+		$dirs = @ scandir( $theme_root );
 
 		if ( ! $dirs ) {
 			trigger_error( "$theme_root is not readable", E_USER_NOTICE );
@@ -190,7 +190,7 @@ function search_theme_directories( $force = FALSE )
 				 * wp-content/themes/a-folder-of-themes/*
 				 * wp-content/themes is $theme_root, a-folder-of-themes is $dir, then themes are $sub_dirs
 				 */
-				$sub_dirs = @scandir( $theme_root . '/' . $dir );
+				$sub_dirs = @ scandir( $theme_root . '/' . $dir );
 
 				if ( ! $sub_dirs ) {
 					trigger_error( "$theme_root/$dir is not readable", E_USER_NOTICE );

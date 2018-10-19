@@ -199,19 +199,19 @@ function wp_load_translations_early()
 			break;
 		}
 
-		if ( defined( 'WP_LANG_DIR' ) && @is_dir( WP_LANG_DIR ) ) {
+		if ( defined( 'WP_LANG_DIR' ) && @ is_dir( WP_LANG_DIR ) ) {
 			$locations[] = WP_LANG_DIR;
 		}
 
-		if ( defined( 'WP_CONTENT_DIR' ) && @is_dir( WP_CONTENT_DIR . '/languages' ) ) {
+		if ( defined( 'WP_CONTENT_DIR' ) && @ is_dir( WP_CONTENT_DIR . '/languages' ) ) {
 			$locations[] = WP_CONTENT_DIR . '/languages';
 		}
 
-		if ( @is_dir( ABSPATH . 'wp-content/languages' ) ) {
+		if ( @ is_dir( ABSPATH . 'wp-content/languages' ) ) {
 			$locations[] = ABSPATH . 'wp-content/languages';
 		}
 
-		if ( @is_dir( ABSPATH . WPINC . '/languages' ) ) {
+		if ( @ is_dir( ABSPATH . WPINC . '/languages' ) ) {
 			$locations[] = ABSPATH . WPINC . '/languages';
 		}
 

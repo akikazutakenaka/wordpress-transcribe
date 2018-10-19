@@ -19,7 +19,7 @@ function maybe_unserialize( $original )
 {
 	if ( is_serialized( $original ) ) {
 		// Don't attempt to unserialize data that wasn't serialized going in.
-		return @unserialize( $original );
+		return @ unserialize( $original );
 	}
 
 	return $original;
@@ -241,7 +241,7 @@ function status_header( $code, $description = '' )
 		$status_header = apply_filters( 'status_header', $status_header, $code, $description, $protocol );
 	}
 
-	@header( $status_header, TRUE, $code );
+	@ header( $status_header, TRUE, $code );
 }
 
 /**
@@ -296,7 +296,7 @@ function nocache_headers()
 
 	// In PHP 5.3+, make sure we are not sending a Last-Modified header.
 	if ( function_exists( 'header_remove' ) ) {
-		@header_remove( 'Last-Modified' );
+		@ header_remove( 'Last-Modified' );
 	} else {
 		// In PHP 5.2, send an empty Last-Modified header, but only as a last resort to override a header already sent. #WP23021
 		foreach ( headers_list() as $header ) {
@@ -308,7 +308,7 @@ function nocache_headers()
 	}
 
 	foreach ( $headers as $name => $field_value ) {
-		@header( "{$name}: {$field_value}" );
+		@ header( "{$name}: {$field_value}" );
 	}
 }
 

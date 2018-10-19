@@ -45,7 +45,7 @@ function wp_parse_url( $url, $component = -1 )
 		$url = 'placeholder://placeholder' . $url;
 	}
 
-	$parts = @parse_url( $url );
+	$parts = @ parse_url( $url );
 
 	if ( FALSE === $parts ) {
 		// Parsing failure.
