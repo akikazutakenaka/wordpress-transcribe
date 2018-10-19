@@ -65,7 +65,20 @@ class WP_Error
 		}
 	}
 
-// @NOW 020
+// @NOW 021
+
+	/**
+	 * Retrieve first error code available.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return string|int Empty string, if no error codes.
+	 */
+	public function get_error_code()
+	{
+		$codes = $this->get_error_codes();
+// @NOW 020 -> wp-includes/class-wp-error.php
+	}
 
 	/**
 	 * Get single error message.
