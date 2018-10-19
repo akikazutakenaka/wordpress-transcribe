@@ -1017,7 +1017,7 @@ function esc_url( $url, $protocols = NULL, $_context = 'display' )
 
 	if ( FALSE !== strpos( $url, '[' ) || FALSE !== strpos( $url, ']' ) ) {
 		$parsed = wp_parse_url( $url );
-// @NOW 019 -> wp-includes/http.php
+// @NOW 019
 	}
 }
 

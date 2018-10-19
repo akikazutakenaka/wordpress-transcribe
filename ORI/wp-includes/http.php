@@ -626,37 +626,5 @@ function ms_allowed_http_request_hosts( $is_external, $host ) {
 }
 
 // refactored. function wp_parse_url( $url, $component = -1 ) {}
-
-/**
- * Retrieve a specific component from a parsed URL array.
- *
- * @internal
- *
- * @since 4.7.0
- * @access private
- *
- * @link https://secure.php.net/manual/en/function.parse-url.php
- *
- * @param array|false $url_parts The parsed URL. Can be false if the URL failed to parse.
- * @param int    $component The specific component to retrieve. Use one of the PHP
- *                          predefined constants to specify which one.
- *                          Defaults to -1 (= return all parts as an array).
- * @return mixed False on parse failure; Array of URL components on success;
- *               When a specific component has been requested: null if the component
- *               doesn't exist in the given URL; a string or - in the case of
- *               PHP_URL_PORT - integer when it does. See parse_url()'s return values.
- */
-function _get_component_from_parsed_url_array( $url_parts, $component = -1 ) {
-	if ( -1 === $component ) {
-		return $url_parts;
-	}
-
-	$key = _wp_translate_php_url_constant_to_key( $component );
-	if ( false !== $key && is_array( $url_parts ) && isset( $url_parts[ $key ] ) ) {
-		return $url_parts[ $key ];
-	} else {
-		return null;
-	}
-}
-
+// :
 // refactored. function _wp_translate_php_url_constant_to_key( $constant ) {}

@@ -83,7 +83,10 @@ function _get_component_from_parsed_url_array( $url_parts, $component = -1 )
 	}
 
 	$key = _wp_translate_php_url_constant_to_key( $component );
-// @NOW 020
+
+	return FALSE !== $key && is_array( $url_parts ) && isset( $url_parts[ $key ] )
+		? $url_parts[ $key ]
+		: NULL;
 }
 
 /**
