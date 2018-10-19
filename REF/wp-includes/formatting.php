@@ -1017,7 +1017,48 @@ function esc_url( $url, $protocols = NULL, $_context = 'display' )
 
 	if ( FALSE !== strpos( $url, '[' ) || FALSE !== strpos( $url, ']' ) ) {
 		$parsed = wp_parse_url( $url );
-// @NOW 019
+		$front = '';
+
+		if ( isset( $parsed['scheme'] ) ) {
+			$front .= $parsed['scheme'] . '://';
+		} elseif ( '/' === $url[0] ) {
+			$front .= '//';
+		}
+
+		if ( isset( $parsed['user'] ) ) {
+			$front .= $parsed['user'];
+		}
+
+		if ( isset( $parsed['pass'] ) ) {
+			$front .= ':' . $parsed['pass'];
+		}
+
+		if ( isset( $parsed['user'] ) || isset( $parsed['pass'] ) ) {
+			$front .= '@';
+		}
+
+		if ( isset( $parsed['host'] ) ) {
+			$front .= $parsed['host'];
+		}
+
+		if ( isset( $parsed['port'] ) ) {
+			$front .= ':' . $parsed['port'];
+		}
+
+		$end_dirty = str_replace( $front, '', $url );
+		$end_clean = str_replace( array( '[', ']' ), array( '%5B', '%5D' ), $end_dirty );
+		$url       = str_replace( $end_dirty, $end_clean, $url );
+	}
+
+	if ( '/' === $url[0] ) {
+		$good_protocol_url = $url;
+	} else {
+		if ( ! is_array( $protocols ) ) {
+			$protocols = wp_allowed_protocols();
+		}
+
+		$good_protocol_url = wp_kses_bad_protocol( $url, $protocols );
+// @NOW 019 -> wp-includes/kses.php
 	}
 }
 

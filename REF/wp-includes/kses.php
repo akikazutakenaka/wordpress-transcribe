@@ -624,6 +624,31 @@ function wp_kses_split2( $string, $allowed_html, $allowed_protocols )
 }
 
 /**
+ * Sanitize string from bad protocols.
+ *
+ * This function removes all non-allowed protocols from the beginning of $string.
+ * It ignores whitespace and the case of the letters, and it does understand HTML entities.
+ * It does its work in a while loop, so it won't be fooled by a string like "javascript:javascript:alert(57)".
+ *
+ * @since 1.0.0
+ *
+ * @param  string $string            Content to filter bad protocols from.
+ * @param  array  $allowed_protocols Allowed protocols to keep.
+ * @return string Filtered content.
+ */
+function wp_kses_bad_protocol( $string, $allowed_protocols )
+{
+	$string = wp_kses_no_null( $string );
+	$iterations = 0;
+
+	do {
+		$original_string = $string;
+		$string = wp_kses_bad_protocol_once( $string, $allowed_protocols );
+// @NOW 020 -> wp-includes/kses.php
+	}
+}
+
+/**
  * Removes any invalid control characters in $string.
  *
  * Also removes any instance of the '\0' string.
@@ -691,6 +716,8 @@ function wp_kses_array_lc( $inarray )
 
 	return $outarray;
 }
+
+// @NOW 021
 
 /**
  * Converts and fixes HTML entities.
