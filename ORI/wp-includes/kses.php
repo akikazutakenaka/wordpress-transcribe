@@ -963,17 +963,7 @@ function wp_filter_kses( $data ) {
 	return addslashes( wp_kses( stripslashes( $data ), current_filter() ) );
 }
 
-/**
- * Sanitize content with allowed HTML Kses rules.
- *
- * @since 2.9.0
- *
- * @param string $data Content to filter, expected to not be escaped
- * @return string Filtered content
- */
-function wp_kses_data( $data ) {
-	return wp_kses( $data, current_filter() );
-}
+// refactored. function wp_kses_data( $data ) {}
 
 /**
  * Sanitize content for allowed HTML tags for post content.

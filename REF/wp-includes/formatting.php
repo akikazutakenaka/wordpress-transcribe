@@ -1084,7 +1084,45 @@ function sanitize_option( $option, $value )
 
 			if ( $value !== $original_value ) {
 				$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', wp_encode_emoji( $original_value ) );
-// @NOW 018
+			}
+
+			if ( is_wp_error( $value ) ) {
+				$error = $value->get_error_message();
+			} else {
+				$value = esc_html( $value );
+			}
+
+			break;
+
+		case 'blog_charset':
+			$value = preg_replace( '/[^a-zA-Z0-9_-]/', '', $value ); // Strips slashes
+			break;
+
+		case 'blog_public':
+			/**
+			 * This is the value if the settings checkbox is not checked on POST.
+			 * Don't rely on this.
+			 */
+			$value = NULL === $value
+				? 1
+				: intval( $value );
+
+			break;
+
+		case 'date_format':
+		case 'time_format':
+		case 'mailserver_url':
+		case 'mailserver_login':
+		case 'mailserver_pass':
+		case 'upload_path':
+			$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', $value );
+
+			if ( is_wp_error( $value ) ) {
+				$error = $value->get_error_message();
+			} else {
+				$value = strip_tags( $value );
+				$value = wp_kses_data( $value );
+// @NOW 018 -> wp-includes/kses.php
 			}
 	}
 }

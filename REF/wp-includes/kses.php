@@ -403,6 +403,8 @@ if ( ! CUSTOM_TAGS ) {
 	$allowedposttags = wp_kses_array_lc( $allowedposttags );
 }
 
+// @NOW 019
+
 /**
  * Goes through an array and changes the keys to all lower case.
  *
@@ -547,6 +549,19 @@ function valid_unicode( $i )
 	    || ( $i >= 0x20 && $i <= 0xd7ff )
 	    || ( $i >= 0xe000 && $i <= 0xfffd )
 	    || ( $i >= 0x10000 && $i <= 0x10ffff );
+}
+
+/**
+ * Sanitize content with allowed HTML Kses rules.
+ *
+ * @since 2.9.0
+ *
+ * @param  string $data Content to filter, expected to not be escaped.
+ * @return string Filtered content.
+ */
+function wp_kses_data( $data )
+{
+	return wp_kses( $data, current_filter() );
 }
 
 /**
