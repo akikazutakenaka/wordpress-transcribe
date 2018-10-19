@@ -20,21 +20,7 @@
 class WP_Error {
 	// refactored. public $errors = array();
 	// :
-	// refactored. public function __construct( $code = '', $message = '', $data = '' ) {}
-
-	/**
-	 * Retrieve all error codes.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @return array List of error codes, if available.
-	 */
-	public function get_error_codes() {
-		if ( empty($this->errors) )
-			return array();
-
-		return array_keys($this->errors);
-	}
+	// refactored. public function get_error_codes() {}
 
 	/**
 	 * Retrieve first error code available.

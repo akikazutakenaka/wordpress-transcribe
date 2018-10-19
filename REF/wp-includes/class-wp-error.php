@@ -65,7 +65,21 @@ class WP_Error
 		}
 	}
 
-// @NOW 021
+	/**
+	 * Retrieve all error codes.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return array List of error codes, if available.
+	 */
+	public function get_error_codes()
+	{
+		if ( empty( $this->errors ) ) {
+			return array();
+		}
+
+		return array_keys( $this->errors );
+	}
 
 	/**
 	 * Retrieve first error code available.
@@ -77,7 +91,7 @@ class WP_Error
 	public function get_error_code()
 	{
 		$codes = $this->get_error_codes();
-// @NOW 020 -> wp-includes/class-wp-error.php
+// @NOW 020
 	}
 
 	/**
