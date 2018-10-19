@@ -816,7 +816,7 @@ function sanitize_option( $option, $value )
 		case 'admin_email':
 		case 'new_admin_email':
 			$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', $value );
-// @NOW 018 -> wp-includes/wp-db.php
+// @NOW 018
 	}
 }
 

@@ -412,48 +412,6 @@ class wpdb {
 
 	// refactored. public function delete( $table, $where, $where_format = null ) {}
 	// :
-	// refactored. protected function strip_invalid_text_from_query( $query ) {}
-
-	/**
-	 * Strips any invalid characters from the string for a given table and column.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @param string $table  Table name.
-	 * @param string $column Column name.
-	 * @param string $value  The text to check.
-	 * @return string|WP_Error The converted string, or a WP_Error object if the conversion fails.
-	 */
-	public function strip_invalid_text_for_column( $table, $column, $value ) {
-		if ( ! is_string( $value ) ) {
-			return $value;
-		}
-
-		$charset = $this->get_col_charset( $table, $column );
-		if ( ! $charset ) {
-			// Not a string column.
-			return $value;
-		} elseif ( is_wp_error( $charset ) ) {
-			// Bail on real errors.
-			return $charset;
-		}
-
-		$data = array(
-			$column => array(
-				'value'   => $value,
-				'charset' => $charset,
-				'length'  => $this->get_col_length( $table, $column ),
-			)
-		);
-
-		$data = $this->strip_invalid_text( $data );
-		if ( is_wp_error( $data ) ) {
-			return $data;
-		}
-
-		return $data[ $column ]['value'];
-	}
-
 	// refactored. protected function get_table_from_query( $query ) {}
 
 	/**
