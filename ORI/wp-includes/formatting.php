@@ -2802,18 +2802,7 @@ function esc_url( $url, $protocols = null, $_context = 'display' ) {
 	return apply_filters( 'clean_url', $good_protocol_url, $original_url, $_context );
 }
 
-/**
- * Performs esc_url() for database usage.
- *
- * @since 2.8.0
- *
- * @param string $url       The URL to be cleaned.
- * @param array  $protocols An array of acceptable protocols.
- * @return string The cleaned URL.
- */
-function esc_url_raw( $url, $protocols = null ) {
-	return esc_url( $url, $protocols, 'db' );
-}
+// refactored. function esc_url_raw( $url, $protocols = null ) {}
 
 /**
  * Convert entities, while preserving already-encoded entities.

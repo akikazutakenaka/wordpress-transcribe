@@ -969,6 +969,22 @@ function sanitize_email( $email )
 	return apply_filters( 'sanitize_email', $email, $email, NULL );
 }
 
+// @NOW 019
+
+/**
+ * Performs esc_url() for database usage.
+ *
+ * @since  2.8.0
+ *
+ * @param  string $url       The URL to be cleaned.
+ * @param  array  $protocols An array of acceptable protocols.
+ * @return string The cleaned URL.
+ */
+function esc_url_raw( $url, $protocols = NULL )
+{
+	return esc_url( $url, $protocols, 'db' );
+}
+
 /**
  * Escaping for HTML blocks.
  *
@@ -1122,8 +1138,15 @@ function sanitize_option( $option, $value )
 			} else {
 				$value = strip_tags( $value );
 				$value = wp_kses_data( $value );
-// @NOW 018
 			}
+
+			break;
+
+		case 'ping_sites':
+			$value = explode( "\n", $value );
+			$value = array_filter( array_map( 'trim', $value ) );
+			$value = array_filter( array_map( 'esc_url_raw', $value ) );
+// @NOW 018 -> wp-includes/formatting.php
 	}
 }
 
