@@ -819,8 +819,8 @@ function sanitize_option( $option, $value )
 
 			if ( is_wp_error( $value ) ) {
 				$error = $value->get_error_message();
-			}
 // @NOW 018
+			}
 	}
 }
 

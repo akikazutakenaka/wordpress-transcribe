@@ -145,6 +145,9 @@ class WP_Error
 		}
 
 		$messages = $this->get_error_messages( $code );
-// @NOW 019
+
+		return empty( $messages )
+			? ''
+			: $messages[0];
 	}
 }
