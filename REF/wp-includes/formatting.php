@@ -1084,7 +1084,7 @@ function sanitize_option( $option, $value )
 
 			if ( $value !== $original_value ) {
 				$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', wp_encode_emoji( $original_value ) );
-// @NOW 018 -> wp-includes/formatting.php
+// @NOW 018
 			}
 	}
 }
@@ -1186,7 +1186,18 @@ function wp_strip_all_tags( $string, $remove_breaks = FALSE )
 function wp_encode_emoji( $content )
 {
 	$emoji = _wp_emoji_list( 'partials' );
-// @NOW 019
+
+	foreach ( $emoji as $emojum ) {
+		$emoji_char = version_compare( phpversion(), '5.4', '<' )
+			? html_entity_decode( $emojum, ENT_COMPAT, 'UTF-8' )
+			: html_entity_decode( $emojum );
+
+		if ( FALSE !== strpos( $content, $emoji_char ) ) {
+			$content = preg_replace( "/$emoji_char/", $emojum, $content );
+		}
+	}
+
+	return $content;
 }
 
 /**

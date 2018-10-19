@@ -3933,32 +3933,7 @@ function _print_emoji_detection_script() {
 	}
 }
 
-/**
- * Convert emoji characters to their equivalent HTML entity.
- *
- * This allows us to store emoji in a DB using the utf8 character set.
- *
- * @since 4.2.0
- *
- * @param string $content The content to encode.
- * @return string The encoded content.
- */
-function wp_encode_emoji( $content ) {
-	$emoji = _wp_emoji_list( 'partials' );
-
-	foreach ( $emoji as $emojum ) {
-		if ( version_compare( phpversion(), '5.4', '<' ) ) {
-			$emoji_char = html_entity_decode( $emojum, ENT_COMPAT, 'UTF-8' );
-		} else {
-			$emoji_char = html_entity_decode( $emojum );
-		}
-		if ( false !== strpos( $content, $emoji_char ) ) {
-			$content = preg_replace( "/$emoji_char/", $emojum, $content );
-		}
-	}
-
-	return $content;
-}
+// refactored. function wp_encode_emoji( $content ) {}
 
 /**
  * Convert emoji to a static img element.
