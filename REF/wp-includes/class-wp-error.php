@@ -100,6 +100,33 @@ class WP_Error
 	}
 
 	/**
+	 * Retrieve all error messages or error messages matching code.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param  string|int $code Optional.
+	 *                          Retrieve messages matching code, if exists.
+	 * @return array      Error strings on success, or empty array on failure (if using code parameter).
+	 */
+	public function get_error_messages( $code = '' )
+	{
+		// Return all messages if no code speicified.
+		if ( empty( $code ) ) {
+			$all_messages = array();
+
+			foreach ( ( array ) $this->errors as $code => $messages ) {
+				$all_messages = array_merge( $all_messages, $messages );
+			}
+
+			return $all_messages;
+		}
+
+		return isset( $this->errors[ $code ] )
+			? $this->errors[ $code ]
+			: array();
+	}
+
+	/**
 	 * Get single error message.
 	 *
 	 * This will get the first message available for the code.
@@ -115,7 +142,9 @@ class WP_Error
 	{
 		if ( empty( $code ) ) {
 			$code = $this->get_error_code();
-// @NOW 019
 		}
+
+		$messages = $this->get_error_messages( $code );
+// @NOW 019
 	}
 }

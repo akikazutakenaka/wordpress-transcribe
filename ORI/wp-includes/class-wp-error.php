@@ -20,31 +20,7 @@
 class WP_Error {
 	// refactored. public $errors = array();
 	// :
-	// refactored. public function get_error_code() {}
-
-	/**
-	 * Retrieve all error messages or error messages matching code.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string|int $code Optional. Retrieve messages matching code, if exists.
-	 * @return array Error strings on success, or empty array on failure (if using code parameter).
-	 */
-	public function get_error_messages($code = '') {
-		// Return all messages if no code specified.
-		if ( empty($code) ) {
-			$all_messages = array();
-			foreach ( (array) $this->errors as $code => $messages )
-				$all_messages = array_merge($all_messages, $messages);
-
-			return $all_messages;
-		}
-
-		if ( isset($this->errors[$code]) )
-			return $this->errors[$code];
-		else
-			return array();
-	}
+	// refactored. public function get_error_messages($code = '') {}
 
 	/**
 	 * Get single error message.
