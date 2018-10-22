@@ -2896,57 +2896,7 @@ function includes_url( $path = '', $scheme = null ) {
 }
 
 // refactored. function content_url( $path = '' ) {}
-
-/**
- * Retrieves a URL within the plugins or mu-plugins directory.
- *
- * Defaults to the plugins directory URL if no arguments are supplied.
- *
- * @since 2.6.0
- *
- * @param  string $path   Optional. Extra path appended to the end of the URL, including
- *                        the relative directory if $plugin is supplied. Default empty.
- * @param  string $plugin Optional. A full path to a file inside a plugin or mu-plugin.
- *                        The URL will be relative to its directory. Default empty.
- *                        Typically this is done by passing `__FILE__` as the argument.
- * @return string Plugins URL link with optional paths appended.
- */
-function plugins_url( $path = '', $plugin = '' ) {
-
-	$path = wp_normalize_path( $path );
-	$plugin = wp_normalize_path( $plugin );
-	$mu_plugin_dir = wp_normalize_path( WPMU_PLUGIN_DIR );
-
-	if ( !empty($plugin) && 0 === strpos($plugin, $mu_plugin_dir) )
-		$url = WPMU_PLUGIN_URL;
-	else
-		$url = WP_PLUGIN_URL;
-
-
-	$url = set_url_scheme( $url );
-
-	if ( !empty($plugin) && is_string($plugin) ) {
-		$folder = dirname(plugin_basename($plugin));
-		if ( '.' != $folder )
-			$url .= '/' . ltrim($folder, '/');
-	}
-
-	if ( $path && is_string( $path ) )
-		$url .= '/' . ltrim($path, '/');
-
-	/**
-	 * Filters the URL to the plugins directory.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @param string $url    The complete URL to the plugins directory including scheme and path.
-	 * @param string $path   Path relative to the URL to the plugins directory. Blank string
-	 *                       if no path is specified.
-	 * @param string $plugin The plugin file path to be relative to. Blank string if no plugin
-	 *                       is specified.
-	 */
-	return apply_filters( 'plugins_url', $url, $path, $plugin );
-}
+// refactored. function plugins_url( $path = '', $plugin = '' ) {}
 
 /**
  * Retrieves the site URL for the current network.

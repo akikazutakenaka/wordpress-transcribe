@@ -278,7 +278,7 @@ function get_theme_root_uri( $stylesheet_or_template = FALSE, $theme_root = FALS
 						: $theme_root ) ) )
 			: content_url( $theme_root ) )
 		: content_url( 'themes' );
-// @NOW 011 -> wp-includes/link-template.php
+// @NOW 011
 }
 
 /**
