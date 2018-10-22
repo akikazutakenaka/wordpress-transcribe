@@ -391,57 +391,7 @@ function get_theme_root( $stylesheet_or_template = false ) {
 	return apply_filters( 'theme_root', $theme_root );
 }
 
-/**
- * Retrieve URI for themes directory.
- *
- * Does not have trailing slash.
- *
- * @since 1.5.0
- *
- * @global array $wp_theme_directories
- *
- * @param string $stylesheet_or_template Optional. The stylesheet or template name of the theme.
- * 	                                     Default is to leverage the main theme root.
- * @param string $theme_root             Optional. The theme root for which calculations will be based, preventing
- * 	                                     the need for a get_raw_theme_root() call.
- * @return string Themes URI.
- */
-function get_theme_root_uri( $stylesheet_or_template = false, $theme_root = false ) {
-	global $wp_theme_directories;
-
-	if ( $stylesheet_or_template && ! $theme_root )
-		$theme_root = get_raw_theme_root( $stylesheet_or_template );
-
-	if ( $stylesheet_or_template && $theme_root ) {
-		if ( in_array( $theme_root, (array) $wp_theme_directories ) ) {
-			// Absolute path. Make an educated guess. YMMV -- but note the filter below.
-			if ( 0 === strpos( $theme_root, WP_CONTENT_DIR ) )
-				$theme_root_uri = content_url( str_replace( WP_CONTENT_DIR, '', $theme_root ) );
-			elseif ( 0 === strpos( $theme_root, ABSPATH ) )
-				$theme_root_uri = site_url( str_replace( ABSPATH, '', $theme_root ) );
-			elseif ( 0 === strpos( $theme_root, WP_PLUGIN_DIR ) || 0 === strpos( $theme_root, WPMU_PLUGIN_DIR ) )
-				$theme_root_uri = plugins_url( basename( $theme_root ), $theme_root );
-			else
-				$theme_root_uri = $theme_root;
-		} else {
-			$theme_root_uri = content_url( $theme_root );
-		}
-	} else {
-		$theme_root_uri = content_url( 'themes' );
-	}
-
-	/**
-	 * Filters the URI for themes directory.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $theme_root_uri         The URI for themes directory.
-	 * @param string $siteurl                WordPress web address which is set in General Options.
-	 * @param string $stylesheet_or_template Stylesheet or template name of the theme.
-	 */
-	return apply_filters( 'theme_root_uri', $theme_root_uri, get_option( 'siteurl' ), $stylesheet_or_template );
-}
-
+// refactored. function get_theme_root_uri( $stylesheet_or_template = false, $theme_root = false ) {}
 // refactored. function get_raw_theme_root( $stylesheet_or_template, $skip_cache = false ) {}
 
 /**

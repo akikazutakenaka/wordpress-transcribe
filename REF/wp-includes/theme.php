@@ -40,7 +40,7 @@ function get_stylesheet_directory_uri()
 {
 	$stylesheet = str_replace( '%2F', '/', rawurlencode( get_stylesheet() ) );
 	$theme_root_uri = get_theme_root_uri( $stylesheet );
-// @NOW 010 -> wp-includes/theme.php
+// @NOW 010
 }
 
 /**
@@ -278,7 +278,17 @@ function get_theme_root_uri( $stylesheet_or_template = FALSE, $theme_root = FALS
 						: $theme_root ) ) )
 			: content_url( $theme_root ) )
 		: content_url( 'themes' );
-// @NOW 011
+
+	/**
+	 * Filters the URI for themes directory.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $theme_root_uri         The URI for themes directory.
+	 * @param string $siteurl                WordPress web address which is set in General Option.
+	 * @param string $stylesheet_or_template Stylesheet or template name of the theme.
+	 */
+	return apply_filters( 'theme_root_uri', $theme_root_uri, get_option( 'siteurl' ), $stylesheet_or_template );
 }
 
 /**
