@@ -29,16 +29,7 @@ class WP_Locale {
 	}
 
 	// refactored. public function init() {}
-
-	/**
-	 * Outputs an admin notice if the /build directory must be used for RTL.
-	 *
-	 * @since 3.8.0
-	 */
-	public function rtl_src_admin_notice() {
-		/* translators: %s: Name of the directory (build) */
-		echo '<div class="error"><p>' . sprintf( __( 'The %s directory of the develop repository must be used for RTL.' ), '<code>build</code>' ) . '</p></div>';
-	}
+	// refactored. public function rtl_src_admin_notice() {}
 
 	/**
 	 * Retrieve the full translated weekday word.

@@ -121,7 +121,7 @@ class WP_Locale
 	public function __construct()
 	{
 		$this->init();
-// @NOW 006 -> wp-includes/class-wp-locale.php
+// @NOW 006
 	}
 
 	/**
@@ -248,7 +248,15 @@ class WP_Locale
 		}
 	}
 
-// @NOW 007
+	/**
+	 * Outputs an admin notice if the /build directory must be used for RTL.
+	 *
+	 * @since 3.8.0
+	 */
+	public function rtl_src_admin_notice()
+	{
+		echo '<div class="error"><p>' . sprintf( __( 'The %s directory of the develop repository must be used for RTL.' ), '<code>build</code>' ) . '</p></div>';
+	}
 
 	/**
 	 * Checks if current locale is RTL.
