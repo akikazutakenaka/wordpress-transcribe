@@ -34,6 +34,12 @@ function apply_filters()
 /**
  * @ignore
  */
+function get_option()
+{}
+
+/**
+ * @ignore
+ */
 function add_action()
 {}
 

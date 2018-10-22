@@ -1290,8 +1290,16 @@ function sanitize_option( $option, $value )
 
 		case 'WPLANG':
 			$allowed = get_available_languages();
-// @NOW 018
+
+			if ( ! is_multisite() && defined( 'WPLANG' ) && '' !== WPLANG && 'en_US' !== WPLANG ) {
+				$allowed[] = WPLANG;
+			}
+
+			if ( ! in_array( $value, $allowed ) && ! empty( $value ) ) {
+				$value = get_option( $option );
+			}
 	}
+// @NOW 018
 }
 
 /**

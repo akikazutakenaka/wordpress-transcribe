@@ -17,11 +17,7 @@
 function esc_attr() {}
 
 // refactored. function apply_filters() {}
-
-/**
- * @ignore
- */
-function get_option() {}
+// refactored. function get_option() {}
 
 /**
  * @ignore
