@@ -67,7 +67,17 @@ function get_stylesheet_directory_uri()
 function get_stylesheet_uri()
 {
 	$stylesheet_dir_uri = get_stylesheet_directory_uri();
-// @NOW 009
+	$stylesheet_uri = $stylesheet_dir_uri . '/style.css';
+
+	/**
+	 * Filters the URI of the current theme stylesheet.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $stylesheet_uri     Stylesheet URI for the current theme/child theme.
+	 * @param string $stylesheet_dir_uri Stylesheet directory URI for the current theme/child theme.
+	 */
+	return apply_filters( 'stylesheet_uri', $stylesheet_uri, $stylesheet_dir_uri );
 }
 
 /**

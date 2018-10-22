@@ -163,30 +163,7 @@ function get_stylesheet_directory() {
 }
 
 // refactored. function get_stylesheet_directory_uri() {}
-
-/**
- * Retrieves the URI of current theme stylesheet.
- *
- * The stylesheet file name is 'style.css' which is appended to the stylesheet directory URI path.
- * See get_stylesheet_directory_uri().
- *
- * @since 1.5.0
- *
- * @return string
- */
-function get_stylesheet_uri() {
-	$stylesheet_dir_uri = get_stylesheet_directory_uri();
-	$stylesheet_uri = $stylesheet_dir_uri . '/style.css';
-	/**
-	 * Filters the URI of the current theme stylesheet.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $stylesheet_uri     Stylesheet URI for the current theme/child theme.
-	 * @param string $stylesheet_dir_uri Stylesheet directory URI for the current theme/child theme.
-	 */
-	return apply_filters( 'stylesheet_uri', $stylesheet_uri, $stylesheet_dir_uri );
-}
+// refactored. function get_stylesheet_uri() {}
 
 /**
  * Retrieves the localized stylesheet URI.

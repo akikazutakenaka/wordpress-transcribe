@@ -105,6 +105,6 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 
 		case 'stylesheet_uri':
 			$output = get_stylesheet_uri();
-// @NOW 008 -> wp-includes/theme.php
+// @NOW 008
 	}
 }
