@@ -754,7 +754,7 @@ function wp_kses_bad_protocol_once( $string, $allowed_protocols, $count = 1 )
 function wp_kses_bad_protocol_once2( $string, $allowed_protocols )
 {
 	$string2 = wp_kses_decode_entities( $string );
-// @NOW 022 -> wp-includes/kses.php
+// @NOW 022
 }
 
 /**
@@ -908,7 +908,18 @@ function _wp_kses_decode_entities_chr( $match )
 	return chr( $match[1] );
 }
 
-// @NOW 023
+/**
+ * Regex callback for wp_kses_decode_entities()
+ *
+ * @since 2.9.0
+ *
+ * @param  array $match preg match.
+ * @return string
+ */
+function _wp_kses_decode_entities_chr_hexdec( $match )
+{
+	return chr( hexdec( $match[1] ) );
+}
 
 /**
  * Sanitize content with allowed HTML Kses rules.

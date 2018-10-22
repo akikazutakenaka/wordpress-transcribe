@@ -665,19 +665,7 @@ function wp_kses_bad_protocol_once2( $string, $allowed_protocols ) {
 
 // refactored. function wp_kses_normalize_entities($string) {}
 // :
-// refactored. function _wp_kses_decode_entities_chr( $match ) {}
-
-/**
- * Regex callback for wp_kses_decode_entities()
- *
- * @since 2.9.0
- *
- * @param array $match preg match
- * @return string
- */
-function _wp_kses_decode_entities_chr_hexdec( $match ) {
-	return chr( hexdec( $match[1] ) );
-}
+// refactored. function _wp_kses_decode_entities_chr_hexdec( $match ) {}
 
 /**
  * Sanitize content with allowed HTML Kses rules.
