@@ -301,7 +301,19 @@ function content_url( $path = '' )
 function plugins_url( $path = '', $plugin = '' )
 {
 	$path = wp_normalize_path( $path );
+	$plugin = wp_normalize_path( $plugin );
+	$mu_plugin_dir = wp_normalize_path( WPMU_PLUGIN_DIR );
+
+	$url = ! empty( $plugin ) && 0 === strpos( $plugin, $mu_plugin_dir )
+		? WPMU_PLUGIN_DIR
+		: WP_PLUGIN_DIR;
+
+	$url = set_url_scheme( $url );
+
+	if ( ! empty( $plugin ) && is_string( $plugin ) ) {
+		$folder = dirname( plugin_basename( $plugin ) );
 // @NOW 012
+	}
 }
 
 /**

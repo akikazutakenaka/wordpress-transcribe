@@ -230,38 +230,7 @@ function do_action_deprecated( $tag, $args, $version, $replacement = false, $mes
 // Functions for handling plugins.
 //
 
-/**
- * Gets the basename of a plugin.
- *
- * This method extracts the name of a plugin from its filename.
- *
- * @since 1.5.0
- *
- * @global array $wp_plugin_paths
- *
- * @param string $file The filename of plugin.
- * @return string The name of a plugin.
- */
-function plugin_basename( $file ) {
-	global $wp_plugin_paths;
-
-	// $wp_plugin_paths contains normalized paths.
-	$file = wp_normalize_path( $file );
-
-	arsort( $wp_plugin_paths );
-	foreach ( $wp_plugin_paths as $dir => $realdir ) {
-		if ( strpos( $file, $realdir ) === 0 ) {
-			$file = $dir . substr( $file, strlen( $realdir ) );
-		}
-	}
-
-	$plugin_dir = wp_normalize_path( WP_PLUGIN_DIR );
-	$mu_plugin_dir = wp_normalize_path( WPMU_PLUGIN_DIR );
-
-	$file = preg_replace('#^' . preg_quote($plugin_dir, '#') . '/|^' . preg_quote($mu_plugin_dir, '#') . '/#','',$file); // get relative path from plugins dir
-	$file = trim($file, '/');
-	return $file;
-}
+// refactored. function plugin_basename( $file ) {}
 
 /**
  * Register a plugin's real path.
