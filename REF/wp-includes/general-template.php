@@ -114,6 +114,87 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 		case 'template_directory':
 		case 'template_url':
 			$output = get_template_directory_uri();
-// @NOW 008
+			break;
+
+		case 'admin_email':
+			$output = get_option( 'admin_email' );
+			break;
+
+		case 'charset':
+			$output = get_option( 'blog_charset' );
+
+			if ( '' == $output ) {
+				$output = 'UTF-8';
+			}
+
+			break;
+
+		case 'html_type':
+			$output = get_option( 'html_type' );
+			break;
+
+		case 'version':
+			global $wp_version;
+			$output = $wp_version;
+			break;
+
+		case 'language':
+			$output = __( 'html_lang_attribute' );
+
+			if ( 'html_lang_attribute' === $output || preg_match( '/[^a-zA-Z0-9-]/', $output ) ) {
+				$output = is_admin()
+					? get_user_locale()
+					: get_locale();
+
+				$output = str_replace( '_', '-', $output );
+			}
+
+			break;
+
+		case 'text_direction':
+			_deprecated_argument( __FUNCTION__, '2.2.0', sprintf( __( 'The %1$s option is deprecated for the family of %2$s functions. Use the %3$s function instead.' ), '<code>' . $show . '</code>', '<code>bloginfo()</code>', '<code>is_rtl()</code>' ) );
+
+			$output = function_exists( 'is_rtl' )
+				? ( is_rtl()
+					? 'rtl'
+					: 'ltr' )
+				: 'ltr';
+
+			break;
+
+		case 'name':
+		default:
+			$output = get_option( 'blogname' );
+			break;
 	}
+
+	$url = TRUE;
+
+	if ( strpos( $show, 'url' ) === FALSE && strpos( $show, 'directory' ) === FALSE && strpos( $show, 'home' ) === FALSE ) {
+		$url = FALSE;
+	}
+
+	if ( 'display' == $filter ) {
+		$output = $url
+			? /**
+			   * Filters the URL returned by get_bloginfo().
+			   *
+			   * @since 2.0.5
+			   *
+			   * @param mixed $output The URL returned by bloginfo().
+			   * @param mixed $show   Type of information requested.
+			   */
+				apply_filters( 'bloginfo_url', $output, $show )
+			: /**
+			   * Filters the site information returned by get_bloginfo().
+			   *
+			   * @since 0.71
+			   *
+			   * @param mixed $output The requested non-URL site information.
+			   * @param mixed $show   Type of information requested.
+			   */
+				apply_filters( 'bloginfo', $output, $show );
+	}
+
+	return $output;
 }

@@ -243,7 +243,7 @@ class WP_Locale
 		}
 
 		if ( 'rtl' == $this->text_direction && strpos( get_bloginfo( 'version' ), '-src' ) ) {
-// @NOW 007 -> wp-includes/general-template.php
+// @NOW 007
 		}
 	}
 
