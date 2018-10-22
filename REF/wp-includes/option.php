@@ -1160,8 +1160,38 @@ function set_site_transient( $transient, $value, $expiration = 0 )
 		} else {
 			if ( $expiration ) {
 				update_site_option( $transient_timeout, time() + $expiration );
-// @NOW 015
 			}
+
+			$result = update_site_option( $option, $value );
 		}
 	}
+
+	if ( $result ) {
+		/**
+		 * Fires after the value for a specific site transient has been set.
+		 *
+		 * The dynamic portion of the hook name, `$transient`, refers to the transient name.
+		 *
+		 * @since 3.0.0
+		 * @since 4.4.0 The `$transient` parameter was added.
+		 *
+		 * @param mixed  $value      Site transient value.
+		 * @param int    $expiration Time until expiration in seconds.
+		 * @param string $transient  Transient name.
+		 */
+		do_action( "set_site_transient_{$transient}", $value, $expiration, $transient );
+
+		/**
+		 * Fires after the value for a site transient has been set.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $transient  The name of the site transient.
+		 * @param mixed  $value      Site transient value.
+		 * @param int    $expiration Time until expiration in seconds.
+		 */
+		do_action( 'setted_site_transient', $transient, $value, $expiration );
+	}
+
+	return $result;
 }

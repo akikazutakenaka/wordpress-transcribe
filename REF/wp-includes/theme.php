@@ -237,7 +237,7 @@ function search_theme_directories( $force = FALSE )
 
 	if ( $theme_roots != get_site_transient( 'theme_roots' ) ) {
 		set_site_transient( 'theme_roots', $theme_roots, $cache_expiration );
-// @NOW 014 -> wp-includes/option.php
+// @NOW 014
 	}
 }
 
