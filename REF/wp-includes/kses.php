@@ -878,7 +878,24 @@ function valid_unicode( $i )
 	    || ( $i >= 0x10000 && $i <= 0x10ffff );
 }
 
-// @NOW 023
+/**
+ * Convert all entities to their character counterparts.
+ *
+ * This function decodes numeric HTML entities (`&#65;` and `&#x41;`).
+ * It doesn't do anything with other entities like &auml;, but we don't need them in the URL protocol whitelisting system anyway.
+ *
+ * @since 1.0.0
+ *
+ * @param  string $string Content to change entities.
+ * @return string Content after decoded entities.
+ */
+function wp_kses_decode_entities( $string )
+{
+	$string = preg_replace_callback( '/&#([0-9]+);/', '_wp_kses_decode_entities_chr', $string );
+// @NOW 023 -> wp-includes/kses.php
+}
+
+// @NOW 024
 
 /**
  * Sanitize content with allowed HTML Kses rules.
