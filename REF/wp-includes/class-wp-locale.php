@@ -243,9 +243,12 @@ class WP_Locale
 		}
 
 		if ( 'rtl' == $this->text_direction && strpos( get_bloginfo( 'version' ), '-src' ) ) {
-// @NOW 007
+			$this->text_direction = 'ltr';
+			add_action( 'all_admin_notices', array( $this, 'rtl_src_admin_notice' ) );
 		}
 	}
+
+// @NOW 007
 
 	/**
 	 * Checks if current locale is RTL.
