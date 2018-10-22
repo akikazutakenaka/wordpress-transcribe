@@ -349,26 +349,7 @@ function is_serialized_string( $data ) {
 	}
 }
 
-/**
- * Serialize data, if needed.
- *
- * @since 2.0.5
- *
- * @param string|array|object $data Data that might be serialized.
- * @return mixed A scalar data
- */
-function maybe_serialize( $data ) {
-	if ( is_array( $data ) || is_object( $data ) )
-		return serialize( $data );
-
-	// Double serialization is required for backward compatibility.
-	// See https://core.trac.wordpress.org/ticket/12930
-	// Also the world will end. See WP 3.6.1.
-	if ( is_serialized( $data, false ) )
-		return serialize( $data );
-
-	return $data;
-}
+// refactored. function maybe_serialize( $data ) {}
 
 /**
  * Retrieve post title from XMLRPC XML.

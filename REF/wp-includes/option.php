@@ -294,6 +294,21 @@ function add_option( $option, $value = '', $deprecated = '', $autoload = 'yes' )
 	}
 
 	$value = sanitize_option( $option, $value );
+
+	/**
+	 * Make sure the option doesn't already exist.
+	 * We can check the 'notoptions' cache before we ask for a db query.
+	 */
+	$notoptions = wp_cache_get( 'notoptions', 'options' );
+
+	if ( ! is_array( $notoptions ) || ! isset( $notoptions[ $option ] ) ) {
+		// This filter is documented in wp-includes/option.php
+		if ( apply_filters( "default_option_{$option}", FALSE, $option, FALSE ) !== get_option( $option ) ) {
+			return FALSE;
+		}
+	}
+
+	$serialized_value = maybe_serialize( $value );
 // @NOW 017
 }
 
