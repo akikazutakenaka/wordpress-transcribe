@@ -735,7 +735,7 @@ function wp_kses_bad_protocol_once( $string, $allowed_protocols, $count = 1 )
 	if ( isset( $string2[1] ) && ! preg_match( '%/\?%', $string2[0] ) ) {
 		$string = trim( $string2[1] );
 		$protocol = wp_kses_bad_protocol_once2( $string2[0], $allowed_protocols );
-// @NOW 021 -> wp-includes/kses.php
+// @NOW 021
 	}
 }
 
@@ -754,7 +754,21 @@ function wp_kses_bad_protocol_once( $string, $allowed_protocols, $count = 1 )
 function wp_kses_bad_protocol_once2( $string, $allowed_protocols )
 {
 	$string2 = wp_kses_decode_entities( $string );
-// @NOW 022
+	$string2 = preg_replace( '/\s/', '', $string2 );
+	$string2 = wp_kses_no_null( $string2 );
+	$string2 = strtolower( $string2 );
+	$allowed = FALSE;
+
+	foreach ( ( array ) $allowed_protocols as $one_protocol ) {
+		if ( strtolower( $one_protocol ) == $string2 ) {
+			$allowed = TRUE;
+			break;
+		}
+	}
+
+	return $allowed
+		? "$string2:"
+		: '';
 }
 
 /**
