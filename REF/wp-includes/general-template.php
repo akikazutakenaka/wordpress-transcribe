@@ -114,6 +114,6 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 		case 'template_directory':
 		case 'template_url':
 			$output = get_template_directory_uri();
-// @NOW 008 -> wp-includes/theme.php
+// @NOW 008
 	}
 }
