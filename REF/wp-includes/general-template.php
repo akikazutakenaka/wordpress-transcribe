@@ -105,6 +105,15 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 
 		case 'stylesheet_uri':
 			$output = get_stylesheet_uri();
-// @NOW 008
+			break;
+
+		case 'stylesheet_directory':
+			$output = get_stylesheet_directory_uri();
+			break;
+
+		case 'template_directory':
+		case 'template_url':
+			$output = get_template_directory_uri();
+// @NOW 008 -> wp-includes/theme.php
 	}
 }

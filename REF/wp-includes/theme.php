@@ -80,6 +80,21 @@ function get_stylesheet_uri()
 	return apply_filters( 'stylesheet_uri', $stylesheet_uri, $stylesheet_dir_uri );
 }
 
+// @NOW 010
+
+/**
+ * Retrieve theme directory URI.
+ *
+ * @since 1.5.0
+ *
+ * @return string Template directory URI.
+ */
+function get_template_directory_uri()
+{
+	$template = str_replace( '%2F', '/', rawurlencode( get_template() ) );
+// @NOW 009 -> wp-includes/theme.php
+}
+
 /**
  * Retrieve theme roots.
  *
