@@ -41,4 +41,4 @@ wp_initial_constants();
 
 // Check for the required PHP version and for the MySQL extension or a database drop-in.
 wp_check_php_mysql_versions();
-// @NOW 003 -> wp-includes/load.php
+// @NOW 003
