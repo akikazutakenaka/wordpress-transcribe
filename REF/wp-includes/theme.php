@@ -79,8 +79,10 @@ function get_theme_roots()
 
 	if ( FALSE === $theme_roots ) {
 		search_theme_directories( TRUE ); // Regenerate the transient.
-// @NOW 013
+		$theme_roots = get_site_transient( 'theme_roots' );
 	}
+
+	return $theme_roots;
 }
 
 /**
@@ -300,6 +302,6 @@ function get_raw_theme_root( $stylesheet_or_template, $skip_cache = FALSE )
 
 	if ( empty( $theme_root ) ) {
 		$theme_roots = get_theme_roots();
-// @NOW 012 -> wp-includes/theme.php
+// @NOW 012
 	}
 }
