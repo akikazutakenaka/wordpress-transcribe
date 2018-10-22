@@ -1944,6 +1944,8 @@ class wpdb
 		return $this->query( $this->prepare( $sql, $values ) );
 	}
 
+// @NOW 017
+
 	/**
 	 * Delete a row in the table.
 	 *
