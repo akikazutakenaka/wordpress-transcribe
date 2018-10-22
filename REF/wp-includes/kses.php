@@ -644,8 +644,13 @@ function wp_kses_bad_protocol( $string, $allowed_protocols )
 	do {
 		$original_string = $string;
 		$string = wp_kses_bad_protocol_once( $string, $allowed_protocols );
-// @NOW 020
+	} while ( $original_string != $string && ++$iterations < 6 );
+
+	if ( $original_string != $string ) {
+		return '';
 	}
+
+	return $string;
 }
 
 /**

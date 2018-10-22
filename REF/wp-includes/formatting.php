@@ -1058,7 +1058,7 @@ function esc_url( $url, $protocols = NULL, $_context = 'display' )
 		}
 
 		$good_protocol_url = wp_kses_bad_protocol( $url, $protocols );
-// @NOW 019 -> wp-includes/kses.php
+// @NOW 019
 	}
 }
 
