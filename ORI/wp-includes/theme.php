@@ -208,23 +208,7 @@ function get_locale_stylesheet_uri() {
 	return apply_filters( 'locale_stylesheet_uri', $stylesheet_uri, $stylesheet_dir_uri );
 }
 
-/**
- * Retrieve name of the current theme.
- *
- * @since 1.5.0
- *
- * @return string Template name.
- */
-function get_template() {
-	/**
-	 * Filters the name of the current theme.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $template Current theme's directory name.
-	 */
-	return apply_filters( 'template', get_option( 'template' ) );
-}
+// refactored. function get_template() {}
 
 /**
  * Retrieve current theme directory.
