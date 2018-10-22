@@ -309,7 +309,77 @@ function add_option( $option, $value = '', $deprecated = '', $autoload = 'yes' )
 	}
 
 	$serialized_value = maybe_serialize( $value );
-// @NOW 017
+
+	$autoload = ( 'no' === $autoload || FALSE === $autoload )
+		? 'no'
+		: 'yes';
+
+	/**
+	 * Fires before an option is added.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $option Name of the option to add.
+	 * @param mixed  $value  Value of the option.
+	 */
+	do_action( 'add_option', $option, $value );
+
+	$result = $wpdb->query( $wpdb->prepare( <<<EOQ
+INSERT INTO `$wpdb->options` ( `option_name`, `option_value`, `autoload` )
+VALUES ( %s, %s, %s )
+ON DUPLICATE KEY
+UPDATE `option_name` = VALUES( `option_name` )
+     , `option_value` = VALUES( `option_value` )
+     , `autoload` = VALUES( `autoload` )
+EOQ
+			, $option, $serialized_value, $autoload ) );
+
+	if ( ! $result ) {
+		return FALSE;
+	}
+
+	if ( ! wp_installing() ) {
+		if ( 'yes' == $autoload ) {
+			$alloptions = wp_load_alloptions();
+			$alloptions[ $option ] = $serialized_value;
+			wp_cache_set( 'alloptions', $alloptions, 'options' );
+		} else {
+			wp_cache_set( $option, $serialized_value, 'options' );
+		}
+	}
+
+	// This option exist now.
+	$notoptions = wp_cache_set( 'notoptions', 'options' ); // Yes, again... we need it to be fresh.
+
+	if ( is_array( $notoptions ) && isset( $notoptions[ $option ] ) ) {
+		unset( $notoptions[ $option ] );
+		wp_cache_set( 'notoptions', $notoptions, 'options' );
+	}
+
+	/**
+	 * Fires after a specific option has been added.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the option name.
+	 *
+	 * @since 2.5.0 As "add_option_{$name}"
+	 * @since 3.0.0
+	 *
+	 * @param string $option Name of the option to add.
+	 * @param mixed  $value  Value of the option.
+	 */
+	do_action( "add_option_{$option}", $option, $value );
+
+	/**
+	 * Fires after an option has been added.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $option Name of the added option.
+	 * @param mixed  $value  Value of the option.
+	 */
+	do_action( 'added_option', $option, $value );
+
+	return TRUE;
 }
 
 /**
@@ -645,7 +715,7 @@ function add_network_option( $network_id, $option, $value )
 
 	if ( ! is_multisite() ) {
 		$result = add_option( $option, $value, '', 'no' );
-// @NOW 016 -> wp-includes/option.php
+// @NOW 016
 	}
 }
 
