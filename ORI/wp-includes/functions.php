@@ -4430,26 +4430,7 @@ function _device_can_upload() {
 	return true;
 }
 
-/**
- * Test if a given path is a stream URL
- *
- * @since 3.5.0
- *
- * @param string $path The resource path or URL.
- * @return bool True if the path is a stream URL.
- */
-function wp_is_stream( $path ) {
-	if ( false === strpos( $path, '://' ) ) {
-		// $path isn't a stream
-		return false;
-	}
-
-	$wrappers    = stream_get_wrappers();
-	$wrappers    = array_map( 'preg_quote', $wrappers );
-	$wrappers_re = '(' . join( '|', $wrappers ) . ')';
-
-	return preg_match( "!^$wrappers_re://!", $path ) === 1;
-}
+// refactored. function wp_is_stream( $path ) {}
 
 /**
  * Test if the supplied date is valid for the Gregorian calendar.

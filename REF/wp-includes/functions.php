@@ -358,7 +358,7 @@ function wp_normalize_path( $path )
 	$wrapper = '';
 
 	if ( wp_is_stream( $path ) ) {
-// @NOW 013 -> wp-includes/functions.php
+// @NOW 013
 	}
 }
 
@@ -886,7 +886,26 @@ function _get_non_cached_ids( $object_ids, $cache_key )
 	return $clean;
 }
 
-// @NOW 014
+/**
+ * Test if a given path is a stream URL.
+ *
+ * @since 3.5.0
+ *
+ * @param  string $path The resource path or URL.
+ * @return bool   True if the path is a stream URL.
+ */
+function wp_is_stream( $path )
+{
+	if ( FALSE === strpos( $path, '://' ) ) {
+		// $path isn't a stream.
+		return FALSE;
+	}
+
+	$wrappers    = stream_get_wrappers();
+	$wrappers    = array_map( 'preg_quote', $wrappers );
+	$wrappers_re = '(' . join( '|', $wrappers ) . ')';
+	return preg_match( "!^$wrappers_re://!", $path ) === 1;
+}
 
 /**
  * Set the mbstring internal encoding to a binary safe encoding when func_overload is enabled.
