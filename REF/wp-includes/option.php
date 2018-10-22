@@ -530,6 +530,25 @@ function delete_site_option( $option )
 }
 
 /**
+ * Update the value of an option that was already added for the current network.
+ *
+ * @since 2.8.0
+ * @since 4.4.0 Modified into wrapper for update_network_option().
+ * @see   update_network_option()
+ *
+ * @param  string $option Name of option.
+ *                        Expected to not be SQL-escaped.
+ * @param  mixed  $value  Option value.
+ *                        Expected to not be SQL-escaped.
+ * @return bool   False if value was not updated.
+ *                True if value was updated.
+ */
+function update_site_option( $option, $value )
+{
+	return update_network_option( $option, $value );
+}
+
+/**
  * Retrieve a network's option value based on the option name.
  *
  * @since  4.4.0
@@ -885,6 +904,8 @@ EOQ
 	return FALSE;
 }
 
+// @NOW 016
+
 /**
  * Get the value of a site transient.
  *
@@ -1017,7 +1038,13 @@ function set_site_transient( $transient, $value, $expiration = 0 )
 		if ( FALSE === get_site_option( $option ) ) {
 			if ( $expiration ) {
 				add_site_option( $transient_timeout, time() + $expiration );
-// @NOW 015
+			}
+
+			$result = add_site_option( $option, $value );
+		} else {
+			if ( $expiration ) {
+				update_site_option( $transient_timeout, time() + $expiration );
+// @NOW 015 -> wp-includes/option.php
 			}
 		}
 	}
