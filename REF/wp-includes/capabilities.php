@@ -24,3 +24,16 @@ function wp_roles()
 
 	return $wp_roles;
 }
+
+/**
+ * Retrieve role object.
+ *
+ * @since 2.0.0
+ *
+ * @param  string       $role Role name.
+ * @return WP_Role|null WP_Role object if found, null if the role does not exist.
+ */
+function get_role( $role )
+{
+	return wp_roles()->get_role( $role );
+}

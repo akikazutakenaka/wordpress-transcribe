@@ -686,18 +686,7 @@ function user_can( $user, $capability ) {
 }
 
 // refactored. function wp_roles() {}
-
-/**
- * Retrieve role object.
- *
- * @since 2.0.0
- *
- * @param string $role Role name.
- * @return WP_Role|null WP_Role object if found, null if the role does not exist.
- */
-function get_role( $role ) {
-	return wp_roles()->get_role( $role );
-}
+// refactored. function get_role( $role ) {}
 
 /**
  * Add role, if it does not exist.

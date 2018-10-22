@@ -1298,8 +1298,87 @@ function sanitize_option( $option, $value )
 			if ( ! in_array( $value, $allowed ) && ! empty( $value ) ) {
 				$value = get_option( $option );
 			}
-	}
+
+			break;
+
+		case 'illegal_names':
+			$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', $value );
+
+			if ( is_wp_error( $value ) ) {
+				$error = $value->get_error_message();
+			} else {
+				if ( ! is_array( $value ) ) {
+					$value = explode( ' ', $value );
+				}
+
+				$value = array_values( array_filter( array_map( 'trim', $value ) ) );
+
+				if ( ! $value ) {
+					$value = '';
+				}
+			}
+
+			break;
+
+		case 'limited_email_domains':
+		case 'banned_email_domains':
+			$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', $value );
+
+			if ( is_wp_error( $value ) ) {
+				$error = $value->get_error_message();
+			} else {
+				if ( ! is_array( $value ) ) {
+					$value = explode( "\n", $value );
+				}
+
+				$domains = array_values( array_filter( array_map( 'trim', $value ) ) );
+				$value = array();
+
+				foreach ( $domains as $domain ) {
+					if ( ! preg_match( '/(--|\.\.)/', $domain ) && preg_match( '|^([a-zA-Z0-9-\.])+$|', $domain ) ) {
+						$value[] = $domain;
+					}
+				}
+
+				if ( ! $value ) {
+					$value = '';
+				}
+			}
+
+			break;
+
+		case 'timezone_string':
+			$allowed_zones = timezone_identifiers_list();
+
+			if ( ! in_array( $value, $allowed_zones ) && ! empty( $value ) ) {
+				$error = __( 'The timezone you have entered is not valid. Please select a valid timezone.' );
+			}
+
+			break;
+
+		case 'permalink_structure':
+		case 'category_base':
+		case 'tag_base':
+			$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', $value );
+
+			if ( is_wp_error( $value ) ) {
+				$error = $value->get_error_message();
+			} else {
+				$value = esc_url_raw( $value );
+				$value = str_replace( 'http://', '', $value );
+			}
+
+			if ( 'permalink_structure' === $option && '' !== $value && ! preg_match( '/%[^\/%]+%/', $value ) ) {
+				$error = sprintf( __( 'A structure tag is required when using custom permalinks. <a href="%s">Learn more</a>' ), __( 'https://codex.wordpress.org/Using_Permalinks#Choosing_your_permalink_structure' ) );
+			}
+
+			break;
+
+		case 'default_role':
+			if ( ! get_role( $value ) && get_role( 'subscriber' ) ) {
 // @NOW 018
+			}
+	}
 }
 
 /**
