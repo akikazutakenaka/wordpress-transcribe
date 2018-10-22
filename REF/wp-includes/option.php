@@ -715,7 +715,29 @@ function add_network_option( $network_id, $option, $value )
 
 	if ( ! is_multisite() ) {
 		$result = add_option( $option, $value, '', 'no' );
-// @NOW 016
+	} else {
+		$cache_key = "$network_id:$option";
+
+		/**
+		 * Make sure the option doesn't already exist.
+		 * We can check the 'notoptions' cache before we ask for a db query.
+		 */
+		$notoptions = wp_cache_get( $notoptions_key, 'site-options' );
+
+		if ( ! is_array( $notoptions ) || ! isset( $notoptions[ $option ] ) ) {
+			if ( FALSE !== get_network_option( $network_id, $option, FALSE ) ) {
+				return FALSE;
+			}
+		}
+
+		$value = sanitize_option( $option, $value );
+		$serialized_value = maybe_serialize( $value );
+		$result = $wpdb->insert( $wpdb->sitemeta, array(
+				'site_id'    => $network_id,
+				'meta_key'   => $option,
+				'meta_value' => $serialized_value
+			) );
+// @NOW 016 -> wp-includes/wp-db.php
 	}
 }
 

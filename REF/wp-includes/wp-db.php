@@ -1861,6 +1861,34 @@ class wpdb
 	}
 
 	/**
+	 * Insert a row into a table.
+	 *
+	 *     wpdb::insert( 'table', array( 'column' => 'foo', 'field' => 'bar' ) );
+	 *     wpdb::insert( 'table', array( 'column' => 'foo', 'field' => 1337 ), array( '%s', '%d' ) );
+	 *
+	 * @since 2.5.0
+	 * @see   wpdb::prepare()
+	 * @see   wpdb::$field_types
+	 * @see   wp_set_wpdb_vars()
+	 *
+	 * @param  string       $table  Table name.
+	 * @param  array        $data   Data to insert (in column => value pairs).
+	 *                              Both $data columns and $data values should be "raw" (neither should be SQL escaped).
+	 *                              Sending a null value will cause the column to be set to NULL - the corresponding format is ignored in this case.
+	 * @param  array|string $format Optional.
+	 *                              An array of formats to be mapped to each of the value in $data.
+	 *                              A format is one of '%d', '%f', '%s' (integer, float, string).
+	 *                              If omitted, all values in $data will be treated as strings unless otherwise specified in wpdb::$field_types.
+	 * @return int|false    The number of rows inserted, or false on error.
+	 */
+	public function insert( $table, $data, $format = NULL )
+	{
+		return $this->_insert_replace_helper( $table, $data, $format, 'INSERT' );
+	}
+
+// @NOW 017
+
+	/**
 	 * Delete a row in the table.
 	 *
 	 *     wpdb::delete( 'table', array( 'ID' => 1 ) );
