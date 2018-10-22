@@ -1886,7 +1886,63 @@ class wpdb
 		return $this->_insert_replace_helper( $table, $data, $format, 'INSERT' );
 	}
 
-// @NOW 017
+	/**
+	 * Helper function for insert and replace.
+	 *
+	 * Runs an insert or replace query based on $type argument.
+	 *
+	 * @since 3.0.0
+	 * @see   wpdb::prepare()
+	 * @see   wpdb::$field_types
+	 * @see   wp_set_wpdb_vars()
+	 *
+	 * @param  string       $table  Table name.
+	 * @param  array        $data   Data to insert (in column => value pairs).
+	 *                              Both $data columns and $data values should be "raw" (neither should be SQL escaped).
+	 *                              Sending a null value will cause the column to be set to NULL - the corresponding format is ignored in this case.
+	 * @param  array|string $format Optional.
+	 *                              An array of formats to be mapped to each of the value in $data.
+	 *                              If string, that format will be used for all of the values in $data.
+	 *                              A format is one of '%d', '%f', '%s' (integer, float, string).
+	 *                              If omitted, all values in $data will be treated as strings unless otherwise specified in wpdb::$field_types.
+	 * @param  string       $type   Optional.
+	 *                              What type of operation is this?
+	 *                              INSERT or REPLACE.
+	 *                              Defaults to INSERT.
+	 * @return int|false    The number of rows affected, or false on failure.
+	 */
+	function _insert_replace_helper( $table, $data, $format = NULL, $type = 'INSERT' )
+	{
+		$this->insert_id = 0;
+
+		if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ) ) ) {
+			return FALSE;
+		}
+
+		$data = $this->process_fields( $table, $data, $format );
+
+		if ( FALSE === $data ) {
+			return FALSE;
+		}
+
+		$formats = $values = array();
+
+		foreach ( $data as $value ) {
+			if ( is_null( $value['value'] ) ) {
+				$formats[] = 'NULL';
+				continue;
+			}
+
+			$formats[] = $value['format'];
+			$values[]  = $value['value'];
+		}
+
+		$fields  = '`' . implode( '`, `', array_keys( $data ) ) . '`';
+		$formats = implode( ', ', $formats );
+		$sql = "$type INTO `$table` ( $fields ) VALUES ( $formats )";
+		$this->check_current_query = FALSE;
+		return $this->query( $this->prepare( $sql, $values ) );
+	}
 
 	/**
 	 * Delete a row in the table.

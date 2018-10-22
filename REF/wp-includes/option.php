@@ -737,7 +737,7 @@ function add_network_option( $network_id, $option, $value )
 				'meta_key'   => $option,
 				'meta_value' => $serialized_value
 			) );
-// @NOW 016 -> wp-includes/wp-db.php
+// @NOW 016
 	}
 }
 
