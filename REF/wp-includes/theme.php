@@ -40,7 +40,18 @@ function get_stylesheet_directory_uri()
 {
 	$stylesheet = str_replace( '%2F', '/', rawurlencode( get_stylesheet() ) );
 	$theme_root_uri = get_theme_root_uri( $stylesheet );
-// @NOW 010
+	$stylesheet_dir_uri = "$theme_root_uri/$stylesheet";
+
+	/**
+	 * Filters the stylesheet directory URI.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $stylesheet_dir_uri Stylesheet directory URI.
+	 * @param string $stylesheet         Name of the activated theme's directory.
+	 * @param string $theme_root_uri     Themes root URI.
+	 */
+	return apply_filters( 'stylesheet_directory_uri', $stylesheet_dir_uri, $stylesheet, $theme_root_uri );
 }
 
 /**
@@ -56,7 +67,7 @@ function get_stylesheet_directory_uri()
 function get_stylesheet_uri()
 {
 	$stylesheet_dir_uri = get_stylesheet_directory_uri();
-// @NOW 009 -> wp-includes/theme.php
+// @NOW 009
 }
 
 /**

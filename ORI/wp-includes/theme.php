@@ -162,29 +162,7 @@ function get_stylesheet_directory() {
 	return apply_filters( 'stylesheet_directory', $stylesheet_dir, $stylesheet, $theme_root );
 }
 
-/**
- * Retrieve stylesheet directory URI.
- *
- * @since 1.5.0
- *
- * @return string
- */
-function get_stylesheet_directory_uri() {
-	$stylesheet = str_replace( '%2F', '/', rawurlencode( get_stylesheet() ) );
-	$theme_root_uri = get_theme_root_uri( $stylesheet );
-	$stylesheet_dir_uri = "$theme_root_uri/$stylesheet";
-
-	/**
-	 * Filters the stylesheet directory URI.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $stylesheet_dir_uri Stylesheet directory URI.
-	 * @param string $stylesheet         Name of the activated theme's directory.
-	 * @param string $theme_root_uri     Themes root URI.
-	 */
-	return apply_filters( 'stylesheet_directory_uri', $stylesheet_dir_uri, $stylesheet, $theme_root_uri );
-}
+// refactored. function get_stylesheet_directory_uri() {}
 
 /**
  * Retrieves the URI of current theme stylesheet.
