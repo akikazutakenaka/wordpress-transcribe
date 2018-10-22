@@ -339,6 +339,8 @@ function nocache_headers()
 	}
 }
 
+// @NOW 013
+
 /**
  * Kill WordPress execution and display HTML message with error message.
  *

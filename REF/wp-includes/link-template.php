@@ -281,7 +281,28 @@ function content_url( $path = '' )
 	return apply_filters( 'content_url', $url, $path );
 }
 
-// @NOW 012
+/**
+ * Retrieves a URL within the plugins or mu-plugins directory.
+ *
+ * Defaults to the plugins directory URL if no arguments are supplied.
+ *
+ * @since 2.6.0
+ *
+ * @param  string $path   Optional.
+ *                        Extra path appended to the end of the URL, including the relative directory if $plugin is supplied.
+ *                        Default empty.
+ * @param  string $plugin Optional.
+ *                        A full path to a file inside a plugin or mu-plugin.
+ *                        The URL will be relative to its directory.
+ *                        Default empty.
+ *                        Typically this is done by passing `__FILE__` as the argument.
+ * @return string Plugins URL link with optional paths appended.
+ */
+function plugins_url( $path = '', $plugin = '' )
+{
+	$path = wp_normalize_path( $path );
+// @NOW 012 -> wp-includes/functions.php
+}
 
 /**
  * Sets the scheme for a URL.
