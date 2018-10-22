@@ -339,7 +339,28 @@ function nocache_headers()
 	}
 }
 
-// @NOW 013
+/**
+ * Normalize a filesystem path.
+ *
+ * On windows systems, replaces backslashes with forward slashes and forces upper-case drive letters.
+ * Allows for two leading slashes for Windows network shares, but ensures that all other duplicate slashes are reduced to a single.
+ *
+ * @since 3.9.0
+ * @since 4.4.0 Ensures upper-case drive letters on Windows systems.
+ * @since 4.5.0 Allows for Windows network shares.
+ * @since 4.9.7 Allows for PHP file wrappers.
+ *
+ * @param  string $path Path to normalize.
+ * @return string Normalized path.
+ */
+function wp_normalize_path( $path )
+{
+	$wrapper = '';
+
+	if ( wp_is_stream( $path ) ) {
+// @NOW 013 -> wp-includes/functions.php
+	}
+}
 
 /**
  * Kill WordPress execution and display HTML message with error message.
@@ -864,6 +885,8 @@ function _get_non_cached_ids( $object_ids, $cache_key )
 
 	return $clean;
 }
+
+// @NOW 014
 
 /**
  * Set the mbstring internal encoding to a binary safe encoding when func_overload is enabled.
