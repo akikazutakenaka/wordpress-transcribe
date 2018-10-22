@@ -979,7 +979,7 @@ function update_network_option( $network_id, $option, $value )
 				'site_id'  => $network_id,
 				'meta_key' => $option
 			) );
-// @NOW 016 -> wp-includes/wp-db.php
+// @NOW 016
 	}
 }
 
