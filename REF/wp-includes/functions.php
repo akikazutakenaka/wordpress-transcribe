@@ -358,8 +358,22 @@ function wp_normalize_path( $path )
 	$wrapper = '';
 
 	if ( wp_is_stream( $path ) ) {
-// @NOW 013
+		list( $wrapper, $path ) = explode( '://', $path, 2 );
+		$wrapper .= '://';
 	}
+
+	// Standardise all paths to use /
+	$path = str_replace( '\\', '/', $path );
+
+	// Replace multiple slashes down to a singular, allowing for network shares having two slashes.
+	$path = preg_replace( '|(?<=.)/+|', '/', $path );
+
+	// Windows paths should uppercase the drive letter
+	if ( ':' === substr( $path, 1, 1 ) ) {
+		$path = ucfirst( $path );
+	}
+
+	return $wrapper . $path;
 }
 
 /**

@@ -301,7 +301,7 @@ function content_url( $path = '' )
 function plugins_url( $path = '', $plugin = '' )
 {
 	$path = wp_normalize_path( $path );
-// @NOW 012 -> wp-includes/functions.php
+// @NOW 012
 }
 
 /**
