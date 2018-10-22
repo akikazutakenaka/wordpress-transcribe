@@ -644,7 +644,7 @@ function wp_kses_bad_protocol( $string, $allowed_protocols )
 	do {
 		$original_string = $string;
 		$string = wp_kses_bad_protocol_once( $string, $allowed_protocols );
-// @NOW 020 -> wp-includes/kses.php
+// @NOW 020
 	}
 }
 
@@ -735,8 +735,23 @@ function wp_kses_bad_protocol_once( $string, $allowed_protocols, $count = 1 )
 	if ( isset( $string2[1] ) && ! preg_match( '%/\?%', $string2[0] ) ) {
 		$string = trim( $string2[1] );
 		$protocol = wp_kses_bad_protocol_once2( $string2[0], $allowed_protocols );
-// @NOW 021
+
+		if ( 'feed:' == $protocol ) {
+			if ( $count > 2 ) {
+				return '';
+			}
+
+			$string = wp_kses_bad_protocol_once( $string, $allowed_protocols, ++$count );
+
+			if ( empty( $string ) ) {
+				return $string;
+			}
+		}
+
+		$string = $protocol . $string;
 	}
+
+	return $string;
 }
 
 /**
