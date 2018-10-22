@@ -41,7 +41,7 @@ function wp_check_php_mysql_version()
 
 	if ( version_compare( $required_php_version, $php_version, '>' ) ) {
 		wp_load_translations_early();
-// @NOW 004 -> wp-includes/load.php
+// @NOW 004
 	}
 }
 
@@ -239,7 +239,6 @@ function wp_load_translations_early()
 	}
 
 	$wp_locale = new WP_Locale();
-// @NOW 005
 }
 
 /**
