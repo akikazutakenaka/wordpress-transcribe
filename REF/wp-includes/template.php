@@ -11,4 +11,7 @@
 
 // Walker_Category_Checklist class
 require_once( ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php' );
-// @NOW 019 -> wp-admin/includes/class-walker-category-checklist.php
+
+// WP_Internal_Pointers class
+require_once( ABSPATH . 'wp-admin/includes/class-wp-internal-pointers.php' );
+// @NOW 019 -> wp-admin/includes/class-wp-internal-pointers.php
