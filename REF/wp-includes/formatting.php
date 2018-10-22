@@ -1402,7 +1402,7 @@ function sanitize_option( $option, $value )
 
 		if ( function_exists( 'add_settings_error' ) ) {
 			add_settings_error( $option, "invalid_{$option}", $error );
-// @NOW 018 -> wp-includes/template.php
+// @NOW 018
 		}
 	}
 }
