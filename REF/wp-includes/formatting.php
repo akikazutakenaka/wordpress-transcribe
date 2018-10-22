@@ -1402,9 +1402,20 @@ function sanitize_option( $option, $value )
 
 		if ( function_exists( 'add_settings_error' ) ) {
 			add_settings_error( $option, "invalid_{$option}", $error );
-// @NOW 018
 		}
 	}
+
+	/**
+	 * Filters an option value following sanitization.
+	 *
+	 * @since 2.3.0
+	 * @since 4.3.0 Added the `$original_value` parameter.
+	 *
+	 * @param string $value          The sanitized option value.
+	 * @param string $option         The option name.
+	 * @param string $original_value The original value passed to the function.
+	 */
+	return apply_filters( "sanitize_option_{$option}", $value, $option, $original_value );
 }
 
 /**

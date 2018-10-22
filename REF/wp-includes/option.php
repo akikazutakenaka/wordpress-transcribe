@@ -294,7 +294,7 @@ function add_option( $option, $value = '', $deprecated = '', $autoload = 'yes' )
 	}
 
 	$value = sanitize_option( $option, $value );
-// @NOW 017 -> wp-includes/formatting.php
+// @NOW 017
 }
 
 /**
