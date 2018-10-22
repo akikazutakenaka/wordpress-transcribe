@@ -79,7 +79,7 @@ function get_theme_roots()
 
 	if ( FALSE === $theme_roots ) {
 		search_theme_directories( TRUE ); // Regenerate the transient.
-// @NOW 013 -> wp-includes/theme.php
+// @NOW 013
 	}
 }
 
@@ -237,8 +237,9 @@ function search_theme_directories( $force = FALSE )
 
 	if ( $theme_roots != get_site_transient( 'theme_roots' ) ) {
 		set_site_transient( 'theme_roots', $theme_roots, $cache_expiration );
-// @NOW 014
 	}
+
+	return $found_themes;
 }
 
 /**
