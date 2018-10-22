@@ -239,7 +239,7 @@ function wp_load_translations_early()
 	}
 
 	$wp_locale = new WP_Locale();
-// @NOW 005 -> wp-includes/class-wp-locale.php
+// @NOW 005
 }
 
 /**

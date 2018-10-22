@@ -258,7 +258,27 @@ class WP_Locale
 		echo '<div class="error"><p>' . sprintf( __( 'The %s directory of the develop repository must be used for RTL.' ), '<code>build</code>' ) . '</p></div>';
 	}
 
-// @NOW 006
+	/**
+	 * Global variables are deprecated.
+	 *
+	 * For backward compatibility only.
+	 *
+	 * @deprecated For backward compatibility only.
+	 * @global     array $weekday
+	 * @global     array $weekday_initial
+	 * @global     array $weekday_abbrev
+	 * @global     array $month
+	 * @global     array $month_abbrev
+	 * @since      2.1.0
+	 */
+	public function register_globals()
+	{
+		$GLOBALS['weekday']         = $this->weekday;
+		$GLOBALS['weekday_initial'] = $this->weekday_initial;
+		$GLOBALS['weekday_abbrev']  = $this->weekday_abbrev;
+		$GLOBALS['month']           = $this->month;
+		$GLOBALS['month_abbrev']    = $this->month_abbrev;
+	}
 
 	/**
 	 * Checks if current locale is RTL.
