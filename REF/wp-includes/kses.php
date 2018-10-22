@@ -892,7 +892,7 @@ function valid_unicode( $i )
 function wp_kses_decode_entities( $string )
 {
 	$string = preg_replace_callback( '/&#([0-9]+);/', '_wp_kses_decode_entities_chr', $string );
-// @NOW 023
+	$string = preg_replace_callback( '/&#[Xx]([0-9A-Fa-f]+);/', '_wp_kses_decode_entities_chr_hexdec', $string );
 }
 
 /**
@@ -907,6 +907,8 @@ function _wp_kses_decode_entities_chr( $match )
 {
 	return chr( $match[1] );
 }
+
+// @NOW 023
 
 /**
  * Sanitize content with allowed HTML Kses rules.

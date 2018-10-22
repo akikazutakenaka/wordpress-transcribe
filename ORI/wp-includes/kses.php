@@ -665,27 +665,6 @@ function wp_kses_bad_protocol_once2( $string, $allowed_protocols ) {
 
 // refactored. function wp_kses_normalize_entities($string) {}
 // :
-// refactored. function valid_unicode($i) {}
-
-/**
- * Convert all entities to their character counterparts.
- *
- * This function decodes numeric HTML entities (`&#65;` and `&#x41;`).
- * It doesn't do anything with other entities like &auml;, but we don't
- * need them in the URL protocol whitelisting system anyway.
- *
- * @since 1.0.0
- *
- * @param string $string Content to change entities
- * @return string Content after decoded entities
- */
-function wp_kses_decode_entities($string) {
-	$string = preg_replace_callback('/&#([0-9]+);/', '_wp_kses_decode_entities_chr', $string);
-	$string = preg_replace_callback('/&#[Xx]([0-9A-Fa-f]+);/', '_wp_kses_decode_entities_chr_hexdec', $string);
-
-	return $string;
-}
-
 // refactored. function _wp_kses_decode_entities_chr( $match ) {}
 
 /**
