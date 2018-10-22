@@ -739,7 +739,23 @@ function wp_kses_bad_protocol_once( $string, $allowed_protocols, $count = 1 )
 	}
 }
 
-// @NOW 022
+/**
+* Callback for wp_kses_bad_protocol_once() regular expression.
+*
+* This function processes URL protocols, checks to see if they're in the whitelist or not, and returns different data depending on the answer.
+*
+* @access private
+* @since  1.0.0
+*
+* @param  string $string            URI scheme to check against the whitelist.
+* @param  string $allowed_protocols Allowed protocols.
+* @return string Sanitized content.
+*/
+function wp_kses_bad_protocol_once2( $string, $allowed_protocols )
+{
+	$string2 = wp_kses_decode_entities( $string );
+// @NOW 022 -> wp-includes/kses.php
+}
 
 /**
  * Converts and fixes HTML entities.
@@ -861,6 +877,8 @@ function valid_unicode( $i )
 	    || ( $i >= 0xe000 && $i <= 0xfffd )
 	    || ( $i >= 0x10000 && $i <= 0x10ffff );
 }
+
+// @NOW 023
 
 /**
  * Sanitize content with allowed HTML Kses rules.
