@@ -1058,8 +1058,22 @@ function esc_url( $url, $protocols = NULL, $_context = 'display' )
 		}
 
 		$good_protocol_url = wp_kses_bad_protocol( $url, $protocols );
-// @NOW 019
+
+		if ( strtolower( $good_protocol_url ) != strtolower( $url ) ) {
+			return '';
+		}
 	}
+
+	/**
+	 * Filters a string cleaned and escaped for output as a URL.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $good_protocol_url The cleaned URL to be returned.
+	 * @param string $original_url      The URL prior to cleaning.
+	 * @param string $_context          If 'display', replace ampersands and single quotes only.
+	 */
+	return apply_filters( 'clean_url', $good_protocol_url, $original_url, $_context );
 }
 
 /**
@@ -1237,7 +1251,7 @@ function sanitize_option( $option, $value )
 			$value = explode( "\n", $value );
 			$value = array_filter( array_map( 'trim', $value ) );
 			$value = array_filter( array_map( 'esc_url_raw', $value ) );
-// @NOW 018 -> wp-includes/formatting.php
+// @NOW 018
 	}
 }
 
