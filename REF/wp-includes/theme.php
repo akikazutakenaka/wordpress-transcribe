@@ -265,8 +265,20 @@ function get_theme_root_uri( $stylesheet_or_template = FALSE, $theme_root = FALS
 
 	if ( $stylesheet_or_template && ! $theme_root ) {
 		$theme_root = get_raw_theme_root( $stylesheet_or_template );
-// @NOW 011
 	}
+
+	$theme_root_uri = $stylesheet_or_template && $theme_root
+		? ( in_array( $theme_root, ( array ) $wp_theme_directories )
+			? ( 0 === strpos( $theme_root, WP_CONTENT_DIR )
+				? content_url( str_replace( WP_CONTENT_DIR, '', $theme_root ) )
+				: ( 0 === strpos( $theme_root, ABSPATH )
+					? site_url( str_replace( ABSPATH, '', $theme_root ) )
+					: ( 0 === strpos( $theme_root, WP_PLUGIN_DIR ) || 0 === strpos( $theme_root, WPMU_PLUGIN_DIR )
+						? plugins_url( basename( $theme_root ), $theme_root )
+						: $theme_root ) ) )
+			: content_url( $theme_root ) )
+		: content_url( 'themes' );
+// @NOW 011 -> wp-includes/link-template.php
 }
 
 /**

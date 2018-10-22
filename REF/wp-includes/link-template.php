@@ -252,6 +252,38 @@ function get_site_url( $blog_id = NULL, $path = '', $scheme = NULL )
 }
 
 /**
+ * Retrieves the URL to the content directory.
+ *
+ * @since 2.6.0
+ *
+ * @param  string $path Optional.
+ *                      Path relative to the content URL.
+ *                      Default empty.
+ * @return string Content URL link with optional path appended.
+ */
+function content_url( $path = '' )
+{
+	$url = set_url_scheme( WP_CONTENT_URL );
+
+	if ( $path && is_string( $path ) ) {
+		$url .= '/' . ltrim( $path, '/' );
+	}
+
+	/**
+	 * Filters the URL to the content directory.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $url  The complete URL to the content directory including scheme and path.
+	 * @param string $path Path relative to the URL to the content directory.
+	 *                     Blank string if no path is specified.
+	 */
+	return apply_filters( 'content_url', $url, $path );
+}
+
+// @NOW 012
+
+/**
  * Sets the scheme for a URL.
  *
  * @since 3.4.0
