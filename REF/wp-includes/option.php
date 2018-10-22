@@ -737,8 +737,54 @@ function add_network_option( $network_id, $option, $value )
 				'meta_key'   => $option,
 				'meta_value' => $serialized_value
 			) );
-// @NOW 016
+
+		if ( ! $result ) {
+			return FALSE;
+		}
+
+		wp_cache_set( $cache_key, $value, 'site-options' );
+
+		// This option exists now.
+		$notoptions = wp_cache_get( $notoptions_key, 'site-options' ); // Yes, again... we need it to be fresh.
+
+		if ( is_array( $notoptions ) && isset( $notoptions[ $option ] ) ) {
+			unset( $notoptions[ $option ] );
+			wp_cache_set( $notoptions_key, $notoptions, 'site-options' );
+		}
 	}
+
+	if ( $result ) {
+		/**
+		 * Fires after a specific network option has been successfully added.
+		 *
+		 * The dynamic portion of the hook name, `$option`, refers to the option name.
+		 *
+		 * @since 2.9.0 As "add_site_option_{$key}"
+		 * @since 3.0.0
+		 * @since 4.7.0 The `$network_id` parameter was added.
+		 *
+		 * @param string $option     Name of the network option.
+		 * @param mixed  $value      Value of the network option.
+		 * @param int    $network_id ID of the network.
+		 */
+		do_action( "add_site_option_{$option}", $option, $value, $network_id );
+
+		/**
+		 * Fires after a network option has been successfully added.
+		 *
+		 * @since 3.0.0
+		 * @since 4.7.0 The `$network_id` parameter was added.
+		 *
+		 * @param string $option     Name of the network option.
+		 * @param mixed  $value      Value of the network option.
+		 * @param int    $network_id ID of the network.
+		 */
+		do_action( 'add_site_option', $option, $value, $network_id );
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /**
@@ -971,7 +1017,7 @@ function set_site_transient( $transient, $value, $expiration = 0 )
 		if ( FALSE === get_site_option( $option ) ) {
 			if ( $expiration ) {
 				add_site_option( $transient_timeout, time() + $expiration );
-// @NOW 015 -> wp-includes/option.php
+// @NOW 015
 			}
 		}
 	}
