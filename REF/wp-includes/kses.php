@@ -892,10 +892,21 @@ function valid_unicode( $i )
 function wp_kses_decode_entities( $string )
 {
 	$string = preg_replace_callback( '/&#([0-9]+);/', '_wp_kses_decode_entities_chr', $string );
-// @NOW 023 -> wp-includes/kses.php
+// @NOW 023
 }
 
-// @NOW 024
+/**
+ * Regex callback for wp_kses_decode_entities()
+ *
+ * @since 2.9.0
+ *
+ * @param  array $match preg match.
+ * @return string
+ */
+function _wp_kses_decode_entities_chr( $match )
+{
+	return chr( $match[1] );
+}
 
 /**
  * Sanitize content with allowed HTML Kses rules.

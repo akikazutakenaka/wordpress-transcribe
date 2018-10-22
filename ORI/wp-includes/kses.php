@@ -686,17 +686,7 @@ function wp_kses_decode_entities($string) {
 	return $string;
 }
 
-/**
- * Regex callback for wp_kses_decode_entities()
- *
- * @since 2.9.0
- *
- * @param array $match preg match
- * @return string
- */
-function _wp_kses_decode_entities_chr( $match ) {
-	return chr( $match[1] );
-}
+// refactored. function _wp_kses_decode_entities_chr( $match ) {}
 
 /**
  * Regex callback for wp_kses_decode_entities()
