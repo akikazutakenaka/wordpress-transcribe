@@ -16,19 +16,6 @@
 class WP_Locale {
 	// refactored. public $weekday;
 	// :
-	// refactored. public $number_format;
-
-	/**
-	 * Constructor which calls helper methods to set up object variables.
-	 *
-	 * @since 2.1.0
-	 */
-	public function __construct() {
-		$this->init();
-		$this->register_globals();
-	}
-
-	// refactored. public function init() {}
 	// refactored. public function rtl_src_admin_notice() {}
 
 	/**

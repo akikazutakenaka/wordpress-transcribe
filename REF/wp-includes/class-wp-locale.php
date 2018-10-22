@@ -121,7 +121,7 @@ class WP_Locale
 	public function __construct()
 	{
 		$this->init();
-// @NOW 006
+		$this->register_globals();
 	}
 
 	/**
@@ -257,6 +257,8 @@ class WP_Locale
 	{
 		echo '<div class="error"><p>' . sprintf( __( 'The %s directory of the develop repository must be used for RTL.' ), '<code>build</code>' ) . '</p></div>';
 	}
+
+// @NOW 006
 
 	/**
 	 * Checks if current locale is RTL.
