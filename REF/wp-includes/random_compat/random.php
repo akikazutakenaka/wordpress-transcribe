@@ -54,7 +54,9 @@ if ( PHP_VERSION_ID < 70000 ) {
 			// See random_bytes_libsodium.php
 			if ( PHP_VERSION_ID >= 50300 && function_exists( '\\Sodium\\randombytes_buf' ) ) {
 				require_once $RandomCompatDIR . '/random_bytes_libsodium.php';
-// @NOW 005 -> wp-includes/random_compat/random_bytes_libsodium.php
+			} elseif ( method_exists( 'Sodium', 'randombytes_buf' ) ) {
+				require_once $RandomCompatDIR . '/random_bytes_libsodium_legacy.php';
+// @NOW 005 -> wp-includes/random_compat/random_bytes_libsodium_legacy.php
 			}
 		}
 	}
