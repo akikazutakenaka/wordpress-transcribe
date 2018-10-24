@@ -1084,22 +1084,7 @@ function get_registered_metadata( $object_type, $object_id, $meta_key = '' ) {
 	return array_intersect_key( $data, $meta_keys );
 }
 
-/**
- * Filter out `register_meta()` args based on a whitelist.
- * `register_meta()` args may change over time, so requiring the whitelist
- * to be explicitly turned off is a warranty seal of sorts.
- *
- * @access private
- * @since 4.6.0
- *
- * @param array $args         Arguments from `register_meta()`.
- * @param array $default_args Default arguments for `register_meta()`.
- *
- * @return array Filtered arguments.
- */
-function _wp_register_meta_args_whitelist( $args, $default_args ) {
-	return array_intersect_key( $args, $default_args );
-}
+// refactored. function _wp_register_meta_args_whitelist( $args, $default_args ) {}
 
 /**
  * Returns the object subtype for a given object ID of a specific type.

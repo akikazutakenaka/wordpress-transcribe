@@ -91,4 +91,8 @@ foreach ( array( 'pre_post_type', 'pre_post_status', 'pre_post_comment_status', 
 
 // Mime types
 add_filter( 'pre_post_mime_type', 'sanitize_mime_type' );
+add_filter( 'post_mime_type',     'sanitize_mime_type' );
+
+// Meta
+add_filter( 'register_meta_args', '_wp_register_meta_args_whitelist', 10, 2 );
 // @NOW 004
