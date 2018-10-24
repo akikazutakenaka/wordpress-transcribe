@@ -352,11 +352,7 @@ function hash_equals( $a, $b ) {
 }
 endif;
 
-// JSON_PRETTY_PRINT was introduced in PHP 5.4
-// Defined here to prevent a notice when using it with wp_json_encode()
-if ( ! defined( 'JSON_PRETTY_PRINT' ) ) {
-	define( 'JSON_PRETTY_PRINT', 128 );
-}
+// refactored. define( 'JSON_PRETTY_PRINT', 128 );
 
 if ( ! function_exists( 'json_last_error_msg' ) ) :
 	/**
