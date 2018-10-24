@@ -1240,56 +1240,7 @@ function convert_chars( $content, $deprecated = '' ) {
 	return $content;
 }
 
-/**
- * Converts invalid Unicode references range to valid range.
- *
- * @since 4.3.0
- *
- * @param string $content String with entities that need converting.
- * @return string Converted string.
- */
-function convert_invalid_entities( $content ) {
-	$wp_htmltranswinuni = array(
-		'&#128;' => '&#8364;', // the Euro sign
-		'&#129;' => '',
-		'&#130;' => '&#8218;', // these are Windows CP1252 specific characters
-		'&#131;' => '&#402;',  // they would look weird on non-Windows browsers
-		'&#132;' => '&#8222;',
-		'&#133;' => '&#8230;',
-		'&#134;' => '&#8224;',
-		'&#135;' => '&#8225;',
-		'&#136;' => '&#710;',
-		'&#137;' => '&#8240;',
-		'&#138;' => '&#352;',
-		'&#139;' => '&#8249;',
-		'&#140;' => '&#338;',
-		'&#141;' => '',
-		'&#142;' => '&#381;',
-		'&#143;' => '',
-		'&#144;' => '',
-		'&#145;' => '&#8216;',
-		'&#146;' => '&#8217;',
-		'&#147;' => '&#8220;',
-		'&#148;' => '&#8221;',
-		'&#149;' => '&#8226;',
-		'&#150;' => '&#8211;',
-		'&#151;' => '&#8212;',
-		'&#152;' => '&#732;',
-		'&#153;' => '&#8482;',
-		'&#154;' => '&#353;',
-		'&#155;' => '&#8250;',
-		'&#156;' => '&#339;',
-		'&#157;' => '',
-		'&#158;' => '&#382;',
-		'&#159;' => '&#376;'
-	);
-
-	if ( strpos( $content, '&#1' ) !== false ) {
-		$content = strtr( $content, $wp_htmltranswinuni );
-	}
-
-	return $content;
-}
+// refactored. function convert_invalid_entities( $content ) {}
 
 /**
  * Balances tags if forced to, or if the 'use_balanceTags' option is set to true.
