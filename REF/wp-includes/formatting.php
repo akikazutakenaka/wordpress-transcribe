@@ -1502,6 +1502,8 @@ function wp_strip_all_tags( $string, $remove_breaks = FALSE )
 	return trim( $string );
 }
 
+// @NOW 005
+
 /**
  * Convert emoji characters to their equivalent HTML entity.
  *
