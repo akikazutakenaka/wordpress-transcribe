@@ -103,4 +103,6 @@ wp_set_lang_dir();
 // Load early WordPress files.
 require( ABSPATH . WPINC . '/compat.php' );
 require( ABSPATH . WPINC . '/class-wp-list-util.php' );
+require( ABSPATH . WPINC . '/functions.php' );
+require( ABSPATH . WPINC . '/class-wp-matchesmapregex.php' );
 // @NOW 003
