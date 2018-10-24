@@ -102,4 +102,4 @@ wp_set_lang_dir();
 
 // Load early WordPress files.
 require( ABSPATH . WPINC . '/compat.php' );
-// @NOW 003 -> wp-includes/compat.php
+// @NOW 003
