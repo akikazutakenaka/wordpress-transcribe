@@ -17,21 +17,4 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-if ( ! defined( 'PHP_VERSION_ID' ) ) {
-	// This constant was introduced in PHP 5.2.7
-	$RandomCompatversion = explode( '.', PHP_VERSION );
-	define( 'PHP_VERSION_ID', $RandomCompatversion[0] * 10000 + $RandomCompatversion[1] * 100 + $RandomCompatversion[2] );
-	$RandomCompatversion = NULL;
-}
-
-if ( PHP_VERSION_ID < 70000 ) {
-	if ( ! defined( 'RANDOM_COMPAT_READ_BUFFER' ) ) {
-		define( 'RANDOM_COMPAT_READ_BUFFER', 8 );
-	}
-
-	$RandomCompatDIR = dirname( __FILE__ );
-	require_once $RandomCompatDIR . '/byte_safe_strings.php';
-	require_once $RandomCompatDIR . '/cast_to_int.php';
-	require_once $RandomCompatDIR . '/error_polyfill.php';
-// @NOW 005 -> wp-includes/random_compat/error_polyfill.php
-}
+// @NOW 006
