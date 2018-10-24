@@ -26,9 +26,7 @@
  * SOFTWARE.
  */
 
-if (!defined('RANDOM_COMPAT_READ_BUFFER')) {
-    define('RANDOM_COMPAT_READ_BUFFER', 8);
-}
+// refactored. define('RANDOM_COMPAT_READ_BUFFER', 8);
 
 if ( ! is_callable( 'random_bytes' ) ):
 /**

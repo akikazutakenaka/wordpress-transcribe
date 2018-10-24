@@ -56,7 +56,31 @@ if ( PHP_VERSION_ID < 70000 ) {
 				require_once $RandomCompatDIR . '/random_bytes_libsodium.php';
 			} elseif ( method_exists( 'Sodium', 'randombytes_buf' ) ) {
 				require_once $RandomCompatDIR . '/random_bytes_libsodium_legacy.php';
-// @NOW 005 -> wp-includes/random_compat/random_bytes_libsodium_legacy.php
+			}
+		}
+
+		// Reading directly from /dev/urandom:
+		if ( DIRECTORY_SEPARATOR === '/' ) {
+			// DIRECTORY_SEPARATOR === '/' on Unix-like OSes -- This is a fast way to exclude Windows.
+			$RandomCompatUrandom = TRUE;
+			$RandomCompat_basedir = ini_get( 'open_basedir' );
+
+			if ( ! empty( $RandomCompat_basedir ) ) {
+				$RandomCompat_open_basedir = explode( PATH_SEPARATOR, strtolower( $RandomCompat_basedir ) );
+				$RandomCompatUrandom = in_array( '/dev', $RandomCompat_open_basedir );
+				$RandomCompat_open_basedir = NULL;
+			}
+
+			if ( ! function_exists( 'random_bytes' ) && $RandomCompatUrandom && @ is_readable( '/dev/urandom' ) ) {
+				/**
+				 * Error suppression on is_readable() in case of an open_basedir or safe_mode failure.
+				 * All we care about is whether or not we can read it at this point.
+				 * If the PHP environment is going to panic over trying to see if the file can be read in the first place, that is not helpful to us here.
+				 */
+
+				// See random_bytes_dev_urandom.php
+				require_once $RandomCompatDIR . '/random_bytes_dev_urandom.php';
+// @NOW 005
 			}
 		}
 	}
