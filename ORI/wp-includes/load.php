@@ -35,28 +35,8 @@ function timer_stop( $display = 0, $precision = 3 ) {
 }
 
 // refactored. function wp_debug_mode() {}
-// refactored. function wp_set_lang_dir() {}
-
-/**
- * Load the database class file and instantiate the `$wpdb` global.
- *
- * @since 2.5.0
- *
- * @global wpdb $wpdb The WordPress database class.
- */
-function require_wp_db() {
-	global $wpdb;
-
-	require_once( ABSPATH . WPINC . '/wp-db.php' );
-	if ( file_exists( WP_CONTENT_DIR . '/db.php' ) )
-		require_once( WP_CONTENT_DIR . '/db.php' );
-
-	if ( isset( $wpdb ) ) {
-		return;
-	}
-
-	$wpdb = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
-}
+// :
+// refactored. function require_wp_db() {}
 
 /**
  * Set the database table prefix and the format specifiers for database

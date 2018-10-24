@@ -369,6 +369,28 @@ function wp_set_lang_dir()
 }
 
 /**
+ * Load the database class file and instantiate the `$wpdb` global.
+ *
+ * @since  2.5.0
+ * @global wpdb $wpdb The WordPress database class.
+ */
+function require_wp_db()
+{
+	global $wpdb;
+	require_once( ABSPATH . WPINC . '/wp-db.php' );
+
+	if ( file_exists( WP_CONTENT_DIR . '/db.php' ) ) {
+		require_once( WP_CONTENT_DIR . '/db.php' );
+	}
+
+	if ( isset( $wpdb ) ) {
+		return;
+	}
+
+	$wpdb = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+}
+
+/**
  * Toggle `$_wp_using_ext_object_cache` on and off without directly touching global.
  *
  * @since  3.7.0

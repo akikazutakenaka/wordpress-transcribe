@@ -106,4 +106,10 @@ require( ABSPATH . WPINC . '/class-wp-list-util.php' );
 require( ABSPATH . WPINC . '/functions.php' );
 require( ABSPATH . WPINC . '/class-wp-matchesmapregex.php' );
 require( ABSPATH . WPINC . '/class-wp.php' );
+require( ABSPATH . WPINC . '/class-wp-error.php' );
+require( ABSPATH . WPINC . '/pomo/mo.php' );
+
+// Include the wpdb class and, if present, a db.php database drop-in.
+global $wpdb;
+require_wp_db();
 // @NOW 003
