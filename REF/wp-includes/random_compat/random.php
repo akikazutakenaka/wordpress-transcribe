@@ -31,5 +31,6 @@ if ( PHP_VERSION_ID < 70000 ) {
 
 	$RandomCompatDIR = dirname( __FILE__ );
 	require_once $RandomCompatDIR . '/byte_safe_strings.php';
-// @NOW 005 -> wp-includes/random_compat/byte_safe_strings.php
+	require_once $RandomCompatDIR . '/cast_to_int.php';
+// @NOW 005 -> wp-includes/random_compat/cast_to_int.php
 }
