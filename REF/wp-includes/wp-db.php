@@ -836,6 +836,8 @@ class wpdb
 		}
 	}
 
+// @NOW 005
+
 	/**
 	 * Sets blog id.
 	 *

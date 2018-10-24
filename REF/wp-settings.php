@@ -112,4 +112,8 @@ require( ABSPATH . WPINC . '/pomo/mo.php' );
 // Include the wpdb class and, if present, a db.php database drop-in.
 global $wpdb;
 require_wp_db();
-// @NOW 003
+
+// Set the database table prefix and the format specifiers for database table columns.
+$GLOBALS['table_prefix'] = $table_prefix;
+wp_set_wpdb_vars();
+// @NOW 003 -> wp-includes/load.php
