@@ -96,7 +96,22 @@ if ( PHP_VERSION_ID < 70000 ) {
 			if ( DIRECTORY_SEPARATOR !== '/' || PHP_VERSION_ID <= 50609 || PHP_VERSION_ID >= 50613 ) {
 				// See random_bytes_mcrypt.php
 				require_once $RandomCompatDIR . '/random_bytes_mcrypt.php';
+			}
+		}
+
+		if ( ! function_exists( 'random_bytes' ) && extension_loaded( 'com_dotnet' ) && class_exists( 'COM' ) ) {
+			$RandomCompat_disabled_classes = preg_split( '#\s*,\s*#', strtolower( ini_get( 'disable_classes' ) ) );
+
+			if ( ! in_array( 'com', $RandomCompat_disabled_classes ) ) {
+				try {
+					$RandomCompatCOMtest = new COM( 'CAPICOM.Utilities.1' );
+
+					if ( method_exists( $RandomCompatCOMtest, 'GetRandom' ) ) {
+						// See random_bytes_com_dotnet.php
+						require_once $RandomCompatDIR . '/random_bytes_com_dotnet.php';
 // @NOW 005
+					}
+				}
 			}
 		}
 	}
