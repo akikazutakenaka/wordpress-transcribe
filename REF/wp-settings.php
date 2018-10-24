@@ -66,4 +66,7 @@ wp_maintenance();
 
 // Start loading timer.
 timer_start();
+
+// Check if we're in WP_DEBUG mode.
+wp_debug_mode();
 // @NOW 003
