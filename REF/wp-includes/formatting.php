@@ -1554,7 +1554,16 @@ function wp_strip_all_tags( $string, $remove_breaks = FALSE )
 function sanitize_text_field( $str )
 {
 	$filtered = _sanitize_text_field( $str, FALSE );
-// @NOW 005
+
+	/**
+	 * Filters a sanitized textarea field string.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param string $filtered The sanitized string.
+	 * @param string $str      The string prior to being sanitized.
+	 */
+	return apply_filters( 'sanitize_text_field', $filtered, $str );
 }
 
 /**

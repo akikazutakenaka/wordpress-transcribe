@@ -3092,38 +3092,7 @@ function normalize_whitespace( $str ) {
 }
 
 // refactored. function wp_strip_all_tags($string, $remove_breaks = false) {}
-
-/**
- * Sanitizes a string from user input or from the database.
- *
- * - Checks for invalid UTF-8,
- * - Converts single `<` characters to entities
- * - Strips all tags
- * - Removes line breaks, tabs, and extra whitespace
- * - Strips octets
- *
- * @since 2.9.0
- *
- * @see sanitize_textarea_field()
- * @see wp_check_invalid_utf8()
- * @see wp_strip_all_tags()
- *
- * @param string $str String to sanitize.
- * @return string Sanitized string.
- */
-function sanitize_text_field( $str ) {
-	$filtered = _sanitize_text_fields( $str, false );
-
-	/**
-	 * Filters a sanitized text field string.
-	 *
-	 * @since 2.9.0
-	 *
-	 * @param string $filtered The sanitized string.
-	 * @param string $str      The string prior to being sanitized.
-	 */
-	return apply_filters( 'sanitize_text_field', $filtered, $str );
-}
+// refactored. function sanitize_text_field( $str ) {}
 
 /**
  * Sanitizes a multiline string from user input or from the database.
