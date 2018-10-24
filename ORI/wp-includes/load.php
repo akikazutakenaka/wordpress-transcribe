@@ -36,67 +36,7 @@ function timer_stop( $display = 0, $precision = 3 ) {
 
 // refactored. function wp_debug_mode() {}
 // :
-// refactored. function wp_using_ext_object_cache( $using = null ) {}
-
-/**
- * Start the WordPress object cache.
- *
- * If an object-cache.php file exists in the wp-content directory,
- * it uses that drop-in as an external object cache.
- *
- * @since 3.0.0
- * @access private
- *
- * @global array $wp_filter Stores all of the filters.
- */
-function wp_start_object_cache() {
-	global $wp_filter;
-
-	$first_init = false;
- 	if ( ! function_exists( 'wp_cache_init' ) ) {
-		if ( file_exists( WP_CONTENT_DIR . '/object-cache.php' ) ) {
-			require_once ( WP_CONTENT_DIR . '/object-cache.php' );
-			if ( function_exists( 'wp_cache_init' ) ) {
-				wp_using_ext_object_cache( true );
-			}
-
-			// Re-initialize any hooks added manually by object-cache.php
-			if ( $wp_filter ) {
-				$wp_filter = WP_Hook::build_preinitialized_hooks( $wp_filter );
-			}
-		}
-
-		$first_init = true;
-	} elseif ( ! wp_using_ext_object_cache() && file_exists( WP_CONTENT_DIR . '/object-cache.php' ) ) {
-		/*
-		 * Sometimes advanced-cache.php can load object-cache.php before
-		 * it is loaded here. This breaks the function_exists check above
-		 * and can result in `$_wp_using_ext_object_cache` being set
-		 * incorrectly. Double check if an external cache exists.
-		 */
-		wp_using_ext_object_cache( true );
-	}
-
-	if ( ! wp_using_ext_object_cache() ) {
-		require_once ( ABSPATH . WPINC . '/cache.php' );
-	}
-
-	/*
-	 * If cache supports reset, reset instead of init if already
-	 * initialized. Reset signals to the cache that global IDs
-	 * have changed and it may need to update keys and cleanup caches.
-	 */
-	if ( ! $first_init && function_exists( 'wp_cache_switch_to_blog' ) ) {
-		wp_cache_switch_to_blog( get_current_blog_id() );
-	} elseif ( function_exists( 'wp_cache_init' ) ) {
-		wp_cache_init();
-	}
-
-	if ( function_exists( 'wp_cache_add_global_groups' ) ) {
-		wp_cache_add_global_groups( array( 'users', 'userlogins', 'usermeta', 'user_meta', 'useremail', 'userslugs', 'site-transient', 'site-options', 'blog-lookup', 'blog-details', 'site-details', 'rss', 'global-posts', 'blog-id-cache', 'networks', 'sites' ) );
-		wp_cache_add_non_persistent_groups( array( 'counts', 'plugins' ) );
-	}
-}
+// refactored. function wp_start_object_cache() {}
 
 /**
  * Redirect to the installer if WordPress is not installed.
