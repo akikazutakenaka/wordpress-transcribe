@@ -126,7 +126,11 @@ if ( PHP_VERSION_ID < 70000 ) {
 		  && extension_loaded( 'openssl' ) ) {
 			// See random_bytes_openssl.php
 			require_once $RandomCompatDIR . '/random_bytes_openssl.php';
-// @NOW 005
 		}
+	}
+
+	if ( ! function_exists( 'random_int' ) ) {
+		require_once $RandomCompatDIR . '/random_int.php';
+// @NOW 005
 	}
 }
