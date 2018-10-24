@@ -81,5 +81,6 @@ foreach ( array( 'user_url', 'link_url', 'link_image', 'link_rss', 'comment_url'
 }
 
 // Slugs
-add_filter( 'pre_term_slug', 'sanitize_title' );
+add_filter( 'pre_term_slug',       'sanitize_title' );
+add_filter( 'wp_insert_post_data', '_wp_customize_changeset_filter_insert_post_data', 10, 2 );
 // @NOW 004
