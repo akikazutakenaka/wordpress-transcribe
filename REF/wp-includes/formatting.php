@@ -1491,7 +1491,22 @@ function wp_pre_kses_less_than( $text )
 	return preg_replace_callback( '%<[^>]*?((?=<)|>|$)%', 'wp_pre_kses_less_than_callback', $text );
 }
 
-// @NOW 007
+/**
+ * Callback function used by preg_replace.
+ *
+ * @since 2.3.0
+ *
+ * @param  array  $matches Populated by matches to preg_replace.
+ * @return string The text returned after esc_html if needed.
+ */
+function wp_pre_kses_less_than_callback( $matches )
+{
+	if ( FALSE === strpos( $matches[0], '>' ) ) {
+		return esc_html( $matches[0] );
+	}
+
+	return $matches[0];
+}
 
 /**
  * Properly strip all HTML tags including script and style.
@@ -1560,7 +1575,7 @@ function _sanitize_text_field( $str, $keep_newlines = FALSE )
 
 	if ( strpos( $filtered, '<' ) !== FALSE ) {
 		$filtered = wp_pre_kses_less_than( $filtered );
-// @NOW 006 -> wp-includes/formatting.php
+// @NOW 006
 	}
 }
 

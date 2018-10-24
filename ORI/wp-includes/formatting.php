@@ -2832,21 +2832,7 @@ function wp_make_link_relative( $link ) {
 
 // refactored. function sanitize_option( $option, $value ) {}
 // :
-// refactored. function wp_pre_kses_less_than( $text ) {}
-
-/**
- * Callback function used by preg_replace.
- *
- * @since 2.3.0
- *
- * @param array $matches Populated by matches to preg_replace.
- * @return string The text returned after esc_html if needed.
- */
-function wp_pre_kses_less_than_callback( $matches ) {
-	if ( false === strpos($matches[0], '>') )
-		return esc_html($matches[0]);
-	return $matches[0];
-}
+// refactored. function wp_pre_kses_less_than_callback( $matches ) {}
 
 /**
  * WordPress implementation of PHP sprintf() with filters.
