@@ -63,4 +63,7 @@ wp_favicon_request();
 
 // Check if we're in maintenance mode.
 wp_maintenance();
+
+// Start loading timer.
+timer_start();
 // @NOW 003

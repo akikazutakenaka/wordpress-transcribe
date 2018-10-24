@@ -235,6 +235,23 @@ function wp_maintenance()
 }
 
 /**
+ * Start the WordPress micro-timer.
+ *
+ * @since  0.71
+ * @access private
+ * @global float $timestart Unix timestamp set at the beginning of the page load.
+ * @see    timer_stop()
+ *
+ * @return bool Always returns true.
+ */
+function timer_start()
+{
+	global $timestart;
+	$timestart = microtime( TRUE );
+	return TRUE;
+}
+
+/**
  * Toggle `$_wp_using_ext_object_cache` on and off without directly touching global.
  *
  * @since  3.7.0

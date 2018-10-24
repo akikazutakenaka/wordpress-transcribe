@@ -7,24 +7,7 @@
 
 // refactored. function wp_get_server_protocol() {}
 // :
-// refactored. function wp_maintenance() {}
-
-/**
- * Start the WordPress micro-timer.
- *
- * @since 0.71
- * @access private
- *
- * @global float $timestart Unix timestamp set at the beginning of the page load.
- * @see timer_stop()
- *
- * @return bool Always returns true.
- */
-function timer_start() {
-	global $timestart;
-	$timestart = microtime( true );
-	return true;
-}
+// refactored. function timer_start() {}
 
 /**
  * Retrieve or display the time from the page start to when function is called.
