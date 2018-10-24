@@ -42,5 +42,44 @@ if ( is_admin() ) {
 	}
 
 	add_filter( 'comment_text', 'wp_kses_post' );
-// @NOW 004
 }
+
+// Email saves
+foreach ( array( 'pre_comment_author_email', 'pre_user_email' ) as $filter ) {
+	add_filter( $filter, 'trim' );
+	add_filter( $filter, 'sanitize_email' );
+	add_filter( $filter, 'wp_filter_kses' );
+}
+
+// Email admin display
+foreach ( array( 'comment_author_email', 'user_email' ) as $filter ) {
+	add_filter( $filter, 'sanitize_email' );
+
+	if ( is_admin() ) {
+		add_filter( $filter, 'wp_kses_data' );
+	}
+}
+
+// Save URL
+foreach ( array( 'pre_comment_author_url', 'pre_user_url', 'pre_link_url', 'pre_link_image', 'pre_link_rss', 'pre_post_guid' ) as $filter ) {
+	add_filter( $filter, 'wp_strip_all_tags' );
+	add_filter( $filter, 'esc_url_raw' );
+	add_filter( $filter, 'wp_filter_kses' );
+}
+
+// Display URL
+foreach ( array( 'user_url', 'link_url', 'link_image', 'link_rss', 'comment_url', 'post_guid' ) as $filter ) {
+	if ( is_admin() ) {
+		add_filter( $filter, 'wp_strip_all_tags' );
+	}
+
+	add_filter( $filter, 'esc_url' );
+
+	if ( is_admin() ) {
+		add_filter( $filter, 'wp_kses_data' );
+	}
+}
+
+// Slugs
+add_filter( 'pre_term_slug', 'sanitize_title' );
+// @NOW 004
