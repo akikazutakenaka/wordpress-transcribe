@@ -1554,7 +1554,7 @@ function wp_strip_all_tags( $string, $remove_breaks = FALSE )
 function sanitize_text_field( $str )
 {
 	$filtered = _sanitize_text_field( $str, FALSE );
-// @NOW 005 -> wp-includes/formatting.php
+// @NOW 005
 }
 
 /**
@@ -1575,8 +1575,32 @@ function _sanitize_text_field( $str, $keep_newlines = FALSE )
 
 	if ( strpos( $filtered, '<' ) !== FALSE ) {
 		$filtered = wp_pre_kses_less_than( $filtered );
-// @NOW 006
+
+		// This will strip extra whitespace for us.
+		$filtered = wp_strip_all_tags( $filtered, FALSE );
+
+		// Use html entities in a special case to make sure no later newline stripping stage could lead to a functional tag.
+		$filtered = str_replace( "<\n", "&lt;\n", $filtered );
 	}
+
+	if ( ! $keep_newlines ) {
+		$filtered = preg_replace( '/[\r\n\t ]+/', ' ', $filtered );
+	}
+
+	$filtered = trim( $filtered );
+	$found = FALSE;
+
+	while ( preg_match( '/%[a-f0-9]{2}/i', $filtered, $match ) ) {
+		$filtered = str_replace( $match[0], '', $filtered );
+		$found = TRUE;
+	}
+
+	if ( $found ) {
+		// Strip out the whitespace that may now exist after removing the octets.
+		$filtered = trim( preg_replace( '/ +/', ' ', $filtered ) );
+	}
+
+	return $filtered;
 }
 
 /**
