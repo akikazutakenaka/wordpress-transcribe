@@ -80,6 +80,22 @@ if ( PHP_VERSION_ID < 70000 ) {
 
 				// See random_bytes_dev_urandom.php
 				require_once $RandomCompatDIR . '/random_bytes_dev_urandom.php';
+			}
+
+			// Unset variables after use
+			$RandomCompat_basedir = NULL;
+			$RandomCompatUrandom = NULL;
+		}
+
+		// mcrypt_create_iv()
+		if ( ! function_exists( 'random_bytes' ) && PHP_VERSION_ID >= 50307 && extension_loaded( 'mcrypt' ) ) {
+			/**
+			 * Prevent this code from hanging indefinitely on non-Windows;
+			 * See https://bugs.php.net/bug.php?id=69833
+			 */
+			if ( DIRECTORY_SEPARATOR !== '/' || PHP_VERSION_ID <= 50609 || PHP_VERSION_ID >= 50613 ) {
+				// See random_bytes_mcrypt.php
+				require_once $RandomCompatDIR . '/random_bytes_mcrypt.php';
 // @NOW 005
 			}
 		}
