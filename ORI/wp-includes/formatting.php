@@ -3129,26 +3129,7 @@ function capital_P_dangit( $text ) {
 	$text );
 }
 
-/**
- * Sanitize a mime type
- *
- * @since 3.1.3
- *
- * @param string $mime_type Mime type
- * @return string Sanitized mime type
- */
-function sanitize_mime_type( $mime_type ) {
-	$sani_mime_type = preg_replace( '/[^-+*.a-zA-Z0-9\/]/', '', $mime_type );
-	/**
-	 * Filters a mime type following sanitization.
-	 *
-	 * @since 3.1.3
-	 *
-	 * @param string $sani_mime_type The sanitized mime type.
-	 * @param string $mime_type      The mime type prior to sanitization.
-	 */
-	return apply_filters( 'sanitize_mime_type', $sani_mime_type, $mime_type );
-}
+// refactored. function sanitize_mime_type( $mime_type ) {}
 
 /**
  * Sanitize space or carriage return separated URLs that are used to send trackbacks.

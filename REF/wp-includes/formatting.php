@@ -1620,7 +1620,7 @@ function sanitize_text_field( $str )
  *                               Default false.
  * @return string Sanitized string.
  */
-function _sanitize_text_field( $str, $keep_newlines = FALSE )
+function _sanitize_text_fields( $str, $keep_newlines = FALSE )
 {
 	$filtered = wp_check_invalid_utf8( $str );
 
@@ -1652,6 +1652,29 @@ function _sanitize_text_field( $str, $keep_newlines = FALSE )
 	}
 
 	return $filtered;
+}
+
+/**
+ * Sanitize a mime type
+ *
+ * @since 3.1.3
+ *
+ * @param  string $mime_type Mime type
+ * @return string Sanitized mime type
+ */
+function sanitize_mime_type( $mime_type )
+{
+	$sani_mime_type = preg_replace( '/[^-+*.a-zA-Z0-9\/]/', '', $mime_type );
+
+	/**
+	 * Filters a mime type following sanitization.
+	 *
+	 * @since 3.1.3
+	 *
+	 * @param string $sani_mime_type The sanitized mime type.
+	 * @param string $mime_type      The mime type prior to sanitization.
+	 */
+	return apply_filters( 'sanitize_mime_type', $sani_mime_type, $mime_type );
 }
 
 /**
