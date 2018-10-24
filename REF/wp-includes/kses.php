@@ -958,6 +958,19 @@ function _wp_kses_decode_entities_chr_hexdec( $match )
 /**
  * Sanitize content with allowed HTML Kses rules.
  *
+ * @since 1.0.0
+ *
+ * @param  string $data Content to filter, expected to be escaped with slashes.
+ * @return string Filtered content.
+ */
+function wp_filter_kses( $data )
+{
+	return addslashes( wp_kses( stripslashes( $data ), current_filter() ) );
+}
+
+/**
+ * Sanitize content with allowed HTML Kses rules.
+ *
  * @since 2.9.0
  *
  * @param  string $data Content to filter, expected to not be escaped.

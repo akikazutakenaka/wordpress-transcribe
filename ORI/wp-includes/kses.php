@@ -574,20 +574,6 @@ function wp_kses_html_error($string) {
 
 // refactored. function wp_kses_bad_protocol_once($string, $allowed_protocols, $count = 1 ) {}
 // :
-// refactored. function _wp_kses_decode_entities_chr_hexdec( $match ) {}
-
-/**
- * Sanitize content with allowed HTML Kses rules.
- *
- * @since 1.0.0
- *
- * @param string $data Content to filter, expected to be escaped with slashes
- * @return string Filtered content
- */
-function wp_filter_kses( $data ) {
-	return addslashes( wp_kses( stripslashes( $data ), current_filter() ) );
-}
-
 // refactored. function wp_kses_data( $data ) {}
 
 /**
