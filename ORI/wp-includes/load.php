@@ -7,21 +7,7 @@
 
 // refactored. function wp_get_server_protocol() {}
 // :
-// refactored. function wp_check_php_mysql_versions() {}
-
-/**
- * Don't load all of WordPress when handling a favicon.ico request.
- *
- * Instead, send the headers for a zero-length favicon and bail.
- *
- * @since 3.0.0
- */
-function wp_favicon_request() {
-	if ( '/favicon.ico' == $_SERVER['REQUEST_URI'] ) {
-		header('Content-Type: image/vnd.microsoft.icon');
-		exit;
-	}
-}
+// refactored. function wp_favicon_request() {}
 
 /**
  * Die with a maintenance message when conditions are met.

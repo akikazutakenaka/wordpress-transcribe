@@ -127,7 +127,7 @@ function wp_fix_server_vars()
  * @global string $required_php_version The required PHP version string.
  * @global string $wp_version           The WordPress version string.
  */
-function wp_check_php_mysql_version()
+function wp_check_php_mysql_versions()
 {
 	global $required_php_version, $wp_version;
 	$php_version = phpversion();
@@ -146,6 +146,21 @@ function wp_check_php_mysql_version()
 		header( sprintf( '%s 500 Internal Server Error', $protocol ), TRUE, 500 );
 		header( 'Content-Type: text/html; charset=utf-8' );
 		die( __( 'Your PHP installation appears to be missing the MySQL extension which is required by WordPress.' ) );
+	}
+}
+
+/**
+ * Don't load all of WordPress when handling a favicon.ico request.
+ *
+ * Instead, send the headers for a zero-length favicon and bail.
+ *
+ * @since 3.0.0
+ */
+function wp_favicon_request()
+{
+	if ( '/favicon.ico' == $_SERVER['REQUEST_URI'] ) {
+		header( 'Content-Type: image/vnc.microsoft.icon' );
+		exit;
 	}
 }
 
