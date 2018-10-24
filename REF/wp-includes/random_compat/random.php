@@ -33,5 +33,29 @@ if ( PHP_VERSION_ID < 70000 ) {
 	require_once $RandomCompatDIR . '/byte_safe_strings.php';
 	require_once $RandomCompatDIR . '/cast_to_int.php';
 	require_once $RandomCompatDIR . '/error_polyfill.php';
-// @NOW 005 -> wp-includes/random_compat/error_polyfill.php
+
+	if ( ! function_exists( 'random_bytes' ) ) {
+		/**
+		 * PHP 5.2.0 - 5.6.x way to implement random_bytes()
+		 *
+		 * We use conditional statements here to define the function in accordance to the operating environment.
+		 * It's a micro-optimization.
+		 *
+		 * In order of preference:
+		 *     1. Use libsodium if available.
+		 *     2. fread() /dev/urandom if available (never on Windows).
+		 *     3. mcrypt_create_iv( $bytes, MCRYPT_DEV_URANDOM )
+		 *     4. COM( 'CAPICOM.Utilities.1' )->GetRandom()
+		 *     5. openssl_random_pseudo_bytes() (absolute last resort)
+		 *
+		 * See ERRATA.md for our reasoning behind this particular order.
+		 */
+		if ( extension_loaded( 'libsodium' ) ) {
+			// See random_bytes_libsodium.php
+			if ( PHP_VERSION_ID >= 50300 && function_exists( '\\Sodium\\randombytes_buf' ) ) {
+				require_once $RandomCompatDIR . '/random_bytes_libsodium.php';
+// @NOW 005 -> wp-includes/random_compat/random_bytes_libsodium.php
+			}
+		}
+	}
 }
