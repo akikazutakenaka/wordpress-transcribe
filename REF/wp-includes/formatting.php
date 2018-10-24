@@ -1476,6 +1476,8 @@ function wp_parse_str( $string, &$array )
 	$array = apply_filters( 'wp_parse_str', $array );
 }
 
+// @NOW 007
+
 /**
  * Properly strip all HTML tags including script and style.
  *
@@ -1525,7 +1527,27 @@ function sanitize_text_field( $str )
 // @NOW 005 -> wp-includes/formatting.php
 }
 
-// @NOW 006
+/**
+ * Internal helper function to sanitize a string from user input or from the db
+ *
+ * @since  4.7.0
+ * @access private
+ *
+ * @param  string $str           String to sanitize.
+ * @param  bool   $keep_newlines Optional.
+ *                               Whether to keep newlines.
+ *                               Default false.
+ * @return string Sanitized string.
+ */
+function _sanitize_text_field( $str, $keep_newlines = FALSE )
+{
+	$filtered = wp_check_invalid_utf8( $str );
+
+	if ( strpos( $filtered, '<' ) !== FALSE ) {
+		$filtered = wp_pre_kses_less_than( $filtered );
+// @NOW 006 -> wp-includes/formatting.php
+	}
+}
 
 /**
  * Convert emoji characters to their equivalent HTML entity.
