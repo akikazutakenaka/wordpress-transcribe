@@ -800,6 +800,25 @@ function convert_invalid_entities( $content )
 }
 
 /**
+ * Balances tags if forced to, or if the 'use_balanceTags' option is set to true.
+ *
+ * @since 0.71
+ *
+ * @param  string $text  Text to be balanced.
+ * @param  bool   $force If true, forces balancing, ignoring the value of the option.
+ *                       Default false.
+ * @return string Balanced text.
+ */
+function balanceTags( $text, $force = FALSE )
+{
+	return $force || get_option( 'use_balanceTags' ) == 1
+		? force_balance_tags( $text )
+		: $text;
+}
+
+// @NOW 005
+
+/**
  * Appends a trailing slash.
  *
  * Will remove trailing forward and backslashes if it exists already before adding a trailing forward slash.

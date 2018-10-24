@@ -1241,23 +1241,7 @@ function convert_chars( $content, $deprecated = '' ) {
 }
 
 // refactored. function convert_invalid_entities( $content ) {}
-
-/**
- * Balances tags if forced to, or if the 'use_balanceTags' option is set to true.
- *
- * @since 0.71
- *
- * @param string $text  Text to be balanced
- * @param bool   $force If true, forces balancing, ignoring the value of the option. Default false.
- * @return string Balanced text
- */
-function balanceTags( $text, $force = false ) {
-	if ( $force || get_option('use_balanceTags') == 1 ) {
-		return force_balance_tags( $text );
-	} else {
-		return $text;
-	}
-}
+// refactored. function balanceTags( $text, $force = false ) {}
 
 /**
  * Balances tags of string using a modified stack.
