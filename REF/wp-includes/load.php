@@ -447,7 +447,11 @@ function wp_set_wpdb_vars()
 		'spam'             => '%d'
 	);
 	$prefix = $wpdb->set_prefix( $table_prefix );
-// @NOW 004
+
+	if ( is_wp_error( $prefix ) ) {
+		wp_load_translations_early();
+		wp_die( sprintf( __( '<strong>ERROR</strong>: %1$s in %2$s can only contain numbers, letters, and underscores.' ), '<code>$table_prefix</code>', '<code>wp-config.php</code>' ) );
+	}
 }
 
 /**

@@ -116,4 +116,4 @@ require_wp_db();
 // Set the database table prefix and the format specifiers for database table columns.
 $GLOBALS['table_prefix'] = $table_prefix;
 wp_set_wpdb_vars();
-// @NOW 003 -> wp-includes/load.php
+// @NOW 003

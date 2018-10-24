@@ -36,47 +36,6 @@ function timer_stop( $display = 0, $precision = 3 ) {
 
 // refactored. function wp_debug_mode() {}
 // :
-// refactored. function require_wp_db() {}
-
-/**
- * Set the database table prefix and the format specifiers for database
- * table columns.
- *
- * Columns not listed here default to `%s`.
- *
- * @since 3.0.0
- * @access private
- *
- * @global wpdb   $wpdb         The WordPress database class.
- * @global string $table_prefix The database table prefix.
- */
-function wp_set_wpdb_vars() {
-	global $wpdb, $table_prefix;
-	if ( !empty( $wpdb->error ) )
-		dead_db();
-
-	$wpdb->field_types = array( 'post_author' => '%d', 'post_parent' => '%d', 'menu_order' => '%d', 'term_id' => '%d', 'term_group' => '%d', 'term_taxonomy_id' => '%d',
-		'parent' => '%d', 'count' => '%d','object_id' => '%d', 'term_order' => '%d', 'ID' => '%d', 'comment_ID' => '%d', 'comment_post_ID' => '%d', 'comment_parent' => '%d',
-		'user_id' => '%d', 'link_id' => '%d', 'link_owner' => '%d', 'link_rating' => '%d', 'option_id' => '%d', 'blog_id' => '%d', 'meta_id' => '%d', 'post_id' => '%d',
-		'user_status' => '%d', 'umeta_id' => '%d', 'comment_karma' => '%d', 'comment_count' => '%d',
-		// multisite:
-		'active' => '%d', 'cat_id' => '%d', 'deleted' => '%d', 'lang_id' => '%d', 'mature' => '%d', 'public' => '%d', 'site_id' => '%d', 'spam' => '%d',
-	);
-
-	$prefix = $wpdb->set_prefix( $table_prefix );
-
-	if ( is_wp_error( $prefix ) ) {
-		wp_load_translations_early();
-		wp_die(
-			/* translators: 1: $table_prefix 2: wp-config.php */
-			sprintf( __( '<strong>ERROR</strong>: %1$s in %2$s can only contain numbers, letters, and underscores.' ),
-				'<code>$table_prefix</code>',
-				'<code>wp-config.php</code>'
-			)
-		);
-	}
-}
-
 // refactored. function wp_using_ext_object_cache( $using = null ) {}
 
 /**
