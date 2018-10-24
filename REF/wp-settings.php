@@ -99,4 +99,7 @@ if ( WP_CACHE && apply_filters( 'enable_loading_advanced_cache_dropin', TRUE ) )
 
 // Define WP_LANG_DIR if not set.
 wp_set_lang_dir();
-// @NOW 003
+
+// Load early WordPress files.
+require( ABSPATH . WPINC . '/compat.php' );
+// @NOW 003 -> wp-includes/compat.php
