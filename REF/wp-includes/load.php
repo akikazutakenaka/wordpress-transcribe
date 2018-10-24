@@ -447,7 +447,7 @@ function wp_set_wpdb_vars()
 		'spam'             => '%d'
 	);
 	$prefix = $wpdb->set_prefix( $table_prefix );
-// @NOW 004 -> wp-includes/wp-db.php
+// @NOW 004
 }
 
 /**
