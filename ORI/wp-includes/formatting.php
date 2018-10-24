@@ -2832,21 +2832,7 @@ function wp_make_link_relative( $link ) {
 
 // refactored. function sanitize_option( $option, $value ) {}
 // :
-// refactored. function wp_parse_str( $string, &$array ) {}
-
-/**
- * Convert lone less than signs.
- *
- * KSES already converts lone greater than signs.
- *
- * @since 2.3.0
- *
- * @param string $text Text to be converted.
- * @return string Converted text.
- */
-function wp_pre_kses_less_than( $text ) {
-	return preg_replace_callback('%<[^>]*?((?=<)|>|$)%', 'wp_pre_kses_less_than_callback', $text);
-}
+// refactored. function wp_pre_kses_less_than( $text ) {}
 
 /**
  * Callback function used by preg_replace.
