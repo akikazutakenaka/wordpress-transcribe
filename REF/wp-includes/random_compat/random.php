@@ -109,10 +109,24 @@ if ( PHP_VERSION_ID < 70000 ) {
 					if ( method_exists( $RandomCompatCOMtest, 'GetRandom' ) ) {
 						// See random_bytes_com_dotnet.php
 						require_once $RandomCompatDIR . '/random_bytes_com_dotnet.php';
-// @NOW 005
 					}
+				} catch ( com_exception $e ) {
+					// Don't try to use it.
 				}
 			}
+
+			$RandomCompat_disabled_classes = NULL;
+			$RandomCompatCOMtest = NULL;
+		}
+
+		// openssl_random_pseudo_bytes()
+		if ( ( DIRECTORY_SEPARATOR === '/' && PHP_VERSION_ID >= 50300
+		    || PHP_VERSION_ID >= 50401 )
+		  && ! function_exists( 'random_bytes' )
+		  && extension_loaded( 'openssl' ) ) {
+			// See random_bytes_openssl.php
+			require_once $RandomCompatDIR . '/random_bytes_openssl.php';
+// @NOW 005
 		}
 	}
 }
