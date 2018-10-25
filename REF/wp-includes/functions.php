@@ -790,7 +790,32 @@ function get_main_network_id()
 	return ( int ) apply_filters( 'get_main_network_id', $main_network_id );
 }
 
-// @NOW 006
+/**
+ * Find hierarchy loops using a callback function that maps object IDs to parent IDs.
+ *
+ * @since  3.1.0
+ * @access private
+ *
+ * @param  callable $callback      Function that accepts (ID, $callback_args) and outputs parent_ID.
+ * @param  int      $start         The ID to start the loop check at.
+ * @param  int      $start_parent  The parent_ID of $start to use instead of calling $callback( $start ).
+ *                                 Use null to always use $callback.
+ * @param  array    $callback_args Optional.
+ *                                 Additional arguments to send to $callback.
+ * @return array    IDs of all members of loop.
+ */
+function wp_find_hierarchy_loop( $callback, $start, $start_parent, $callback_args = array() )
+{
+	$override = is_null( $start_parent )
+		? array()
+		: array( $start => $start_parent );
+
+	if ( ! $arbitrary_loop_member = wp_find_hierarchy_loop_tortoise_hare( $callback, $start, $override, $callback_args ) ) {
+// @NOW 006 -> wp-includes/functions.php
+	}
+}
+
+// @NOW 007
 
 /**
  * Retrieve a list of protocols to allow in HTML attributes.
