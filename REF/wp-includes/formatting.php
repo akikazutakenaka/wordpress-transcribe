@@ -497,6 +497,8 @@ function wpautop( $pee, $br = TRUE )
 // @NOW 005 -> wp-includes/formatting.php
 }
 
+// @NOW 007
+
 /**
  * Retrieve the combined regular expression for HTML and shortcodes.
  *
@@ -564,7 +566,21 @@ function _get_wptexturize_shortcode_regex( $tagnames )
 	return $regex;
 }
 
-// @NOW 006
+/**
+ * Replace characters or phrases within HTML elements only.
+ *
+ * @since 4.2.3
+ *
+ * @param  string $haystack      The text which has to be formatted.
+ * @param  array  $replace_pairs In the form array('from' => 'to', ...).
+ * @return string The formatted text.
+ */
+function wp_replace_in_html_tags( $haystack, $replace_pairs )
+{
+	// Find all elements.
+	$textarr = wp_html_split( $haystack );
+// @NOW 006 -> wp-includes/formatting.php
+}
 
 /**
  * Checks to see if a string is utf8 encoded.
