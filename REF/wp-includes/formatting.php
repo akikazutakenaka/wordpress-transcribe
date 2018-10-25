@@ -494,7 +494,75 @@ function wpautop( $pee, $br = TRUE )
 
 	// Find newlines in all elements and add placeholders.
 	$pee = wp_replace_in_html_tags( $pee, array( "\n" => " <!-- wpnl --> " ) );
+
+	// Collapse line breaks before and after <option> elements so they don't get autop'd.
+	if ( strpos( $pee, '<option' ) !== FALSE ) {
+		$pee = preg_replace( '|\s*<option|', '<option', $pee );
+		$pee = preg_replace( '|</option>\s*|', '</option>', $pee );
+	}
+
+	// Collapse line breaks inside <object> elements, before <param> and <embed> elements so they don't get autop'd.
+	if ( strpos( $pee, '</object>' ) !== FALSE ) {
+		$pee = preg_replace( '|(<object[^>]*>)\s*|', '$1', $pee );
+		$pee = preg_replace( '|\s*</object>|', '</object>', $pee );
+		$pee = preg_replace( '%\s*(</?(?:param|embed)[^>]*>)\s*%', '$1', $pee );
+	}
+
+	// Collapse line breaks inside <audio> and <video> elements, before and after <source> and <track> elements.
+	if ( strpos( $pee, '<source' ) !== FALSE || strpos( $pee, '<track' ) !== FALSE ) {
+		$pee = preg_replace( '%([<\[](?:audio|video)[^>\]]*[>\]])\s*%', '$1', $pee );
+		$pee = preg_replace( '%\s*([<\[]/(?:audio|video)[>\]])%', '$1', $pee );
+		$pee = preg_replace( '%\s*(<(?:source|track)[^>]*>)\s*%', '$1', $pee );
+	}
+
+	// Collapse line breaks before and after <figcaption> elements.
+	if ( strpos( $pee, '<figcaption' ) !== FALSE ) {
+		$pee = preg_replace( '|\s*(<figcaption[^>]*>)|', '$1', $pee );
+		$pee = preg_replace( '|</figcaption>\s*|', '</figcaption>', $pee );
+	}
+
+	// Remove more than two contiguous line breaks.
+	$pee = preg_replace( "/\n\n+/", "\n\n", $pee );
+
+	// Split up the contents into an array of strings, separated by double line breaks.
+	$pees = preg_split( '/\n\s*\n/', $pee, -1, PREG_SPLIT_NO_EMPTY );
+
+	// Reset $pee prior to rebuilding.
+	$pee = '';
+
+	// Rebuild the content as a string, wrapping every bit with a <p>.
+	foreach ( $pees as $tinkle ) {
+		$pee .= '<p>' . trim( $tinkle, "\n" ) . "</p>\n";
+	}
+
+	// Under certain strange conditions it could create a P of entirely whitespace.
+	$pee = preg_replace( '|<p>\s*</p>|', '', $pee );
+
+	// Add a closing <p> inside <div>, <address>, or <form> tag if missing.
+	$pee = preg_replace( '!<p>([^<]+)</(div|address|form)>!', "<p>$1</p></$2>", $pee );
+
+	// If an opening or closing block element tag is wrapped in a <p>, unwrap it.
+	$pee = preg_replace( '!<p>\s*(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee );
+
+	// In some cases <li> may get wrapped in <p>, fix them.
+	$pee = preg_replace( "|<p>(<li.+?)</p>|", "$1", $pee );
+
+	// If a <blockquote> is wrapped with a <p>, move it inside the <blockquote>.
+	$pee = preg_replace( '|<p><blockquote([^>]*)>|i', "<blockquote>$1><p>", $pee );
+	$pee = str_replace( '</blockquote></p>', '</p></blockquote>', $pee );
+
+	// If an opening or closing block element tag is preceded by an opening <p> tag, remove it.
+	$pee = preg_replace( '!<p>\s*(</?' . $allblocks . '[^>]*>)!', "$1", $pee );
+
+	// If an opening or closing block element tag is followed by a closing <p> tag, remove it.
+	$pee = preg_replace( '!(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee );
+
+	// Optionally insert line breaks.
+	if ( $br ) {
+		// Replace newlines that shouldn't be touched with a placeholder.
+		$pee = preg_replace_callback( '/<(script|style).*?<\/\\1>/s', '_autop_newline_preservation_helper', $pee );
 // @NOW 005
+	}
 }
 
 /**
@@ -676,6 +744,20 @@ function wp_replace_in_html_tags( $haystack, $replace_pairs )
 	}
 
 	return $haystack;
+}
+
+/**
+ * Newline preservation help function for wpautop
+ *
+ * @since  3.1.0
+ * @access private
+ *
+ * @param  array  $matches preg_replace_callback matches array.
+ * @return string
+ */
+function _autop_newline_preservation_helper( $matches )
+{
+	return str_replace( "\n", "<WPPreserveNewline />", $matches[0] );
 }
 
 /**

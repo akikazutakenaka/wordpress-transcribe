@@ -183,20 +183,7 @@ function wpautop( $pee, $br = true ) {
 
 // refactored. function wp_html_split( $input ) {}
 // :
-// refactored. function wp_replace_in_html_tags( $haystack, $replace_pairs ) {}
-
-/**
- * Newline preservation help function for wpautop
- *
- * @since 3.1.0
- * @access private
- *
- * @param array $matches preg_replace_callback matches array
- * @return string
- */
-function _autop_newline_preservation_helper( $matches ) {
-	return str_replace( "\n", "<WPPreserveNewline />", $matches[0] );
-}
+// refactored. function _autop_newline_preservation_helper( $matches ) {}
 
 /**
  * Don't auto-p wrap shortcodes that stand alone
