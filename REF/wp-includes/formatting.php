@@ -2370,6 +2370,39 @@ function _sanitize_text_fields( $str, $keep_newlines = FALSE )
 }
 
 /**
+ * Forever eliminate "Wordpress" from the planet (or at least the little bit we can influence).
+ *
+ * Violating our coding standards for a good function name.
+ *
+ * @since     3.0.0
+ * @staticvar string|false $dblq
+ *
+ * @param  string $text The text to be modified.
+ * @return string The modified text.
+ */
+function capital_P_dangit( $text )
+{
+	// Simple replacement for titles.
+	$current_filter = current_filter();
+
+	if ( 'the_title' === $current_filter || 'wp_title' === $current_filter ) {
+		return str_replace( 'Wordpress', 'WordPress', $text );
+	}
+
+	/**
+	 * Still here?
+	 * Use the more judicious replacement.
+	 */
+	static $dblq = FALSE;
+
+	if ( FALSE === $dblq ) {
+		$dblq = _x( '&#8220;', 'opening curly double quote' );
+	}
+
+	return str_replace( array( ' Wordpress', '&#8216;Wordpress', $dblq . 'Wordpress', '>Wordpress', '(Wordpress' ), array( ' WordPress', '&#8216;WordPress', $dblq . 'WordPress', '>WordPress', '(WordPress' ), $text );
+}
+
+/**
  * Sanitize a mime type
  *
  * @since 3.1.3
