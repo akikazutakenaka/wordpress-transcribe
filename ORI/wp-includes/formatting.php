@@ -181,17 +181,7 @@ function wpautop( $pee, $br = true ) {
 	return $pee;
 }
 
-/**
- * Separate HTML elements and comments from the text.
- *
- * @since 4.2.4
- *
- * @param string $input The text which has to be formatted.
- * @return array The formatted text.
- */
-function wp_html_split( $input ) {
-	return preg_split( get_html_split_regex(), $input, -1, PREG_SPLIT_DELIM_CAPTURE );
-}
+// refactored. function wp_html_split( $input ) {}
 
 /**
  * Retrieve the regular expression for an HTML element.

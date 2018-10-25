@@ -497,6 +497,19 @@ function wpautop( $pee, $br = TRUE )
 // @NOW 005 -> wp-includes/formatting.php
 }
 
+/**
+ * Separate HTML elements and comments from the text.
+ *
+ * @since 4.2.4
+ *
+ * @param  string $input The text which has to be formatted.
+ * @return array  The formatted text.
+ */
+function wp_html_split( $input )
+{
+	return preg_split( get_html_split_regex(), $input, -1, PREG_SPLIT_DELIM_CAPTURE );
+}
+
 // @NOW 007
 
 /**
