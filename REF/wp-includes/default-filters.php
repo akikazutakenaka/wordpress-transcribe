@@ -128,5 +128,11 @@ foreach ( array( 'term_description', 'get_the_post_type_description' ) as $filte
 	add_filter( $filter, 'convert_chars' );
 	add_filter( $filter, 'wpautop' );
 	add_filter( $filter, 'shortcode_unautop' );
-// @NOW 004
 }
+
+// Format for RSS
+add_filter( 'term_name_rss', 'convert_chars' );
+
+// Pre save hierarchy
+add_filter( 'wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2 );
+// @NOW 004 -> wp-includes/post.php
