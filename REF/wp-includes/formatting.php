@@ -122,7 +122,7 @@ function wptexturize( $text, $reset = FALSE )
 		);
 		$dynamic = array();
 		$spaces = wp_spaces_regexp();
-// @NOW 005 -> wp-includes/formatting.php
+// @NOW 005
 	}
 }
 
@@ -2004,7 +2004,39 @@ function sanitize_mime_type( $mime_type )
 	return apply_filters( 'sanitize_mime_type', $sani_mime_type, $mime_type );
 }
 
-// @NOW 006
+/**
+ * Returns the regexp for common whitespace characters.
+ *
+ * By default, spaces include new lines, tabs, nbsp entities, and the UTF-8 nbsp.
+ * This is designed to replace the PCRE \s sequence.
+ * In ticket #22692, that sequence was found to be unreliable due to random inclusion of the A0 byte.
+ *
+ * @since     4.0.0
+ * @staticvar string $spaces
+ *
+ * @return string The spaces regexp.
+ */
+function wp_spaces_regexp()
+{
+	static $spaces = '';
+
+	if ( empty( $spaces ) ) {
+		/**
+		 * Filters the regexp for common whitespace characters.
+		 *
+		 * This string is substituted for the \s sequence as needed in regular expressions.
+		 * For websites not written in English, different characters may represent whitespace.
+		 * For websites not encoded in UTF-8, the 0xC2 0xA0 sequence may not be in use.
+		 *
+		 * @since 4.0.0
+		 *
+		 * @param string $spaces Regexp pattern for matching common whitespace characters.
+		 */
+		$spaces = apply_filters( 'wp_spaces_regexp', '[\r\n\t ]|\xC2\xA0|&nbsp;' );
+	}
+
+	return $spaces;
+}
 
 /**
  * Convert emoji characters to their equivalent HTML entity.
