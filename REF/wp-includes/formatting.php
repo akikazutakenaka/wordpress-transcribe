@@ -232,10 +232,116 @@ function wptexturize( $text, $reset = FALSE )
 				$curl = preg_replace( '/&(?!#(?:\d+|x[a-f0-9]+);|[a-z1-4]{1,8};)/i', '&#038;', $curl );
 
 				_wptexturize_pushpop_element( $curl, $no_texturize_tags_stack, $no_texturize_tags );
+			}
+		} elseif ( '' === trim( $curl ) ) {
+			/**
+			 * This is a newline between delimiters.
+			 * Performance improves when we check this.
+			 */
+			continue;
+		} elseif ( '[' === $first && $found_shortcodes && 1 === preg_match( '/^' . $shortcode_regex . '$/', $curl ) ) {
+			// This is a shortcode delimiter.
+			if ( '[[' !== substr( $curl, 0, 2 ) && ']]' !== substr( $curl, -2 ) ) {
+				// Looks like a normal shortcode.
+				_wptexturize_pushpop_element( $curl, $no_texturize_shortcodes_stack, $no_texturize_shortcodes );
+			} else {
+				// Looks like an escaped shortcode.
+				continue;
+			}
+		} elseif ( empty( $no_texturize_shortcodes_stack ) && empty( $no_texturize_tags_stack ) ) {
+			/**
+			 * This is neither a delimiter, nor is this content inside of no_texturize pairs.
+			 * Do texturize
+			 */
+			$curl = str_replace( $static_characters, $static_replacements, $curl );
+
+			if ( FALSE !== strpos( $curl, "'" ) ) {
+				$curl = preg_replace( $dynamic_characters['apos'], $dynamic_replacements['apos'], $curl );
+				$curl = wptexturize_primes( $curl, "'", $prime, $open_sq_flag, $closing_single_quote );
 // @NOW 005
 			}
 		}
 	}
+}
+
+/**
+ * Implements a logic tree to determine whether or not "7'." represents seven feet, then converts the special char into either a prime char or a closing quote char.
+ *
+ * @since 4.3.0
+ *
+ * @param  string $haystack    The plain text to be searched.
+ * @param  string $needle      The character to search for such as ' or ".
+ * @param  string $prime       The prime char to use for replacement.
+ * @param  string $open_quote  The opening quote char.
+ *                             Opening quote replacement must be accomplished already.
+ * @param  string $close_quote The closing quote char to use for replacement.
+ * @return string The $haystack value after primes and quotes replacements.
+ */
+function wptexturize_primes( $haystack, $needle, $prime, $open_quote, $close_quote )
+{
+	$spaces = wp_spaces_regexp();
+	$flag = '<!--wp-prime-or-quote-->';
+	$quote_pattern = "/$needle(?=\\Z|[.,:;!?)}\\-\\]]|&gt;|" . $spaces . ")/";
+	$prime_pattern    = "/(?<=\\d)$needle/";
+	$flag_after_digit = "/(?<=\\d)$flag/";
+	$flag_no_digit    = "/(?<!\\d)$flag/";
+	$sentenes = explode( $open_quote, $haystack );
+
+	foreach ( $sentences as $key => &$sentence ) {
+		if ( FALSE === strpos( $sentence, $needle ) ) {
+			continue;
+		} elseif ( 0 !== $key && 0 === substr_count( $sentence, $close_quote ) ) {
+			$sentence = preg_replace( $quote_pattern, $flag, $sentence, -1, $count );
+
+			if ( $count > 1 ) {
+				/**
+				 * This sentence appears to have multiple closing quotes.
+				 * Attempt Vulcan logic.
+				 */
+				$sentence = preg_replace( $flag_no_digit, $close_quote, $sentence, -1, $count2 );
+
+				if ( 0 === $count2 ) {
+					// Try looking for a quote followed by a period.
+					$count2 = substr_count( $sentence, "$flag." );
+
+					$pos = $count2 > 0
+						? // Assume the rightmost quote-period match is the end of quotation.
+							strrpos( $sentence, "$flag." )
+						: /**
+						   * When all else fails, make the rightmost candidate a closing quote.
+						   * This is most likely to be problematic in the context of bug #18549.
+						   */
+							strrpos( $sentence, $flag );
+
+					$sentence = substr_replace( $sentence, $close_quote, $pos, strlen( $flag ) );
+				}
+
+				// Use conventional replacement on any remaining primes and quotes.
+				$sentence = preg_replace( $prime_pattern, $prime, $sentence );
+				$sentence = preg_replace( $flag_after_digit, $prime, $sentence );
+				$sentence = str_replace( $flag, $close_quote, $sentence );
+			} elseif ( 1 == $count ) {
+				// Found only one closing quote candidate, so give it priority over primes.
+				$sentence = str_replace( $flag, $close_quote, $sentence );
+				$sentence = preg_replace( $prime_pattern, $prime, $sentence );
+			} else {
+				/**
+				 * No closing quotes found.
+				 * Just run primes pattern.
+				 */
+				$sentence = preg_replace( $prime_pattern, $prime, $sentence );
+			}
+		} else {
+			$sentence = preg_replace( $prime_pattern, $prime, $sentence );
+			$sentence = preg_replace( $quote_pattern, $close_quote, $sentence );
+		}
+
+		if ( '"' == $needle && FALSE !== strpos( $sentence, '"' ) ) {
+			$sentence = str_replace( '"', $close_quote, $sentence );
+		}
+	}
+
+	return implode( $open_quote, $sentences );
 }
 
 /**
