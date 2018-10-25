@@ -368,59 +368,7 @@ function wptexturize_primes( $haystack, $needle, $prime, $open_quote, $close_quo
 	return implode( $open_quote, $sentences );
 }
 
-/**
- * Search for disabled element tags. Push element to stack on tag open and pop
- * on tag close.
- *
- * Assumes first char of $text is tag opening and last char is tag closing.
- * Assumes second char of $text is optionally '/' to indicate closing as in </html>.
- *
- * @since 2.9.0
- * @access private
- *
- * @param string $text Text to check. Must be a tag like `<html>` or `[shortcode]`.
- * @param array  $stack List of open tag elements.
- * @param array  $disabled_elements The tag names to match against. Spaces are not allowed in tag names.
- */
-function _wptexturize_pushpop_element( $text, &$stack, $disabled_elements ) {
-	// Is it an opening tag or closing tag?
-	if ( isset( $text[1] ) && '/' !== $text[1] ) {
-		$opening_tag = true;
-		$name_offset = 1;
-	} elseif ( 0 == count( $stack ) ) {
-		// Stack is empty. Just stop.
-		return;
-	} else {
-		$opening_tag = false;
-		$name_offset = 2;
-	}
-
-	// Parse out the tag name.
-	$space = strpos( $text, ' ' );
-	if ( false === $space ) {
-		$space = -1;
-	} else {
-		$space -= $name_offset;
-	}
-	$tag = substr( $text, $name_offset, $space );
-
-	// Handle disabled tags.
-	if ( in_array( $tag, $disabled_elements ) ) {
-		if ( $opening_tag ) {
-			/*
-			 * This disables texturize until we find a closing tag of our type
-			 * (e.g. <pre>) even if there was invalid nesting before that
-			 *
-			 * Example: in the case <pre>sadsadasd</code>"baba"</pre>
-			 *          "baba" won't be texturize
-			 */
-
-			array_push( $stack, $tag );
-		} elseif ( end( $stack ) == $tag ) {
-			array_pop( $stack );
-		}
-	}
-}
+// refactored. function _wptexturize_pushpop_element( $text, &$stack, $disabled_elements ) {}
 
 /**
  * Replaces double line-breaks with paragraph elements.

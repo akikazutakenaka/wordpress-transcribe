@@ -215,7 +215,87 @@ function wptexturize( $text, $reset = FALSE )
 		: '';
 
 	$regex = _get_wptexturize_split_regex( $shortcode_regex );
+	$textarr = preg_split( $regex, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
+
+	foreach ( $textarr as &$url ) {
+		// Only call _wptexturize_pushpop_element if $curl is a delimiter.
+		$first = $curl[0];
+
+		if ( '<' === $first ) {
+			if ( '<!--' === substr( $curl, 0, 4 ) ) {
+				// This is an HTML comment delimiter.
+				continue;
+			} else {
+				// This is an HTML element delimiter.
+
+				// Replace each & with &#038; unelss it already looks like an entity.
+				$curl = preg_replace( '/&(?!#(?:\d+|x[a-f0-9]+);|[a-z1-4]{1,8};)/i', '&#038;', $curl );
+
+				_wptexturize_pushpop_element( $curl, $no_texturize_tags_stack, $no_texturize_tags );
 // @NOW 005
+			}
+		}
+	}
+}
+
+/**
+ * Search for disabled element tags.
+ * Push element to stack on tag open and pop on tag close.
+ *
+ * Assumes first char of $text is tag opening and last char is tag closing.
+ * Assumes second char of $text is optionally '/' to indicate closing as in </html>.
+ *
+ * @since  2.9.0
+ * @access private
+ *
+ * @param string $text              Text to check.
+ *                                  Must be a tag like `<html>` or `[shortcode]`.
+ * @param array  $stack             List of open tag elements.
+ * @param array  $disabled_elements The tag names to match against.
+ *                                  Spaces are not allowed in tag names.
+ */
+function _wptexturize_pushpop_element( $text, &$stack, $disabled_elements )
+{
+	// Is it an opening tag or closing tag?
+	if ( isset( $text[1] ) && '/' !== $text[1] ) {
+		$opening_tag = TRUE;
+		$name_offset = 1;
+	} elseif ( 0 == count( $stack ) ) {
+		/**
+		 * Stack is empty.
+		 * Just stop.
+		 */
+		return;
+	} else {
+		$opening_tag = FALSE;
+		$name_offset = 2;
+	}
+
+	// Parse out the tag name.
+	$space = strpos( $text, ' ' );
+
+	if ( FALSE === $space ) {
+		$space = -1;
+	} else {
+		$space -= $name_offset;
+	}
+
+	$tag = substr( $text, $name_offset, $space );
+
+	// Handle disabled tags.
+	if ( in_array( $tag, $disabled_elements ) ) {
+		if ( $opening_tag ) {
+			/**
+			 * This disables texturize until we find a closing tag of our type (e.g. <pre>) even if there was invalid nesting before that.
+			 *
+			 * Example: in the case <pre>sadsadasd</code>"baba"</pre>
+			 *          "baba" won't be texturize
+			 */
+			array_push( $stack, $tag );
+		} elseif ( end( $stack ) == $tag ) {
+			array_pop( $stack );
+		}
+	}
 }
 
 /**
