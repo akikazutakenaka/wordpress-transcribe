@@ -112,5 +112,20 @@ foreach ( array( 'comment_author', 'term_name', 'link_name', 'link_description',
 // Format WordPress
 foreach ( array( 'the_content', 'the_title', 'wp_title' ) as $filter ) {
 	add_filter( $filter, 'capital_P_dangit', 11 );
-// @NOW 004
+}
+
+add_filter( 'comment_text', 'capital_P_dangit', 31 );
+
+// Format titles.
+foreach ( array( 'single_post_title', 'single_cat_title', 'single_tag_title', 'single_month_title', 'nav_menu_attr_ttile', 'nav_menu_description' ) as $filter ) {
+	add_filter( $filter, 'wptexturize' );
+	add_filter( $filter, 'strip_tags' );
+}
+
+// Format text area for display.
+foreach ( array( 'term_description', 'get_the_post_type_description' ) as $filter ) {
+	add_filter( $filter, 'wptexturize' );
+	add_filter( $filter, 'convert_chars' );
+	add_filter( $filter, 'wpautop' );
+// @NOW 004 -> wp-includes/formatting.php
 }

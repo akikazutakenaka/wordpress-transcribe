@@ -426,6 +426,78 @@ function _wptexturize_pushpop_element( $text, &$stack, $disabled_elements )
 }
 
 /**
+ * Replaces double line-breaks with paragraph elements.
+ *
+ * A group of regex replaces used to identify text formatted with newlines and replace double line-breaks with HTML paragraph tags.
+ * The remaining line-breaks after conversion become <<br />> tags, unless $br is set to '0' or 'false'.
+ *
+ * @since 0.71
+ *
+ * @param  string $pee The text which has to be formatted.
+ * @param  bool   $br  Optional.
+ *                      If set, this will convert all remaining line-breaks after paragraphing.
+ *                      Default true.
+ * @return string Text which has been converted into correct paragraph tags.
+ */
+function wpautop( $pee, $br = TRUE )
+{
+	$pre_tags = array();
+
+	if ( trim( $pee ) === '' ) {
+		return '';
+	}
+
+	// Just to make things a little easier, pad the end.
+	$pee = $pee . "\n";
+
+	/**
+	 * Pre tags shouldn't be touched by autop.
+	 * Replace pre tags with placeholders and bring them back after autop.
+	 */
+	if ( strpos( $pee, '<pre' ) !== FALSE ) {
+		$pee_parts = explode( '</pre>', $pee );
+		$last_pee = array_pop( $pee_parts );
+		$pee = '';
+		$i = 0;
+
+		foreach ( $pee_parts as $pee_part ) {
+			$start = strpos( $pee_part, '<pre' );
+
+			// Malformed HTML?
+			if ( $start === FALSE ) {
+				$pee .= $pee_part;
+				continue;
+			}
+
+			$name = "<pre wp-pre-tag-$i></pre>";
+			$pre_tags[ $name ] = substr( $pee_part, $start ) . '</pre>';
+			$pee .= substr( $pee_part, 0, $start ) . $name;
+			$i++;
+		}
+
+		$pee .= $last_pee;
+	}
+
+	// Change multiple <br>s into two line breaks, which will turn into paragraphs.
+	$pee = preg_replace( '|<br\s*/?>\s*<br\s*/?>|', "\n\n", $pee );
+
+	$allblocks = '(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)';
+
+	// Add a double line break above block-level opening tags.
+	$pee = preg_replace( '!(<' . $allblocks . '[\s/>])!', "\n\n$1", $pee );
+
+	// Add a double line break below block-level closing tags.
+	$pee = preg_replace( '!(</' . $allblock . '>)!', "$1\n\n", $pee );
+
+	// Standardize newline characters to "\n".
+	$pee = str_replace( array( "\r\n", "\r" ), "\n", $pee );
+
+	// Find newlines in all elements and add placeholders.
+	$pee = wp_replace_in_html_tags( $pee, array( "\n" => " <!-- wpnl --> " ) );
+// @NOW 005 -> wp-includes/formatting.php
+}
+
+/**
  * Retrieve the combined regular expression for HTML and shortcodes.
  *
  * @access    private
@@ -491,6 +563,8 @@ function _get_wptexturize_shortcode_regex( $tagnames )
 		. '\]?';            // Shortcodes may end with ]]
 	return $regex;
 }
+
+// @NOW 006
 
 /**
  * Checks to see if a string is utf8 encoded.
