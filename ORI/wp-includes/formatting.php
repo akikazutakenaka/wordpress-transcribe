@@ -9,66 +9,6 @@
 
 // refactored. function wptexturize( $text, $reset = false ) {}
 // :
-// refactored. function _autop_newline_preservation_helper( $matches ) {}
-
-/**
- * Don't auto-p wrap shortcodes that stand alone
- *
- * Ensures that shortcodes are not wrapped in `<p>...</p>`.
- *
- * @since 2.9.0
- *
- * @global array $shortcode_tags
- *
- * @param string $pee The content.
- * @return string The filtered content.
- */
-function shortcode_unautop( $pee ) {
-	global $shortcode_tags;
-
-	if ( empty( $shortcode_tags ) || !is_array( $shortcode_tags ) ) {
-		return $pee;
-	}
-
-	$tagregexp = join( '|', array_map( 'preg_quote', array_keys( $shortcode_tags ) ) );
-	$spaces = wp_spaces_regexp();
-
-	$pattern =
-		  '/'
-		. '<p>'                              // Opening paragraph
-		. '(?:' . $spaces . ')*+'            // Optional leading whitespace
-		. '('                                // 1: The shortcode
-		.     '\\['                          // Opening bracket
-		.     "($tagregexp)"                 // 2: Shortcode name
-		.     '(?![\\w-])'                   // Not followed by word character or hyphen
-		                                     // Unroll the loop: Inside the opening shortcode tag
-		.     '[^\\]\\/]*'                   // Not a closing bracket or forward slash
-		.     '(?:'
-		.         '\\/(?!\\])'               // A forward slash not followed by a closing bracket
-		.         '[^\\]\\/]*'               // Not a closing bracket or forward slash
-		.     ')*?'
-		.     '(?:'
-		.         '\\/\\]'                   // Self closing tag and closing bracket
-		.     '|'
-		.         '\\]'                      // Closing bracket
-		.         '(?:'                      // Unroll the loop: Optionally, anything between the opening and closing shortcode tags
-		.             '[^\\[]*+'             // Not an opening bracket
-		.             '(?:'
-		.                 '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
-		.                 '[^\\[]*+'         // Not an opening bracket
-		.             ')*+'
-		.             '\\[\\/\\2\\]'         // Closing shortcode tag
-		.         ')?'
-		.     ')'
-		. ')'
-		. '(?:' . $spaces . ')*+'            // optional trailing whitespace
-		. '<\\/p>'                           // closing paragraph
-		. '/';
-
-	return preg_replace( $pattern, '$1', $pee );
-}
-
-// refactored. function seems_utf8( $str ) {}
 // refactored. function _wp_specialchars( $string, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false ) {}
 
 /**
