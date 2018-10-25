@@ -660,49 +660,7 @@ function get_html_split_regex() {
 	return $regex;
 }
 
-/**
- * Retrieve the combined regular expression for HTML and shortcodes.
- *
- * @access private
- * @ignore
- * @internal This function will be removed in 4.5.0 per Shortcode API Roadmap.
- * @since 4.4.0
- *
- * @staticvar string $html_regex
- *
- * @param string $shortcode_regex The result from _get_wptexturize_shortcode_regex().  Optional.
- * @return string The regular expression
- */
-function _get_wptexturize_split_regex( $shortcode_regex = '' ) {
-	static $html_regex;
-
-	if ( ! isset( $html_regex ) ) {
-		$comment_regex =
-			  '!'           // Start of comment, after the <.
-			. '(?:'         // Unroll the loop: Consume everything until --> is found.
-			.     '-(?!->)' // Dash not followed by end of comment.
-			.     '[^\-]*+' // Consume non-dashes.
-			. ')*+'         // Loop possessively.
-			. '(?:-->)?';   // End of comment. If not found, match all input.
-
-		$html_regex =			 // Needs replaced with wp_html_split() per Shortcode API Roadmap.
-			  '<'                // Find start of element.
-			. '(?(?=!--)'        // Is this a comment?
-			.     $comment_regex // Find end of comment.
-			. '|'
-			.     '[^>]*>?'      // Find end of element. If not found, match all input.
-			. ')';
-	}
-
-	if ( empty( $shortcode_regex ) ) {
-		$regex = '/(' . $html_regex . ')/';
-	} else {
-		$regex = '/(' . $html_regex . '|' . $shortcode_regex . ')/';
-	}
-
-	return $regex;
-}
-
+// refactored. function _get_wptexturize_split_regex( $shortcode_regex = '' ) {}
 // refactored. function _get_wptexturize_shortcode_regex( $tagnames ) {}
 
 /**
