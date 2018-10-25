@@ -122,8 +122,126 @@ function wptexturize( $text, $reset = FALSE )
 		);
 		$dynamic = array();
 		$spaces = wp_spaces_regexp();
-// @NOW 005
+
+		// '99' and '99" are ambiguous among other patterns; assume it's an abbreviated year at the end of a quotation.
+		if ( "'" !== $apos || "'" !== $closing_single_quote ) {
+			$dynamic[ '/\'(\d\d)\'(?=\Z|[.,:;!?)}\-\]]|&gt;|' . $spaces . ')/' ] = $apos_flag . '$1' . $closing_single_quote;
+		}
+
+		if ( "'" !== $apos || '"' !== $closing_quote ) {
+			$dynamic[ '/\'(\d\d)"(?=\Z|[.,:;!?)}\-\]]|&gt;|' . $spaces . ')/' ] = $apos_flag . '$1' . $closing_quote;
+		}
+
+		// '99 '99s '99's (apostrophe) But never '9 or '99% or '999 or '99.0.
+		if ( "'" !== $apos ) {
+			$dynamic['/\'(?=\d\d(?:\Z|(?![%\d]|[.,]\d)))/'] = $apos_flag;
+		}
+
+		// Quoted Numbers like '0.42'
+		if ( "'" !== $opening_single_quote && "'" !== $closing_single_quote ) {
+			$dynamic[ '/(?<=\A|' . $spaces . ')\'(\d[.,\d]*)\'/' ] = $open_sq_flag . '$1' . $closing_single_quote;
+		}
+
+		// Single quote at start, or preceded by (, {, <, [, ", -, or spaces.
+		if ( "'" !== $opening_single_quote ) {
+			$dynamic[ ' /(?<=\A|[([{"\-]|&lt;|' . $spaces . ')\'/' ] = $open_sq_flag;
+		}
+
+		/**
+		 * Apostrophe in a word.
+		 * No spaces, double apostrophes, or other punctuation.
+		 */
+		if ( "'" !== $apos ) {
+			$dynamic[ '/(?<!' . $spaces . ')\'(?!\Z|[.,:;!?"\'(){}[\]\-]|&[lg]t;|' . $spaces . ')/' ] = $apos_flag;
+		}
+
+		$dynamic_characters['apos'] = array_keys( $dynamic );
+		$dynamic_replacements['apos'] = array_values( $dynamic );
+		$dynamic = array();
+
+		// Quoted Numbers like "42"
+		if ( '"' !== $opening_quote && '"' !== $closing_quote ) {
+			$dynamic[ '/(?<=\A|' . $spaces . ')"(\d[.,\d]*)"/' ] = $open_q_flag . '$1' . $closing_quote;
+		}
+
+		// Double quote at start, or preceded by (, {, <, [, -, or spaces, and not followed by spaces.
+		if ( '"' !== $opening_quote ) {
+			$dynamic[ '/(?<=\A|[([{\-]|&lt;|' . $spaces . ')"(?!' . $spaces . ')/' ] = $open_q_flag;
+		}
+
+		$dynamic_characters['quote'] = array_keys( $dynamic );
+		$dynamic_replacements['quote'] = array_values( $dynamic );
+		$dynamic = array();
+
+		// Dashes and spaces
+		$dynamic['/---/'] = $em_dash;
+		$dynamic[ '/(?<=^|' . $spaces . ')--(?=$|' . $spaces . ')/' ] = $em_dash;
+		$dynamic['/(?<!xn)--/'] = $en_dash;
+		$dynamic[ '/(?<=^|' . $spaces . ')-(?=$|' . $spaces . ')/' ] = $en_dash;
+		$dynamic_characters['dash'] = array_keys( $dynamic );
+		$dynamic_replacements['dash'] = array_values( $dynamic );
 	}
+
+	// Must do this every time in case plugins use these filters in a context sensitive manner.
+
+	/**
+	 * Filters the list of HTML elements not to texturize.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array $default_no_texturize_tags An array of HTML element names.
+	 */
+	$no_texturize_tags = apply_filters( 'no_texturize_tags', $default_no_texturize_tags );
+
+	/**
+	 * Filters the list of shortcodes not to texturize.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array $default_no_texturize_shortcodes An array of shortcode names.
+	 */
+	$no_texturize_shortcodes = apply_filters( 'no_texturize_shortcodes', $default_no_texturize_shortcodes );
+
+	$no_texturize_tags_stack = array();
+	$no_texturize_shortcodes_stack = array();
+
+	// Look for shortcodes and HTML elements.
+	preg_match_all( '@\[/?([^<>&/\[\]\x00-\x20=]++)@', $text, $matches );
+	$tagnames = array_intersect( array_keys( $shortcode_tags ), $matches[1] );
+	$found_shortcodes = ! empty( $tagnames );
+
+	$shortcode_regex = $found_shortcodes
+		? _get_wptexturize_shortcode_regex( $tagnames )
+		: '';
+// @NOW 005
+}
+
+/**
+ * Retrieve the regular expression for shortcodes.
+ *
+ * @access   private
+ * @ignore
+ * @internal This function will be removed in 4.5.0 per Shortcode API Roadmap.
+ * @since    4.4.0
+ *
+ * @param  array  $tagnames List of shortcodes to find.
+ * @return string The regular expression.
+ */
+function _get_wptexturize_shortcode_regex( $tagnames )
+{
+	$tagregexp = join( '|', array_map( 'preg_quote', $tagnames ) );
+	$tagregexp = "(?:$tagregexp)(?=[\\s\\]\\/])"; // Excerpt of get_shortcode_regex().
+	$regex = '\['           // Find start of shortcode.
+		. '[\/\[]?'         // Shortcodes may begin with [/ or [[
+		. $tagregexp        // Only match registered shortcodes, because performance.
+		. '(?:'
+			. '[^\[\]<>]+'  // Shortcodes do not contain other shortcodes. Quantifier critical.
+			. '|'
+			. '<[^\[\]>]*>' // HTML elements permitted. Prevents matching ] before >.
+		. ')*+'             // Possessive critical.
+		. '\]'              // Find end of shortcode.
+		. '\]?';            // Shortcodes may end with ]]
+	return $regex;
 }
 
 /**

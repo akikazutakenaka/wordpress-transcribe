@@ -703,34 +703,7 @@ function _get_wptexturize_split_regex( $shortcode_regex = '' ) {
 	return $regex;
 }
 
-/**
- * Retrieve the regular expression for shortcodes.
- *
- * @access private
- * @ignore
- * @internal This function will be removed in 4.5.0 per Shortcode API Roadmap.
- * @since 4.4.0
- *
- * @param array $tagnames List of shortcodes to find.
- * @return string The regular expression
- */
-function _get_wptexturize_shortcode_regex( $tagnames ) {
-	$tagregexp = join( '|', array_map( 'preg_quote', $tagnames ) );
-	$tagregexp = "(?:$tagregexp)(?=[\\s\\]\\/])"; // Excerpt of get_shortcode_regex().
-	$regex =
-		  '\['              // Find start of shortcode.
-		. '[\/\[]?'         // Shortcodes may begin with [/ or [[
-		. $tagregexp        // Only match registered shortcodes, because performance.
-		. '(?:'
-		.     '[^\[\]<>]+'  // Shortcodes do not contain other shortcodes. Quantifier critical.
-		. '|'
-		.     '<[^\[\]>]*>' // HTML elements permitted. Prevents matching ] before >.
-		. ')*+'             // Possessive critical.
-		. '\]'              // Find end of shortcode.
-		. '\]?';            // Shortcodes may end with ]]
-
-	return $regex;
-}
+// refactored. function _get_wptexturize_shortcode_regex( $tagnames ) {}
 
 /**
  * Replace characters or phrases within HTML elements only.
