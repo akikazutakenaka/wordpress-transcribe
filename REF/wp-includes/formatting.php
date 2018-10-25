@@ -2773,7 +2773,31 @@ function sanitize_mime_type( $mime_type )
 	return apply_filters( 'sanitize_mime_type', $sani_mime_type, $mime_type );
 }
 
-// @NOW 007
+/**
+ * Add slashes to a string or array of strings.
+ *
+ * This should be used when preparing data for core API that expects slashed data.
+ * This should not be used to escape data going directly into an SQL query.
+ *
+ * @since 3.6.0
+ *
+ * @param  string|array $value String or array of strings to slash.
+ * @return string|array Slashed $value.
+ */
+function wp_slash( $value )
+{
+	if ( is_array( $value ) ) {
+		foreach ( $value as $k => $v ) {
+			$value[ $k ] = is_array( $v )
+				? wp_slash( $v )
+				: addslashes( $v );
+		}
+	} else {
+		$value = addslashes( $value );
+	}
+
+	return $value;
+}
 
 /**
  * Returns the regexp for common whitespace characters.

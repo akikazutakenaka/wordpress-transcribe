@@ -30,7 +30,7 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
 		// Non-escaped post was passed.
 		$postarr = get_object_vars( $postarr );
 		$postarr = wp_slash( $postarr );
-// @NOW 006 -> wp-includes/formatting.php
+// @NOW 006
 	}
 }
 
