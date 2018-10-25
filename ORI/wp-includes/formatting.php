@@ -739,28 +739,7 @@ function sanitize_html_class( $class, $fallback = '' ) {
 	return apply_filters( 'sanitize_html_class', $sanitized, $class, $fallback );
 }
 
-/**
- * Converts lone & characters into `&#038;` (a.k.a. `&amp;`)
- *
- * @since 0.71
- *
- * @param string $content    String of characters to be converted.
- * @param string $deprecated Not used.
- * @return string Converted string.
- */
-function convert_chars( $content, $deprecated = '' ) {
-	if ( ! empty( $deprecated ) ) {
-		_deprecated_argument( __FUNCTION__, '0.71' );
-	}
-
-	if ( strpos( $content, '&' ) !== false ) {
-		$content = preg_replace( '/&([^#])(?![a-z1-4]{1,8};)/i', '&#038;$1', $content );
-	}
-
-	return $content;
-}
-
-// refactored. function convert_invalid_entities( $content ) {}
+// refactored. function convert_chars( $content, $deprecated = '' ) {}
 // :
 // refactored. function force_balance_tags( $text ) {}
 

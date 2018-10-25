@@ -1233,6 +1233,28 @@ function sanitize_title( $title, $fallback_title = '', $context = 'save' )
 }
 
 /**
+ * Converts lone & characters into `&#038;` (a.k.a. `&amp;`)
+ *
+ * @since 0.71
+ *
+ * @param  string $content    String of characters to be converted.
+ * @param  string $deprecated Not used.
+ * @return string Converted string.
+ */
+function convert_chars( $content, $deprecated = '' )
+{
+	if ( ! empty( $deprecated ) ) {
+		_deprecated_argument( __FUNCTION__, '0.71' );
+	}
+
+	if ( strpos( $content, '&' ) !== FALSE ) {
+		$content = preg_replace( '/&([^#])(?![a-z1-4]{1,8};)/i', '&#038;$1', $content );
+	}
+
+	return $content;
+}
+
+/**
  * Converts invalid Unicode references range to valid range.
  *
  * @since 4.3.0

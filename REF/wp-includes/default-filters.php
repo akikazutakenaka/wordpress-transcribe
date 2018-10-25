@@ -105,5 +105,6 @@ foreach ( array( 'content_save_pre', 'excerpt_save_pre', 'comment_save_pre', 'pr
 // Format strings for display.
 foreach ( array( 'comment_author', 'term_name', 'link_name', 'link_description', 'link_notes', 'bloginfo', 'wp_title', 'widget_title' ) as $filter ) {
 	add_filter( $filter, 'wptexturize' );
+	add_filter( $filter, 'convert_chars' );
 // @NOW 004
 }
