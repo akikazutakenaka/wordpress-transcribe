@@ -811,8 +811,10 @@ function wp_find_hierarchy_loop( $callback, $start, $start_parent, $callback_arg
 		: array( $start => $start_parent );
 
 	if ( ! $arbitrary_loop_member = wp_find_hierarchy_loop_tortoise_hare( $callback, $start, $override, $callback_args ) ) {
-// @NOW 006
+		return array();
 	}
+
+	return wp_find_hierarchy_loop_tortoise_hare( $callback, $arbitrary_loop_member, $override, $callback_args, TRUE );
 }
 
 /**

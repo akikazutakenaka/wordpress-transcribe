@@ -38,6 +38,6 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
 
 	// Now look for larger loops.
 	if ( ! $loop = wp_find_hierarchy_loop( 'wp_get_post_parent_id', $post_ID, $post_parent ) ) {
-// @NOW 005 -> wp-includes/functions.php
+// @NOW 005
 	}
 }
