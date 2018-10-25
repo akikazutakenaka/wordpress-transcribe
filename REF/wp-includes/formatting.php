@@ -2773,6 +2773,8 @@ function sanitize_mime_type( $mime_type )
 	return apply_filters( 'sanitize_mime_type', $sani_mime_type, $mime_type );
 }
 
+// @NOW 007
+
 /**
  * Returns the regexp for common whitespace characters.
  *
