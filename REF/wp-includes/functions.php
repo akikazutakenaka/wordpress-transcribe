@@ -811,11 +811,68 @@ function wp_find_hierarchy_loop( $callback, $start, $start_parent, $callback_arg
 		: array( $start => $start_parent );
 
 	if ( ! $arbitrary_loop_member = wp_find_hierarchy_loop_tortoise_hare( $callback, $start, $override, $callback_args ) ) {
-// @NOW 006 -> wp-includes/functions.php
+// @NOW 006
 	}
 }
 
-// @NOW 007
+/**
+ * Use the "The Tortoise and the Hare" algorithm to detect loops.
+ *
+ * For every step of the algorithm, the hare takes two steps and the tortoise one.
+ * If the hare ever laps the tortoise, there must be a loop.
+ *
+ * @since  3.1.0
+ * @access private
+ *
+ * @param  callable $callback      Function that accepts (ID, callback_arg, ...) and outputs parent_ID.
+ * @param  int      $start         The ID to start the loop check at.
+ * @param  array    $override      Optional.
+ *                                 An array of (ID => parent_ID, ...) to use instead of $callback.
+ *                                 Default empty array.
+ * @param  array    $callback_args Optional.
+ *                                 Additional arguments to send to $callback.
+ *                                 Default empty array.
+ * @param  bool     $_return_loop  Optional.
+ *                                 Return loop members or just detect presence of loop?
+ *                                 Only set to true if you already know the given $start is part of a loop (otherwise the returned array might include branches).
+ *                                 Default false.
+ * @return mixed    Scalar ID of some arbitrary member of the loop, or array of IDs of all members of loop if $_return_loop.
+ */
+function wp_find_hierarchy_loop_tortoise_hare( $callback, $start, $override = array(), $callback_args = array(), $_return_loop = FALSE )
+{
+	$tortoise = $hare = $evanescent_hare = $start;
+	$return = array();
+
+	/**
+	 * Set evanescent_hare to one past hare.
+	 * Increment hare two steps.
+	 */
+	while ( $tortoise
+	     && ( $evanescent_hare = isset( $override[ $hare ] )
+	     	? $override[ $hare ]
+	     	: call_user_func_array( $callback, array_merge( array( $hare ), $callback_args ) ) )
+	     && ( $hare = isset( $override[ $evanescent_hare ] )
+	     	? $override[ $evanescent_hare ]
+	     	: call_user_func_array( $callback, array_merge( array( $evanescent_hare ), $callback_args ) ) ) ) {
+		if ( $_return_loop ) {
+			$return[ $tortoise ] = $return[ $evanescent_hare ] = $return[ $hare ] = TRUE;
+		}
+
+		// Tortoise got lapped - must be a loop.
+		if ( $tortoise == $evanescent_hare || $tortoise == $hare ) {
+			return $_return_loop
+				? $return
+				: $tortoise;
+		}
+
+		// Increment tortoise by one step.
+		$tortoise = isset( $override[ $tortoise ] )
+			? $override[ $tortoise ]
+			: call_user_func_array( $callback, array_merge( array( $tortoise ), $callback_args ) );
+	}
+
+	return FALSE;
+}
 
 /**
  * Retrieve a list of protocols to allow in HTML attributes.
