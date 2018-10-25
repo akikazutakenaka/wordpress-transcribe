@@ -494,7 +494,7 @@ function wpautop( $pee, $br = TRUE )
 
 	// Find newlines in all elements and add placeholders.
 	$pee = wp_replace_in_html_tags( $pee, array( "\n" => " <!-- wpnl --> " ) );
-// @NOW 005 -> wp-includes/formatting.php
+// @NOW 005
 }
 
 /**
@@ -639,7 +639,43 @@ function wp_replace_in_html_tags( $haystack, $replace_pairs )
 {
 	// Find all elements.
 	$textarr = wp_html_split( $haystack );
-// @NOW 006
+	$changed = FALSE;
+
+	// Optimize when searching for one item.
+	if ( 1 === count( $replace_pairs ) ) {
+		// Extract $needle and $replace.
+		foreach ( $replace_pairs as $needle => $replace );
+
+		// Loop through delimiters (elements) only.
+		for ( $i = 1, $c = count( $textarr ); $i < $c; $i += 2 ) {
+			if ( FALSE !== strpos( $textarr[ $i ], $needle ) ) {
+				$textarr[ $i ] = str_replace( $needle, $replace, $textarr[ $i ] );
+				$changed = TRUE;
+			}
+		}
+	} else {
+		// Extract all $needles.
+		$needles = array_keys( $replace_pairs );
+
+		// Loop through delimiters (elements) only.
+		for ( $i = 1, $c = count( $textarr ); $i < $c; $i += 2 ) {
+			foreach ( $needles as $needle ) {
+				if ( FALSE !== strpos( $textarr[ $i ], $needle ) ) {
+					$textarr[ $i ] = strtr( $textarr[ $i ], $replace_pairs );
+					$changed = TRUE;
+
+					// After one strtr() break out of the foreach loop and look at next element.
+					break;
+				}
+			}
+		}
+	}
+
+	if ( $changed ) {
+		$haystack = implode( $textarr );
+	}
+
+	return $haystack;
 }
 
 /**

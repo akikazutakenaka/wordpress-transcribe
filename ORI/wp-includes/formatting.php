@@ -183,57 +183,7 @@ function wpautop( $pee, $br = true ) {
 
 // refactored. function wp_html_split( $input ) {}
 // :
-// refactored. function _get_wptexturize_shortcode_regex( $tagnames ) {}
-
-/**
- * Replace characters or phrases within HTML elements only.
- *
- * @since 4.2.3
- *
- * @param string $haystack The text which has to be formatted.
- * @param array $replace_pairs In the form array('from' => 'to', ...).
- * @return string The formatted text.
- */
-function wp_replace_in_html_tags( $haystack, $replace_pairs ) {
-	// Find all elements.
-	$textarr = wp_html_split( $haystack );
-	$changed = false;
-
-	// Optimize when searching for one item.
-	if ( 1 === count( $replace_pairs ) ) {
-		// Extract $needle and $replace.
-		foreach ( $replace_pairs as $needle => $replace );
-
-		// Loop through delimiters (elements) only.
-		for ( $i = 1, $c = count( $textarr ); $i < $c; $i += 2 ) {
-			if ( false !== strpos( $textarr[$i], $needle ) ) {
-				$textarr[$i] = str_replace( $needle, $replace, $textarr[$i] );
-				$changed = true;
-			}
-		}
-	} else {
-		// Extract all $needles.
-		$needles = array_keys( $replace_pairs );
-
-		// Loop through delimiters (elements) only.
-		for ( $i = 1, $c = count( $textarr ); $i < $c; $i += 2 ) {
-			foreach ( $needles as $needle ) {
-				if ( false !== strpos( $textarr[$i], $needle ) ) {
-					$textarr[$i] = strtr( $textarr[$i], $replace_pairs );
-					$changed = true;
-					// After one strtr() break out of the foreach loop and look at next element.
-					break;
-				}
-			}
-		}
-	}
-
-	if ( $changed ) {
-		$haystack = implode( $textarr );
-	}
-
-	return $haystack;
-}
+// refactored. function wp_replace_in_html_tags( $haystack, $replace_pairs ) {}
 
 /**
  * Newline preservation help function for wpautop
