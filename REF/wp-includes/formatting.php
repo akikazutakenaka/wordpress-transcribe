@@ -561,8 +561,35 @@ function wpautop( $pee, $br = TRUE )
 	if ( $br ) {
 		// Replace newlines that shouldn't be touched with a placeholder.
 		$pee = preg_replace_callback( '/<(script|style).*?<\/\\1>/s', '_autop_newline_preservation_helper', $pee );
-// @NOW 005
+
+		// Normalize <br>
+		$pee = str_replace( array( '<br>', '<br/>' ), '<br />', $pee );
+
+		// Replace any new line characters that aren't preceded by a <br /> with a <br />.
+		$pee = preg_replace( '|(?<!<br />)\s*\n|', "<br />\n", $pee );
+
+		// Replace newline placeholders with newlines.
+		$pee = str_replace( '<WPPreserveNewline />', "\n", $pee );
 	}
+
+	// If a <br /> tag is after an opening or closing block tag, remove it.
+	$pee = preg_replace( '!(</?' . $allblocks . '[^>]*>)\s*<br />!', "$1", $pee );
+
+	// If a <br /> tag is before a subset of opening or closing block tags, remove it.
+	$pee = preg_replace( '!<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $pee );
+	$pee = preg_replace( "|\n</p>$|", '</p>', $pee );
+
+	// Replace placeholder <pre> tags with their original content.
+	if ( ! empty( $pre_tags ) ) {
+		$pee = str_replace( array_keys( $pre_tags ), array_values( $pre_tags ), $pee );
+	}
+
+	// Restore newlines in all elements.
+	if ( FALSE !== strpos( $pee, '<!-- wpnl -->' ) ) {
+		$pee = str_replace( array( ' <!-- wpnl --> ', '<!-- wpnl -->' ), "\n", $pee );
+	}
+
+	return $pee;
 }
 
 /**

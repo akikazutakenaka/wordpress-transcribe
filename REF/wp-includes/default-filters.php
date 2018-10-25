@@ -127,5 +127,5 @@ foreach ( array( 'term_description', 'get_the_post_type_description' ) as $filte
 	add_filter( $filter, 'wptexturize' );
 	add_filter( $filter, 'convert_chars' );
 	add_filter( $filter, 'wpautop' );
-// @NOW 004 -> wp-includes/formatting.php
+// @NOW 004
 }
