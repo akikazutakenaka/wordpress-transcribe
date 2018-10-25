@@ -790,6 +790,8 @@ function get_main_network_id()
 	return ( int ) apply_filters( 'get_main_network_id', $main_network_id );
 }
 
+// @NOW 006
+
 /**
  * Retrieve a list of protocols to allow in HTML attributes.
  *
