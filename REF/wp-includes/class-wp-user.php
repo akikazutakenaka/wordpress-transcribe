@@ -272,7 +272,37 @@ EOQ
 		return metadata_exists( 'user', $this->ID, $key );
 	}
 
-// @NOW 012
+	/**
+	 * Magic method for accessing custom fields.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param  string $key User meta key to retrieve.
+	 * @return mixed  Value of the given user meta key (if set).
+	 *                If `$key` is 'id', the user ID.
+	 */
+	public function __get( $key )
+	{
+		if ( 'id' == $key ) {
+			_deprecated_argument( 'WP_User->id', '2.1.0', sprintf( __( 'Use %s instead.' ), '<code>WP_User->ID</code>' ) );
+			return $this->ID;
+		}
+
+		if ( isset( $this->data->$key ) ) {
+			$value = $this->data->$key;
+		} else {
+			if ( isset( self::$back_compat_keys[ $key ] ) ) {
+				$key = self::$back_compat_keys[ $key ];
+			}
+
+			$value = get_user_meta( $this->ID, $key, TRUE );
+		}
+
+		if ( $this->filter ) {
+			$value = sanitize_user_field( $key, $value, $this->ID, $this->filter );
+// @NOW 012 -> wp-includes/user.php
+		}
+	}
 
 	/**
 	 * Determine whether the user exists in the database.

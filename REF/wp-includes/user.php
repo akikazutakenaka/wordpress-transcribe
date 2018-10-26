@@ -140,6 +140,8 @@ function setup_userdata( $for_user_id = '' )
 	$user_identity = $user->display_name;
 }
 
+// @NOW 013
+
 /**
  * Update all user caches.
  *
