@@ -2254,6 +2254,8 @@ function esc_html( $text )
 	return apply_filters( 'esc_html', $safe_text, $text );
 }
 
+// @NOW 014
+
 /**
  * Escaping for textarea values.
  *

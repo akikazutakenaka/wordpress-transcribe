@@ -9,14 +9,6 @@
 
 // refactored. function __() {}
 // :
-// refactored. function add_filter() {}
-
-/**
- * @ignore
- */
-function esc_attr() {}
-
-// refactored. function apply_filters() {}
 // refactored. function get_option() {}
 
 /**
