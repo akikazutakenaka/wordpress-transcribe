@@ -66,10 +66,24 @@ function get_user_option( $option, $user = 0, $deprecated = '' )
 
 	$prefix = $wpdb->get_blog_prefix();
 
-	if ( $user->has_prop( $prefix . $option ) ) { // Blog specific
-		$result = $user->get( $prefix . $option );
-// @NOW 011
-	}
+	$result = $user->has_prop( $prefix . $option )
+		? $user->get( $prefix . $option )
+		: ( $user->has_prop( $option )
+			? $user->get( $option )
+			: FALSE );
+
+	/**
+	 * Filters a specific user option value.
+	 *
+	 * The dynamic portion of the hook name, `$option`, refers to the user option name.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param mixed   $result Value for the user's option.
+	 * @param string  $option Name of the option being retrieved.
+	 * @param WP_User $user   WP_User object of the user whose option is being retrieved.
+	 */
+	return apply_filters( "get_user_option_{$option}", $result, $option, $user );
 }
 
 /**
