@@ -36,9 +36,50 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 	}
 
 	if ( $post instanceof WP_Post ) {
-// @NOW 007
+		$_post = $post;
+	} elseif ( is_object( $post ) ) {
+		if ( empty( $post->filter ) ) {
+			$_post = sanitize_post( $post, 'raw' );
+// @NOW 007 -> wp-includes/post.php
+		}
 	}
 }
+
+/**
+ * Sanitize every post field.
+ *
+ * If the context is 'raw', then the post object or array will get minimal sanitization of the integer fields.
+ *
+ * @since 2.3.0
+ * @see   sanitize_post_field()
+ *
+ * @param  object|WP_Post|array $post    The Post Object or Array.
+ * @param  string               $context Optional.
+ *                                       How to sanitize post fields.
+ *                                       Accepts 'raw', 'edit', 'db', or 'display'.
+ *                                       Default 'display'.
+ * @param  object|WP_Post|array The now sanitized Post Object or Array (will be the same type as $post).
+ */
+function sanitize_post( $post, $context = 'display' )
+{
+	if ( is_object( $post ) ) {
+		// Check if post already filtered for this context.
+		if ( isset( $post->filter ) && $context == $post->filter ) {
+			return $post;
+		}
+
+		if ( ! isset( $post->ID ) ) {
+			$post->ID = 0;
+		}
+
+		foreach ( array_keys( get_object_vars( $post ) ) as $field ) {
+			$post->$field = sanitize_post_field( $field, $post->$field, $post->ID, $context );
+// @NOW 008 -> wp-includes/post.php
+		}
+	}
+}
+
+// @NOW 009
 
 /**
  * Update a post with new post data.
