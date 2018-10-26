@@ -193,7 +193,7 @@ function sanitize_user_field( $field, $value, $user_id, $context )
 		$value = 'description' == $field
 			? esc_html( $value )
 			: esc_attr( $value );
-// @NOW 013 -> wp-includes/formatting.php
+// @NOW 013
 	}
 }
 
