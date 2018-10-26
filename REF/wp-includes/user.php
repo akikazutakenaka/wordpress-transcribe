@@ -31,6 +31,47 @@ function get_current_user_id()
 }
 
 /**
+ * Retrieve user option that can be either per Site or per Network.
+ *
+ * If the user ID is not given, then the current user will be used instead.
+ * If the user ID is given, then the user data will be retrieved.
+ * The filter for the result, will also pass the original option name and finally the user data object as the third parameter.
+ *
+ * The option will first check for the per site name and then the per Network name.
+ *
+ * @since  2.0.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  string $option     User option name.
+ * @param  int    $user       Optional.
+ *                            User ID.
+ * @param  string $deprecated Use get_option() to check for an option in the options table.
+ * @return mixed  User option value on success, false on failure.
+ */
+function get_user_option( $option, $user = 0, $deprecated = '' )
+{
+	global $wpdb;
+
+	if ( ! empty( $deprecated ) ) {
+		_deprecated_argument( __FUNCTION__, '3.0.0' );
+	}
+
+	if ( empty( $user ) ) {
+		$user = get_current_user_id();
+	}
+
+	if ( ! $user = get_userdata( $user ) ) {
+		return FALSE;
+	}
+
+	$prefix = $wpdb->get_blog_prefix();
+
+	if ( $user->has_prop( $prefix . $option ) ) { // Blog specific
+// @NOW 011 -> wp-includes/class-wp-user.php
+	}
+}
+
+/**
  * Retrieve user meta field for a user.
  *
  * @since 3.0.0

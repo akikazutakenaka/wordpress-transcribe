@@ -223,7 +223,7 @@ function user_can_richedit()
 		$wp_rich_edit = FALSE;
 
 		if ( get_user_option( 'rich_editing' ) == 'true' || ! is_user_logged_in() ) {
-// @NOW 010 -> wp-includes/pluggable.php
+// @NOW 010 -> wp-includes/user.php
 		}
 	}
 }

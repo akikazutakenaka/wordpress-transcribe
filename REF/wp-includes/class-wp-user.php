@@ -258,6 +258,8 @@ EOQ
 		return ! empty( $this->ID );
 	}
 
+// @NOW 012
+
 	/**
 	 * Retrieve all of the role capabilities and merge with individual capabilities.
 	 *
