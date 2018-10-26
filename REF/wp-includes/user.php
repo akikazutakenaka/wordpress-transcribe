@@ -193,6 +193,47 @@ function sanitize_user_field( $field, $value, $user_id, $context )
 		$value = 'description' == $field
 			? esc_html( $value )
 			: esc_attr( $value );
+	} elseif ( 'db' == $context ) {
+		$value = $prefixed
+			? // This filter is documented in wp-includes/post.php
+				apply_filters( "pre_{$field}", $value )
+			: /**
+			   * Filters the value of a user field in the 'db' context.
+			   *
+			   * The dynamic portion of the hook name, `$field`, refers to the prefixed user field being filtered, such as 'user_login', 'user_email', 'first_name', etc.
+			   *
+			   * @since 2.9.0
+			   *
+			   * @param mixed $value Value of the prefixed user field.
+			   */
+				apply_filters( "pre_user_{$field}", $value );
+	} else {
+		// Use display filters by default.
+		$value = $prefixed
+			? // This filter is documented in wp-includes/post.php
+				apply_filters( "{$field}", $value, $user_id, $context )
+			: /**
+			   * Filters the value of a user field in a standard context.
+			   *
+			   * The dynamic portion of the hook name, `$field`, refers to the prefixed user field being filtered, such as 'user_login', 'user_email', 'first_name', etc.
+			   *
+			   * @since 2.9.0
+			   *
+			   * @param mixed  $value   The user object value to sanitize.
+			   * @param int    $user_id User ID.
+			   * @param string $context The context to filter within.
+			   */
+				apply_filters( "user_{$field}", $value, $user_id, $context );
+	}
+
+	if ( 'user_url' == $field ) {
+		$value = esc_url( $value );
+	}
+
+	if ( 'attribute' == $context ) {
+		$value = esc_attr( $value );
+	} elseif ( 'js' == $context ) {
+		$value = esc_js( $value );
 // @NOW 013
 	}
 }
