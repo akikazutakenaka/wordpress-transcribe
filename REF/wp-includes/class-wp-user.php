@@ -272,6 +272,8 @@ EOQ
 		return metadata_exists( 'user', $this->ID, $key );
 	}
 
+// @NOW 012
+
 	/**
 	 * Determine whether the user exists in the database.
 	 *
@@ -282,6 +284,21 @@ EOQ
 	public function exists()
 	{
 		return ! empty( $this->ID );
+	}
+
+	/**
+	 * Retrieve the value of a property or meta key.
+	 *
+	 * Retrieves from the users and usermeta table.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param  string $key Property
+	 * @return mixed
+	 */
+	public function get( $key )
+	{
+		return $this->__get( $key );
 	}
 
 	/**

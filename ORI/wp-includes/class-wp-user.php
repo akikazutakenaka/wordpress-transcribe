@@ -130,21 +130,7 @@ class WP_User {
 	}
 
 	// refactored. public function exists() {}
-
-	/**
-	 * Retrieve the value of a property or meta key.
-	 *
-	 * Retrieves from the users and usermeta table.
-	 *
-	 * @since 3.3.0
-	 *
-	 * @param string $key Property
-	 * @return mixed
-	 */
-	public function get( $key ) {
-		return $this->__get( $key );
-	}
-
+	// :
 	// refactored. public function has_prop( $key ) {}
 
 	/**
