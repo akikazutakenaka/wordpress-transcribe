@@ -1676,26 +1676,7 @@ function esc_attr( $text ) {
 	return apply_filters( 'attribute_escape', $safe_text, $text );
 }
 
-/**
- * Escaping for textarea values.
- *
- * @since 3.1.0
- *
- * @param string $text
- * @return string
- */
-function esc_textarea( $text ) {
-	$safe_text = htmlspecialchars( $text, ENT_QUOTES, get_option( 'blog_charset' ) );
-	/**
-	 * Filters a string cleaned and escaped for output in a textarea element.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param string $safe_text The text after it has been escaped.
- 	 * @param string $text      The text prior to being escaped.
-	 */
-	return apply_filters( 'esc_textarea', $safe_text, $text );
-}
+// refactored. function esc_textarea( $text ) {}
 
 /**
  * Escape an HTML tag name.
