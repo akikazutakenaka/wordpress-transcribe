@@ -236,5 +236,17 @@ final class WP_Post
 	 */
 	public $filter;
 
-// @NOW 008
+	/**
+	 * Constructor.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param WP_Post|object $post Post object.
+	 */
+	public function __construct( $post )
+	{
+		foreach ( get_object_vars( $post ) as $key => $value ) {
+			$this->$key = $value;
+		}
+	}
 }

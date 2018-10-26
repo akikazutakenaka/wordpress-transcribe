@@ -81,17 +81,7 @@ final class WP_Post {
 		return new WP_Post( $_post );
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @param WP_Post|object $post Post object.
-	 */
-	public function __construct( $post ) {
-		foreach ( get_object_vars( $post ) as $key => $value )
-			$this->$key = $value;
-	}
+	// refactored. public function __construct( $post ) {}
 
 	/**
 	 * Isset-er.

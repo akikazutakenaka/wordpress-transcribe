@@ -36,7 +36,7 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 	}
 
 	if ( $post instanceof WP_Post ) {
-// @NOW 007 -> wp-includes/class-wp-post.php
+// @NOW 007
 	}
 }
 
