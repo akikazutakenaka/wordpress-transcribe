@@ -234,8 +234,9 @@ function sanitize_user_field( $field, $value, $user_id, $context )
 		$value = esc_attr( $value );
 	} elseif ( 'js' == $context ) {
 		$value = esc_js( $value );
-// @NOW 013
 	}
+
+	return $value;
 }
 
 /**

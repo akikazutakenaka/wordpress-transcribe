@@ -300,7 +300,7 @@ EOQ
 
 		if ( $this->filter ) {
 			$value = sanitize_user_field( $key, $value, $this->ID, $this->filter );
-// @NOW 012 -> wp-includes/user.php
+// @NOW 012
 		}
 	}
 
