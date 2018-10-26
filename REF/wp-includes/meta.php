@@ -80,7 +80,44 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 		: array();
 }
 
-// @NOW 012
+/**
+ * Determine if a meta key is set for a given object.
+ *
+ * @since 3.3.0
+ *
+ * @param  string $meta_type Type of object metadata is for (e.g., comment, post, or user).
+ * @param  int    $object_id ID of the object metadata is for.
+ * @param  string $meta_key  Metadata key.
+ * @return bool   True if the key is set, false if not.
+ */
+function metadata_exists( $meta_type, $object_id, $meta_key )
+{
+	if ( ! $meta_type || ! is_numeric( $object_id ) ) {
+		return FALSE;
+	}
+
+	$object_id = absint( $object_id );
+
+	if ( ! $object_id ) {
+		return FALSE;
+	}
+
+	// This filter is documented in wp-includes/meta.php
+	$check = apply_filters( "get_{$meta_type}_metadata", NULL, $object_id, $meta_key, TRUE );
+
+	if ( NULL !== $check ) {
+		return ( bool ) $check;
+	}
+
+	$meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
+
+	if ( ! $meta_cache ) {
+		$meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
+		$meta_cache = $meta_cache[ $object_id ];
+	}
+
+	return isset( $meta_cache[ $meta_key ] );
+}
 
 /**
  * Update the metadata cache for the specified objects.
