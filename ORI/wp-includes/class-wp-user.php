@@ -38,42 +38,7 @@
 class WP_User {
 	// refactored. public $data;
 	// :
-	// refactored. public function __isset( $key ) {}
-
-	/**
-	 * Magic method for accessing custom fields.
-	 *
-	 * @since 3.3.0
-	 *
-	 * @param string $key User meta key to retrieve.
-	 * @return mixed Value of the given user meta key (if set). If `$key` is 'id', the user ID.
-	 */
-	public function __get( $key ) {
-		if ( 'id' == $key ) {
-			_deprecated_argument( 'WP_User->id', '2.1.0',
-				sprintf(
-					/* translators: %s: WP_User->ID */
-					__( 'Use %s instead.' ),
-					'<code>WP_User->ID</code>'
-				)
-			);
-			return $this->ID;
-		}
-
-		if ( isset( $this->data->$key ) ) {
-			$value = $this->data->$key;
-		} else {
-			if ( isset( self::$back_compat_keys[ $key ] ) )
-				$key = self::$back_compat_keys[ $key ];
-			$value = get_user_meta( $this->ID, $key, true );
-		}
-
-		if ( $this->filter ) {
-			$value = sanitize_user_field( $key, $value, $this->ID, $this->filter );
-		}
-
-		return $value;
-	}
+	// refactored. public function __get( $key ) {}
 
 	/**
 	 * Magic method for setting custom user fields.

@@ -300,8 +300,9 @@ EOQ
 
 		if ( $this->filter ) {
 			$value = sanitize_user_field( $key, $value, $this->ID, $this->filter );
-// @NOW 012
 		}
+
+		return $value;
 	}
 
 	/**

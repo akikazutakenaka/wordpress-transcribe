@@ -68,7 +68,7 @@ function get_user_option( $option, $user = 0, $deprecated = '' )
 
 	if ( $user->has_prop( $prefix . $option ) ) { // Blog specific
 		$result = $user->get( $prefix . $option );
-// @NOW 011 -> wp-includes/class-wp-user.php
+// @NOW 011
 	}
 }
 
