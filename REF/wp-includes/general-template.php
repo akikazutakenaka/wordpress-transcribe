@@ -199,4 +199,31 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 	return $output;
 }
 
-// @NOW 010
+/**
+ * Whether the user can access the visual editor.
+ *
+ * Checks if the user can access the visual editor and that it's supported by the user's browser.
+ *
+ * @since  2.0.0
+ * @global bool $wp_rich_edit Whether the user can access the visual editor.
+ * @global bool $is_gecko     Whether the browser is Gecko-based.
+ * @global bool $is_opera     Whether the browser is Opera.
+ * @global bool $is_safari    Whether the browser is Safari.
+ * @global bool $is_chrome    Whether the browser is Chrome.
+ * @global bool $is_IE        Whether the browser is Internet Explorer.
+ * @global bool $is_edge      Whether the browser is Microsoft Edge.
+ *
+ * @return bool True if the user can access the visual editor, false otherwise.
+ */
+function user_can_richedit()
+{
+	global $wp_rich_edit, $is_gecko, $is_opera, $is_safari, $is_chrome, $is_IE, $is_edge;
+
+	if ( ! isset( $wp_rich_edit ) ) {
+		$wp_rich_edit = FALSE;
+
+		if ( get_user_option( 'rich_editing' ) == 'true' || ! is_user_logged_in() ) {
+// @NOW 010 -> wp-includes/pluggable.php
+		}
+	}
+}

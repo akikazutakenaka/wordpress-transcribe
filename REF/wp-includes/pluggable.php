@@ -106,3 +106,5 @@ if ( ! function_exists( 'get_user_by' ) ) {
 		return $user;
 	}
 }
+
+// @NOW 011
