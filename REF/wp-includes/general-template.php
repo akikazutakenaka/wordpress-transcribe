@@ -198,3 +198,5 @@ function get_bloginfo( $show = '', $filter = 'raw' )
 
 	return $output;
 }
+
+// @NOW 010

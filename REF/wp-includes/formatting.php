@@ -1838,8 +1838,9 @@ function format_to_edit( $content, $rich_text = FALSE )
 
 	if ( ! $rich_text ) {
 		$content = esc_textarea( $content );
-// @NOW 010
 	}
+
+	return $content;
 }
 
 /**
