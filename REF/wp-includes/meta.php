@@ -80,6 +80,8 @@ function get_metadata( $meta_type, $object_id, $meta_key = '', $single = FALSE )
 		: array();
 }
 
+// @NOW 012
+
 /**
  * Update the metadata cache for the specified objects.
  *

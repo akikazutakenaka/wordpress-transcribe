@@ -38,36 +38,7 @@
 class WP_User {
 	// refactored. public $data;
 	// :
-	// refactored. public static function get_data_by( $field, $value ) {}
-
-	/**
-	 * Magic method for checking the existence of a certain custom field.
-	 *
-	 * @since 3.3.0
-	 *
-	 * @param string $key User meta key to check if set.
-	 * @return bool Whether the given user meta key is set.
-	 */
-	public function __isset( $key ) {
-		if ( 'id' == $key ) {
-			_deprecated_argument( 'WP_User->id', '2.1.0',
-				sprintf(
-					/* translators: %s: WP_User->ID */
-					__( 'Use %s instead.' ),
-					'<code>WP_User->ID</code>'
-				)
-			);
-			$key = 'ID';
-		}
-
-		if ( isset( $this->data->$key ) )
-			return true;
-
-		if ( isset( self::$back_compat_keys[ $key ] ) )
-			$key = self::$back_compat_keys[ $key ];
-
-		return metadata_exists( 'user', $this->ID, $key );
-	}
+	// refactored. public function __isset( $key ) {}
 
 	/**
 	 * Magic method for accessing custom fields.

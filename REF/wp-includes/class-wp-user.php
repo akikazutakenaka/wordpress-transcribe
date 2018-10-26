@@ -246,7 +246,31 @@ EOQ
 		return $user;
 	}
 
-// @NOW 012
+	/**
+	 * Magic method for checking the existence of a certain custom field.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param  string $key User meta key to check if set.
+	 * @return bool   Whether the given user meta key is set.
+	 */
+	public function __isset( $key )
+	{
+		if ( 'id' == $key ) {
+			_deprecated_argument( 'WP_User->id', '2.1.0', sprintf( __( 'Use %s instead.' ), '<code>WP_User->ID</code>' ) );
+			$key = 'ID';
+		}
+
+		if ( isset( $this->data->$key ) ) {
+			return TRUE;
+		}
+
+		if ( isset( self::$back_compat_keys[ $key ] ) ) {
+			$key = self::$back_compat_keys[ $key ];
+		}
+
+		return metadata_exists( 'user', $this->ID, $key );
+	}
 
 	/**
 	 * Determine whether the user exists in the database.
