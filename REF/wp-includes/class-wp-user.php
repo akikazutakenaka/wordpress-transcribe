@@ -246,6 +246,8 @@ EOQ
 		return $user;
 	}
 
+// @NOW 012
+
 	/**
 	 * Determine whether the user exists in the database.
 	 *
@@ -258,7 +260,20 @@ EOQ
 		return ! empty( $this->ID );
 	}
 
-// @NOW 012
+	/**
+	 * Determine whether a property or meta key is set.
+	 *
+	 * Consults the users and usermeta tables.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param  string $key Property
+	 * @return bool
+	 */
+	public function has_prop( $key )
+	{
+		return $this->__isset( $key );
+	}
 
 	/**
 	 * Retrieve all of the role capabilities and merge with individual capabilities.

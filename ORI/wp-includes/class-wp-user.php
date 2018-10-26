@@ -174,19 +174,7 @@ class WP_User {
 		return $this->__get( $key );
 	}
 
-	/**
-	 * Determine whether a property or meta key is set
-	 *
-	 * Consults the users and usermeta tables.
-	 *
-	 * @since 3.3.0
-	 *
-	 * @param string $key Property
-	 * @return bool
-	 */
-	public function has_prop( $key ) {
-		return $this->__isset( $key );
-	}
+	// refactored. public function has_prop( $key ) {}
 
 	/**
 	 * Return an array representation.
