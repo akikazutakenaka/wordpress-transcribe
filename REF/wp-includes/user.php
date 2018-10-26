@@ -140,7 +140,62 @@ function setup_userdata( $for_user_id = '' )
 	$user_identity = $user->display_name;
 }
 
-// @NOW 013
+/**
+ * Sanitize user field based on context.
+ *
+ * Possible context values are: 'raw', 'edit', 'db', 'display', 'attribute' and 'js'.
+ * The 'display' context is used by default.
+ * 'attribute' and 'js' contexts are treated like 'display' when calling for filters.
+ *
+ * @since 2.3.0
+ *
+ * @param  string $field   The user Object field name.
+ * @param  mixed  $value   The user Object value.
+ * @param  int    $user_id User ID.
+ * @param  string $context How to sanitize user fields.
+ *                         Looks for 'raw', 'edit', 'db', 'display', 'attribute' and 'js'.
+ * @return mixed  Sanitized value.
+ */
+function sanitize_user_field( $field, $value, $user_id, $context )
+{
+	$int_fields = array( 'ID' );
+
+	if ( in_array( $field, $int_fields ) ) {
+		$value = ( int ) $value;
+	}
+
+	if ( 'raw' == $context ) {
+		return $value;
+	}
+
+	if ( ! is_string ( $value ) && ! is_numeric( $value ) ) {
+		return $value;
+	}
+
+	$prefixed = FALSE !== strpos( $field, 'user_' );
+
+	if ( 'edit' == $context ) {
+		$value = $prefixed
+			? // This filter is documented in wp-includes/post.php
+				apply_filters( "edit_{$field}", $value, $user_id )
+			: /**
+			   * Filters a user field value in the 'edit' context.
+			   *
+			   * The dynamic portion of the hook name, `$field`, refers to the prefixed user field being filtered, such as 'user_login', 'user_email', 'first_name', etc.
+			   *
+			   * @since 2.9.0
+			   *
+			   * @param mixed $value   Value of the prefixed user field.
+			   * @param int   $user_id User ID.
+			   */
+				apply_filters( "edit_user_{$field}", $value, $user_id );
+
+		$value = 'description' == $field
+			? esc_html( $value )
+			: esc_attr( $value );
+// @NOW 013 -> wp-admin/includes/noop.php, wp-includes/formatting.php
+	}
+}
 
 /**
  * Update all user caches.
