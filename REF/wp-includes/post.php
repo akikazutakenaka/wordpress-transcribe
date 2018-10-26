@@ -79,7 +79,91 @@ function sanitize_post( $post, $context = 'display' )
 	}
 }
 
-// @NOW 009
+/**
+ * Sanitize post field based on context.
+ *
+ * Possible context values are: 'raw', 'edit', 'db', 'display', 'attribute' and 'js'.
+ * The 'display' context is used by default.
+ * 'attribute' and 'js' contexts are treated like 'display' when calling filters.
+ *
+ * @since 2.3.0
+ * @since 4.4.0 Like `sanitize_post()`, `$context` defaults to 'display'.
+ *
+ * @param  string $field   The Post Object field name.
+ * @param  mixed  $value   The Post Object value.
+ * @param  int    $post_id Post ID.
+ * @param  string $context Optional.
+ *                         How to sanitize post fields.
+ *                         Looks for 'raw', 'edit', 'db', 'display', 'attribute' and 'js'.
+ *                         Default 'display'.
+ * @return mixed  Sanitized value.
+ */
+function sanitize_post_field( $field, $value, $post_id, $context = 'display' )
+{
+	$int_fields = array( 'ID', 'post_parent', 'menu_order' );
+
+	if ( in_array( $field, $int_fields ) ) {
+		$value = ( int ) $value;
+	}
+
+	// Fields which contain arrays of integers.
+	$array_int_fields = array( 'ancestors' );
+
+	if ( in_array( $field, $array_int_fields ) ) {
+		$value = array_map( 'absint', $value );
+		return $value;
+	}
+
+	if ( 'raw' == $context ) {
+		return $value;
+	}
+
+	$prefixed = FALSE;
+
+	if ( FALSE !== strpos( $field, 'post_' ) ) {
+		$prefixed = TRUE;
+		$field_no_prefix = str_replace( 'post_', '', $field );
+	}
+
+	if ( 'edit' == $context ) {
+		$format_to_edit = array( 'post_content', 'post_excerpt', 'post_title', 'post_password' );
+
+		if ( $prefixed ) {
+			/**
+			 * Filters the value of a specific post field to edit.
+			 *
+			 * The dynamic portion of the hook name, `$field`, refers to the post field name.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param mixed $value   Value of the post field.
+			 * @param int   $post_id Post ID.
+			 */
+			$value = apply_filters( "edit_{$field}", $value, $post_id );
+
+			/**
+			 * Filters the value of a specific post field to edit.
+			 *
+			 * The dynamic portion of the hook name, `$field_no_prefix`, refers to the post field name.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param mixed $value   Value of the post field.
+			 * @param int   $post_id Post ID.
+			 */
+			$value = apply_filters( "{$field_no_prefix}_edit_pre", $value, $post_id );
+		} else {
+			$value = apply_filters( "edit_post_{$field}", $value, $post_id );
+		}
+
+		$value = in_array( $field, $format_to_edit )
+			? ( 'post_content' == $field
+				? format_to_edit( $value, user_can_richedit() )
+				: format_to_edit( $value ) )
+			: esc_attr( $value );
+// @NOW 009 -> wp-includes/formatting.php
+	}
+}
 
 /**
  * Update a post with new post data.

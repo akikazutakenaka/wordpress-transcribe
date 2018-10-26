@@ -1810,6 +1810,8 @@ function force_balance_tags( $text )
 	return $newtext;
 }
 
+// @NOW 010
+
 /**
  * Appends a trailing slash.
  *
