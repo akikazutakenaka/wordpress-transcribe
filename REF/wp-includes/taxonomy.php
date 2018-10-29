@@ -34,7 +34,7 @@ function get_object_taxonomies( $object, $output = 'names' )
 	if ( is_object( $object ) ) {
 		if ( $object->post_type == 'attachment' ) {
 			return get_attachment_taxonomies( $object, $output );
-// self -> @NOW 010 -> wp-includes/media.php
+// self -> @NOW 010
 		}
 	}
 }

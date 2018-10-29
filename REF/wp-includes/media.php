@@ -32,5 +32,36 @@ function get_attachment_taxonomies( $attachment, $output = 'names' )
 	}
 
 	$file = get_attached_file( $attachment->ID );
-// wp-includes/taxonomy.php -> @NOW 011
+	$filename = basename( $file );
+	$objects = array( 'attachment' );
+
+	if ( FALSE !== strpos( $filename, '.' ) ) {
+		$objects[] = 'attachment:' . substr( $filename, strrpos( $filename, '.' ) + 1 );
+	}
+
+	if ( ! empty( $attachment->post_mime_type ) ) {
+		$objects[] = 'attachment:' . $attachment->post_mime_type;
+
+		if ( FALSE !== strpos( $attachment->post_mime_type, '/' ) ) {
+			foreach ( explode( '/', $attachment->post_mime_type ) as $token ) {
+				if ( ! empty( $token ) ) {
+					$objects[] = "attachment:$token";
+				}
+			}
+		}
+	}
+
+	$taxonomies = array();
+
+	foreach ( $objects as $object ) {
+		if ( $taxes = get_object_taxonomies( $object, $output ) ) {
+			$taxonomies = array_merge( $taxonomies, $taxes );
+		}
+	}
+
+	if ( 'names' === $output ) {
+		$taxonomies = array_unique( $taxonomies );
+	}
+
+	return $taxonomies;
 }
