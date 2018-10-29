@@ -339,6 +339,8 @@ function nocache_headers()
 	}
 }
 
+// self -> @NOW 015
+
 /**
  * Normalize a filesystem path.
  *
@@ -442,7 +444,29 @@ function wp_upload_dir( $time = NULL, $create_dir = TRUE, $refresh_cache = FALSE
 	}
 }
 
-// self -> @NOW 014
+/**
+ * A non-filtered, non-cached version of wp_upload_dir() that doesn't check the path.
+ *
+ * @since  4.5.0
+ * @access private
+ *
+ * @param  string $time Optional.
+ *                      Time formatted in 'yyyy/mm'.
+ *                      Default null.
+ * @return array  See wp_upload_dir()
+ */
+function _wp_upload_dir( $time = NULL )
+{
+	$siteurl = get_option( 'siteurl' );
+	$upload_path = trim( get_option( 'upload_path' ) );
+
+	$dir = empty( $upload_path ) || 'wp-content/uploads' == $upload_path
+		? WP_CONTENT_DIR . '/uploads'
+		: ( 0 !== strpos( $upload_path, ABSPATH )
+			? path_join( ABSPATH, $upload_path ) // $dir is absolute, $upload_path is (maybe) relative to ABSPATH
+			: $upload_path );
+// self -> @NOW 014 -> self
+}
 
 /**
  * Kill WordPress execution and display HTML message with error message.
