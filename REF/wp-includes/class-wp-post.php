@@ -237,6 +237,49 @@ final class WP_Post
 	public $filter;
 
 	/**
+	 * Retrieve WP_Post instance.
+	 *
+	 * @since  3.5.0
+	 * @static
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  int           $post_id Post ID.
+	 * @return WP_Post|false Post object, false otherwise.
+	 */
+	public static function get_instance( $post_id )
+	{
+		global $wpdb;
+		$post_id = ( int ) $post_id;
+
+		if ( ! $post_id ) {
+			return FALSE;
+		}
+
+		$_post = wp_cache_get( $post_id, 'posts' );
+
+		if ( ! $_post ) {
+			$_post = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT *
+FROM $wpdb->posts
+WHERE ID = %d
+LIMIT 1
+EOQ
+					, $post_id ) );
+
+			if ( ! $_post ) {
+				return FALSE;
+			}
+
+			$_post = sanitize_post( $_post, 'raw' );
+			wp_cache_add( $_post->ID, $_post, 'posts' );
+		} elseif ( empty( $_post->filter ) ) {
+			$_post = sanitize_post( $_post, 'raw' );
+		}
+
+		return new WP_Post( $_post );
+	}
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 3.5.0

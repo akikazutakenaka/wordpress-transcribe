@@ -40,6 +40,11 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 	} elseif ( is_object( $post ) ) {
 		if ( empty( $post->filter ) ) {
 			$_post = sanitize_post( $post, 'raw' );
+			$_post = new WP_Post( $_post );
+		} elseif ( 'raw' == $post->filter ) {
+			$_post = new WP_Post( $post );
+		} else {
+			$_post = WP_Post::get_instance( $post->ID );
 // @NOW 007
 		}
 	}

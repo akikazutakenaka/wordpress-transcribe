@@ -21,66 +21,7 @@
  */
 final class WP_Post {
 	// refactored. public $ID;
-	// refactored. public $post_author = 0;
-	// refactored. public $post_date = '0000-00-00 00:00:00';
-	// refactored. public $post_date_gmt = '0000-00-00 00:00:00';
-	// refactored. public $post_content = '';
-	// refactored. public $post_title = '';
-	// refactored. public $post_excerpt = '';
-	// refactored. public $post_status = 'publish';
-	// refactored. public $comment_status = 'open';
-	// refactored. public $ping_status = 'open';
-	// refactored. public $post_password = '';
-	// refactored. public $post_name = '';
-	// refactored. public $to_ping = '';
-	// refactored. public $pinged = '';
-	// refactored. public $post_modified = '0000-00-00 00:00:00';
-	// refactored. public $post_modified_gmt = '0000-00-00 00:00:00';
-	// refactored. public $post_content_filtered = '';
-	// refactored. public $post_parent = 0;
-	// refactored. public $guid = '';
-	// refactored. public $menu_order = 0;
-	// refactored. public $post_type = 'post';
-	// refactored. public $post_mime_type = '';
-	// refactored. public $comment_count = 0;
-	// refactored. public $filter;
-
-	/**
-	 * Retrieve WP_Post instance.
-	 *
-	 * @since 3.5.0
-	 * @static
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @param int $post_id Post ID.
-	 * @return WP_Post|false Post object, false otherwise.
-	 */
-	public static function get_instance( $post_id ) {
-		global $wpdb;
-
-		$post_id = (int) $post_id;
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$_post = wp_cache_get( $post_id, 'posts' );
-
-		if ( ! $_post ) {
-			$_post = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE ID = %d LIMIT 1", $post_id ) );
-
-			if ( ! $_post )
-				return false;
-
-			$_post = sanitize_post( $_post, 'raw' );
-			wp_cache_add( $_post->ID, $_post, 'posts' );
-		} elseif ( empty( $_post->filter ) ) {
-			$_post = sanitize_post( $_post, 'raw' );
-		}
-
-		return new WP_Post( $_post );
-	}
-
+	// :
 	// refactored. public function __construct( $post ) {}
 
 	/**
