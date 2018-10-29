@@ -28,8 +28,24 @@ function get_attached_file( $attachment_id, $unfiltered = FALSE )
 
 	// If the file is relative, prepend upload dir.
 	if ( $file && 0 !== strpos( $file, '/' ) && ! preg_match( '|^.:\\\|', $file ) && $uploads = wp_get_upload_dir() && FALSE === $uploads['error'] ) {
-// wp-includes/media.php -> @NOW 012
+		$file = $uploads['basedir'] . "/$file";
 	}
+
+	if ( $unfiltered ) {
+		return $file;
+	}
+
+	return $unfiltered
+		? $file
+		: /**
+		   * Filters the attached file based on the given ID.
+		   *
+		   * @since 2.1.0
+		   *
+		   * @param string $file          Path to attached file.
+		   * @param int    $attachment_id Attachment ID.
+		   */
+			apply_filters( 'get_attached_file', $file, $attachment_id );
 }
 
 /**

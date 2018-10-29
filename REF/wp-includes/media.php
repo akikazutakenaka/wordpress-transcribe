@@ -32,5 +32,5 @@ function get_attachment_taxonomies( $attachment, $output = 'names' )
 	}
 
 	$file = get_attached_file( $attachment->ID );
-// wp-includes/taxonomy.php -> @NOW 011 -> wp-includes/post.php
+// wp-includes/taxonomy.php -> @NOW 011
 }
