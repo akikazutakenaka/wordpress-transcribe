@@ -875,20 +875,7 @@ function wp_clear_auth_cookie() {
 }
 endif;
 
-if ( !function_exists('is_user_logged_in') ) :
-/**
- * Checks if the current visitor is a logged in user.
- *
- * @since 2.0.0
- *
- * @return bool True if user is logged in, false if not logged in.
- */
-function is_user_logged_in() {
-	$user = wp_get_current_user();
-
-	return $user->exists();
-}
-endif;
+// refactored. function is_user_logged_in() {}
 
 if ( !function_exists('auth_redirect') ) :
 /**
