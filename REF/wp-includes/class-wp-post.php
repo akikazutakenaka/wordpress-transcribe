@@ -310,5 +310,23 @@ EOQ
 				: sanitize_post( $this, $filter ) );
 	}
 
-// @NOW 007
+// @NOW 008
+
+	/**
+	 * Convert object to array.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return array Object as array.
+	 */
+	public function to_array()
+	{
+		$post = get_object_vars( $this );
+
+		foreach ( array( 'ancestors', 'page_template', 'post_category', 'tags_input' ) as $key ) {
+			if ( $this->__isset( $key ) ) {
+// @NOW 007 -> wp-includes/class-wp-post.php
+			}
+		}
+	}
 }
