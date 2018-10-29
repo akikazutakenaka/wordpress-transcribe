@@ -3190,25 +3190,7 @@ function update_object_term_cache($object_ids, $object_type) {
 	}
 }
 
-/**
- * Updates Terms to Taxonomy in cache.
- *
- * @since 2.3.0
- *
- * @param array  $terms    List of term objects to change.
- * @param string $taxonomy Optional. Update Term to this taxonomy in cache. Default empty.
- */
-function update_term_cache( $terms, $taxonomy = '' ) {
-	foreach ( (array) $terms as $term ) {
-		// Create a copy in case the array was passed by reference.
-		$_term = clone $term;
-
-		// Object ID should not be cached.
-		unset( $_term->object_id );
-
-		wp_cache_add( $term->term_id, $_term, 'terms' );
-	}
-}
+// refactored. function update_term_cache( $terms, $taxonomy = '' ) {}
 
 //
 // Private

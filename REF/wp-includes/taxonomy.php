@@ -95,7 +95,28 @@ function get_object_term_cache( $id, $taxonomy )
 // wp-includes/category-template.php -> @NOW 010 -> self
 }
 
-// self -> @NOW 012
+/**
+ * Updates Terms to Taxonomy in cache.
+ *
+ * @since 2.3.0
+ *
+ * @param array  $terms    List of term objects to change.
+ * @param string $taxonomy Optional.
+ *                         Update Term to this taxonomy in cache.
+ *                         Default empty.
+ */
+function update_term_cache( $terms, $taxonomy = '' )
+{
+	foreach ( ( array ) $terms as $term ) {
+		// Create a copy in case the array was passed by reference.
+		$_term = clone $term;
+
+		// Object ID should not be cached.
+		unset( $_term->object_id );
+
+		wp_cache_add( $term->term_id, $_term, 'terms' );
+	}
+}
 
 /**
  * Adds any terms from the given IDs to the cache that do not already exist in cache.
@@ -123,7 +144,7 @@ WHERE t.term_id IN ( %s )
 EOQ
 				, join( ",", array_map( 'intval', $non_cached_ids ) ) ) );
 		update_term_cache( $fresh_terms, $update_meta_cache );
-// self -> @NOW 011 -> self
+// self -> @NOW 011
 	}
 }
 
