@@ -226,7 +226,7 @@ function user_can_richedit()
 			if ( $is_safari ) {
 				$wp_rich_edit = ! wp_is_mobile()
 				             || preg_match( '!AppleWebKit/(\d+)!', $_SERVER['HTTP_USER_AGENT'], $match ) && intval( $match[1] ) >= 534;
-// @NOW 010 -> wp-includes/vars.php
+// @NOW 010
 			}
 		}
 	}
