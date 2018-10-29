@@ -34,9 +34,25 @@ function get_object_taxonomies( $object, $output = 'names' )
 	if ( is_object( $object ) ) {
 		if ( $object->post_type == 'attachment' ) {
 			return get_attachment_taxonomies( $object, $output );
-// self -> @NOW 010
+		}
+
+		$object = $object->post_type;
+	}
+
+	$object = ( array ) $object;
+	$taxonomies = array();
+
+	foreach ( ( array ) $wp_taxonomies as $tax_name => $tax_obj ) {
+		if ( array_intersect( $object, ( array ) $tax_obj->object_type ) ) {
+			if ( 'names' == $output ) {
+				$taxonomies[] = $tax_name;
+			} else {
+				$taxonomies[ $tax_name ] = $tax_obj;
+			}
 		}
 	}
+
+	return $taxonomies;
 }
 
 /**
@@ -51,5 +67,5 @@ function get_object_taxonomies( $object, $output = 'names' )
 function is_object_in_taxonomy( $object_type, $taxonomy )
 {
 	$taxonomies = get_object_taxonomies( $object_type );
-// wp-includes/class-wp-post.php -> @NOW 009 -> self
+// wp-includes/class-wp-post.php -> @NOW 009
 }

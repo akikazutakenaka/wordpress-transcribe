@@ -174,50 +174,7 @@ function get_taxonomies( $args = array(), $output = 'names', $operator = 'and' )
 	return wp_filter_object_list($wp_taxonomies, $args, $operator, $field);
 }
 
-/**
- * Return the names or objects of the taxonomies which are registered for the requested object or object type, such as
- * a post object or post type name.
- *
- * Example:
- *
- *     $taxonomies = get_object_taxonomies( 'post' );
- *
- * This results in:
- *
- *     Array( 'category', 'post_tag' )
- *
- * @since 2.3.0
- *
- * @global array $wp_taxonomies The registered taxonomies.
- *
- * @param array|string|WP_Post $object Name of the type of taxonomy object, or an object (row from posts)
- * @param string               $output Optional. The type of output to return in the array. Accepts either
- *                                     taxonomy 'names' or 'objects'. Default 'names'.
- * @return array The names of all taxonomy of $object_type.
- */
-function get_object_taxonomies( $object, $output = 'names' ) {
-	global $wp_taxonomies;
-
-	if ( is_object($object) ) {
-		if ( $object->post_type == 'attachment' )
-			return get_attachment_taxonomies( $object, $output );
-		$object = $object->post_type;
-	}
-
-	$object = (array) $object;
-
-	$taxonomies = array();
-	foreach ( (array) $wp_taxonomies as $tax_name => $tax_obj ) {
-		if ( array_intersect($object, (array) $tax_obj->object_type) ) {
-			if ( 'names' == $output )
-				$taxonomies[] = $tax_name;
-			else
-				$taxonomies[ $tax_name ] = $tax_obj;
-		}
-	}
-
-	return $taxonomies;
-}
+// refactored. function get_object_taxonomies( $object, $output = 'names' ) {}
 
 /**
  * Retrieves the taxonomy object of $taxonomy.
