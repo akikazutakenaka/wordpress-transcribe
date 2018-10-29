@@ -1353,34 +1353,7 @@ function wp_mkdir_p( $target ) {
 	return false;
 }
 
-/**
- * Test if a given filesystem path is absolute.
- *
- * For example, '/foo/bar', or 'c:\windows'.
- *
- * @since 2.5.0
- *
- * @param string $path File path.
- * @return bool True if path is absolute, false is not absolute.
- */
-function path_is_absolute( $path ) {
-	/*
-	 * This is definitive if true but fails if $path does not exist or contains
-	 * a symbolic link.
-	 */
-	if ( realpath($path) == $path )
-		return true;
-
-	if ( strlen($path) == 0 || $path[0] == '.' )
-		return false;
-
-	// Windows allows absolute paths like this.
-	if ( preg_match('#^[a-zA-Z]:\\\\#', $path) )
-		return true;
-
-	// A path starting with / or \ is absolute; anything else is relative.
-	return ( $path[0] == '/' || $path[0] == '\\' );
-}
+// refactored. function path_is_absolute( $path ) {}
 
 /**
  * Join two filesystem paths together.

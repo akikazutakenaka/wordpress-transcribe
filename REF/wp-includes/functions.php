@@ -339,7 +339,27 @@ function nocache_headers()
 	}
 }
 
-// self -> @NOW 016
+/**
+ * Test if a given filesystem path is absolute.
+ *
+ * For example, '/foo/bar', or 'c:\windows'.
+ *
+ * @since 2.5.0
+ *
+ * @param  string $path File path.
+ * @return bool   True if path is absolute, false is not absolute.
+ */
+function path_is_absolute( $path )
+{
+	// This is definitive if true but fails if $path does not exist or contains a symbolic link.
+	return realpath( $path ) == $path
+		? TRUE
+		: ( strlen( $path ) == 0 || $path[0] == '.'
+			? FALSE
+			: ( preg_match( '#^[a-zA-Z]:\\\\#', $path ) // Windows allows absolute paths like this.
+				? TRUE
+				: $path[0] == '/' || $path[0] == '\\' ) ); // A path starting with / or \ is absolute; anything else is relative.
+}
 
 /**
  * Join two filesystem paths together.
@@ -356,7 +376,7 @@ function nocache_headers()
 function path_join( $base, $path )
 {
 	if ( path_is_absolute( $path ) ) {
-// self -> @NOW 015 -> self
+// self -> @NOW 015
 	}
 }
 
