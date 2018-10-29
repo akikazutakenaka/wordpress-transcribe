@@ -231,6 +231,19 @@ function wp_switch_roles_and_user( $new_site_id, $old_site_id )
 }
 
 /**
+ * Determines if switch_to_blog() is in effect.
+ *
+ * @since  3.5.0
+ * @global array $_wp_switched_stack
+ *
+ * @return bool True if switched, false otherwise.
+ */
+function ms_is_switched()
+{
+	return ! empty( $GLOBALS['_wp_switched_stack'] );
+}
+
+/**
  * Retrieves a list of networks.
  *
  * @since 4.6.0
