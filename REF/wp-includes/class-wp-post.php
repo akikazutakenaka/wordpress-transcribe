@@ -337,7 +337,7 @@ EOQ
 	{
 		if ( 'page_template' == $key && $this->__isset( $key ) ) {
 			return get_post_meta( $this->ID, '_wp_page_template', TRUE );
-// @NOW 008 -> wp-includes/post.php
+// @NOW 008
 		}
 	}
 
