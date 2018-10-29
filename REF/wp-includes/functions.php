@@ -8,6 +8,45 @@
 require( ABSPATH . WPINC . '/option.php' );
 
 /**
+ * Retrieve the current time based on specified type.
+ *
+ * The 'mysql' type will return the time in the format for MySQL DATETIME field.
+ * The 'timestamp' type will return the current timestamp.
+ * Other strings will be interpreted as PHP date formats (e.g. 'Y-m-d').
+ *
+ * If $gmt is set to either '1' or 'true', then both types will use GMT time.
+ * If $gmt is false, the output is adjusted with the GMT offset in the WordPress option.
+ *
+ * @since 1.0.0
+ *
+ * @param  string     $type Type of time to retrieve.
+ *                          Accepts 'mysql', 'timestamp', or PHP date format string (e.g. 'Y-m-d').
+ * @param  int|bool   $gmt  Optional.
+ *                          Whether to use GMT timezone.
+ *                          Default false.
+ * @return int|string Integer if $type is 'timestamp', string otherwise.
+ */
+function current_time( $type, $gmt = 0 )
+{
+	switch ( $type ) {
+		case 'mysql':
+			return $gmt
+				? gmdate( 'Y-m-d H:i:s' )
+				: gmdate( 'Y-m-d H:i:s', time() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+
+		case 'timestamp':
+			return $gmt
+				? time()
+				: time() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+
+		default:
+			return $gmt
+				? date( $type )
+				: date( $type, time() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+	}
+}
+
+/**
  * Unserialize value only if it was serialized.
  *
  * @since 2.0.0
@@ -539,6 +578,34 @@ function _wp_upload_dir( $time = NULL )
 			$dir .= $ms_dir;
 			$url .= $ms_dir;
 		} elseif ( defined( 'UPLOADS' ) && ! ms_is_switched() ) {
+			/**
+			 * Handle the old-form ms-files.php rewriting if the network still has that enabled.
+			 * When ms-files rewriting is enabled, then we only listen to UPLOADS when:
+			 * 1) We are not on the main site in a post-MU network, as wp-content/uploads is used there, and
+			 * 2) We are not switched, as ms_upload_constants() hardcodes these constants to reflect the original blog ID.
+			 *
+			 * Rather than UPLOADS, we actually use BLOGUPLOADDIR if it is set, as it is absolute.
+			 * (And it will be set, see ms_upload_constants().)
+			 * Otherwise, UPLOADS can be used, as it is relative to ABSPATH.
+			 * For the final piece: when UPLOADS is used with ms-files rewriting in multisite, the resulting URL is /files.
+			 * (#WP22702 for background.)
+			 */
+			$dir = defined( 'BLOGUPLOADDIR' )
+				? untrailingslashit( BLOGUPLOADDIR )
+				: ABSPATH . UPLOADS;
+
+			$url = trailingslashit( $siteurl ) . 'files';
+		}
+	}
+
+	$basedir = $dir;
+	$baseurl = $url;
+	$subdir = '';
+
+	if ( get_option( 'uploads_use_yearmonth_folders' ) ) {
+		// Generate the yearly and monthly dirs.
+		if ( ! $time ) {
+			$time = current_time( 'mysql' );
 // self -> @NOW 014
 		}
 	}
