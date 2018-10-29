@@ -341,7 +341,8 @@ EOQ
 
 		if ( 'post_category' == $key ) {
 			if ( is_object_in_taxonomy( $this->post_type, 'category' ) ) {
-// self -> @NOW 008
+				$terms = get_the_terms( $this, 'category' );
+// self -> @NOW 008 -> wp-includes/category-template.php
 			}
 		}
 	}
