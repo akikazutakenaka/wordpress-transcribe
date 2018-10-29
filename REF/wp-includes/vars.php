@@ -20,6 +20,6 @@ global $pagenow, $is_lynx, $is_gecko, $is_winIE, $is_macIE, $is_opera, $is_NS4, 
 if ( is_admin() ) {
 	// wp-admin pages are checked more carefully.
 	if ( is_network_admin() ) {
-// @NOW 011 -> wp-includes/load.php
+// @NOW 011
 	}
 }

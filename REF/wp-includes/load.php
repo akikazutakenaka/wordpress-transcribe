@@ -552,7 +552,26 @@ function is_admin()
 			: FALSE );
 }
 
-// @NOW 012
+/**
+ * Whether the current request is for the network administrative interface.
+ *
+ * e.g. `/wp-admin/network/`
+ *
+ * Does not check if the user is an administrator; current_user_can() for checking roles and capabilities.
+ *
+ * @since  3.1.0
+ * @global WP_Screen $current_screen
+ *
+ * @return bool True if inside WordPress network administration pages.
+ */
+function is_network_admin()
+{
+	return isset( $GLOBALS['current_screen'] )
+		? $GLOBALS['current_screen']->in_admin( 'network' )
+		: ( defined( 'WP_NETWORK_ADMIN' )
+			? WP_NETWORK_ADMIN
+			: FALSE );
+}
 
 /**
  * If Multisite is enabled.
