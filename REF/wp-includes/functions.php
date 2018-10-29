@@ -379,6 +379,76 @@ function nocache_headers()
 }
 
 /**
+ * Recursive directory creation based on full path.
+ *
+ * Will attempt to set permissions on folders.
+ *
+ * @since 2.0.1
+ *
+ * @param  string $target Full path to attempt to create.
+ * @return bool   Whether the path was created.
+ *                True if path already exists.
+ */
+function wp_mkdir_p( $target )
+{
+	$wrapper = NULL;
+
+	// Strip the protocol.
+	if ( wp_is_stream( $target ) ) {
+		list( $wrapper, $target ) = explode( '://', $target, 2 );
+	}
+
+	// From php.net/mkdir user contributed notes.
+	$target = str_replace( '//', '/', $target );
+
+	// Put the wrapper back on the target.
+	if ( $wrapper !== NULL ) {
+		$target = $wrapper . '://' . $target;
+	}
+
+	/**
+	 * Safe mode fails with a trailing slash under certain PHP versions.
+	 * Use rtrim() instead of untrailingslashit to avoid formatting.php dependency.
+	 */
+	$target = rtrim( $target, '/' );
+
+	if ( empty( $target ) ) {
+		$target = '/';
+	}
+
+	if ( file_exists( $target ) ) {
+		return @ is_dir( $target );
+	}
+
+	// We need to find the permissions of the parent folder that exists and inherit that.
+	$target_parent = dirname( $target );
+
+	while ( '.' != $target_parent && ! is_dir( $target_parent ) && dirname( $target_parent ) !== $target_parent ) {
+		$target_parent = dirname( $target_parent );
+	}
+
+	// Get the permission bits.
+	$dir_perms = ( $stat = @ stat( $target_parent ) )
+		? $stat['mode'] & 0007777
+		: 0777;
+
+	if ( @ mkdir( $target, $dir_perms, TRUE ) ) {
+		// If a umask is set that modifies $dir_perms, we'll have to re-set the $dir_perms correctly with chmod().
+		if ( $dir_perms != $dir_perms & ~ umask() ) {
+			$folder_parts = explode( '/', substr( $target, strlen( $target_parent ) + 1 ) );
+
+			for ( $i = 1, $c = count( $folder_parts ); $i <= $c; $i++ ) {
+				@ chmod( $target_parent . '/' . implode( '/', array_slice( $folder_parts, 0, $i ) ), $dir_perms );
+			}
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+/**
  * Test if a given filesystem path is absolute.
  *
  * For example, '/foo/bar', or 'c:\windows'.
@@ -518,7 +588,27 @@ function wp_upload_dir( $time = NULL, $create_dir = TRUE, $refresh_cache = FALSE
 
 	if ( $refresh_cache || empty( $cache[ $key ] ) ) {
 		$cache[ $key ] = _wp_upload_dir( $time );
+	}
+
+	/**
+	 * Filters the uploads directory data.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $uploads Array of upload directory data with keys of 'path', 'url', 'subdir', 'basedir', and 'error'.
+	 */
+	$uploads = apply_filters( 'upload_dir', $cache[ $key ] );
+
+	if ( $create_dir ) {
+		$path = $uploads['path'];
+
+		if ( array_key_exists( $path, $tested_paths ) ) {
+			$uploads['error'] = $tested_paths[ $path ];
+		} else {
+			if ( ! wp_mkdir_p( $path ) ) {
 // wp-includes/post.php -> @NOW 013
+			}
+		}
 	}
 }
 

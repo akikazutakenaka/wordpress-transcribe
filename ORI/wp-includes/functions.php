@@ -1258,76 +1258,7 @@ function wp_get_original_referer() {
 	return false;
 }
 
-/**
- * Recursive directory creation based on full path.
- *
- * Will attempt to set permissions on folders.
- *
- * @since 2.0.1
- *
- * @param string $target Full path to attempt to create.
- * @return bool Whether the path was created. True if path already exists.
- */
-function wp_mkdir_p( $target ) {
-	$wrapper = null;
-
-	// Strip the protocol.
-	if ( wp_is_stream( $target ) ) {
-		list( $wrapper, $target ) = explode( '://', $target, 2 );
-	}
-
-	// From php.net/mkdir user contributed notes.
-	$target = str_replace( '//', '/', $target );
-
-	// Put the wrapper back on the target.
-	if ( $wrapper !== null ) {
-		$target = $wrapper . '://' . $target;
-	}
-
-	/*
-	 * Safe mode fails with a trailing slash under certain PHP versions.
-	 * Use rtrim() instead of untrailingslashit to avoid formatting.php dependency.
-	 */
-	$target = rtrim($target, '/');
-	if ( empty($target) )
-		$target = '/';
-
-	if ( file_exists( $target ) )
-		return @is_dir( $target );
-
-	// We need to find the permissions of the parent folder that exists and inherit that.
-	$target_parent = dirname( $target );
-	while ( '.' != $target_parent && ! is_dir( $target_parent ) && dirname( $target_parent ) !== $target_parent ) {
-		$target_parent = dirname( $target_parent );
-	}
-
-	// Get the permission bits.
-	if ( $stat = @stat( $target_parent ) ) {
-		$dir_perms = $stat['mode'] & 0007777;
-	} else {
-		$dir_perms = 0777;
-	}
-
-	if ( @mkdir( $target, $dir_perms, true ) ) {
-
-		/*
-		 * If a umask is set that modifies $dir_perms, we'll have to re-set
-		 * the $dir_perms correctly with chmod()
-		 */
-		if ( $dir_perms != ( $dir_perms & ~umask() ) ) {
-			$folder_parts = explode( '/', substr( $target, strlen( $target_parent ) + 1 ) );
-			for ( $i = 1, $c = count( $folder_parts ); $i <= $c; $i++ ) {
-				@chmod( $target_parent . '/' . implode( '/', array_slice( $folder_parts, 0, $i ) ), $dir_perms );
-			}
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-// refactored. function path_is_absolute( $path ) {}
+// refactored. function wp_mkdir_p( $target ) {}
 // :
 // refactored. function wp_normalize_path( $path ) {}
 
