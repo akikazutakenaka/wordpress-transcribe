@@ -74,7 +74,7 @@ function sanitize_post( $post, $context = 'display' )
 
 		foreach ( array_keys( get_object_vars( $post ) ) as $field ) {
 			$post->$field = sanitize_post_field( $field, $post->$field, $post->ID, $context );
-// @NOW 008 -> wp-includes/post.php
+// @NOW 008
 		}
 	}
 }
@@ -161,8 +161,71 @@ function sanitize_post_field( $field, $value, $post_id, $context = 'display' )
 				? format_to_edit( $value, user_can_richedit() )
 				: format_to_edit( $value ) )
 			: esc_attr( $value );
-// @NOW 009
+	} elseif ( 'db' == $context ) {
+		if ( $prefixed ) {
+			/**
+			 * Filters the value of a specific post field before saving.
+			 *
+			 * The dynamic portion of the hook name, `$field`, refers to the post field name.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param mixed $value Value of the post field.
+			 */
+			$value = apply_filters( "pre_{$field}", $value );
+
+			/**
+			 * Filters the value of a specific field before saving.
+			 *
+			 * The dynamic portion of the hook name, `$field_no_prefix`, refers to the post field name.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param mixed $value Value of the post field.
+			 */
+			$value = apply_filters( "{$field_no_prefix}_save_pre", $value );
+		} else {
+			$value = apply_filters( "pre_post_{$field}", $value );
+
+			/**
+			 * Filters the value of a specific post field before saving.
+			 *
+			 * The dynamic portion of the hook name, `$field`, refers to the post field name.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param mixed $value Value of the post field.
+			 */
+			$value = apply_filters( "{$field}_pre", $value );
+		}
+	} else {
+		// Use display filters by default.
+		if ( $prefixed ) {
+			/**
+			 * Filters the value of a specific post field for display.
+			 *
+			 * The dynamic portion of the hook name, `$field`, refers to the post field name.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param mixed  $value   Value of the prefixed post field.
+			 * @param int    $post_id Post ID.
+			 * @param string $context Context for how to sanitize the field.
+			 *                        Possible values include 'raw', 'edit', 'db', 'display', 'attribute', and 'js'.
+			 */
+			$value = apply_filters( "{$field}", $value, $post_id, $context );
+		} else {
+			$value = apply_filters( "post_{$field}", $value, $post_id, $context );
+		}
+
+		if ( 'attribute' == $context ) {
+			$value = esc_attr( $value );
+		} elseif ( 'js' == $context ) {
+			$value = esc_js( $value );
+		}
 	}
+
+	return $value;
 }
 
 /**
