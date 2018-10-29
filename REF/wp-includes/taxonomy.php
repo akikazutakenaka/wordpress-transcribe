@@ -95,7 +95,37 @@ function get_object_term_cache( $id, $taxonomy )
 // wp-includes/category-template.php -> @NOW 010 -> self
 }
 
-// self -> @NOW 011
+// self -> @NOW 012
+
+/**
+ * Adds any terms from the given IDs to the cache that do not already exist in cache.
+ *
+ * @since  4.6.0
+ * @access private
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param array $term_ids          Array of term IDs.
+ * @param bool  $update_meta_cache Optional.
+ *                                 Whether to update the meta cache.
+ *                                 Default true.
+ */
+function _prime_term_caches( $term_ids, $update_meta_cache = TRUE )
+{
+	global $wpdb;
+	$non_cached_ids = _get_non_cached_ids( $term_ids, 'terms' );
+
+	if ( ! empty( $non_cached_ids ) ) {
+		$fresh_terms = $wpdb->get_results( sprintf( <<<EOQ
+SELECT t.*, tt.*
+FROM $wpdb->terms AS t
+INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id
+WHERE t.term_id IN ( %s )
+EOQ
+				, join( ",", array_map( 'intval', $non_cached_ids ) ) ) );
+		update_term_cache( $fresh_terms, $update_meta_cache );
+// self -> @NOW 011 -> self
+	}
+}
 
 /**
 * Determine if the given object type is associated with the given taxonomy.
