@@ -237,32 +237,6 @@ function is_blog_admin() {
 }
 
 // refactored. function is_network_admin() {}
-
-/**
- * Whether the current request is for a user admin screen.
- *
- * e.g. `/wp-admin/user/`
- *
- * Does not inform on whether the user is an admin! Use capability
- * checks to tell if the user should be accessing a section or not
- * current_user_can().
- *
- * @since 3.1.0
- *
- * @global WP_Screen $current_screen
- *
- * @return bool True if inside WordPress user administration pages.
- */
-function is_user_admin() {
-	if ( isset( $GLOBALS['current_screen'] ) )
-		return $GLOBALS['current_screen']->in_admin( 'user' );
-	elseif ( defined( 'WP_USER_ADMIN' ) )
-		return WP_USER_ADMIN;
-
-	return false;
-}
-
-// refactored. function is_multisite() {}
 // :
 // refactored. function wp_doing_ajax() {}
 

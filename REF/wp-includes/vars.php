@@ -20,6 +20,8 @@ global $pagenow, $is_lynx, $is_gecko, $is_winIE, $is_macIE, $is_opera, $is_NS4, 
 if ( is_admin() ) {
 	// wp-admin pages are checked more carefully.
 	if ( is_network_admin() ) {
+		preg_match( '#/wp-admin/network/?(.*?)$#i', $_SERVER['PHP_SELF'], $self_matches );
+	} elseif ( is_user_admin() ) {
 // @NOW 011
 	}
 }
