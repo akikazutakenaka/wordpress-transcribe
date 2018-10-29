@@ -326,6 +326,22 @@ EOQ
 	}
 
 	/**
+	 * Getter.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param  string $key Key to get.
+	 * @return mixed
+	 */
+	public function __get( $key )
+	{
+		if ( 'page_template' == $key && $this->__isset( $key ) ) {
+			return get_post_meta( $this->ID, '_wp_page_template', TRUE );
+// @NOW 008 -> wp-includes/post.php
+		}
+	}
+
+	/**
 	 * Convert object to array.
 	 *
 	 * @since 3.5.0
@@ -338,7 +354,8 @@ EOQ
 
 		foreach ( array( 'ancestors', 'page_template', 'post_category', 'tags_input' ) as $key ) {
 			if ( $this->__isset( $key ) ) {
-// @NOW 007
+				$post[ $key ] = $this->__get( $key );
+// @NOW 007 -> wp-includes/class-wp-post.php
 			}
 		}
 	}

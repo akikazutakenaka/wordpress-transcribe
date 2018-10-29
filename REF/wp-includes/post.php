@@ -58,6 +58,8 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 			: $_post );
 }
 
+// @NOW 009
+
 /**
  * Sanitize every post field.
  *
