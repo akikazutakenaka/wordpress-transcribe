@@ -518,7 +518,7 @@ function wp_upload_dir( $time = NULL, $create_dir = TRUE, $refresh_cache = FALSE
 
 	if ( $refresh_cache || empty( $cache[ $key ] ) ) {
 		$cache[ $key ] = _wp_upload_dir( $time );
-// wp-includes/post.php -> @NOW 013 -> self
+// wp-includes/post.php -> @NOW 013
 	}
 }
 
@@ -606,9 +606,23 @@ function _wp_upload_dir( $time = NULL )
 		// Generate the yearly and monthly dirs.
 		if ( ! $time ) {
 			$time = current_time( 'mysql' );
-// self -> @NOW 014
 		}
+
+		$y = substr( $time, 0, 4 );
+		$m = substr( $time, 5, 2 );
+		$subdir = "/$y/$m";
 	}
+
+	$dir .= $subdir;
+	$url .= $subdir;
+	return array(
+		'path'    => $dir,
+		'url'     => $url,
+		'subdir'  => $subdir,
+		'basedir' => $basedir,
+		'baseurl' => $baseurl,
+		'error'   => FALSE
+	);
 }
 
 /**
