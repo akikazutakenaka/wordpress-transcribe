@@ -526,7 +526,7 @@ function _wp_upload_dir( $time = NULL )
 	if ( is_multisite()
 	  && ! ( is_main_network() && is_main_site() && defined( 'MULTISITE' ) ) ) {
 	}
-// self -> @NOW 014 -> self
+// self -> @NOW 014
 }
 
 /**
@@ -933,7 +933,30 @@ function is_main_site( $site_id = NULL, $network_id = NULL )
 	return $site_id === get_main_site_id( $network_id );
 }
 
-// self -> @NOW 015
+/**
+ * Get the main site ID.
+ *
+ * @since 4.9.0
+ *
+ * @param  int $network_id Optional.
+ *                         The ID of the network for which to get the main site.
+ *                         Defaults to the current network.
+ * @return int The ID of the main site.
+ */
+function get_main_site_id( $network_id = NULL )
+{
+	if ( ! is_multisite() ) {
+		return get_current_blog_id();
+	}
+
+	$network = get_network( $network_id );
+
+	if ( ! $network ) {
+		return 0;
+	}
+
+	return $network->site_id;
+}
 
 /**
  * Determine whether a network is the main network of the Multisite installation.

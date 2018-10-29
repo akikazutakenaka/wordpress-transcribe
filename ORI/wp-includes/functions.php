@@ -3670,30 +3670,7 @@ function wp_suspend_cache_invalidation( $suspend = true ) {
 }
 
 // refactored. function is_main_site( $site_id = null, $network_id = null ) {}
-
-/**
- * Gets the main site ID.
- *
- * @since 4.9.0
- *
- * @param int $network_id Optional. The ID of the network for which to get the main site.
- *                        Defaults to the current network.
- * @return int The ID of the main site.
- */
-function get_main_site_id( $network_id = null ) {
-	if ( ! is_multisite() ) {
-		return get_current_blog_id();
-	}
-
-	$network = get_network( $network_id );
-	if ( ! $network ) {
-		return 0;
-	}
-
-	return $network->site_id;
-}
-
-// refactored. function is_main_network( $network_id = null ) {}
+// :
 // refactored. function get_main_network_id() {}
 
 /**
