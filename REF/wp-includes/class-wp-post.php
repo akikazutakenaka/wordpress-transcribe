@@ -341,7 +341,7 @@ EOQ
 
 		if ( 'post_category' == $key ) {
 			if ( is_object_in_taxonomy( $this->post_type, 'category' ) ) {
-// @NOW 008 -> wp-includes/taxonomy.php
+// self -> @NOW 008 -> wp-includes/taxonomy.php
 			}
 		}
 	}
@@ -360,7 +360,7 @@ EOQ
 		foreach ( array( 'ancestors', 'page_template', 'post_category', 'tags_input' ) as $key ) {
 			if ( $this->__isset( $key ) ) {
 				$post[ $key ] = $this->__get( $key );
-// @NOW 007 -> wp-includes/class-wp-post.php
+// wp-includes/post.php -> @NOW 007 -> self
 			}
 		}
 	}

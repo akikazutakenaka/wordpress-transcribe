@@ -135,4 +135,4 @@ add_filter( 'term_name_rss', 'convert_chars' );
 
 // Pre save hierarchy
 add_filter( 'wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2 );
-// @NOW 004 -> wp-includes/post.php
+// wp-settings.php -> @NOW 004 -> wp-includes/post.php

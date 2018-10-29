@@ -438,11 +438,11 @@ function wp_upload_dir( $time = NULL, $create_dir = TRUE, $refresh_cache = FALSE
 
 	if ( $refresh_cache || empty( $cache[ $key ] ) ) {
 		$cache[ $key ] = _wp_upload_dir( $time );
-// @NOW 013 -> wp-includes/functions.php
+// wp-includes/post.php -> @NOW 013 -> self
 	}
 }
 
-// @NOW 014
+// self -> @NOW 014
 
 /**
  * Kill WordPress execution and display HTML message with error message.

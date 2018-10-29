@@ -122,4 +122,4 @@ wp_start_object_cache();
 
 // Attach the default filters.
 require( ABSPATH . WPINC . '/default-filters.php' );
-// @NOW 003 -> wp-includes/default-filters.php
+// wp-load.php -> @NOW 003 -> wp-includes/default-filters.php
