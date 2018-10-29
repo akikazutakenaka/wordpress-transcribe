@@ -6,6 +6,8 @@
  * @subpackage Post
  */
 
+// @NOW 012
+
 /**
  * Retrieves post data given a post ID or post object.
  *
