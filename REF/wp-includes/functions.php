@@ -339,7 +339,26 @@ function nocache_headers()
 	}
 }
 
-// self -> @NOW 015
+// self -> @NOW 016
+
+/**
+ * Join two filesystem paths together.
+ *
+ * For example, 'give me $path relative to $base'.
+ * If the $path is absolute, then it the full path is returned.
+ *
+ * @since 2.5.0
+ *
+ * @param  string $base Base path.
+ * @param  string $path Path relative to $base.
+ * @return string The path with the base or absolute path.
+ */
+function path_join( $base, $path )
+{
+	if ( path_is_absolute( $path ) ) {
+// self -> @NOW 015 -> self
+	}
+}
 
 /**
  * Normalize a filesystem path.
