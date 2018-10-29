@@ -552,6 +552,8 @@ function is_admin()
 			: FALSE );
 }
 
+// @NOW 012
+
 /**
  * If Multisite is enabled.
  *

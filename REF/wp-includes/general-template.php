@@ -222,8 +222,12 @@ function user_can_richedit()
 	if ( ! isset( $wp_rich_edit ) ) {
 		$wp_rich_edit = FALSE;
 
-		if ( get_user_option( 'rich_editing' ) == 'true' || ! is_user_logged_in() ) {
-// @NOW 010
+		if ( get_user_option( 'rich_editing' ) == 'true' || ! is_user_logged_in() ) { // Default to 'true' for logged out users
+			if ( $is_safari ) {
+				$wp_rich_edit = ! wp_is_mobile()
+				             || preg_match( '!AppleWebKit/(\d+)!', $_SERVER['HTTP_USER_AGENT'], $match ) && intval( $match[1] ) >= 534;
+// @NOW 010 -> wp-includes/vars.php
+			}
 		}
 	}
 }
