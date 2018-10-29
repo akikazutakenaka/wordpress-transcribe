@@ -341,7 +341,7 @@ EOQ
 
 		if ( 'post_category' == $key ) {
 			if ( is_object_in_taxonomy( $this->post_type, 'category' ) ) {
-// self -> @NOW 008 -> wp-includes/taxonomy.php
+// self -> @NOW 008
 			}
 		}
 	}

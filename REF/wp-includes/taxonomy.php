@@ -67,5 +67,8 @@ function get_object_taxonomies( $object, $output = 'names' )
 function is_object_in_taxonomy( $object_type, $taxonomy )
 {
 	$taxonomies = get_object_taxonomies( $object_type );
-// wp-includes/class-wp-post.php -> @NOW 009
+
+	return empty( $taxonomies )
+		? FALSE
+		: in_array( $taxonomy, $taxonomies );
 }

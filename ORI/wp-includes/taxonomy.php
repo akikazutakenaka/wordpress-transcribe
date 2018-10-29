@@ -4171,22 +4171,7 @@ function is_object_in_term( $object_id, $taxonomy, $terms = null ) {
 	return false;
 }
 
-/**
- * Determine if the given object type is associated with the given taxonomy.
- *
- * @since 3.0.0
- *
- * @param string $object_type Object type string.
- * @param string $taxonomy    Single taxonomy name.
- * @return bool True if object is associated with the taxonomy, otherwise false.
- */
-function is_object_in_taxonomy( $object_type, $taxonomy ) {
-	$taxonomies = get_object_taxonomies( $object_type );
-	if ( empty( $taxonomies ) ) {
-		return false;
-	}
-	return in_array( $taxonomy, $taxonomies );
-}
+// refactored. function is_object_in_taxonomy( $object_type, $taxonomy ) {}
 
 /**
  * Get an array of ancestor IDs for a given object.
