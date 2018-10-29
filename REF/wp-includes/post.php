@@ -28,7 +28,7 @@ function get_attached_file( $attachment_id, $unfiltered = FALSE )
 
 	// If the file is relative, prepend upload dir.
 	if ( $file && 0 !== strpos( $file, '/' ) && ! preg_match( '|^.:\\\|', $file ) && $uploads = wp_get_upload_dir() && FALSE === $uploads['error'] ) {
-// wp-includes/media.php -> @NOW 012 -> wp-includes/functions.php
+// wp-includes/media.php -> @NOW 012
 	}
 }
 

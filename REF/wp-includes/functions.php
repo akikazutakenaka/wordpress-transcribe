@@ -606,10 +606,18 @@ function wp_upload_dir( $time = NULL, $create_dir = TRUE, $refresh_cache = FALSE
 			$uploads['error'] = $tested_paths[ $path ];
 		} else {
 			if ( ! wp_mkdir_p( $path ) ) {
-// wp-includes/post.php -> @NOW 013
+				$error_path = 0 === strpos( $uploads['basedir'], ABSPATH )
+					? str_replace( ABSPATH, '', $uploads['basedir'] ) . $uploads['subdir']
+					: basename( $uploads['basedir'] ) . $uploads['subdir'];
+
+				$uploads['error'] = sprintf( __( 'Unable to create directory %s. Is its parent directory writable by the server?' ), esc_html( $error_path ) );
 			}
+
+			$tested_paths[ $path ] = $uploads['error'];
 		}
 	}
+
+	return $uploads;
 }
 
 /**
