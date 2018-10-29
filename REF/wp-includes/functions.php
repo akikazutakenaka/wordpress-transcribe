@@ -375,9 +375,9 @@ function path_is_absolute( $path )
  */
 function path_join( $base, $path )
 {
-	if ( path_is_absolute( $path ) ) {
-// self -> @NOW 015
-	}
+	return path_is_absolute( $path )
+		? $path
+		: rtrim( $base, '/' ) . '/' . ltrim( $path, '/' );
 }
 
 /**
@@ -504,7 +504,7 @@ function _wp_upload_dir( $time = NULL )
 		: ( 0 !== strpos( $upload_path, ABSPATH )
 			? path_join( ABSPATH, $upload_path ) // $dir is absolute, $upload_path is (maybe) relative to ABSPATH
 			: $upload_path );
-// self -> @NOW 014 -> self
+// self -> @NOW 014
 }
 
 /**

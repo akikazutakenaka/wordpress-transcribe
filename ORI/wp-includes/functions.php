@@ -1354,26 +1354,7 @@ function wp_mkdir_p( $target ) {
 }
 
 // refactored. function path_is_absolute( $path ) {}
-
-/**
- * Join two filesystem paths together.
- *
- * For example, 'give me $path relative to $base'. If the $path is absolute,
- * then it the full path is returned.
- *
- * @since 2.5.0
- *
- * @param string $base Base path.
- * @param string $path Path relative to $base.
- * @return string The path with the base or absolute path.
- */
-function path_join( $base, $path ) {
-	if ( path_is_absolute($path) )
-		return $path;
-
-	return rtrim($base, '/') . '/' . ltrim($path, '/');
-}
-
+// :
 // refactored. function wp_normalize_path( $path ) {}
 
 /**
