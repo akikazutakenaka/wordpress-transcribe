@@ -309,4 +309,6 @@ EOQ
 				? self::get_instance( $this->ID )
 				: sanitize_post( $this, $filter ) );
 	}
+
+// @NOW 007
 }

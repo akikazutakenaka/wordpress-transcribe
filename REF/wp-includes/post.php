@@ -50,7 +50,12 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 	}
 
 	$_post = $_post->filter( $filter );
-// @NOW 007
+
+	return $output == ARRAY_A
+		? $_post->to_array()
+		: ( $output == ARRAY_N
+			? array_values( $_post->to_array() )
+			: $_post );
 }
 
 /**
@@ -282,7 +287,7 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
 
 	// First, get all of the original fields.
 	$post = get_post( $postarr['ID'], ARRAY_A );
-// @NOW 006 -> wp-includes/post.php
+// @NOW 006 -> wp-includes/class-wp-post.php
 }
 
 /**
