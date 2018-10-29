@@ -337,7 +337,12 @@ EOQ
 	{
 		if ( 'page_template' == $key && $this->__isset( $key ) ) {
 			return get_post_meta( $this->ID, '_wp_page_template', TRUE );
-// @NOW 008
+		}
+
+		if ( 'post_category' == $key ) {
+			if ( is_object_in_taxonomy( $this->post_type, 'category' ) ) {
+// @NOW 008 -> wp-includes/taxonomy.php
+			}
 		}
 	}
 
