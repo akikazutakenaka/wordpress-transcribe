@@ -55,6 +55,8 @@ function get_object_taxonomies( $object, $output = 'names' )
 	return $taxonomies;
 }
 
+// wp-includes/category-template.php -> @NOW 010
+
 /**
 * Determine if the given object type is associated with the given taxonomy.
 *
