@@ -2004,46 +2004,7 @@ function is_sticky( $post_id = 0 ) {
 	return false;
 }
 
-/**
- * Sanitize every post field.
- *
- * If the context is 'raw', then the post object or array will get minimal
- * sanitization of the integer fields.
- *
- * @since 2.3.0
- *
- * @see sanitize_post_field()
- *
- * @param object|WP_Post|array $post    The Post Object or Array
- * @param string               $context Optional. How to sanitize post fields.
- *                                      Accepts 'raw', 'edit', 'db', or 'display'.
- *                                      Default 'display'.
- * @return object|WP_Post|array The now sanitized Post Object or Array (will be the
- *                              same type as $post).
- */
-function sanitize_post( $post, $context = 'display' ) {
-	if ( is_object($post) ) {
-		// Check if post already filtered for this context.
-		if ( isset($post->filter) && $context == $post->filter )
-			return $post;
-		if ( !isset($post->ID) )
-			$post->ID = 0;
-		foreach ( array_keys(get_object_vars($post)) as $field )
-			$post->$field = sanitize_post_field($field, $post->$field, $post->ID, $context);
-		$post->filter = $context;
-	} elseif ( is_array( $post ) ) {
-		// Check if post already filtered for this context.
-		if ( isset($post['filter']) && $context == $post['filter'] )
-			return $post;
-		if ( !isset($post['ID']) )
-			$post['ID'] = 0;
-		foreach ( array_keys($post) as $field )
-			$post[$field] = sanitize_post_field($field, $post[$field], $post['ID'], $context);
-		$post['filter'] = $context;
-	}
-	return $post;
-}
-
+// refactored. function sanitize_post( $post, $context = 'display' ) {}
 // refactored. function sanitize_post_field( $field, $value, $post_id, $context = 'display' ) {}
 
 /**

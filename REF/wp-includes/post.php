@@ -40,7 +40,7 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 	} elseif ( is_object( $post ) ) {
 		if ( empty( $post->filter ) ) {
 			$_post = sanitize_post( $post, 'raw' );
-// @NOW 007 -> wp-includes/post.php
+// @NOW 007
 		}
 	}
 }
@@ -74,9 +74,27 @@ function sanitize_post( $post, $context = 'display' )
 
 		foreach ( array_keys( get_object_vars( $post ) ) as $field ) {
 			$post->$field = sanitize_post_field( $field, $post->$field, $post->ID, $context );
-// @NOW 008
 		}
+
+		$post->filter = $context;
+	} elseif ( is_array( $post ) ) {
+		// Check if post already filtered for this context.
+		if ( isset( $post['filter'] ) && $context == $post['filter'] ) {
+			return $post;
+		}
+
+		if ( ! isset( $post['ID'] ) ) {
+			$post['ID'] = 0;
+		}
+
+		foreach ( array_keys( $post ) as $field ) {
+			$post[ $field ] = sanitize_post_field( $field, $post[ $field ], $post['ID'], $context );
+		}
+
+		$post['filter'] = $context;
 	}
+
+	return $post;
 }
 
 /**
