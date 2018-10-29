@@ -22,31 +22,7 @@
 final class WP_Post {
 	// refactored. public $ID;
 	// :
-	// refactored. public function __construct( $post ) {}
-
-	/**
-	 * Isset-er.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @param string $key Property to check if set.
-	 * @return bool
-	 */
-	public function __isset( $key ) {
-		if ( 'ancestors' == $key )
-			return true;
-
-		if ( 'page_template' == $key )
-			return true;
-
-		if ( 'post_category' == $key )
-		   return true;
-
-		if ( 'tags_input' == $key )
-		   return true;
-
-		return metadata_exists( 'post', $this->ID, $key );
-	}
+	// refactored. public function __isset( $key ) {}
 
 	/**
 	 * Getter.

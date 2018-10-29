@@ -310,7 +310,20 @@ EOQ
 				: sanitize_post( $this, $filter ) );
 	}
 
-// @NOW 008
+	/**
+	 * Isset-er.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param  string $key Property to check if set.
+	 * @return bool
+	 */
+	public function __isset( $key )
+	{
+		return 'ancestors' == $key || 'page_template' == $key || 'post_category' == $key || 'tags_input' == $key
+			? TRUE
+			: metadata_exists( 'post', $this->ID, $key );
+	}
 
 	/**
 	 * Convert object to array.
@@ -325,7 +338,7 @@ EOQ
 
 		foreach ( array( 'ancestors', 'page_template', 'post_category', 'tags_input' ) as $key ) {
 			if ( $this->__isset( $key ) ) {
-// @NOW 007 -> wp-includes/class-wp-post.php
+// @NOW 007
 			}
 		}
 	}
