@@ -3717,28 +3717,7 @@ function get_main_site_id( $network_id = null ) {
 	return $network->site_id;
 }
 
-/**
- * Determine whether a network is the main network of the Multisite installation.
- *
- * @since 3.7.0
- *
- * @param int $network_id Optional. Network ID to test. Defaults to current network.
- * @return bool True if $network_id is the main network, or if not running Multisite.
- */
-function is_main_network( $network_id = null ) {
-	if ( ! is_multisite() ) {
-		return true;
-	}
-
-	if ( null === $network_id ) {
-		$network_id = get_current_network_id();
-	}
-
-	$network_id = (int) $network_id;
-
-	return ( $network_id === get_main_network_id() );
-}
-
+// refactored. function is_main_network( $network_id = null ) {}
 // refactored. function get_main_network_id() {}
 
 /**

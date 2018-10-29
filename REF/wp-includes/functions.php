@@ -504,7 +504,29 @@ function _wp_upload_dir( $time = NULL )
 		: ( 0 !== strpos( $upload_path, ABSPATH )
 			? path_join( ABSPATH, $upload_path ) // $dir is absolute, $upload_path is (maybe) relative to ABSPATH
 			: $upload_path );
-// self -> @NOW 014
+
+	if ( ! $url = get_option( 'upload_url_path' ) ) {
+		$url = empty( $upload_path ) || 'wp-content/uploads' == $upload_path || $upload_path == $dir
+			? WP_CONTENT_URL . '/uploads'
+			: trailingslashit( $siteurl ) . $upload_path;
+	}
+
+	/**
+	 * Honor the value of UPLOADS.
+	 * This happens as long as ms-files rewriting is disabled.
+	 * We also sometimes obey UPLOADS when rewriting is enabled -- see the next block.
+	 */
+	if ( defined( 'UPLOADS' )
+	  && ! ( is_multisite() && get_site_option( 'ms_files_rewriting' ) ) ) {
+		$dir = ABSPATH . UPLOADS;
+		$url = trailingslashit( $siteurl ) . UPLOADS;
+	}
+
+	// If multisite (and if not the main site in a post-MU network)
+	if ( is_multisite()
+	  && ! ( is_main_network() && is_main_site() && defined( 'MULTISITE' ) ) ) {
+	}
+// self -> @NOW 014 -> self
 }
 
 /**
@@ -881,6 +903,32 @@ function wp_suspend_cache_addition( $suspend = NULL )
 	}
 
 	return $_suspend;
+}
+
+// self -> @NOW 015
+
+/**
+ * Determine whether a network is the main network of the Multisite installation.
+ *
+ * @since 3.7.0
+ *
+ * @param  int  $network_id Optional.
+ *                          Network ID to test.
+ *                          Defaults to current network.
+ * @return bool True if $network_id is the main network, or if not running Multisite.
+ */
+function is_main_network( $network_id = NULL )
+{
+	if ( ! is_multisite() ) {
+		return TRUE;
+	}
+
+	if ( NULL === $network_id ) {
+		$network_id = get_current_network_id();
+	}
+
+	$network_id = ( int ) $network_id;
+	return $network_id === get_main_network_id();
 }
 
 /**
