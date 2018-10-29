@@ -6,7 +6,38 @@
  * @subpackage Taxonomy
  */
 
-// @NOW 010
+/**
+ * Return the names or objects of the taxonomies which are registered for the requested object or object type, such as a post object or post type name.
+ *
+ * Example:
+ *
+ *     $taxonomies = get_object_taxonomies( 'post' );
+ *
+ * This results in:
+ *
+ *     Array( 'category', 'post_tag' );
+ *
+ * @since  2.3.0
+ * @global array $wp_taxonomies The registered taxonomies.
+ *
+ * @param  array|string|WP_Post $object Name of the type of taxonomy object, or an object (row from posts).
+ * @param  string               $output Optional.
+ *                                      The type of output to return in the array.
+ *                                      Accepts either taxonomy 'names' or 'objects'.
+ *                                      Default 'names'.
+ * @return array                The names of all taxonomy of $object_type.
+ */
+function get_object_taxonomies( $object, $output = 'names' )
+{
+	global $wp_taxonomies;
+
+	if ( is_object( $object ) ) {
+		if ( $object->post_type == 'attachment' ) {
+			return get_attachment_taxonomies( $object, $output );
+// @NOW 010 -> wp-includes/media.php
+		}
+	}
+}
 
 /**
 * Determine if the given object type is associated with the given taxonomy.
