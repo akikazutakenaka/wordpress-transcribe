@@ -292,4 +292,21 @@ EOQ
 			$this->$key = $value;
 		}
 	}
+
+	/**
+	 * {@Missing Summary}
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param  string                         $filter Filter.
+	 * @return self|array|bool|object|WP_Post
+	 */
+	public function filter( $filter )
+	{
+		return $this->filter == $filter
+			? $this
+			: ( $filter == 'raw'
+				? self::get_instance( $this->ID )
+				: sanitize_post( $this, $filter ) );
+	}
 }

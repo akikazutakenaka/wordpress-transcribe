@@ -35,19 +35,22 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 		$post = $GLOBALS['post'];
 	}
 
-	if ( $post instanceof WP_Post ) {
-		$_post = $post;
-	} elseif ( is_object( $post ) ) {
-		if ( empty( $post->filter ) ) {
-			$_post = sanitize_post( $post, 'raw' );
-			$_post = new WP_Post( $_post );
-		} elseif ( 'raw' == $post->filter ) {
-			$_post = new WP_Post( $post );
-		} else {
-			$_post = WP_Post::get_instance( $post->ID );
-// @NOW 007
-		}
+	$_post = $post instanceof WP_Post
+		? $post
+		: ( is_object( $post )
+			? ( empty( $post->filter )
+				? new WP_Post( sanitize_post( $post, 'raw' ) )
+				: ( 'raw' == $post->filter
+					? new WP_Post( $post )
+					: WP_Post::get_instance( $post->ID ) ) )
+			: WP_Post::get_instance( $post ) );
+
+	if ( ! $_post ) {
+		return NULL;
 	}
+
+	$_post = $_post->filter( $filter );
+// @NOW 007
 }
 
 /**
