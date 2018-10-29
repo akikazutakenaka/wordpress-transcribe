@@ -376,6 +376,8 @@ function wp_normalize_path( $path )
 	return $wrapper . $path;
 }
 
+// @NOW 013
+
 /**
  * Kill WordPress execution and display HTML message with error message.
  *
