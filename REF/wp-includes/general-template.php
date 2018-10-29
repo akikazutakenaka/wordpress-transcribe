@@ -226,8 +226,23 @@ function user_can_richedit()
 			if ( $is_safari ) {
 				$wp_rich_edit = ! wp_is_mobile()
 				             || preg_match( '!AppleWebKit/(\d+)!', $_SERVER['HTTP_USER_AGENT'], $match ) && intval( $match[1] ) >= 534;
-// @NOW 010
+			} elseif ( $is_IE ) {
+				$wp_rich_edit = strpos( $_SERVER['HTTP_USER_AGENT'], 'Trident/7.0;' ) !== FALSE;
+			} elseif ( $is_gecko
+			        || $is_chrome
+			        || $is_edge
+			        || $is_opera && ! wp_is_mobile() ) {
+				$wp_rich_edit = TRUE;
 			}
 		}
 	}
+
+	/**
+	 * Filters whether the user can access the visual editor.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param bool $wp_rich_edit Whether the user can access the visual editor.
+	 */
+	return apply_filters( 'user_can_richedit', $wp_rich_edit );
 }

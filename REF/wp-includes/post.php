@@ -161,7 +161,7 @@ function sanitize_post_field( $field, $value, $post_id, $context = 'display' )
 				? format_to_edit( $value, user_can_richedit() )
 				: format_to_edit( $value ) )
 			: esc_attr( $value );
-// @NOW 009 -> wp-includes/general-template.php
+// @NOW 009
 	}
 }
 
