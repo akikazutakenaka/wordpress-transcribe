@@ -131,7 +131,10 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 	} elseif ( is_object( $term ) ) {
 		if ( empty( $term->filter ) || 'raw' === $term->filter ) {
 			$_term = sanitize_term( $term, $taxonomy, 'raw' );
-// self -> @NOW 011
+			$_term = new WP_Term( $_term );
+		} else {
+			$_term = WP_Term::get_instance( $term->term_id );
+// self -> @NOW 011 -> wp-includes/class-wp-term.php
 		}
 	}
 }

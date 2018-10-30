@@ -107,6 +107,101 @@ final class WP_Term
 	public $filter = 'raw';
 
 	/**
+	 * Retrieve WP_Term instance.
+	 *
+	 * @since  4.4.0
+	 * @static
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  int                    $term_id  Term ID.
+	 * @param  string                 $taxonomy Optional.
+	 *                                          Limit matched terms to those matching `$taxonomy`.
+	 *                                          Only used for disambiguating potentially shared terms.
+	 * @return WP_Term|WP_Error|false Term object, if found.
+	 *                                WP_Error if `$term_id` is shared between taxonomies and there's insufficient data to distinguish which term is intended.
+	 *                                False for other failures.
+	 */
+	public static function get_instance( $term_id, $taxonomy = NULL )
+	{
+		global $wpdb;
+		$term_id = ( int ) $term_id;
+
+		if ( ! $term_id ) {
+			return FALSE;
+		}
+
+		$_term = wp_cache_get( $term_id, 'terms' );
+
+		// If there isn't a cached version, hit the database.
+		if ( ! $term
+		  || $taxonomy && $taxonomy !== $_term->taxonomy ) {
+			// Any term found in the cache is not a match, so don't use it.
+			$_term = FALSE;
+
+			// Grab all matching terms, in case any are shared between taxonomies.
+			$terms = $wpdb->get_results( $wpdb->prepare( <<<EOQ
+SELECT t.*, tt.*
+FROM $wpdb->terms AS t
+INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id
+WHERE t.term_id = %d
+EOQ
+					, $term_id ) );
+
+			if ( ! $terms ) {
+				return FALSE;
+			}
+
+			if ( $taxonomy ) {
+				// If a taxonomy was specified, find a match.
+				foreach ( $terms as $match ) {
+					if ( $taxonomy === $match->taxonomy ) {
+						$_term = $match;
+						break;
+					}
+				}
+			} elseif ( 1 === count( $terms ) ) {
+				// If only one match was found, it's the one we want.
+				$_term = reset( $terms );
+			} else {
+				// Otherwise, the term must be shared between taxonomies.
+				foreach ( $terms as $t ) {
+					// If the term is shared only with invalid taxonomies, return the one valid term.
+					if ( ! taxonomy_exists( $t->taxonomy ) ) {
+						continue;
+					}
+
+					// Only hit if we've already identified a term in a valid taxonomy.
+					if ( $_term ) {
+						return new WP_Error( 'ambiguous_term_id', __( 'Term ID is shared between multiple taxonomies' ), $term_id );
+					}
+
+					$_term = $t;
+				}
+			}
+
+			if ( ! $_term ) {
+				return FALSE;
+			}
+
+			// Don't return terms from invalid taxonomies.
+			if ( ! taxonomy_exists( $_term->taxonomy ) ) {
+				return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+			}
+
+			$_term = sanitize_term( $_term, $_term->taxonomy, 'raw' );
+
+			// Don't cache terms that are shared between taxonomies.
+			if ( 1 === count( $terms ) ) {
+				wp_cache_add( $term_id, $_terms, 'terms' );
+			}
+		}
+
+		$term_obj = new WP_Term( $_term );
+		$term_obj->filter( $term_obj->filter );
+// wp-includes/taxonomy.php -> @NOW 012 -> self
+	}
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 4.4.0
@@ -119,4 +214,6 @@ final class WP_Term
 			$this->$key = $value;
 		}
 	}
+
+// self -> @NOW 013
 }
