@@ -123,7 +123,11 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 	}
 
 	if ( $taxonomy && ! taxonomy_exists( $taxonomy ) ) {
-// self -> @NOW 011
+		return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+	}
+
+	if ( $term instanceof WP_Term ) {
+// self -> @NOW 011 -> wp-includes/class-wp-term.php
 	}
 }
 
