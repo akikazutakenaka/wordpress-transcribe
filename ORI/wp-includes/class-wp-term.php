@@ -17,18 +17,7 @@
 final class WP_Term {
 	// refactored. public $term_id;
 	// :
-	// refactored. public function filter( $filter ) {}
-
-	/**
-	 * Converts an object to array.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @return array Object as array.
-	 */
-	public function to_array() {
-		return get_object_vars( $this );
-	}
+	// refactored. public function to_array() {}
 
 	/**
 	 * Getter.

@@ -457,7 +457,7 @@ function get_object_term_cache( $id, $taxonomy )
 
 	foreach ( $term_ids as $term_id ) {
 		$term = get_term( $term_id, $taxonomy );
-// wp-includes/category-template.php -> @NOW 010 -> wp-includes/class-wp-term.php
+// wp-includes/category-template.php -> @NOW 010
 	}
 }
 

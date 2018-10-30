@@ -228,5 +228,15 @@ EOQ
 		sanitize_term( $this, $this->taxonomy, $filter );
 	}
 
-// wp-includes/taxonomy.php -> @NOW 011
+	/**
+	 * Converts an object to array.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return array Object as array.
+	 */
+	public function to_array()
+	{
+		return get_object_vars( $this );
+	}
 }
