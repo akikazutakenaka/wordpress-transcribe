@@ -109,17 +109,7 @@ final class WP_Term {
 	}
 
 	// refactored. public function __construct( $term ) {}
-
-	/**
-	 * Sanitizes term fields, according to the filter type provided.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param string $filter Filter context. Accepts 'edit', 'db', 'display', 'attribute', 'js', 'raw'.
-	 */
-	public function filter( $filter ) {
-		sanitize_term( $this, $this->taxonomy, $filter );
-	}
+	// refactored. public function filter( $filter ) {}
 
 	/**
 	 * Converts an object to array.

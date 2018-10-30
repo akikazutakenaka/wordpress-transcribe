@@ -198,7 +198,7 @@ EOQ
 
 		$term_obj = new WP_Term( $_term );
 		$term_obj->filter( $term_obj->filter );
-// wp-includes/taxonomy.php -> @NOW 012 -> self
+// wp-includes/taxonomy.php -> @NOW 012
 	}
 
 	/**
@@ -215,5 +215,16 @@ EOQ
 		}
 	}
 
-// self -> @NOW 013
+	/**
+	 * Sanitizes term fields, according to the filter type provided.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param string $filter Filter context.
+	 *                       Accepts 'edit', 'db', 'display', 'attribute', 'js', 'raw'.
+	 */
+	public function filter( $filter )
+	{
+		sanitize_term( $this, $this->taxonomy, $filter );
+	}
 }
