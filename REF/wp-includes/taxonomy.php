@@ -55,6 +55,8 @@ function get_object_taxonomies( $object, $output = 'names' )
 	return $taxonomies;
 }
 
+// self -> @NOW 011
+
 /**
  * Retrieves the taxonomy relationship to the term object id.
  *
@@ -144,7 +146,10 @@ WHERE t.term_id IN ( %s )
 EOQ
 				, join( ",", array_map( 'intval', $non_cached_ids ) ) ) );
 		update_term_cache( $fresh_terms, $update_meta_cache );
-// self -> @NOW 011
+
+		if ( $update_meta_cache ) {
+			update_termmeta_cache( $non_cached_ids );
+		}
 	}
 }
 

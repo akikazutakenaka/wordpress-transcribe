@@ -3359,31 +3359,7 @@ function _pad_term_counts( &$terms, $taxonomy ) {
 			$terms_by_id[$id]->count = count($items);
 }
 
-/**
- * Adds any terms from the given IDs to the cache that do not already exist in cache.
- *
- * @since 4.6.0
- * @access private
- *
- * @global wpdb $wpdb WordPress database abstraction object.
- *
- * @param array $term_ids          Array of term IDs.
- * @param bool  $update_meta_cache Optional. Whether to update the meta cache. Default true.
- */
-function _prime_term_caches( $term_ids, $update_meta_cache = true ) {
-	global $wpdb;
-
-	$non_cached_ids = _get_non_cached_ids( $term_ids, 'terms' );
-	if ( ! empty( $non_cached_ids ) ) {
-		$fresh_terms = $wpdb->get_results( sprintf( "SELECT t.*, tt.* FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE t.term_id IN (%s)", join( ",", array_map( 'intval', $non_cached_ids ) ) ) );
-
-		update_term_cache( $fresh_terms, $update_meta_cache );
-
-		if ( $update_meta_cache ) {
-			update_termmeta_cache( $non_cached_ids );
-		}
-	}
-}
+// refactored. function _prime_term_caches( $term_ids, $update_meta_cache = true ) {}
 
 //
 // Default callbacks
