@@ -23,5 +23,5 @@ function get_the_terms( $post, $taxonomy )
 	}
 
 	$terms = get_object_term_cache( $post->ID, $taxonomy );
-// wp-includes/class-wp-post.php -> @NOW 009 -> wp-includes/taxonomy.php
+// wp-includes/class-wp-post.php -> @NOW 009
 }

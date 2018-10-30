@@ -2714,56 +2714,7 @@ function clean_taxonomy_cache( $taxonomy ) {
 	do_action( 'clean_taxonomy_cache', $taxonomy );
 }
 
-/**
- * Retrieves the taxonomy relationship to the term object id.
- *
- * Upstream functions (like get_the_terms() and is_object_in_term()) are
- * responsible for populating the object-term relationship cache. The current
- * function only fetches relationship data that is already in the cache.
- *
- * @since 2.3.0
- * @since 4.7.0 Returns a WP_Error object if get_term() returns an error for
- *              any of the matched terms.
- *
- * @param int    $id       Term object ID.
- * @param string $taxonomy Taxonomy name.
- * @return bool|array|WP_Error Array of `WP_Term` objects, if cached.
- *                             False if cache is empty for `$taxonomy` and `$id`.
- *                             WP_Error if get_term() returns an error object for any term.
- */
-function get_object_term_cache( $id, $taxonomy ) {
-	$_term_ids = wp_cache_get( $id, "{$taxonomy}_relationships" );
-
-	// We leave the priming of relationship caches to upstream functions.
-	if ( false === $_term_ids ) {
-		return false;
-	}
-
-	// Backward compatibility for if a plugin is putting objects into the cache, rather than IDs.
-	$term_ids = array();
-	foreach ( $_term_ids as $term_id ) {
-		if ( is_numeric( $term_id ) ) {
-			$term_ids[] = intval( $term_id );
-		} elseif ( isset( $term_id->term_id ) ) {
-			$term_ids[] = intval( $term_id->term_id );
-		}
-	}
-
-	// Fill the term objects.
-	_prime_term_caches( $term_ids );
-
-	$terms = array();
-	foreach ( $term_ids as $term_id ) {
-		$term = get_term( $term_id, $taxonomy );
-		if ( is_wp_error( $term ) ) {
-			return $term;
-		}
-
-		$terms[] = $term;
-	}
-
-	return $terms;
-}
+// refactored. function get_object_term_cache( $id, $taxonomy ) {}
 
 /**
  * Updates the cache for the given term object ID(s).

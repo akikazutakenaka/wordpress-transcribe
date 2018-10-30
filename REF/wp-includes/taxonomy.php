@@ -457,8 +457,15 @@ function get_object_term_cache( $id, $taxonomy )
 
 	foreach ( $term_ids as $term_id ) {
 		$term = get_term( $term_id, $taxonomy );
-// wp-includes/category-template.php -> @NOW 010
+
+		if ( is_wp_error( $term ) ) {
+			return $term;
+		}
+
+		$terms[] = $term;
 	}
+
+	return $terms;
 }
 
 /**
