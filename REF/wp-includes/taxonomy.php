@@ -127,7 +127,12 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 	}
 
 	if ( $term instanceof WP_Term ) {
-// self -> @NOW 011
+		$_term = $term;
+	} elseif ( is_object( $term ) ) {
+		if ( empty( $term->filter ) || 'raw' === $term->filter ) {
+			$_term = sanitize_term( $term, $taxonomy, 'raw' );
+// self -> @NOW 011 -> self
+		}
 	}
 }
 
@@ -152,6 +157,48 @@ function update_termmeta_cache( $term_ids )
 
 	return update_meta_cache( 'term', $term_ids );
 }
+
+/**
+ * Sanitize Term all fields.
+ *
+ * Relies on sanitize_term_field() to sanitize the term.
+ * The difference is that this function will sanitize <strong>all</strong> fields.
+ * The context is based on sanitize_term_field().
+ *
+ * The $term is expected to be either an array or an object.
+ *
+ * @since 2.3.0
+ *
+ * @param  array|object $term     The term to check.
+ * @param  string       $taxonomy The taxonomy name to use.
+ * @param  string       $context  Optional.
+ *                                Context in which to sanitize the term.
+ *                                Accepts 'edit', 'db', 'display', 'attribute', or 'js'.
+ *                                Default 'display'.
+ * @return array|object Term with all fields sanitized.
+ */
+function sanitize_term( $term, $taxonomy, $context = 'display' )
+{
+	$fields = array( 'term_id', 'name', 'description', 'slug', 'count', 'parent', 'term_group', 'term_taxonomy_id', 'object_id' );
+	$do_object = is_object( $term );
+
+	$term_id = $do_object
+		? $term->term_id
+		: ( isset( $term['term_id'] )
+			? $term['term_id']
+			: 0 );
+
+	foreach ( ( array ) $fields as $field ) {
+		if ( $do_object ) {
+			if ( isset( $term->$field ) ) {
+				$term->$field = sanitize_term_field( $field, $term->$field, $term_id, $taxonomy, $context );
+// self -> @NOW 012 -> self
+			}
+		}
+	}
+}
+
+// self -> @NOW 013
 
 /**
  * Retrieves the taxonomy relationship to the term object id.
