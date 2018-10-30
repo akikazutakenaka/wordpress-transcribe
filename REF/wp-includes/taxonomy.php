@@ -126,17 +126,57 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 		return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
 	}
 
-	if ( $term instanceof WP_Term ) {
-		$_term = $term;
-	} elseif ( is_object( $term ) ) {
-		if ( empty( $term->filter ) || 'raw' === $term->filter ) {
-			$_term = sanitize_term( $term, $taxonomy, 'raw' );
-			$_term = new WP_Term( $_term );
-		} else {
-			$_term = WP_Term::get_instance( $term->term_id );
-// self -> @NOW 011
-		}
+	$_term = $term instanceof WP_Term
+		? $term
+		: ( is_object( $term )
+			? ( empty( $term->filter ) || 'raw' === $term->filter
+				? new WP_Term( sanitize_term( $term, $taxonomy, 'raw' ) )
+				: WP_Term::get_instance( $term->term_id ) )
+			: WP_Term::get_instance( $term, $taxonomy ) );
+
+	if ( is_wp_error( $_term ) ) {
+		return $_term;
+	} elseif ( ! $_term ) {
+		return NULL;
 	}
+
+	/**
+	 * Filters a term.
+	 *
+	 * @since 2.3.0
+	 * @since 4.4.0 `$_term` can now also be a WP_Term object.
+	 *
+	 * @param int|WP_Term $_term    Term object or ID.
+	 * @param string      $taxonomy The taxonomy slug.
+	 */
+	$_term = apply_filters( 'get_term', $_term, $taxonomy );
+
+	/**
+	 * Filters a taxonomy.
+	 *
+	 * The dynamic portion of the filter name, `$taxonomy`, refers to the taxonomy slug.
+	 *
+	 * @since 2.3.0
+	 * @since 4.4.0 `$_term` can now also be a WP_Term object.
+	 *
+	 * @param int|WP_Term $_term    Term object or ID.
+	 * @param string      $taxonomy The taxonomy slug.
+	 */
+	$_term = apply_filters( "get_{$taxonomy}", $_term, $taxonomy );
+
+	// Bail if a filter callback has changed the type of the `$_term` object.
+	if ( ! ( $_term instanceof WP_Term ) ) {
+		return $_term;
+	}
+
+	// Sanitize term, according to the specified filter.
+	$_term->filter( $filter );
+
+	return $output == ARRAY_A
+		? $_term->to_array()
+		: ( $output == ARRAY_N
+			? array_values( $_term->to_array() )
+			: $_term );
 }
 
 /**
@@ -417,7 +457,7 @@ function get_object_term_cache( $id, $taxonomy )
 
 	foreach ( $term_ids as $term_id ) {
 		$term = get_term( $term_id, $taxonomy );
-// wp-includes/category-template.php -> @NOW 010 -> self
+// wp-includes/category-template.php -> @NOW 010 -> wp-includes/class-wp-term.php
 	}
 }
 
