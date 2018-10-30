@@ -106,5 +106,17 @@ final class WP_Term
 	 */
 	public $filter = 'raw';
 
-// wp-includes/taxonomy.php -> @NOW 012
+	/**
+	 * Constructor.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param WP_Term|object $term Term object.
+	 */
+	public function __construct( $term )
+	{
+		foreach ( get_object_vars( $term ) as $key => $value ) {
+			$this->$key = $value;
+		}
+	}
 }

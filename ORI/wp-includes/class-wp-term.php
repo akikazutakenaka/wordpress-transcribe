@@ -108,18 +108,7 @@ final class WP_Term {
 		return $term_obj;
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param WP_Term|object $term Term object.
-	 */
-	public function __construct( $term ) {
-		foreach ( get_object_vars( $term ) as $key => $value ) {
-			$this->$key = $value;
-		}
-	}
+	// refactored. public function __construct( $term ) {}
 
 	/**
 	 * Sanitizes term fields, according to the filter type provided.

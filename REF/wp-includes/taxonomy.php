@@ -127,7 +127,7 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 	}
 
 	if ( $term instanceof WP_Term ) {
-// self -> @NOW 011 -> wp-includes/class-wp-term.php
+// self -> @NOW 011
 	}
 }
 
