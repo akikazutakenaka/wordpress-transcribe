@@ -198,7 +198,7 @@ EOQ
 
 		$term_obj = new WP_Term( $_term );
 		$term_obj->filter( $term_obj->filter );
-// wp-includes/taxonomy.php -> @NOW 012
+		return $term_obj;
 	}
 
 	/**

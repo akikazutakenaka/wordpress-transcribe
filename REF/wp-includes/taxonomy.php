@@ -134,7 +134,7 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 			$_term = new WP_Term( $_term );
 		} else {
 			$_term = WP_Term::get_instance( $term->term_id );
-// self -> @NOW 011 -> wp-includes/class-wp-term.php
+// self -> @NOW 011
 		}
 	}
 }
