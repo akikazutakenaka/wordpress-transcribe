@@ -192,13 +192,174 @@ function sanitize_term( $term, $taxonomy, $context = 'display' )
 		if ( $do_object ) {
 			if ( isset( $term->$field ) ) {
 				$term->$field = sanitize_term_field( $field, $term->$field, $term_id, $taxonomy, $context );
-// self -> @NOW 012 -> self
+// self -> @NOW 012
 			}
 		}
 	}
 }
 
-// self -> @NOW 013
+/**
+ * Cleanse the field value in the term based on the context.
+ *
+ * Passing a term field value through the function should be assumed to have cleansed the value for whatever context the term field is going to be used.
+ *
+ * If no context or an unsupported context is given, then default filters will be applied.
+ *
+ * There are enough filters for each context to support a custom filtering without creating your own filter function.
+ * Simply create a function that hooks into the filter you need.
+ *
+ * @since 2.3.0
+ *
+ * @param  string $field    Term field to sanitize.
+ * @param  string $value    Search for this term value.
+ * @param  int    $term_id  Term ID.
+ * @param  string $taxonomy Taxonomy name.
+ * @param  string $context  Context in which to sanitize the term field.
+ *                          Accepts 'edit', 'db', 'display', 'attribute', or 'js'.
+ * @return mixed  Sanitized field.
+ */
+function sanitize_term_field( $field, $value, $term_id, $taxonomy, $context )
+{
+	$int_fields = array( 'parent', 'term_id', 'count', 'term_group', 'term_taxonomy_id', 'object_id' );
+
+	if ( in_array( $field, $int_fields ) ) {
+		$value = ( int ) $value;
+
+		if ( $value < 0 ) {
+			$value = 0;
+		}
+	}
+
+	if ( 'raw' == $context ) {
+		return $value;
+	}
+
+	if ( 'edit' == $context ) {
+		/**
+		 * Filters a term field to edit before it is sanitized.
+		 *
+		 * The dynamic portion of the filter name, `$field`, refers to the term field.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed  $value    Value of the term field.
+		 * @param int    $term_id  Term ID.
+		 * @param string $taxonomy Taxonomy slug.
+		 */
+		$value = apply_filters( "edit_term_{$field}", $value, $term_id, $taxonomy );
+
+		/**
+		 * Filters the taxonomy field to edit before it is sanitized.
+		 *
+		 * The dynamic portions of the filter name, `$taxonomy` and `$field`, refer to the taxonomy slug and taxonomy field, respectively.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed $value   Value of the taxonomy field to edit.
+		 * @param int   $term_id Term ID.
+		 */
+		$value = apply_filters( "edit_{$taxonomy}_{$field}", $value, $term_id );
+
+		$value = 'description' == $field
+			? esc_html( $value )
+			: esc_attr( $value );
+	} elseif ( 'db' == $context ) {
+		/**
+		 * Filters a term field value before it is sanitized.
+		 *
+		 * The dynamic portion of the filter name, `$field`, refers to the term field.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed  $value    Value of the term field.
+		 * @param string $taxonomy Taxonomy slug.
+		 */
+		$value = apply_filters( "pre_term_{$field}", $value, $taxonomy );
+
+		/**
+		 * Filters a taxonomy field before it is sanitized.
+		 *
+		 * The dynamic portions of the filter name, `$taxonomy` and `$field`, refer to the taxonomy slug and field name, respectively.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed $value Value of the taxonomy field.
+		 */
+		$value = apply_filters( "pre_{$taxonomy}_{$field}", $value );
+
+		// Back compat filters.
+		if ( 'slug' == $field ) {
+			/**
+			 * Filters the category nicename before it is sanitized.
+			 *
+			 * Use the {@see 'pre_$taxonomy_$field'} hook instead.
+			 *
+			 * @since 2.0.3
+			 *
+			 * @param string $value The category nicename.
+			 */
+			$value = apply_filters( 'pre_category_nicename', $value );
+		}
+	} elseif ( 'rss' == $context ) {
+		/**
+		 * Filters the term field for use in RSS.
+		 *
+		 * The dynamic portion of the filter name, `$field`, refers to the term field.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed  $value    Value of the term field.
+		 * @param string $taxonomy Taxonomy slug.
+		 */
+		$value = apply_filters( "term_{$field}_rss", $value, $taxonomy );
+
+		/**
+		 * Filters the taxonomy field for use in RSS.
+		 *
+		 * The dynamic portions of the hook name, `$taxonomy` and `$field`, refer to the taxonomy slug and field name, respectively.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed $value Value of the taxonomy field.
+		 */
+		$value = apply_filters( "{$taxonomy}_{$field}_rss", $value );
+	} else {
+		// Use display filters by default.
+
+		/**
+		 * Filters the term field sanitized for display.
+		 *
+		 * The dynamic portion of the filter name, `$field`, refers to the term field name.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed  $value    Value of the term field.
+		 * @param int    $term_id  Term ID.
+		 * @param string $taxonomy Taxonomy slug.
+		 * @param string $context  Context to retrieve the term field value.
+		 */
+		$value = apply_filters( "term_{$field}", $value, $term_id, $taxonomy, $context );
+
+		/**
+		 * Filters the taxonomy field sanitized for display.
+		 *
+		 * The dynamic portions of the filter name, `$taxonomy` and `$field`, refer to the taxonomy slug and taxonomy name, respectively.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param mixed  $value   Value of the taxonomy field.
+		 * @param int    $term_id Term ID.
+		 * @param string $context Context to retrieve the taxonomy field value.
+		 */
+		$value = apply_filters( "{$taxonomy}_{$field}", $value, $term_id, $context );
+	}
+
+	$value = 'attribute' == $context
+		? esc_attr( $value )
+		: esc_js( $value );
+
+	return $value;
+}
 
 /**
  * Retrieves the taxonomy relationship to the term object id.
