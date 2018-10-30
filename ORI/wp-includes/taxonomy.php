@@ -1325,48 +1325,7 @@ function term_is_ancestor_of( $term1, $term2, $taxonomy ) {
 	return term_is_ancestor_of( $term1, get_term( $term2->parent, $taxonomy ), $taxonomy );
 }
 
-/**
- * Sanitize Term all fields.
- *
- * Relies on sanitize_term_field() to sanitize the term. The difference is that
- * this function will sanitize <strong>all</strong> fields. The context is based
- * on sanitize_term_field().
- *
- * The $term is expected to be either an array or an object.
- *
- * @since 2.3.0
- *
- * @param array|object $term     The term to check.
- * @param string       $taxonomy The taxonomy name to use.
- * @param string       $context  Optional. Context in which to sanitize the term. Accepts 'edit', 'db',
- *                               'display', 'attribute', or 'js'. Default 'display'.
- * @return array|object Term with all fields sanitized.
- */
-function sanitize_term($term, $taxonomy, $context = 'display') {
-	$fields = array( 'term_id', 'name', 'description', 'slug', 'count', 'parent', 'term_group', 'term_taxonomy_id', 'object_id' );
-
-	$do_object = is_object( $term );
-
-	$term_id = $do_object ? $term->term_id : (isset($term['term_id']) ? $term['term_id'] : 0);
-
-	foreach ( (array) $fields as $field ) {
-		if ( $do_object ) {
-			if ( isset($term->$field) )
-				$term->$field = sanitize_term_field($field, $term->$field, $term_id, $taxonomy, $context);
-		} else {
-			if ( isset($term[$field]) )
-				$term[$field] = sanitize_term_field($field, $term[$field], $term_id, $taxonomy, $context);
-		}
-	}
-
-	if ( $do_object )
-		$term->filter = $context;
-	else
-		$term['filter'] = $context;
-
-	return $term;
-}
-
+// refactored. function sanitize_term($term, $taxonomy, $context = 'display') {}
 // refactored. function sanitize_term_field($field, $value, $term_id, $taxonomy, $context) {}
 
 /**

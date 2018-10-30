@@ -131,7 +131,7 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 	} elseif ( is_object( $term ) ) {
 		if ( empty( $term->filter ) || 'raw' === $term->filter ) {
 			$_term = sanitize_term( $term, $taxonomy, 'raw' );
-// self -> @NOW 011 -> self
+// self -> @NOW 011
 		}
 	}
 }
@@ -192,10 +192,21 @@ function sanitize_term( $term, $taxonomy, $context = 'display' )
 		if ( $do_object ) {
 			if ( isset( $term->$field ) ) {
 				$term->$field = sanitize_term_field( $field, $term->$field, $term_id, $taxonomy, $context );
-// self -> @NOW 012
+			}
+		} else {
+			if ( isset( $term[ $field ] ) ) {
+				$term[ $field ] = sanitize_term_field( $field, $term[ $field ], $term_id, $taxonomy, $context );
 			}
 		}
 	}
+
+	if ( $do_object ) {
+		$term->filter = $context;
+	} else {
+		$term['filter'] = $context;
+	}
+
+	return $term;
 }
 
 /**
