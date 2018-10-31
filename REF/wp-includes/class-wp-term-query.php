@@ -224,6 +224,8 @@ class WP_Term_Query
 		}
 	}
 
+// self -> @NOW 013
+
 	/**
 	 * Sets up the query for retrieving terms.
 	 *
@@ -238,5 +240,18 @@ class WP_Term_Query
 		return $this->get_terms();
 	}
 
-// wp-includes/taxonomy.php -> @NOW 012
+	/**
+	 * Get terms, based on query_vars.
+	 *
+	 * @since  4.6.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @return array List of terms.
+	 */
+	public function get_terms()
+	{
+		global $wpdb;
+		$this->parse_query( $this->query_vars );
+// wp-includes/taxonomy.php -> @NOW 012 -> self
+	}
 }
