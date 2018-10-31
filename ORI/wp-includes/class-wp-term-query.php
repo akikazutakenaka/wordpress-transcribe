@@ -78,18 +78,7 @@ class WP_Term_Query {
 		do_action( 'parse_term_query', $this );
 	}
 
-	/**
-	 * Sets up the query for retrieving terms.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param string|array $query Array or URL query string of parameters.
-	 * @return array|int List of terms, or number of terms when 'count' is passed as a query var.
-	 */
-	public function query( $query ) {
-		$this->query_vars = wp_parse_args( $query );
-		return $this->get_terms();
-	}
+	// refactored. public function query( $query ) {}
 
 	/**
 	 * Get terms, based on query_vars.
