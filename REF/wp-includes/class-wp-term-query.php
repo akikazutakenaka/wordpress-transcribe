@@ -224,7 +224,65 @@ class WP_Term_Query
 		}
 	}
 
-// self -> @NOW 013
+	/**
+	 * Parse arguments passed to the term query with default query parameters.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param string|array $query WP_Term_Query arguments.
+	 *                            See WP_Term_Query::__construct().
+	 */
+	public function parse_query( $query = '' )
+	{
+		if ( empty( $query ) ) {
+			$query = $this->query_vars;
+		}
+
+		$taxonomies = isset( $query['taxonomy'] )
+			? ( array ) $query['taxonomy']
+			: NULL;
+
+		/**
+		 * Filters the terms query default arguments.
+		 *
+		 * Use {@see 'get_terms_args'} to filter the passed arguments.
+		 *
+		 * @since 4.4.0
+		 *
+		 * @param array $defaults   An array of default get_terms() arguments.
+		 * @param array $taxonomies An array of taxonomies.
+		 */
+		$this->query_var_defaults = apply_filters( 'get_terms_defaults', $this->query_var_defaults, $taxonomies );
+
+		$query = wp_parse_args( $query, $this->query_var_defaults );
+		$query['number'] = absint( $query['number'] );
+		$query['offset'] = absint( $query['offset'] );
+
+		// 'parent' overrides 'child_of'.
+		if ( 0 < intval( $query['parent'] ) ) {
+			$query['child_of'] = FALSE;
+		}
+
+		if ( 'all' == $query['get'] ) {
+			$query['childless']    = FALSE;
+			$query['child_of']     = 0;
+			$query['hide_empty']   = 0;
+			$query['hierarchical'] = FALSE;
+			$query['pad_counts']   = FALSE;
+		}
+
+		$query['taxonomy'] = $taxonomies;
+		$this->query_vars = $query;
+
+		/**
+		 * Fires after term query vars have been parsed.
+		 *
+		 * @since 4.6.0
+		 *
+		 * @param WP_Term_Query $this Current instance of WP_Term_Query.
+		 */
+		do_action( 'parse_term_query', $this );
+	}
 
 	/**
 	 * Sets up the query for retrieving terms.
@@ -252,6 +310,6 @@ class WP_Term_Query
 	{
 		global $wpdb;
 		$this->parse_query( $this->query_vars );
-// wp-includes/taxonomy.php -> @NOW 012 -> self
+// wp-includes/taxonomy.php -> @NOW 012
 	}
 }
