@@ -175,29 +175,7 @@ function get_taxonomies( $args = array(), $output = 'names', $operator = 'and' )
 }
 
 // refactored. function get_object_taxonomies( $object, $output = 'names' ) {}
-
-/**
- * Retrieves the taxonomy object of $taxonomy.
- *
- * The get_taxonomy function will first check that the parameter string given
- * is a taxonomy object and if it is, it will return it.
- *
- * @since 2.3.0
- *
- * @global array $wp_taxonomies The registered taxonomies.
- *
- * @param string $taxonomy Name of taxonomy object to return.
- * @return WP_Taxonomy|false The Taxonomy Object or false if $taxonomy doesn't exist.
- */
-function get_taxonomy( $taxonomy ) {
-	global $wp_taxonomies;
-
-	if ( ! taxonomy_exists( $taxonomy ) )
-		return false;
-
-	return $wp_taxonomies[$taxonomy];
-}
-
+// :
 // refactored. function taxonomy_exists( $taxonomy ) {}
 
 /**
