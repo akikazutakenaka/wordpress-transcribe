@@ -55,6 +55,8 @@ function get_object_taxonomies( $object, $output = 'names' )
 	return $taxonomies;
 }
 
+// self -> @NOW 011
+
 /**
  * Checks that the taxonomy name exists.
  *
@@ -413,6 +415,68 @@ function sanitize_term_field( $field, $value, $term_id, $taxonomy, $context )
 		: esc_js( $value );
 
 	return $value;
+}
+
+/**
+ * Retrieves the terms associated with the given object(s), in the supplied taxonomies.
+ *
+ * @since 2.3.0
+ * @since 4.2.0 Added support for 'taxonomy', 'parent', and 'term_taxonomy_id' values of `$orderby`.
+ *              Introduced `$parent` argument.
+ * @since 4.4.0 Introduced `$meta_query` and `$update_term_meta_cache` arguments.
+ *              When `$fields` is 'all' or 'all_with_object_id', an array of `WP_Term` objects will be returned.
+ * @since 4.7.0 Refactored to use WP_Term_Query, and to support any WP_Term_Query arguments.
+ *
+ * @param  int|array      $object_ids The ID(s) of the object(s) to retrieve.
+ * @param  string|array   $taxonomies The taxonomies to retrieve terms from.
+ * @param  array|string   $args       See WP_Term_Query::__construct() for supported arguments.
+ * @return array|WP_Error The requested term data or empty array if no terms found.
+ *                        WP_Error if any of the $taxonomies don't exist.
+ */
+function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
+{
+	if ( empty( $object_ids ) || empty( $taxonomies ) ) {
+		return array();
+	}
+
+	if ( ! is_array( $taxonomies ) ) {
+		$taxonomies = array( $taxonomies );
+	}
+
+	foreach ( $taxonomies as $taxonomy ) {
+		if ( ! taxonomy_exists( $taxonomy ) ) {
+			return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+		}
+	}
+
+	if ( ! is_array( $object_ids ) ) {
+		$object_ids = array( $object_ids );
+	}
+
+	$object_ids = array_map( 'intval', $object_ids );
+	$args = wp_parse_args( $args );
+
+	/**
+	 * Filter arguments for retrieving object terms.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param array        $args       An array of arguments for retrieving terms for the given object(s).
+	 *                                 See {@see wp_get_object_terms()} for details.
+	 * @param int|array    $object_ids Object ID or array of IDs.
+	 * @param string|array $taxonomies The taxonomies to retrieving terms from.
+	 */
+	$args = apply_filters( 'wp_get_object_terms_args', $args, $object_ids, $taxonomies );
+
+	// When one or more queried taxonomies is registered with an 'args' array, those params override the `$args` passed to this function.
+	$terms = array();
+
+	if ( count( $taxonomies ) > 1 ) {
+		foreach ( $taxonomies as $index => $taxonomy ) {
+			$t = get_taxonomy( $taxonomy );
+// wp-includes/category-template.php -> @NOW 010 -> self
+		}
+	}
 }
 
 /**
