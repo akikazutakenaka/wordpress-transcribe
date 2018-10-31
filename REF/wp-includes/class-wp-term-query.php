@@ -310,6 +310,10 @@ class WP_Term_Query
 	{
 		global $wpdb;
 		$this->parse_query( $this->query_vars );
-// wp-includes/taxonomy.php -> @NOW 012
+		$args = &$this->query_vars;
+
+		// Set up meta_query so it's available to 'pre_get_terms'.
+		$this->meta_query = new WP_Meta_Query();
+// wp-includes/taxonomy.php -> @NOW 012 -> wp-includes/class-wp-meta-query.php
 	}
 }
