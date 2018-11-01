@@ -703,7 +703,7 @@ function _get_term_hierarchy( $taxonomy )
 	}
 
 	update_option( "{$taxonomy}_children", $children );
-// wp-includes/class-wp-term-query.php -> @NOW 013 -> wp-includes/option.php
+// wp-includes/class-wp-term-query.php -> @NOW 013
 }
 
 /**
