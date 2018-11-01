@@ -333,8 +333,55 @@ class WP_Term_Query
 		if ( $taxonomies ) {
 			foreach ( $taxonomies as $_tax ) {
 				if ( is_taxonomy_hierarchical( $_tax ) ) {
-// wp-includes/taxonomy.php -> @NOW 012
+					$has_hierarchical_tax = TRUE;
 				}
+			}
+		}
+
+		if ( ! $has_hierarchical_tax ) {
+			$args['hierarchical'] = FALSE;
+			$args['pad_counts']   = FALSE;
+		}
+
+		// 'parent' overrides 'child_of'.
+		if ( 0 < intval( $args['parent'] ) ) {
+			$args['child_of'] = FALSE;
+		}
+
+		if ( 'all' == $args['get'] ) {
+			$args['childless']    = FALSE;
+			$args['child_of']     = 0;
+			$args['hide_empty']   = 0;
+			$args['hierarchical'] = FALSE;
+			$args['pad_counts']   = FALSE;
+		}
+
+		/**
+		 * Filters the terms query arguments.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param array $args       An array of get_terms() arguments.
+		 * @param array $taxonomies An array of taxonomies.
+		 */
+		$args = apply_filters( 'get_terms_args', $args, $taxonomies );
+
+		// Avoid the query if the queried parent/child_of term has no descendants.
+		$child_of = $args['child_of'];
+		$parent   = $args['parent'];
+
+		$_parent = $child_of
+			? $child_of
+			: ( $parent
+				? $parent
+				: FALSE );
+
+		if ( $_parent ) {
+			$in_hierarchy = FALSE;
+
+			foreach ( $taxonomies as $_tax ) {
+				$hierarchy = _get_term_hierarchy( $_tax );
+// wp-includes/taxonomy.php -> @NOW 012 -> wp-includes/taxonomy.php
 			}
 		}
 	}

@@ -244,6 +244,8 @@ EOQ
 	return apply_filters( 'alloptions', $alloptions );
 }
 
+// wp-includes/taxonomy.php -> @NOW 014
+
 /**
  * Add a new option.
  *
