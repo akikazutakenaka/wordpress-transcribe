@@ -102,5 +102,47 @@ class WP_Meta_Query
 	 */
 	protected $has_or_relation = FALSE;
 
+	/**
+	 * Constructor.
+	 *
+	 * @since 3.2.0
+	 * @since 4.2.0 Introduced support for naming query clauses by associative array keys.
+	 *
+	 * @param array $meta_query {
+	 *     Array of meta query clauses.
+	 *     When first-order clauses or sub-clauses use strings as their array keys, they may be referenced in the 'orderby' parameter of the parent query.
+	 *
+	 *     @type string $relation Optional.
+	 *                            The MySQL keyword used to join the clauses of the query.
+	 *                            Accepts 'AND', or 'OR'.
+	 *                            Default 'AND'.
+	 *     @type array {
+	 *         Optional.
+	 *         An array of first-order clause parameters, or another fully-formed meta query.
+	 *
+	 *         @type string $key     Meta key to filter by.
+	 *         @type string $value   Meta value to filter by.
+	 *         @type string $compare MySQL operator used for comparing the $value.
+	 *                               Accepts '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'REGEXP', 'NOT REGEXP', 'RLIKE', 'EXISTS' or 'NOT EXISTS'.
+	 *                               Default is 'IN' when `$value` is an array, '=' otherwise.
+	 *         @type string $type    MySQL data type that the meta_value column will be CAST to for comparisons.
+	 *                               Accepts 'NUMERIC', 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', or 'UNSIGNED'.
+	 *                               Default is 'CHAR'.
+	 *     }
+	 * }
+	 */
+	public function __construct( $meta_query = FALSE )
+	{
+		if ( ! $meta_query ) {
+			return;
+		}
+
+		$this->relation = isset( $meta_query['relation'] ) && strtoupper( $meta_query['relation'] ) == 'OR'
+			? 'OR'
+			: 'AND';
+
+		$this->queries = $this->sanitize_query( $meta_query );
+	}
+
 // wp-includes/class-wp-term-query.php -> @NOW 013
 }
