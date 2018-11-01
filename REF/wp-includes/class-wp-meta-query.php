@@ -297,5 +297,30 @@ class WP_Meta_Query
 // wp-includes/class-wp-term-query.php -> @NOW 015 -> self
 	}
 
-// self -> @NOW 016
+	/**
+	 * Generate SQL clauses to be appended to a main query.
+	 *
+	 * Called by the public WP_Meta_Query::get_sql(), this method is abstracted out to maintain parity with the other Query classes.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @return array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	protected function get_sql_clauses()
+	{
+		/**
+		 * $queries are passed by reference to get_sql_for_query() for recursion.
+		 * To keep $this->queries unaltered, pass a copy.
+		 */
+		$queries = $this->queries;
+		$sql = $this->get_sql_for_query( $queries );
+// self -> @NOW 016 -> self
+	}
+
+// self -> @NOW 017
 }
