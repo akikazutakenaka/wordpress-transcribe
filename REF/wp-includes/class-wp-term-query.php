@@ -315,6 +315,27 @@ class WP_Term_Query
 		// Set up meta_query so it's available to 'pre_get_terms'.
 		$this->meta_query = new WP_Meta_Query();
 		$this->meta_query->parse_query_vars( $args );
+
+		/**
+		 * Fires before terms are retrieved.
+		 *
+		 * @since 4.6.0
+		 *
+		 * @param WP_Term_Query $this Current instance of WP_Term_Query.
+		 */
+		do_action( 'pre_get_terms', $this );
+
+		$taxonomies = ( array ) $args['taxonomy'];
+
+		// Save queries by not crawling the tree in the case of multiple taxes or a flat tax.
+		$has_hierarchical_tax = FALSE;
+
+		if ( $taxonomies ) {
+			foreach ( $taxonomies as $_tax ) {
+				if ( is_taxonomy_hierarchical( $_tax ) ) {
 // wp-includes/taxonomy.php -> @NOW 012
+				}
+			}
+		}
 	}
 }

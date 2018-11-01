@@ -93,6 +93,29 @@ function taxonomy_exists( $taxonomy )
 }
 
 /**
+ * Whether the taxonomy object is hierarchical.
+ *
+ * Checks to make sure that the taxonomy is an object first.
+ * Then Gets the object, and finally returns the hierarchical value in the object.
+ *
+ * A false return value might also mean that the taxonomy does not exist.
+ *
+ * @since 2.3.0
+ *
+ * @param  string $taxonomy Name of taxonomy object.
+ * @return bool   Whether the taxonomy is hierarchical.
+ */
+function is_taxonomy_hierarchical( $taxonomy )
+{
+	if ( ! taxonomy_exists( $taxonomy ) ) {
+		return FALSE;
+	}
+
+	$taxonomy = get_taxonomy( $taxonomy );
+	return $taxonomy->hierarchical;
+}
+
+/**
  * Get all Term data from database by Term ID.
  *
  * The usage of the get_term function is to apply filters to a term object.
