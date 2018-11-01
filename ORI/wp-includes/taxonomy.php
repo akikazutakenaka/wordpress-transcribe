@@ -2742,37 +2742,7 @@ function update_object_term_cache($object_ids, $object_type) {
 }
 
 // refactored. function update_term_cache( $terms, $taxonomy = '' ) {}
-
-//
-// Private
-//
-
-/**
- * Retrieves children of taxonomy as Term IDs.
- *
- * @ignore
- * @since 2.3.0
- *
- * @param string $taxonomy Taxonomy name.
- * @return array Empty if $taxonomy isn't hierarchical or returns children as Term IDs.
- */
-function _get_term_hierarchy( $taxonomy ) {
-	if ( !is_taxonomy_hierarchical($taxonomy) )
-		return array();
-	$children = get_option("{$taxonomy}_children");
-
-	if ( is_array($children) )
-		return $children;
-	$children = array();
-	$terms = get_terms($taxonomy, array('get' => 'all', 'orderby' => 'id', 'fields' => 'id=>parent'));
-	foreach ( $terms as $term_id => $parent ) {
-		if ( $parent > 0 )
-			$children[$parent][] = $term_id;
-	}
-	update_option("{$taxonomy}_children", $children);
-
-	return $children;
-}
+// refactored. function _get_term_hierarchy( $taxonomy ) {}
 
 /**
  * Get the subset of $terms that are descendants of $term_id.

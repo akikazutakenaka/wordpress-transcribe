@@ -381,7 +381,7 @@ class WP_Term_Query
 
 			foreach ( $taxonomies as $_tax ) {
 				$hierarchy = _get_term_hierarchy( $_tax );
-// wp-includes/taxonomy.php -> @NOW 012 -> wp-includes/taxonomy.php
+// wp-includes/taxonomy.php -> @NOW 012
 			}
 		}
 	}
