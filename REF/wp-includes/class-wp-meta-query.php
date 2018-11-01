@@ -265,5 +265,37 @@ class WP_Meta_Query
 		$this->__construct( $meta_query );
 	}
 
-// wp-includes/class-wp-term-query.php -> @NOW 015
+	/**
+	 * Generates SQL clauses to be appended to a main query.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param  string      $type              Type of meta, e.g. 'user', 'post'.
+	 * @param  string      $primary_table     Database table where the object being filtered is stored (e.g. wp_users).
+	 * @param  string      $primary_id_column ID column for the filtered object in $primary_table.
+	 * @param  object      $context           Optional.
+	 *                                        The main query object.
+	 * @return false|array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	public function get_sql( $type, $primary_table, $primary_id_column, $context = NULL )
+	{
+		if ( ! $meta_table = _get_meta_table( $type ) ) {
+			return FALSE;
+		}
+
+		$this->table_aliases = array();
+		$this->meta_table     = $meta_table;
+		$this->meta_id_column = sanitize_key( $type . '_id' );
+		$this->primary_table     = $primary_table;
+		$this->primary_id_column = $primary_id_column;
+		$sql = $this->get_sql_clauses();
+// wp-includes/class-wp-term-query.php -> @NOW 015 -> self
+	}
+
+// self -> @NOW 016
 }
