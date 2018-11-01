@@ -429,7 +429,7 @@ class WP_Term_Query
 			$orderby = "FIELD( t.term_id, $include )";
 		} elseif ( 'slug__in' == $_orderby && ! empty( $this->query_vars['slug'] ) && is_array( $this->query_vars['slug'] ) ) {
 			$slugs = implode( "', '", array_map( 'sanitize_title_for_query', $this->query_vars['slug'] ) );
-// self -> @NOW 013 -> wp-includes/formatting.php
+// self -> @NOW 013
 		}
 	}
 }
