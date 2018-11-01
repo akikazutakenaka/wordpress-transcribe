@@ -381,8 +381,55 @@ class WP_Term_Query
 
 			foreach ( $taxonomies as $_tax ) {
 				$hierarchy = _get_term_hierarchy( $_tax );
-// wp-includes/taxonomy.php -> @NOW 012
+
+				if ( isset( $hierarchy[ $_parent ] ) ) {
+					$in_hierarchy = TRUE;
+				}
 			}
+
+			if ( ! $in_hierarchy ) {
+				return array();
+			}
+		}
+
+		// 'term_order' is a legal sort order only when joining the relationship table.
+		$_orderby = $this->query_vars['orderby'];
+
+		if ( 'term_order' === $_orderby && empty( $this->query_vars['object_ids'] ) ) {
+			$_orderby = 'term_id';
+		}
+
+		$orderby = $this->parse_orderby( $_orderby );
+// wp-includes/taxonomy.php -> @NOW 012 -> self
+	}
+
+	/**
+	 * Parse and sanitize 'orderby' keys passed to the term query.
+	 *
+	 * @since  4.6.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  string       $orderby_raw Alias for the field to order by.
+	 * @return string|false Value to used in the ORDER clause.
+	 *                      False otherwise.
+	 */
+	protected function parse_orderby( $orderby_raw )
+	{
+		$_orderby = strtolower( $orderby_raw );
+		$maybe_orderby_meta = FALSE;
+
+		if ( in_array( $_orderby, array( 'term_id', 'name', 'slug', 'term_group' ), TRUE ) ) {
+			$orderby = "t.$_orderby";
+		} elseif ( in_array( $_orderby, array( 'count', 'parent', 'taxonomy', 'term_taxonomy_id', 'description' ), TRUE ) ) {
+			$orderby = "tt.$_orderby";
+		} elseif ( 'term_orderby' === $_orderby ) {
+			$orderby = 'tr.term_order';
+		} elseif ( 'include' == $_orderby && ! empty( $this->query_vars['include'] ) ) {
+			$include = implode( ',', wp_parse_id_list( $this->query_vars['include'] ) );
+			$orderby = "FIELD( t.term_id, $include )";
+		} elseif ( 'slug__in' == $_orderby && ! empty( $this->query_vars['slug'] ) && is_array( $this->query_vars['slug'] ) ) {
+			$slugs = implode( "', '", array_map( 'sanitize_title_for_query', $this->query_vars['slug'] ) );
+// self -> @NOW 013 -> wp-includes/formatting.php
 		}
 	}
 }
