@@ -314,6 +314,7 @@ class WP_Term_Query
 
 		// Set up meta_query so it's available to 'pre_get_terms'.
 		$this->meta_query = new WP_Meta_Query();
+		$this->meta_query->parse_query_vars( $args );
 // wp-includes/taxonomy.php -> @NOW 012
 	}
 }
