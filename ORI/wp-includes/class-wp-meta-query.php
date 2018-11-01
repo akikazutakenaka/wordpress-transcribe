@@ -91,20 +91,7 @@ class WP_Meta_Query {
 		return $clean_queries;
 	}
 
-	/**
-	 * Determine whether a query clause is first-order.
-	 *
-	 * A first-order meta query clause is one that has either a 'key' or
-	 * a 'value' array key.
-	 *
-	 * @since 4.1.0
-	 *
-	 * @param array $query Meta query arguments.
-	 * @return bool Whether the query clause is a first-order clause.
-	 */
-	protected function is_first_order_clause( $query ) {
-		return isset( $query['key'] ) || isset( $query['value'] );
-	}
+	// refactored. protected function is_first_order_clause( $query ) {}
 
 	/**
 	 * Constructs a meta query based on 'meta_*' query vars

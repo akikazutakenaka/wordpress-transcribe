@@ -168,10 +168,23 @@ class WP_Meta_Query
 			} elseif ( ! is_array( $query ) ) {
 				continue;
 			} elseif ( $this->is_first_order_clause( $query ) ) {
-// wp-includes/class-wp-term-query.php -> @NOW 013 -> self
+// wp-includes/class-wp-term-query.php -> @NOW 013
 			}
 		}
 	}
 
-// self -> @NOW 014
+	/**
+	 * Determine whether a query clause is first-order.
+	 *
+	 * A first-order meta query clause is one that has either a 'key' or a 'value' array key.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $query Meta query arguments.
+	 * @return bool  Whether the query clause is a first-order clause.
+	 */
+	protected function is_first_order_clause( $query )
+	{
+		return isset( $query['key'] ) || isset( $query['value'] );
+	}
 }
