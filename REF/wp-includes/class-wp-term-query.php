@@ -429,7 +429,50 @@ class WP_Term_Query
 			$orderby = "FIELD( t.term_id, $include )";
 		} elseif ( 'slug__in' == $_orderby && ! empty( $this->query_vars['slug'] ) && is_array( $this->query_vars['slug'] ) ) {
 			$slugs = implode( "', '", array_map( 'sanitize_title_for_query', $this->query_vars['slug'] ) );
-// self -> @NOW 013
+			$orderby = "FIELD( t.slug, '" . $slugs . "')";
+		} elseif ( 'none' == $_orderby ) {
+			$orderby = '';
+		} elseif ( empty( $_orderby ) || 'id' == $_orderby || 'term_id' === $_orderby ) {
+			$orderby = 't.term_id';
+		} else {
+			$orderby = 't.name';
+
+			// This may be a value of orderby related to meta.
+			$maybe_orderby_meta = TRUE;
 		}
+
+		/**
+		 * Filters the ORDERBY clause of the terms query.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string $orderby    `ORDERBY` clause of the terms query.
+		 * @param array  $args       An array of terms query arguments.
+		 * @param array  $taxonomies An array of taxonomies.
+		 */
+		$orderby = apply_filters( 'get_terms_orderby', $orderby, $this->query_vars, $this->query_vars['taxonomy'] );
+
+		// Run after the 'get_terms_orderby' filter for backward compatibility.
+		if ( $maybe_orderby_meta ) {
+			$maybe_orderby_meta = $this->parse_orderby_meta( $_orderby );
+// self -> @NOW 013 -> self
+		}
+	}
+
+	/**
+	 * Generate the ORDER BY clause for an 'orderby' param that is potentially related to a meta query.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param  string $orderby_raw Raw 'orderby' value passed to WP_Term_Query.
+	 * @return string ORDER BY clause.
+	 */
+	protected function parse_orderby_meta( $orderby_raw )
+	{
+		$orderby = '';
+
+		// Tell the meta query to generate its SQL, so we have access to table aliases.
+		$this->meta_query->get_sql( 'term', 't', 'term_id' );
+// self -> @NOW 014 -> wp-includes/class-wp-meta-query.php
 	}
 }
