@@ -144,5 +144,34 @@ class WP_Meta_Query
 		$this->queries = $this->sanitize_query( $meta_query );
 	}
 
-// wp-includes/class-wp-term-query.php -> @NOW 013
+	/**
+	 * Ensure the 'meta_query' argument passed to the class constructor is well-formed.
+	 *
+	 * Eliminates empty items and ensures that a 'relation' is set.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $queries Array of query clauses.
+	 * @return array Sanitized array of query clauses.
+	 */
+	public function sanitize_query( $queries )
+	{
+		$clean_queries = array();
+
+		if ( ! is_array( $queries ) ) {
+			return $clean_queries;
+		}
+
+		foreach ( $queries as $key => $query ) {
+			if ( 'relation' === $key ) {
+				$relation = $query;
+			} elseif ( ! is_array( $query ) ) {
+				continue;
+			} elseif ( $this->is_first_order_clause( $query ) ) {
+// wp-includes/class-wp-term-query.php -> @NOW 013 -> self
+			}
+		}
+	}
+
+// self -> @NOW 014
 }
