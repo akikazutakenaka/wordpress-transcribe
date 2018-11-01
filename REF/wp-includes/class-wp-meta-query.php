@@ -168,9 +168,40 @@ class WP_Meta_Query
 			} elseif ( ! is_array( $query ) ) {
 				continue;
 			} elseif ( $this->is_first_order_clause( $query ) ) {
-// wp-includes/class-wp-term-query.php -> @NOW 013
+				if ( isset( $query['value'] ) && array() === $query['value'] ) {
+					unset( $query['value'] );
+				}
+
+				$clean_queries[ $key ] = $query;
+			} else {
+				$cleaned_query = $this->sanitize_query( $query );
+
+				if ( ! empty( $cleaned_query ) ) {
+					$clean_queries[ $key ] = $cleaned_query;
+				}
 			}
 		}
+
+		if ( empty( $clean_queries ) ) {
+			return $clean_queries;
+		}
+
+		// Sanitize the 'relation' key provided in the query.
+		if ( isset( $relation ) && 'OR' === strtoupper( $relation ) ) {
+			$clean_queries['relation'] = 'OR';
+			$this->has_or_relation = TRUE;
+		} elseif ( 1 === count( $clean_queries ) ) {
+			/**
+			 * If there is only a single clause, call the relation 'OR'.
+			 * This value will not actually be used to join clauses, but it simplifies the logic around combining key-only queries.
+			 */
+			$clean_queries['relation'] = 'OR';
+		} else {
+			// Default to AND.
+			$clean_queries['relation'] = 'AND';
+		}
+
+		return $clean_queries;
 	}
 
 	/**
