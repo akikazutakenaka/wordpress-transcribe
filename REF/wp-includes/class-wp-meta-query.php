@@ -321,7 +321,28 @@ class WP_Meta_Query
 		$this->primary_table     = $primary_table;
 		$this->primary_id_column = $primary_id_column;
 		$sql = $this->get_sql_clauses();
-// wp-includes/class-wp-term-query.php -> @NOW 015
+
+		/**
+		 * If any JOINs are LEFT JOINs (as in the case of NOT EXISTS), then all JOINs should be LEFT.
+		 * Otherwise posts with no metadata will be excluded from results.
+		 */
+		if ( FALSE !== strpos( $sql['join'], 'LEFT JOIN' ) ) {
+			$sql['join'] = str_replace( 'INNER JOIN', 'LEFT JOIN', $sql['join'] );
+		}
+
+		/**
+		 * Filters the meta query's generated SQL.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param array  $clauses           Array containing the query's JOIN and WHERE clauses.
+		 * @param array  $queries           Array of meta queries.
+		 * @param string $type              Type of meta.
+		 * @param string $primary_table     Primary table.
+		 * @param string $primary_id_column Primary column ID.
+		 * @param object $context           The main query object.
+		 */
+		return apply_filters_ref_array( 'get_meta_sql', array( $sql, $this->queries, $type, $primary_table, $primary_id_column, $context ) );
 	}
 
 	/**

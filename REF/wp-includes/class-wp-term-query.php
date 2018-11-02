@@ -473,6 +473,6 @@ class WP_Term_Query
 
 		// Tell the meta query to generate its SQL, so we have access to table aliases.
 		$this->meta_query->get_sql( 'term', 't', 'term_id' );
-// self -> @NOW 014 -> wp-includes/class-wp-meta-query.php
+// self -> @NOW 014
 	}
 }
