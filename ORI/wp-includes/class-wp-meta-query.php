@@ -22,22 +22,6 @@
 class WP_Meta_Query {
 	// refactored. public $queries = array();
 	// :
-	// refactored. public function get_sql_for_clause( &$clause, $parent_query, $clause_key = '' ) {}
-
-	/**
-	 * Get a flattened list of sanitized meta clauses.
-	 *
-	 * This array should be used for clause lookup, as when the table alias and CAST type must be determined for
-	 * a value of 'orderby' corresponding to a meta clause.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @return array Meta clauses.
-	 */
-	public function get_clauses() {
-		return $this->clauses;
-	}
-
 	// refactored. protected function find_compatible_table_alias( $clause, $parent_query ) {}
 
 	/**

@@ -639,6 +639,20 @@ class WP_Meta_Query
 	}
 
 	/**
+	 * Get a flattened list of sanitized meta clauses.
+	 *
+	 * This array should be used for clause lookup, as when the table alias and CAST type must be determined for a value of 'orderby' corresponding to a meta clause.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @return array Meta clauses.
+	 */
+	public function get_clauses()
+	{
+		return $this->clauses;
+	}
+
+	/**
 	 * Identify an existing table alias that is compatible with the current query clause.
 	 *
 	 * We avoid unnecessary table joins by allowing each clause to look for an existing table alias that is compatible with the query that it needs to perform.
