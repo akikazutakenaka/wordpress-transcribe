@@ -400,6 +400,12 @@ class WP_Term_Query
 		}
 
 		$orderby = $this->parse_orderby( $_orderby );
+
+		if ( $orderby ) {
+			$orderby = "ORDER BY $orderby";
+		}
+
+		$order = $this->parse_order( $this->query_vars['order'] );
 // wp-includes/taxonomy.php -> @NOW 012
 	}
 
@@ -525,5 +531,22 @@ class WP_Term_Query
 		}
 
 		return $orderby;
+	}
+
+	/**
+	 * Parse an 'order' query variable and cast it to ASC or DESC as necessary.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param  string $order The 'order' query variable.
+	 * @return string The sanitized 'order' query variable.
+	 */
+	protected function parse_order( $order )
+	{
+		return ! is_string( $order ) || empty( $order )
+			? 'DESC'
+			: ( 'ASC' === strtoupper( $order )
+				? 'ASC'
+				: 'DESC' );
 	}
 }

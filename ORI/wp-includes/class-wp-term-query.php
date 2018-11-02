@@ -544,27 +544,8 @@ class WP_Term_Query {
 	}
 
 	// refactored. protected function parse_orderby( $orderby_raw ) {}
-	// refactored. protected function parse_orderby_meta( $orderby_raw ) {}
-
-	/**
-	 * Parse an 'order' query variable and cast it to ASC or DESC as necessary.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param string $order The 'order' query variable.
-	 * @return string The sanitized 'order' query variable.
-	 */
-	protected function parse_order( $order ) {
-		if ( ! is_string( $order ) || empty( $order ) ) {
-			return 'DESC';
-		}
-
-		if ( 'ASC' === strtoupper( $order ) ) {
-			return 'ASC';
-		} else {
-			return 'DESC';
-		}
-	}
+	// :
+	// refactored. protected function parse_order( $order ) {}
 
 	/**
 	 * Used internally to generate a SQL string related to the 'search' parameter.
