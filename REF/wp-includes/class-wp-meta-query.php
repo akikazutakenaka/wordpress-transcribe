@@ -321,7 +321,7 @@ class WP_Meta_Query
 		$this->primary_table     = $primary_table;
 		$this->primary_id_column = $primary_id_column;
 		$sql = $this->get_sql_clauses();
-// wp-includes/class-wp-term-query.php -> @NOW 015 -> self
+// wp-includes/class-wp-term-query.php -> @NOW 015
 	}
 
 	/**
@@ -346,7 +346,12 @@ class WP_Meta_Query
 		 */
 		$queries = $this->queries;
 		$sql = $this->get_sql_for_query( $queries );
-// self -> @NOW 016
+
+		if ( ! empty( $sql['where'] ) ) {
+			$sql['where'] = ' AND ' . $sql['where'];
+		}
+
+		return $sql;
 	}
 
 	/**

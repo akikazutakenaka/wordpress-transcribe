@@ -78,37 +78,8 @@ class WP_Meta_Query {
 		return apply_filters_ref_array( 'get_meta_sql', array( $sql, $this->queries, $type, $primary_table, $primary_id_column, $context ) );
 	}
 
-	/**
-	 * Generate SQL clauses to be appended to a main query.
-	 *
-	 * Called by the public WP_Meta_Query::get_sql(), this method is abstracted
-	 * out to maintain parity with the other Query classes.
-	 *
-	 * @since 4.1.0
-	 *
-	 * @return array {
-	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
-	 *
-	 *     @type string $join  SQL fragment to append to the main JOIN clause.
-	 *     @type string $where SQL fragment to append to the main WHERE clause.
-	 * }
-	 */
-	protected function get_sql_clauses() {
-		/*
-		 * $queries are passed by reference to get_sql_for_query() for recursion.
-		 * To keep $this->queries unaltered, pass a copy.
-		 */
-		$queries = $this->queries;
-		$sql = $this->get_sql_for_query( $queries );
-
-		if ( ! empty( $sql['where'] ) ) {
-			$sql['where'] = ' AND ' . $sql['where'];
-		}
-
-		return $sql;
-	}
-
-	// refactored. protected function get_sql_for_query( &$query, $depth = 0 ) {}
+	// refactored. protected function get_sql_clauses() {}
+	// :
 	// refactored. public function get_sql_for_clause( &$clause, $parent_query, $clause_key = '' ) {}
 
 	/**
