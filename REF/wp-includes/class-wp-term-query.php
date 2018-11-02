@@ -455,7 +455,7 @@ class WP_Term_Query
 		// Run after the 'get_terms_orderby' filter for backward compatibility.
 		if ( $maybe_orderby_meta ) {
 			$maybe_orderby_meta = $this->parse_orderby_meta( $_orderby );
-// self -> @NOW 013 -> self
+// self -> @NOW 013
 		}
 	}
 
@@ -474,6 +474,51 @@ class WP_Term_Query
 		// Tell the meta query to generate its SQL, so we have access to table aliases.
 		$this->meta_query->get_sql( 'term', 't', 'term_id' );
 		$meta_clauses = $this->meta_query->get_clauses();
-// self -> @NOW 014
+
+		if ( ! $meta_clauses || ! $orderby_raw ) {
+			return $orderby;
+		}
+
+		$allowed_keys = array();
+		$primary_meta_key = NULL;
+		$primary_meta_query = reset( $meta_clauses );
+
+		if ( ! empty( $primary_meta_query['key'] ) ) {
+			$primary_meta_key = $primary_meta_query['key'];
+			$allowed_keys[] = $primary_meta_key;
+		}
+
+		$allowed_keys[] = 'meta_value';
+		$allowed_keys[] = 'meta_value_num';
+		$allowed_keys   = array_merge( $allowed_keys, array_keys( $meta_clauses ) );
+
+		if ( ! in_array( $orderby_raw, $allowed_keys, TRUE ) ) {
+			return $orderby;
+		}
+
+		switch ( $orderby_raw ) {
+			case $primary_meta_key:
+			case 'meta_value':
+				$orderby = ! empty( $primary_meta_query['type'] )
+					? "CAST({$primary_meta_query['alias']}.meta_value AS {$primary_meta_query['cast']})"
+					: "{$primary_meta_query['alias']}.meta_value";
+
+				break;
+
+			case 'meta_value_num':
+				$orderby = "{$primary_meta_query['alias']}.meta_value+0";
+				break;
+
+			default:
+				if ( array_key_exists( $orderby_raw, $meta_clauses ) ) {
+					// $orderby corresponds to a meta_query clause.
+					$meta_clause = $meta_clauses[ $orderby_raw ];
+					$orderby = "CAST({$meta_clause['alias']}.meta_value AS {$meta_clause['cast']})";
+				}
+
+				break;
+		}
+
+		return $orderby;
 	}
 }

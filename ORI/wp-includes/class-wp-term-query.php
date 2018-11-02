@@ -602,64 +602,7 @@ class WP_Term_Query {
 		return $orderby;
 	}
 
-	/**
-	 * Generate the ORDER BY clause for an 'orderby' param that is potentially related to a meta query.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param string $orderby_raw Raw 'orderby' value passed to WP_Term_Query.
-	 * @return string ORDER BY clause.
-	 */
-	protected function parse_orderby_meta( $orderby_raw ) {
-		$orderby = '';
-
-		// Tell the meta query to generate its SQL, so we have access to table aliases.
-		$this->meta_query->get_sql( 'term', 't', 'term_id' );
-		$meta_clauses = $this->meta_query->get_clauses();
-		if ( ! $meta_clauses || ! $orderby_raw ) {
-			return $orderby;
-		}
-
-		$allowed_keys = array();
-		$primary_meta_key = null;
-		$primary_meta_query = reset( $meta_clauses );
-		if ( ! empty( $primary_meta_query['key'] ) ) {
-			$primary_meta_key = $primary_meta_query['key'];
-			$allowed_keys[] = $primary_meta_key;
-		}
-		$allowed_keys[] = 'meta_value';
-		$allowed_keys[] = 'meta_value_num';
-		$allowed_keys   = array_merge( $allowed_keys, array_keys( $meta_clauses ) );
-
-		if ( ! in_array( $orderby_raw, $allowed_keys, true ) ) {
-			return $orderby;
-		}
-
-		switch( $orderby_raw ) {
-			case $primary_meta_key:
-			case 'meta_value':
-				if ( ! empty( $primary_meta_query['type'] ) ) {
-					$orderby = "CAST({$primary_meta_query['alias']}.meta_value AS {$primary_meta_query['cast']})";
-				} else {
-					$orderby = "{$primary_meta_query['alias']}.meta_value";
-				}
-				break;
-
-			case 'meta_value_num':
-				$orderby = "{$primary_meta_query['alias']}.meta_value+0";
-				break;
-
-			default:
-				if ( array_key_exists( $orderby_raw, $meta_clauses ) ) {
-					// $orderby corresponds to a meta_query clause.
-					$meta_clause = $meta_clauses[ $orderby_raw ];
-					$orderby = "CAST({$meta_clause['alias']}.meta_value AS {$meta_clause['cast']})";
-				}
-				break;
-		}
-
-		return $orderby;
-	}
+	// refactored. protected function parse_orderby_meta( $orderby_raw ) {}
 
 	/**
 	 * Parse an 'order' query variable and cast it to ASC or DESC as necessary.
