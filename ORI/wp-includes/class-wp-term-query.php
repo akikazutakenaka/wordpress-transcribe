@@ -543,65 +543,7 @@ class WP_Term_Query {
 		return $this->terms;
 	}
 
-	/**
-	 * Parse and sanitize 'orderby' keys passed to the term query.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @param string $orderby_raw Alias for the field to order by.
-	 * @return string|false Value to used in the ORDER clause. False otherwise.
-	 */
-	protected function parse_orderby( $orderby_raw ) {
-		$_orderby = strtolower( $orderby_raw );
-		$maybe_orderby_meta = false;
-
-		if ( in_array( $_orderby, array( 'term_id', 'name', 'slug', 'term_group' ), true ) ) {
-			$orderby = "t.$_orderby";
-		} elseif ( in_array( $_orderby, array( 'count', 'parent', 'taxonomy', 'term_taxonomy_id', 'description' ), true ) ) {
-			$orderby = "tt.$_orderby";
-		} elseif ( 'term_order' === $_orderby ) {
-			$orderby = 'tr.term_order';
-		} elseif ( 'include' == $_orderby && ! empty( $this->query_vars['include'] ) ) {
-			$include = implode( ',', wp_parse_id_list( $this->query_vars['include'] ) );
-			$orderby = "FIELD( t.term_id, $include )";
-		} elseif ( 'slug__in' == $_orderby && ! empty( $this->query_vars['slug'] ) && is_array( $this->query_vars['slug'] ) ) {
-			$slugs = implode( "', '", array_map( 'sanitize_title_for_query', $this->query_vars['slug'] ) );
-			$orderby = "FIELD( t.slug, '" . $slugs . "')";
-		} elseif ( 'none' == $_orderby ) {
-			$orderby = '';
-		} elseif ( empty( $_orderby ) || 'id' == $_orderby || 'term_id' === $_orderby ) {
-			$orderby = 't.term_id';
-		} else {
-			$orderby = 't.name';
-
-			// This may be a value of orderby related to meta.
-			$maybe_orderby_meta = true;
-		}
-
-		/**
-		 * Filters the ORDERBY clause of the terms query.
-		 *
-		 * @since 2.8.0
-		 *
-		 * @param string $orderby    `ORDERBY` clause of the terms query.
-		 * @param array  $args       An array of terms query arguments.
-		 * @param array  $taxonomies An array of taxonomies.
-		 */
-		$orderby = apply_filters( 'get_terms_orderby', $orderby, $this->query_vars, $this->query_vars['taxonomy'] );
-
-		// Run after the 'get_terms_orderby' filter for backward compatibility.
-		if ( $maybe_orderby_meta ) {
-			$maybe_orderby_meta = $this->parse_orderby_meta( $_orderby );
-			if ( $maybe_orderby_meta ) {
-				$orderby = $maybe_orderby_meta;
-			}
-		}
-
-		return $orderby;
-	}
-
+	// refactored. protected function parse_orderby( $orderby_raw ) {}
 	// refactored. protected function parse_orderby_meta( $orderby_raw ) {}
 
 	/**

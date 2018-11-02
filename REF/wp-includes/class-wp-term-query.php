@@ -400,7 +400,7 @@ class WP_Term_Query
 		}
 
 		$orderby = $this->parse_orderby( $_orderby );
-// wp-includes/taxonomy.php -> @NOW 012 -> self
+// wp-includes/taxonomy.php -> @NOW 012
 	}
 
 	/**
@@ -455,8 +455,13 @@ class WP_Term_Query
 		// Run after the 'get_terms_orderby' filter for backward compatibility.
 		if ( $maybe_orderby_meta ) {
 			$maybe_orderby_meta = $this->parse_orderby_meta( $_orderby );
-// self -> @NOW 013
+
+			if ( $maybe_orderby_meta ) {
+				$orderby = $maybe_orderby_meta;
+			}
 		}
+
+		return $orderby;
 	}
 
 	/**
