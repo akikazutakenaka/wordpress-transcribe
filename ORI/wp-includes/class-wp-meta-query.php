@@ -405,71 +405,7 @@ class WP_Meta_Query {
 		return $this->clauses;
 	}
 
-	/**
-	 * Identify an existing table alias that is compatible with the current
-	 * query clause.
-	 *
-	 * We avoid unnecessary table joins by allowing each clause to look for
-	 * an existing table alias that is compatible with the query that it
-	 * needs to perform.
-	 *
-	 * An existing alias is compatible if (a) it is a sibling of `$clause`
-	 * (ie, it's under the scope of the same relation), and (b) the combination
-	 * of operator and relation between the clauses allows for a shared table join.
-	 * In the case of WP_Meta_Query, this only applies to 'IN' clauses that are
-	 * connected by the relation 'OR'.
-	 *
-	 * @since 4.1.0
-	 *
-	 * @param  array       $clause       Query clause.
-	 * @param  array       $parent_query Parent query of $clause.
-	 * @return string|bool Table alias if found, otherwise false.
-	 */
-	protected function find_compatible_table_alias( $clause, $parent_query ) {
-		$alias = false;
-
-		foreach ( $parent_query as $sibling ) {
-			// If the sibling has no alias yet, there's nothing to check.
-			if ( empty( $sibling['alias'] ) ) {
-				continue;
-			}
-
-			// We're only interested in siblings that are first-order clauses.
-			if ( ! is_array( $sibling ) || ! $this->is_first_order_clause( $sibling ) ) {
-				continue;
-			}
-
-			$compatible_compares = array();
-
-			// Clauses connected by OR can share joins as long as they have "positive" operators.
-			if ( 'OR' === $parent_query['relation'] ) {
-				$compatible_compares = array( '=', 'IN', 'BETWEEN', 'LIKE', 'REGEXP', 'RLIKE', '>', '>=', '<', '<=' );
-
-			// Clauses joined by AND with "negative" operators share a join only if they also share a key.
-			} elseif ( isset( $sibling['key'] ) && isset( $clause['key'] ) && $sibling['key'] === $clause['key'] ) {
-				$compatible_compares = array( '!=', 'NOT IN', 'NOT LIKE' );
-			}
-
-			$clause_compare  = strtoupper( $clause['compare'] );
-			$sibling_compare = strtoupper( $sibling['compare'] );
-			if ( in_array( $clause_compare, $compatible_compares ) && in_array( $sibling_compare, $compatible_compares ) ) {
-				$alias = $sibling['alias'];
-				break;
-			}
-		}
-
-		/**
-		 * Filters the table alias identified as compatible with the current clause.
-		 *
-		 * @since 4.1.0
-		 *
-		 * @param string|bool $alias        Table alias, or false if none was found.
-		 * @param array       $clause       First-order query clause.
-		 * @param array       $parent_query Parent of $clause.
-		 * @param object      $this         WP_Meta_Query object.
-		 */
-		return apply_filters( 'meta_query_find_compatible_table_alias', $alias, $clause, $parent_query, $this ) ;
-	}
+	// refactored. protected function find_compatible_table_alias( $clause, $parent_query ) {}
 
 	/**
 	 * Checks whether the current query has any OR relations.
