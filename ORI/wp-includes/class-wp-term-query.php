@@ -545,25 +545,7 @@ class WP_Term_Query {
 
 	// refactored. protected function parse_orderby( $orderby_raw ) {}
 	// :
-	// refactored. protected function parse_order( $order ) {}
-
-	/**
-	 * Used internally to generate a SQL string related to the 'search' parameter.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @param string $string
-	 * @return string
-	 */
-	protected function get_search_sql( $string ) {
-		global $wpdb;
-
-		$like = '%' . $wpdb->esc_like( $string ) . '%';
-
-		return $wpdb->prepare( '((t.name LIKE %s) OR (t.slug LIKE %s))', $like, $like );
-	}
+	// refactored. protected function get_search_sql( $string ) {}
 
 	/**
 	 * Creates an array of term objects from an array of term IDs.

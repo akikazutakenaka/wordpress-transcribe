@@ -409,6 +409,157 @@ class WP_Term_Query
 
 		if ( $taxonomies ) {
 			$this->sql_clauses['where']['taxonomy'] = "tt.taxonomy IN ('" . implode( "', '", array_map( 'esc_sql', $taxonomies ) ) . "')";
+		}
+
+		$exclude      = $args['exclude'];
+		$exclude_tree = $args['exclude_tree'];
+		$include      = $args['include'];
+		$inclusions = '';
+
+		if ( ! empty( $include ) ) {
+			$exclude = '';
+			$exclude_tree = '';
+			$inclusions = implode( ',', wp_parse_id_list( $include ) );
+		}
+
+		if ( ! empty( $inclusions ) ) {
+			$this->sql_clauses['where']['inclusions'] = 't.term_id IN ( ' . $inclusions . ' )';
+		}
+
+		$exclusions = array();
+
+		if ( ! empty( $exclude_tree ) ) {
+			$exclude_tree = wp_parse_id_list( $exclude_tree );
+			$excluded_children = $exclude_tree;
+
+			foreach ( $exclude_tree as $extrunk ) {
+				$excluded_children = array_merge( $excluded_children, ( array ) get_terms( reset( $taxonomies ), array(
+							'child_of'   => intval( $extrunk ),
+							'fields'     => 'ids',
+							'hide_empty' => 0
+						) ) );
+			}
+
+			$exclusions = array_merge( $excluded_children, $exclusions );
+		}
+
+		if ( ! empty( $exclude ) ) {
+			$exclusions = array_merge( wp_parse_id_list( $exclude ), $exclusions );
+		}
+
+		// 'children' terms are those without an entry in the flattened term hierarchy.
+		$childless = ( bool ) $args['childless'];
+
+		if ( $childless ) {
+			foreach ( $taxonomies as $_tax ) {
+				$term_hierarchy = _get_term_hierarchy( $_tax );
+				$exclusions = array_merge( array_keys( $term_hierarchy ), $exclusions );
+			}
+		}
+
+		$exclusions = ! empty( $exclusions )
+			? 't.term_id NOT IN (' . implode( ',', array_map( 'intval', $exclusions ) ) . ')'
+			: '';
+
+		/**
+		 * Filters the terms to exclude from the terms query.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param string $exclusions `NOT IN` clause of the terms query.
+		 * @param array  $args       An array of terms query arguments.
+		 * @param array  $taxonomies An array of taxonomies.
+		 */
+		$exclusions = apply_filters( 'list_terms_exclusions', $exclusions, $args, $taxonomies );
+
+		if ( ! empty( $exclusions ) ) {
+			// Must do string manipulation here for backward compatibility with filter.
+			$this->sql_clauses['where']['exclusions'] = preg_replace( '/^\s*AND\s*/', '', $exclusions );
+		}
+
+		if ( ! empty( $args['name'] )
+		  || is_string( $args['name'] ) && 0 !== strlen( $args['name'] ) ) {
+			$names = ( array ) $args['name'];
+
+			foreach ( $names as &$_name ) {
+				// `sanitize_term_field()` returns slashed data.
+				$_name = stripslashes( sanitize_term_field( 'name', $_name, 0, reset( $taxonomies ), 'db' ) );
+			}
+
+			$this->sql_clauses['where']['name'] = "t.name IN ('" . implode( "', '", array_map( 'esc_sql', $names ) ) . "')";
+		}
+
+		if ( ! empty( $args['slug'] )
+		  || is_string( $args['slug'] ) && 0 !== strlen( $args['slug'] ) ) {
+			if ( is_array( $args['slug'] ) ) {
+				$slug = array_map( 'sanitize_title', $args['slug'] );
+				$this->sql_clauses['where']['slug'] = "t.slug IN ('" . implode( "', '", $slug ) . "')";
+			} else {
+				$slug = sanitize_title( $args['slug'] );
+				$this->sql_clauses['where']['slug'] = "t.slug = '$slug'";
+			}
+		}
+
+		if ( ! empty( $args['term_taxonomy_id'] ) ) {
+			if ( is_array( $args['term_taxonomy_id'] ) ) {
+				$tt_ids = implode( ',', array_map( 'intval', $args['term_taxonomy_id'] ) );
+				$this->sql_clauses['where']['term_taxonomy_id'] = "tt.term_taxonomy_id IN ({$tt_ids})";
+			} else {
+				$this->sql_clauses['where']['term_taxonomy_id'] = $wpdb->prepare( "tt.term_taxonomy_id = %d", $args['term_taxonomy_id'] );
+			}
+		}
+
+		if ( ! empty( $args['name__like'] ) ) {
+			$this->sql_clauses['where']['name__like'] = $wpdb->prepare( "t.name LIKE %s", '%' . $wpdb->esc_like( $args['name__like'] ) . '%' );
+		}
+
+		if ( ! empty( $args['description__like'] ) ) {
+			$this->sql_clauses['where']['description__like'] = $wpdb->prepare( "tt.description LIKE %s", '%' . $wpdb->esc_like( $args['description__like'] ) . '%' );
+		}
+
+		if ( ! empty( $args['object_ids'] ) ) {
+			$object_ids = $args['object_ids'];
+
+			if ( ! is_array( $object_ids ) ) {
+				$object_ids = array( $object_ids );
+			}
+
+			$object_ids = implode( ', ', array_map( 'intval', $object_ids ) );
+			$this->sql_clauses['where']['object_ids'] = "tr.object_id IN ($object_ids)";
+		}
+
+		// When querying for object relationships, the 'count > 0' check added by 'hide_empty' is superfluous.
+		if ( ! empty( $args['object_ids'] ) ) {
+			$args['hide_empty'] = FALSE;
+		}
+
+		if ( '' !== $parent ) {
+			$parent = ( int ) $parent;
+			$this->sql_clauses['where']['parent'] = "tt.parent = '$parent'";
+		}
+
+		$hierarchical = $args['hierarchical'];
+
+		if ( 'count' == $args['fields'] ) {
+			$hierarchical = FALSE;
+		}
+
+		if ( $args['hide_empty'] && ! $hierarchical ) {
+			$this->sql_clauses['where']['count'] = 'tt.count > 0';
+		}
+
+		$number = $args['number'];
+		$offset = $args['offset'];
+
+		// Don't limit the query results when we have to descend the family tree.
+		$limits = $number && ! $hierarchical && ! $child_of && '' === $parent
+			? ( $offset
+				? 'LIMIT ' . $offset . ',' . $number
+				: 'LIMIT ' . $number )
+			: '';
+
+		if ( ! empty( $args['search'] ) ) {
+			$this->sql_clauses['where']['search'] = $this->get_search_sql( $args['search'] );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -565,5 +716,21 @@ class WP_Term_Query
 			: ( 'ASC' === strtoupper( $order )
 				? 'ASC'
 				: 'DESC' );
+	}
+
+	/**
+	 * Used internally to generate a SQL string related to the 'search' parameter.
+	 *
+	 * @since  4.6.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  string $string
+	 * @return string
+	 */
+	protected function get_search_sql( $string )
+	{
+		global $wpdb;
+		$like = '%' . $wpdb->esc_like( $string ) . '%';
+		return $wpdb->prepare( '((t.name LIKE %s) OR (t.slug LIKE %s))', $like, $like );
 	}
 }
