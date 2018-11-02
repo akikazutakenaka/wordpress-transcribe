@@ -406,7 +406,11 @@ class WP_Term_Query
 		}
 
 		$order = $this->parse_order( $this->query_vars['order'] );
+
+		if ( $taxonomies ) {
+			$this->sql_clauses['where']['taxonomy'] = "tt.taxonomy IN ('" . implode( "', '", array_map( 'esc_sql', $taxonomies ) ) . "')";
 // wp-includes/taxonomy.php -> @NOW 012
+		}
 	}
 
 	/**
