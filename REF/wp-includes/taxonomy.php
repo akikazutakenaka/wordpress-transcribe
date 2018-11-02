@@ -268,7 +268,20 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 function get_terms( $args = array(), $deprecated = '' )
 {
 	$term_query = new WP_Term_Query();
-// self -> @NOW 011 -> wp-includes/class-wp-term-query.php
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/category-template.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 011: wp-includes/taxonomy.php
+ * -> wp-includes/class-wp-term-query.php
+ */
 }
 
 /**
@@ -584,7 +597,19 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
 	// Taxonomies registered without an 'args' param are handled here.
 	if ( ! empty( $taxonomies ) ) {
 		$terms_from_remaining_taxonomies = get_terms( $args );
-// wp-includes/category-template.php -> @NOW 010 -> self
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/category-template.php
+ * @NOW 010: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
+ */
 	}
 }
 

@@ -26,6 +26,17 @@ function get_the_terms( $post, $taxonomy )
 
 	if ( FALSE === $terms ) {
 		$terms = wp_get_object_terms( $post->ID, $taxonomy );
-// wp-includes/class-wp-post.php -> @NOW 009 -> wp-includes/taxonomy.php
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/class-wp-post.php
+ * @NOW 009: wp-includes/category-template.php
+ * -> wp-includes/taxonomy.php
+ */
 	}
 }

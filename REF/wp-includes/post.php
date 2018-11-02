@@ -350,7 +350,15 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
 
 	// First, get all of the original fields.
 	$post = get_post( $postarr['ID'], ARRAY_A );
-// self -> @NOW 006 -> wp-includes/class-wp-post.php
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * @NOW 006: wp-includes/post.php
+ * -> wp-includes/class-wp-post.php
+ */
 }
 
 /**
@@ -402,6 +410,13 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
 				'ID'          => $loop_member,
 				'post_parent' => 0
 			) );
-// wp-includes/default-filters.php -> @NOW 005 -> self
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * @NOW 005: wp-includes/post.php
+ * -> wp-includes/post.php
+ */
 	}
 }

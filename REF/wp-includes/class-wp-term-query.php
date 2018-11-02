@@ -409,7 +409,20 @@ class WP_Term_Query
 
 		if ( $taxonomies ) {
 			$this->sql_clauses['where']['taxonomy'] = "tt.taxonomy IN ('" . implode( "', '", array_map( 'esc_sql', $taxonomies ) ) . "')";
-// wp-includes/taxonomy.php -> @NOW 012
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/category-template.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 012: wp-includes/class-wp-term-query.php
+ */
 		}
 	}
 

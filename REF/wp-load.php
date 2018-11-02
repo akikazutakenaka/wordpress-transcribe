@@ -26,5 +26,9 @@ error_reporting( E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_ERROR | E_W
 if ( file_exists( ABSPATH . 'wp-config.php' ) ) {
 	// The config file resides in ABSPATH
 	require_once( ABSPATH . 'wp-config.php' );
-// wp-blog-header.php -> @NOW 002 -> wp-settings.php
+/**
+ * <- wp-blog-header.php
+ * @NOW 002: wp-load.php
+ * -> wp-settings.php
+ */
 }

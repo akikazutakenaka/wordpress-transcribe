@@ -10,5 +10,8 @@ if ( ! isset( $wp_did_header ) ) {
 
 	// Load the WordPress library.
 	require_once( dirname( __FILE__ ) . '/wp-load.php' );
-// @NOW 001 -> wp-load.php
+/**
+ * @NOW 001: wp-blog-header.php
+ * -> wp-load.php
+ */
 }
