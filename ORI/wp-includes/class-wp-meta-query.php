@@ -22,30 +22,7 @@
 class WP_Meta_Query {
 	// refactored. public $queries = array();
 	// :
-	// refactored. public function parse_query_vars( $qv ) {}
-
-	/**
-	 * Return the appropriate alias for the given meta type if applicable.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @param string $type MySQL type to cast meta_value.
-	 * @return string MySQL type.
-	 */
-	public function get_cast_for_type( $type = '' ) {
-		if ( empty( $type ) )
-			return 'CHAR';
-
-		$meta_type = strtoupper( $type );
-
-		if ( ! preg_match( '/^(?:BINARY|CHAR|DATE|DATETIME|SIGNED|UNSIGNED|TIME|NUMERIC(?:\(\d+(?:,\s?\d+)?\))?|DECIMAL(?:\(\d+(?:,\s?\d+)?\))?)$/', $meta_type ) )
-			return 'CHAR';
-
-		if ( 'NUMERIC' == $meta_type )
-			$meta_type = 'SIGNED';
-
-		return $meta_type;
-	}
+	// refactored. public function get_cast_for_type( $type = '' ) {}
 
 	/**
 	 * Generates SQL clauses to be appended to a main query.

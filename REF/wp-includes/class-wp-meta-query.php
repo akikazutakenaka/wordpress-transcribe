@@ -266,6 +266,33 @@ class WP_Meta_Query
 	}
 
 	/**
+	 * Return the appropriate alias for the given meta type if applicable.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param  string $type MySQL type to cast meta_value.
+	 * @return string MySQL type.
+	 */
+	public function get_cast_for_type( $type = '' )
+	{
+		if ( empty( $type ) ) {
+			return 'CHAR';
+		}
+
+		$meta_type = strtoupper( $type );
+
+		if ( ! preg_match( '/^(?:BINARY|CHAR|DATE|DATETIME|SIGNED|UNSIGNED|TIME|NUMERIC(?:\(\d+(?:,\s?\d+)?\))?|DECIMAL(?:\(\d+(?:,\s?\d+)?\))?)$/', $mtea_type ) ) {
+			return 'CHAR';
+		}
+
+		if ( 'NUMERIC' == $meta_type ) {
+			$meta_type = 'SIGNED';
+		}
+
+		return $meta_type;
+	}
+
+	/**
 	 * Generates SQL clauses to be appended to a main query.
 	 *
 	 * @since 3.2.0
@@ -418,6 +445,47 @@ class WP_Meta_Query
 		 * Look for an existing join compatible with this clause.
 		 */
 		$alias = $this->find_compatible_table_alias( $clause, $parent_query );
+
+		if ( FALSE === $alias ) {
+			$i = count( $this->table_aliases );
+
+			$alias = $i
+				? 'mt' . $i
+				: $this->meta_table;
+
+			if ( 'NOT EXISTS' === $meta_compare ) {
+				// JOIN clauses for NOT EXISTS have their own syntax.
+				$join .= " LEFT JOIN $this->meta_table";
+
+				$join .= $i
+					? " AS $alias"
+					: '';
+
+				$join .= $wpdb->prepare( " ON ($this->primary_table.$this->primary_id_column = $alias.$this->meta_id_column AND $alias.meta_key = %s", $clause['key'] );
+			} else {
+				// All other JOIN clauses.
+				$join .= " INNER JOIN $this->meta_table";
+
+				$join .= $i
+					? " AS $alias"
+					: '';
+
+				$join .= " ON ( $this->primary_table.$this->primary_id_column = $alias.$this->meta_id_column )";
+			}
+
+			$this->table_aliases[] = $alias;
+			$sql_chunks['join'][] = $join;
+		}
+
+		// Save the alias to this clause, for future siblings to find.
+		$clause['alias'] = $alias;
+
+		// Determine the data type.
+		$_meta_type = isset( $clause['type'] )
+			? $clause['type']
+			: '';
+
+		$meta_type = $this->get_cast_for_type( $_meta_type );
 // self -> @NOW 018
 	}
 
