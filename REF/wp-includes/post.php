@@ -132,6 +132,16 @@ function get_post_ancestors( $post )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ */
+
+/**
  * Retrieve post meta field for a post.
  *
  * @since 1.5.0
@@ -354,13 +364,141 @@ function sanitize_post_field( $field, $value, $post_id, $context = 'display' )
 }
 
 /**
+ * Insert or update a post.
+ *
+ * If the $postarr parameter has 'ID' set to a value, then post will be updated.
+ *
+ * You can set the post date manually, by setting the values for 'post_date' and 'post_date_gmt' keys.
+ * You can close the comments or open the comments by setting the value for 'comment_status' key.
+ *
+ * @since  1.0.0
+ * @since  4.2.0 Support was added for encoding emoji in the post title, content, and excerpt.
+ * @since  4.4.0 A 'meta_input' array can now be passed to `$postarr` to add post meta data.
+ * @see    sanitize_post()
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  array        $postarr {
+ *     An array of elements that make up a post to update or insert.
+ *
+ *     @type int    $ID                    The post ID.
+ *                                         If equal to something other than 0, the post with that ID will be updated.
+ *                                         Default 0.
+ *     @type int    $post_author           The ID of the user who added the post.
+ *                                         Default is the current user ID.
+ *     @type string $post_date             The date of the post.
+ *                                         Default is the current time.
+ *     @type string $post_date_gmt         The date of the post in the GMT timezone.
+ *                                         Default is the value of `$post_date`.
+ *     @type mixed  $post_content          The post content.
+ *                                         Default empty.
+ *     @type string $post_content_filtered The filtered post content.
+ *                                         Default empty.
+ *     @type string $post_title            The post title.
+ *                                         Default empty.
+ *     @type string $post_excerpt          The post excerpt.
+ *                                         Default empty.
+ *     @type string $post_status           The post status.
+ *                                         Default 'draft'.
+ *     @type string $post_type             The post type.
+ *                                         Default 'post'.
+ *     @type string $comment_status        Whether the post can accept comments.
+ *                                         Accepts 'open' or 'closed'.
+ *                                         Default is the value of 'default_comment_status' option.
+ *     @type string $ping_status           Whether the post can accept pings.
+ *                                         Accepts 'open' or 'closed'.
+ *                                         Default is the value of 'default_ping_status' option.
+ *     @type string $post_password         The password to access the post.
+ *                                         Default empty.
+ *     @type string $post_name             The post name.
+ *                                         Default is the sanitized post title when creating a new post.
+ *     @type string $to_ping               Space or carriage return-separated list of URLs to ping.
+ *                                         Default empty.
+ *     @type string $pinged                Space or carriage return-separated list of URLs that have been pinged.
+ *                                         Default empty.
+ *     @type string $post_modified         The date when the post was last modified.
+ *                                         Default is the current time.
+ *     @type string $post_modified_gmt     The date when the post was last modified in the GMT timezone.
+ *                                         Default is the current time.
+ *     @type int    $post_parent           Set this for the post it belongs to, if any.
+ *                                         Default 0.
+ *     @type int    $menu_order            The order the post should be displayed in.
+ *                                         Default 0.
+ *     @type string $post_mime_type        The mime type of the post.
+ *                                         Default empty.
+ *     @type string $guid                  Global Unique ID for referencing the post.
+ *                                         Default empty.
+ *     @type array  $post_category         Array of category names, slugs, or IDs.
+ *                                         Defaults to value of the 'default_category' option.
+ *     @type array  $tags_input            Array of tag names, slugs, or IDs.
+ *                                         Default empty.
+ *     @type array  $tax_input             Array of taxonomy terms keyed by their taxonomy name.
+ *                                         Default empty.
+ *     @type array  $meta_input            Array of post meta values keyed by their post meta key.
+ *                                         Default empty.
+ * }
+ * @param  bool         $wp_error Optional.
+ *                                Whether to return a WP_Error on failure.
+ *                                Default false.
+ * @return int|WP_Error The post ID on success.
+ *                      The value 0 or WP_Error on failure.
+ */
+function wp_insert_post( $postarr, $wp_error = FALSE )
+{
+	global $wpdb;
+	$user_id = get_current_user_id();
+	$defaults = array(
+		'post_author'           => $user_id,
+		'post_content'          => '',
+		'post_content_filtered' => '',
+		'post_title'            => '',
+		'post_excerpt'          => '',
+		'post_status'           => 'draft',
+		'post_type'             => 'post',
+		'comment_status'        => '',
+		'ping_status'           => '',
+		'post_password'         => '',
+		'to_ping'               => '',
+		'pinged'                => '',
+		'post_parent'           => 0,
+		'menu_order'            => 0,
+		'guid'                  => '',
+		'import_id'             => 0,
+		'context'               => ''
+	);
+	$postarr = wp_parse_args( $postarr, $defaults );
+	unset( $postarr['filter'] );
+	$postarr = sanitize_post( $postarr, 'db' );
+
+	// Are we updating or creating?
+	$post_ID = 0;
+	$update = FALSE;
+	$guid = $postarr['guid'];
+
+	if ( ! empty( $postarr['ID'] ) ) {
+		$update = TRUE;
+
+		// Get the post ID and GUID.
+		$post_ID = $postarr['ID'];
+		$post_before = get_post( $post_ID );
+
+		if ( is_null( $post_before ) ) {
+			return $wp_error
+				? new WP_Error( 'invalid_post', __( 'Invalid post ID.' ) )
+				: 0;
+		}
+
+		$guid = get_post_field( 'guid', $post_ID );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
+	}
+}
 
 /**
  * Update a post with new post data.
