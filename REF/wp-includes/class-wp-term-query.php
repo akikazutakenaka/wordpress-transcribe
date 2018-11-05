@@ -742,6 +742,14 @@ class WP_Term_Query
 
 				if ( ! empty( $children ) ) {
 					$terms = _get_term_children( $child_of, $terms, $_tax );
+				}
+			}
+		}
+
+		// Update term counts to include children.
+		if ( $args['pad_counts'] && 'all' == $_fields ) {
+			foreach ( $taxonomies as $_tax ) {
+				_pad_term_counts( $terms, $_tax );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -756,7 +764,6 @@ class WP_Term_Query
  * <- wp-includes/taxonomy.php
  * @NOW 012: wp-includes/class-wp-term-query.php
  */
-				}
 			}
 		}
 	}
