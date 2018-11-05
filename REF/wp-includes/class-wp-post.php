@@ -389,16 +389,9 @@ EOQ
 		foreach ( array( 'ancestors', 'page_template', 'post_category', 'tags_input' ) as $key ) {
 			if ( $this->__isset( $key ) ) {
 				$post[ $key ] = $this->__get( $key );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/class-wp-post.php
- */
 			}
 		}
+
+		return $post;
 	}
 }

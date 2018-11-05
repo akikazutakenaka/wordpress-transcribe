@@ -388,7 +388,6 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/class-wp-post.php
  */
 }
 
