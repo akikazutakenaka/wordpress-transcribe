@@ -891,21 +891,7 @@ function wp_array_slice_assoc( $array, $keys )
 function wp_list_pluck( $list, $field, $index_key = NULL )
 {
 	$util = new WP_List_Util( $list );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/category-template.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/class-wp-term-query.php
- * @NOW 013: wp-includes/functions.php
- */
+	return $util->pluck( $field, $index_key );
 }
 
 /**

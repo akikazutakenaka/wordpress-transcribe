@@ -55,4 +55,20 @@ class WP_List_Util
 	{
 		$this->output = $this->input = $input;
 	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/class-wp-post.php
+ * <- wp-includes/category-template.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/class-wp-term-query.php
+ * @NOW 013: wp-includes/class-wp-list-util.php
+ */
 }
