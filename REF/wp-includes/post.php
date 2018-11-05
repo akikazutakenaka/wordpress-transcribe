@@ -101,6 +101,37 @@ function get_post( $post = NULL, $output = OBJECT, $filter = 'raw' )
 }
 
 /**
+ * Retrieve ancestors of a post.
+ *
+ * @since 2.5.0
+ *
+ * @param  int|WP_Post $post Post ID or post object.
+ * @return array       Ancestor IDs or empty array if none are found.
+ */
+function get_post_ancestors( $post )
+{
+	$post = get_post( $post );
+
+	if ( ! $post || empty( $post->post_parent ) || $post->post_parent == $post->ID ) {
+		return array();
+	}
+
+	$ancestors = array();
+	$id = $ancestors[] = $post->post_parent;
+
+	while ( $ancestor = get_post( $id ) ) {
+		// Loop detection: If the ancestor has been seen before, break.
+		if ( empty( $ancestor->post_parent ) || $ancestor->post_parent == $post->ID || in_array( $ancestor->post_parent, $ancestors ) ) {
+			break;
+		}
+
+		$id = $ancestors[] = $ancestor->post_parent;
+	}
+
+	return $ancestors;
+}
+
+/**
  * Retrieve post meta field for a post.
  *
  * @since 1.5.0

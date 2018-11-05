@@ -342,6 +342,31 @@ EOQ
 		if ( 'post_category' == $key ) {
 			if ( is_object_in_taxonomy( $this->post_type, 'category' ) ) {
 				$terms = get_the_terms( $this, 'category' );
+			}
+
+			if ( empty( $terms ) ) {
+				return array();
+			}
+
+			return empty( $terms )
+				? array()
+				: wp_list_pluck( $terms, 'term_id' );
+		}
+
+		if ( 'tags_input' == $key ) {
+			if ( is_object_in_taxonomy( $this->post_type, 'post_tag' ) ) {
+				$terms = get_the_terms( $this, 'post_tag' );
+			}
+
+			return empty( $terms )
+				? array()
+				: wp_list_pluck( $terms, 'name' );
+		}
+
+		// Rest of the values need filtering.
+		$value = 'ancestors' == $key
+			? get_post_ancestors( $this )
+			: get_post_meta( $this->ID, $key, TRUE );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -351,10 +376,7 @@ EOQ
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-post.php
  * @NOW 008: wp-includes/class-wp-post.php
- * -> wp-includes/category-template.php
  */
-			}
-		}
 	}
 
 	/**
