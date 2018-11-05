@@ -707,6 +707,27 @@ class WP_Term_Query
 		if ( FALSE !== $cache ) {
 			if ( 'all' === $_fields || 'all_with_object_id' === $_fields ) {
 				$cache = $this->populate_terms( $cache );
+			}
+
+			$this->terms = $cache;
+			return $this->terms;
+		}
+
+		if ( 'count' == $_fields ) {
+			$count = $wpdb->get_var( $this->request );
+			wp_cache_set( $cache_key, $count, 'terms' );
+			return $count;
+		}
+
+		$terms = $wpdb->get_results( $this->request );
+
+		if ( 'all' == $_fields || 'all_with_object_id' === $_fields ) {
+			update_term_cache( $terms );
+		}
+
+		// Prime termmeta cache.
+		if ( $args['update_term_meta_cache'] ) {
+			$term_ids = wp_list_pluck( $terms, 'term_id' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -720,8 +741,8 @@ class WP_Term_Query
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 012: wp-includes/class-wp-term-query.php
+ * -> wp-includes/functions.php
  */
-			}
 		}
 	}
 
