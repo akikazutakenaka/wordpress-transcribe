@@ -311,19 +311,66 @@ function get_term_children( $term_id, $taxonomy )
 function get_terms( $args = array(), $deprecated = '' )
 {
 	$term_query = new WP_Term_Query();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/category-template.php
- * <- wp-includes/taxonomy.php
- * @NOW 011: wp-includes/taxonomy.php
- */
+	$defaults = array( 'suppress_filter' => FALSE );
+
+	/**
+	 * Legacy argument format ($taxonomy, $args) takes precedence.
+	 *
+	 * We detect legacy argument format by checking if
+	 * (a) a second non-empty parameter is passed, or
+	 * (b) the first parameter shares no keys with the default array (i.e. it's a list of taxonomies)
+	 */
+	$_args = wp_parse_args( $args );
+	$key_intersect = array_intersect_key( $term_query->query_var_defaults, ( array ) $_args );
+	$do_legacy_args = $deprecated || empty( $key_intersect );
+
+	if ( $do_legacy_args ) {
+		$taxonomies = ( array ) $args;
+		$args = wp_parse_args( $deprecated, $defaults );
+		$args['taxonomy'] = $taxonomies;
+	} else {
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( isset( $args['taxonomy'] ) && NULL !== $args['taxonomy'] ) {
+			$args['taxonomy'] = ( array ) $args['taxonomy'];
+		}
+	}
+
+	if ( ! empty( $args['taxonomy'] ) ) {
+		foreach ( $args['taxonomy'] as $taxonomy ) {
+			if ( ! taxonomy_exists( $taxonomy ) ) {
+				return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+			}
+		}
+	}
+
+	// Don't pass suppress_filter to WP_Term_Query.
+	$suppress_filter = $args['suppress_filter'];
+	unset( $args['suppress_filter'] );
+
+	$terms = $term_query->query( $args );
+
+	// Count queries are not filtered, for legacy reasons.
+	if ( ! is_array( $terms ) ) {
+		return $terms;
+	}
+
+	if ( $suppress_filter ) {
+		return $terms;
+	}
+
+	/**
+	 * Filters the found terms.
+	 *
+	 * @since 2.3.0
+	 * @since 4.6.0 Added the `$term_query` parameter.
+	 *
+	 * @param array         $terms      Array of found terms.
+	 * @param array         $taxonomies An array of taxonomies.
+	 * @param array         $args       An array of get_terms() arguments.
+	 * @param WP_Term_Query $term_query The WP_Term_Query object.
+	 */
+	return apply_filters( 'get_terms', $terms, $term_query->query_vars['taxonomy'], $term_query->query_vars, $term_query );
 }
 
 /**
@@ -650,7 +697,6 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
  * <- wp-includes/class-wp-post.php
  * <- wp-includes/category-template.php
  * @NOW 010: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 	}
 }
