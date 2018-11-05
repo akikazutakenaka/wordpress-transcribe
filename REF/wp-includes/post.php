@@ -132,14 +132,40 @@ function get_post_ancestors( $post )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/post.php
+ * Retrieve data from a post field based on Post ID.
+ *
+ * Examples of the post field will be, 'post_type', 'post_status', 'post_content', etc and based off of the post object property or key names.
+ *
+ * The context values are based off of the taxonomy filter functions and supported values are found within those functions.
+ *
+ * @since 2.3.0
+ * @since 4.5.0 The `$post` parameter was made optional.
+ * @see   sanitize_post_field()
+ *
+ * @param  string      $field   Post field name.
+ * @param  int|WP_Post $post    Optional.
+ *                              Post ID or post object.
+ *                              Defaults to current post.
+ * @param  string      $context Optional.
+ *                              How to filter the field.
+ *                              Accepts 'raw', 'edit', 'db', or 'display'.
+ *                              Default 'display'.
+ * @return string      The value of the post field on success, empty string on failure.
  */
+function get_post_field( $field, $post = NULL, $context = 'display' )
+{
+	$post = get_post( $post );
+
+	if ( ! $post ) {
+		return '';
+	}
+
+	if ( ! isset( $post->$field ) ) {
+		return '';
+	}
+
+	return sanitize_post_field( $field, $post->$field, $post->ID, $context );
+}
 
 /**
  * Retrieve post meta field for a post.
@@ -495,7 +521,6 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/post.php
  */
 	}
 }

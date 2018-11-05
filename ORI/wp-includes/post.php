@@ -514,39 +514,8 @@ function get_extended( $post ) {
 }
 
 // refactored. function get_post( $post = null, $output = OBJECT, $filter = 'raw' ) {}
-// refactored. function get_post_ancestors( $post ) {}
-
-/**
- * Retrieve data from a post field based on Post ID.
- *
- * Examples of the post field will be, 'post_type', 'post_status', 'post_content',
- * etc and based off of the post object property or key names.
- *
- * The context values are based off of the taxonomy filter functions and
- * supported values are found within those functions.
- *
- * @since 2.3.0
- * @since 4.5.0 The `$post` parameter was made optional.
- *
- * @see sanitize_post_field()
- *
- * @param string      $field   Post field name.
- * @param int|WP_Post $post    Optional. Post ID or post object. Defaults to current post.
- * @param string      $context Optional. How to filter the field. Accepts 'raw', 'edit', 'db',
- *                             or 'display'. Default 'display'.
- * @return string The value of the post field on success, empty string on failure.
- */
-function get_post_field( $field, $post = null, $context = 'display' ) {
-	$post = get_post( $post );
-
-	if ( !$post )
-		return '';
-
-	if ( !isset($post->$field) )
-		return '';
-
-	return sanitize_post_field($field, $post->$field, $post->ID, $context);
-}
+// :
+// refactored. function get_post_field( $field, $post = null, $context = 'display' ) {}
 
 /**
  * Retrieve the mime type of an attachment based on the ID.
