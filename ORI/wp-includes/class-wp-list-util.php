@@ -16,20 +16,7 @@
 class WP_List_Util {
 	// refactored. private $input = array();
 	// :
-	// refactored. private $orderby = array();
-
-	/**
-	 * Constructor.
-	 *
-	 * Sets the input array.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param array $input Array to perform operations on.
-	 */
-	public function __construct( $input ) {
-		$this->output = $this->input = $input;
-	}
+	// refactored. public function __construct( $input ) {}
 
 	/**
 	 * Returns the original input array.

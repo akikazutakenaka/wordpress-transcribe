@@ -42,20 +42,17 @@ class WP_List_Util
 	 */
 	private $orderby = array();
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/category-template.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/class-wp-term-query.php
- * <- wp-includes/functions.php
- * @NOW 014: wp-includes/class-wp-list-util.php
- */
+	/**
+	 * Constructor.
+	 *
+	 * Sets the input array.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param array $input Array to perform operations on.
+	 */
+	public function __construct( $input )
+	{
+		$this->output = $this->input = $input;
+	}
 }

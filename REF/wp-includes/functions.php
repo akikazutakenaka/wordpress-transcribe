@@ -905,7 +905,6 @@ function wp_list_pluck( $list, $field, $index_key = NULL )
  * <- wp-includes/taxonomy.php
  * <- wp-includes/class-wp-term-query.php
  * @NOW 013: wp-includes/functions.php
- * -> wp-includes/class-wp-list-util.php
  */
 }
 
