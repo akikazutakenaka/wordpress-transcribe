@@ -323,7 +323,6 @@ function get_terms( $args = array(), $deprecated = '' )
  * <- wp-includes/category-template.php
  * <- wp-includes/taxonomy.php
  * @NOW 011: wp-includes/taxonomy.php
- * -> wp-includes/class-wp-term-query.php
  */
 }
 

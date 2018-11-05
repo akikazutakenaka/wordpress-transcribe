@@ -758,23 +758,93 @@ class WP_Term_Query
 			foreach ( $terms as $k => $term ) {
 				if ( ! $term->count ) {
 					$children = get_term_children( $term->term_id, $term->taxonomy );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/class-wp-post.php
- * <- wp-includes/category-template.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * @NOW 012: wp-includes/class-wp-term-query.php
- */
+
+					if ( is_array( $children ) ) {
+						foreach ( $children as $child_id ) {
+							$child = get_term( $child_id, $term->taxonomy );
+
+							if ( $child->count ) {
+								continue 2;
+							}
+						}
+					}
+
+					// It really is empty.
+					unset( $terms[ $k ] );
 				}
 			}
 		}
+
+		/**
+		 * When querying for terms connected to objects, we may get duplicate results.
+		 * The duplicates should be preserved if `$fields` is 'all_with_object_id', but should otherwise be removed.
+		 */
+		if ( ! empty( $args['object_ids'] ) && 'all_with_object_id' != $_fields ) {
+			$_tt_ids = $_terms = array();
+
+			foreach ( $terms as $term ) {
+				if ( isset( $_tt_ids[ $term->term_id ] ) ) {
+					continue;
+				}
+
+				$_tt_ids[ $term->term_id ] = 1;
+				$_terms[] = $term;
+			}
+
+			$terms = $_terms;
+		}
+
+		$_terms = array();
+
+		if ( 'id=>parent' == $_fields ) {
+			foreach ( $terms as $term ) {
+				$_terms[ $term->term_id ] = $term->parent;
+			}
+		} elseif ( 'ids' == $_fields ) {
+			foreach ( $terms as $term ) {
+				$_terms[] = ( int ) $term->term_id;
+			}
+		} elseif ( 'tt_ids' == $_fields ) {
+			foreach ( $terms as $term ) {
+				$_terms[] = ( int ) $term->taxonomy_id;
+			}
+		} elseif ( 'names' == $_fields ) {
+			foreach ( $terms as $term ) {
+				$_terms[] = $term->name;
+			}
+		} elseif ( 'slugs' == $_fields ) {
+			foreach ( $terms as $term ) {
+				$_terms[] = $term->slug;
+			}
+		} elseif ( 'id=>name' == $_fields ) {
+			foreach ( $terms as $term ) {
+				$_terms[ $term->term_id ] = $term->name;
+			}
+		} elseif ( 'id=>slug' == $_fields ) {
+			foreach ( $terms as $term ) {
+				$_terms[ $term->term_id ] = $term->slug;
+			}
+		}
+
+		if ( ! empty( $_terms ) ) {
+			$terms = $_terms;
+		}
+
+		// Hierarchical queries are not limited, so 'offset' and 'number' must be handled now.
+		if ( $hierarchical && $number && is_array( $terms ) ) {
+			$terms = $offset >= count( $terms )
+				? array()
+				: array_slice( $terms, $offset, $number, TRUE );
+		}
+
+		wp_cache_add( $cache_key, $terms, 'terms', DAY_IN_SECONDS );
+
+		if ( 'all' === $_fields || 'all_with_object_id' === $_fields ) {
+			$terms = $this->populate_terms( $terms );
+		}
+
+		$this->terms = $terms;
+		return $this->terms;
 	}
 
 	/**
