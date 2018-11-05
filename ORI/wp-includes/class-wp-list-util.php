@@ -14,29 +14,9 @@
  * @since 4.7.0
  */
 class WP_List_Util {
-	/**
-	 * The input array.
-	 *
-	 * @since 4.7.0
-	 * @var array
-	 */
-	private $input = array();
-
-	/**
-	 * The output array.
-	 *
-	 * @since 4.7.0
-	 * @var array
-	 */
-	private $output = array();
-
-	/**
-	 * Temporary arguments for sorting.
-	 *
-	 * @since 4.7.0
-	 * @var array
-	 */
-	private $orderby = array();
+	// refactored. private $input = array();
+	// :
+	// refactored. private $orderby = array();
 
 	/**
 	 * Constructor.
