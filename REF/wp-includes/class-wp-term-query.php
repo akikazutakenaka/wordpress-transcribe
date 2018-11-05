@@ -728,6 +728,20 @@ class WP_Term_Query
 		// Prime termmeta cache.
 		if ( $args['update_term_meta_cache'] ) {
 			$term_ids = wp_list_pluck( $terms, 'term_id' );
+			update_termmeta_cache( $term_ids );
+		}
+
+		if ( empty( $terms ) ) {
+			wp_cache_add( $cache_key, array(), 'terms', DAY_IN_SECONDS );
+			return array();
+		}
+
+		if ( $child_of ) {
+			foreach ( $taxonomies as $_tax ) {
+				$children = _get_term_hierarchy( $_tax );
+
+				if ( ! empty( $children ) ) {
+					$terms = _get_term_children( $child_of, $terms, $_tax );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -742,6 +756,8 @@ class WP_Term_Query
  * <- wp-includes/taxonomy.php
  * @NOW 012: wp-includes/class-wp-term-query.php
  */
+				}
+			}
 		}
 	}
 
