@@ -381,6 +381,38 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
 
 	// First, get all of the original fields.
 	$post = get_post( $postarr['ID'], ARRAY_A );
+
+	if ( is_null( $post ) ) {
+		return $wp_error
+			? new WP_Error( 'invalid_post', __( 'Invalid post ID.' ) )
+			: 0;
+	}
+
+	// Escape data pulled from DB.
+	$post = wp_slash( $post );
+
+	// Passed post category list overwrites existing category list if not empty.
+	$post_cats = isset( $postarr['post_category'] ) && is_array( $postarr['post_category'] ) && 0 != count( $postarr['post_category'] )
+		? $postarr['post_category']
+		: $post['post_category'];
+
+	// Drafts shouldn't be assigned a date unless explicitly done so by the user.
+	$clear_date = isset( $post['post_status'] ) && in_array( $post['post_status'], array( 'draft', 'pending', 'auto-draft' ) ) && empty( $postarr['edit_date'] ) && '0000-00-00 00:00:00' == $post['post_date_gmt'];
+
+	// Merge old and new fields with new fields overwriting old ones.
+	$postarr = array_merge( $post, $postarr );
+	$postarr['post_category'] = $post_cats;
+
+	if ( $clear_date ) {
+		$postarr['post_date'] = current_time( 'mysql' );
+		$postarr['post_date_gmt'] = '';
+	}
+
+	return $postarr['post_type'] == 'attachment'
+		? wp_insert_attachment( $postarr )
+		: wp_insert_post( $postarr, $wp_error );
+}
+
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -389,7 +421,6 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
  */
-}
 
 /**
  * Check the given subset of the post hierarchy for hierarchy loops.
