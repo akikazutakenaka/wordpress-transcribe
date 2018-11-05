@@ -354,6 +354,15 @@ function sanitize_post_field( $field, $value, $post_id, $context = 'display' )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * @NOW 006: wp-includes/post.php
+ */
+
+/**
  * Update a post with new post data.
  *
  * The date does not have to be set for drafts.
@@ -414,13 +423,46 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * @NOW 006: wp-includes/post.php
+ * Insert an attachment.
+ *
+ * If you set the 'ID' in the $args parameter, it will mean that you are updating and attempt to update the attachment.
+ * You can also set the attachment name or title by setting the key 'post_name' or 'post_title'.
+ *
+ * You can set the dates for the attachment manually by setting the 'post_date' and 'post_date_gmt' keys' values.
+ *
+ * By default, the comments will use the default settings for whether the comments are allowed.
+ * You can close them manually or keep them open by setting the value for the 'comment_status' key.
+ *
+ * @since 2.0.0
+ * @since 4.7.0 Added the `$wp_error` parameter to allow a WP_Error to be returned on failure.
+ * @see   wp_insert_post()
+ *
+ * @param  string|array $args     Arguments for inserting an attachment.
+ * @param  string       $file     Optional.
+ *                                Filename.
+ * @param  int          $parent   Optional.
+ *                                Parent post ID.
+ * @param  bool         $wp_error Optional.
+ *                                Whether to return a WP_Error on failure.
+ *                                Default false.
+ * @return int|WP_Error The attachment ID on success.
+ *                      The value 0 or WP_Error on failure.
  */
+function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FALSE )
+{
+	$defaults = array(
+		'file'        => $file,
+		'post_parent' => 0
+	);
+	$data = wp_parse_args( $args, $defaults );
+
+	if ( ! empty( $parent ) ) {
+		$data['post_parent'] = $parent;
+	}
+
+	$data['post_type'] = 'attachment';
+	return wp_insert_post( $data, $wp_error );
+}
 
 /**
  * Check the given subset of the post hierarchy for hierarchy loops.
