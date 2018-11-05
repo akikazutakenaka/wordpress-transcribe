@@ -750,6 +750,14 @@ class WP_Term_Query
 		if ( $args['pad_counts'] && 'all' == $_fields ) {
 			foreach ( $taxonomies as $_tax ) {
 				_pad_term_counts( $terms, $_tax );
+			}
+		}
+
+		// Make sure we show empty categories that have children.
+		if ( $hierarchical && $args['hide_empty'] && is_array( $terms ) ) {
+			foreach ( $terms as $k => $term ) {
+				if ( ! $term->count ) {
+					$children = get_term_children( $term->term_id, $term->taxonomy );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -764,6 +772,7 @@ class WP_Term_Query
  * <- wp-includes/taxonomy.php
  * @NOW 012: wp-includes/class-wp-term-query.php
  */
+				}
 			}
 		}
 	}

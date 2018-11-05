@@ -223,6 +223,49 @@ function get_term( $term, $taxonomy = '', $output = OBJECT, $filter = 'raw' )
 }
 
 /**
+ * Merge all term children into a single array of their IDs.
+ *
+ * This recursive function will merge all of the children of $term into the same array of term IDs.
+ * Only useful for taxonomies which are hierarchical.
+ *
+ * Will return an empty array if $term does not exist in $taxonomy.
+ *
+ * @since 2.3.0
+ *
+ * @param  int            $term_id  ID of Term to get children.
+ * @param  string         $taxonomy Taxonomy Name.
+ * @return array|WP_Error List of Term IDs.
+ *                        WP_Error returned if `$taxonomy` does not exist.
+ */
+function get_term_children( $term_id, $taxonomy )
+{
+	if ( ! taxonomy_exists( $taxonomy ) ) {
+		return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+	}
+
+	$term_id = intval( $term_id );
+	$terms = _get_term_hierarchy( $taxonomy );
+
+	if ( ! isset( $terms[ $term_id ] ) ) {
+		return array();
+	}
+
+	$children = $terms[ $term_id ];
+
+	foreach ( ( array ) $terms[ $term_id ] as $child ) {
+		if ( $term_id == $child ) {
+			continue;
+		}
+
+		if ( isset( $terms[ $child ] ) ) {
+			$children = array_merge( $children, get_term_children( $child, $taxonomy ) );
+		}
+	}
+
+	return $children;
+}
+
+/**
  * Retrieve the terms in a given taxonomy or list of taxonomies.
  *
  * You can fully inject any customizations to the query before it is sent, as well as control the output with a filter.
