@@ -36,7 +36,6 @@ function get_the_terms( $post, $taxonomy )
  * <- wp-includes/class-wp-post.php
  * <- wp-includes/class-wp-post.php
  * @NOW 009: wp-includes/category-template.php
- * -> wp-includes/taxonomy.php
  */
 	}
 }
