@@ -741,7 +741,6 @@ class WP_Term_Query
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 012: wp-includes/class-wp-term-query.php
- * -> wp-includes/class-wp-list-util.php
  */
 		}
 	}
