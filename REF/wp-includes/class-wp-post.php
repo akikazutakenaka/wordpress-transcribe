@@ -367,16 +367,12 @@ EOQ
 		$value = 'ancestors' == $key
 			? get_post_ancestors( $this )
 			: get_post_meta( $this->ID, $key, TRUE );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-post.php
- * @NOW 008: wp-includes/class-wp-post.php
- */
+
+		if ( $this->filter ) {
+			$value = sanitize_post_field( $key, $value, $this->ID, $this->filter );
+		}
+
+		return $value;
 	}
 
 	/**
@@ -401,7 +397,6 @@ EOQ
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-post.php
- * -> wp-includes/class-wp-post.php
  */
 			}
 		}
