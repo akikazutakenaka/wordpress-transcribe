@@ -560,6 +560,153 @@ class WP_Term_Query
 
 		if ( ! empty( $args['search'] ) ) {
 			$this->sql_clauses['where']['search'] = $this->get_search_sql( $args['search'] );
+		}
+
+		// Meta query support.
+		$join = '';
+		$distinct = '';
+
+		// Reparse meta_query query_vars, in case they were modified in a 'pre_get_terms' callback.
+		$this->meta_query->parse_query_vars( $this->query_vars );
+		$mq_sql = $this->meta_query->get_sql( 'term', 't', 'term_id' );
+		$meta_clauses = $this->meta_query->get_clauses();
+
+		if ( ! empty( $meta_clauses ) ) {
+			$join .= $mq_sql['join'];
+			$this->sql_clauses['where']['meta_query'] = preg_replace( '/^\s*AND\s*/', '', $mq_sql['where'] );
+			$distinct .= "DISTINCT";
+		}
+
+		$selects = array();
+
+		switch ( $args['fields'] ) {
+			case 'all':
+			case 'all_with_object_id':
+			case 'tt_ids':
+			case 'slugs':
+				$selects = array( 't.*', 'tt.*' );
+
+				if ( 'all_with_object_id' === $args['fields'] && ! empty( $args['object_ids'] ) ) {
+					$selects[] = 'tr.object_id';
+				}
+
+				break;
+
+			case 'ids':
+			case 'id=>parent':
+				$selects = array( 't.term_id', 'tt.parent', 'tt.count', 'tt.taxonomy' );
+				break;
+
+			case 'names':
+				$selects = array( 't.term_id', 'tt.parent', 'tt.count', 't.name', 'tt.taxonomy' );
+				break;
+
+			case 'count':
+				$orderby = '';
+				$order = '';
+				$selects = array( 'COUNT(*)' );
+				break;
+
+			case 'id=>name':
+				$selects = array( 't.term_id', 't.name', 'tt.count', 'tt.taxonomy' );
+				break;
+
+			case 'id=>slug':
+				$selects = array( 't.term_id', 't.slug', 'tt.count', 'tt.taxonomy' );
+				break;
+		}
+
+		$_fields = $args['fields'];
+
+		/**
+		 * Filters the fields to select in the terms query.
+		 *
+		 * Field lists modified using this filter will only modify the term fields returned by the function when the `$fields` parameter set to 'count' or 'all'.
+		 * In all other cases, the term fields in the results array will be determined by the `$fields` parameter alone.
+		 *
+		 * Use of this filter can result in unpredictable behavior, and is not recommended.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $selects    An array of fields to select for the terms query.
+		 * @param array $args       An array of term query arguments.
+		 * @param array $taxonomies An array of taxonomies.
+		 */
+		$fields = implode( ', ', apply_filters( 'get_terms_fields', $selects, $args, $taxonomies ) );
+
+		$join = " INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id";
+
+		if ( ! empty( $this->query_vars['object_ids'] ) ) {
+			$join .= " INNER JOIN {$wpdb->term_relationships} AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id";
+		}
+
+		$where = implode( ' AND ', $this->sql_clauses['where'] );
+
+		/**
+		 * Filters the terms query SQL clauses.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param array $pieces     Terms query SQL clauses.
+		 * @param array $taxonomies An array of taxonomies.
+		 * @param array $args       An array of terms query arguments.
+		 */
+		$clauses = apply_filters( 'terms_clauses', compact( 'fields', 'join', 'where', 'distinct', 'orderby', 'order', 'limits' ), $taxonomies, $args );
+
+		$fields = isset( $clauses['fields'] )
+			? $clauses['fields']
+			: '';
+
+		$join = isset( $clauses['join'] )
+			? $clauses['join']
+			: '';
+
+		$where = isset( $clauses['where'] )
+			? $clauses['where']
+			: '';
+
+		$distinct = isset( $clauses['distinct'] )
+			? $clauses['distinct']
+			: '';
+
+		$orderby = isset( $clauses['orderby'] )
+			? $clauses['orderby']
+			: '';
+
+		$order = isset( $clauses['order'] )
+			? $clauses['order']
+			: '';
+
+		$limits = isset( $clauses['limits'] )
+			? $clauses['limits']
+			: '';
+
+		if ( $where ) {
+			$where = "WHERE $where";
+		}
+
+		$this->sql_clauses['select']  = "SELECT $distinct $fields";
+		$this->sql_clauses['from']    = "FROM $wpdb->terms AS t $join";
+
+		$this->sql_clauses['orderby'] = $orderby
+			? "$orderby $order"
+			: '';
+
+		$this->sql_clauses['limits']  = $limits;
+		$this->request = "{$this->sql_clauses['select']} {$this->sql_clauses['from']} {$where} {$this->sql_clauses['orderby']} {$this->sql_clauses['limits']}";
+
+		/**
+		 * $args can be anything.
+		 * Only use the args defined in defaults to compute the key.
+		 */
+		$key = md5( serialize( wp_array_slice_assoc( $args, array_keys( $this->query_var_defaults ) ) ) . serialize( $taxonomies ) . $this->request );
+		$last_changed = wp_cache_get_last_changed( 'terms' );
+		$cache_key = "get_terms:$key:$last_changed";
+		$cache = wp_cache_get( $cache_key, 'terms' );
+
+		if ( FALSE !== $cache ) {
+			if ( 'all' === $_fields || 'all_with_object_id' === $_fields ) {
+				$cache = $this->populate_terms( $cache );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -574,6 +721,7 @@ class WP_Term_Query
  * <- wp-includes/taxonomy.php
  * @NOW 012: wp-includes/class-wp-term-query.php
  */
+			}
 		}
 	}
 
@@ -732,5 +880,34 @@ class WP_Term_Query
 		global $wpdb;
 		$like = '%' . $wpdb->esc_like( $string ) . '%';
 		return $wpdb->prepare( '((t.name LIKE %s) OR (t.slug LIKE %s))', $like, $like );
+	}
+
+	/**
+	 * Creates an array of term objects from an array of term IDs.
+	 *
+	 * Also discards invalid term objects.
+	 *
+	 * @since 4.9.8
+	 *
+	 * @param  array $term_ids Term IDs.
+	 * @return array
+	 */
+	protected function populate_terms( $term_ids )
+	{
+		$terms = array();
+
+		if ( ! is_array( $term_ids ) ) {
+			return $terms;
+		}
+
+		foreach ( $term_ids as $key => $term_id ) {
+			$term = get_term( $term_id );
+
+			if ( $term instanceof WP_Term ) {
+				$terms[ $key ] = $term;
+			}
+		}
+
+		return $terms;
 	}
 }

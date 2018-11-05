@@ -545,32 +545,5 @@ class WP_Term_Query {
 
 	// refactored. protected function parse_orderby( $orderby_raw ) {}
 	// :
-	// refactored. protected function get_search_sql( $string ) {}
-
-	/**
-	 * Creates an array of term objects from an array of term IDs.
-	 *
-	 * Also discards invalid term objects.
-	 *
-	 * @since 4.9.8
-	 *
-	 * @param array $term_ids Term IDs.
-	 * @return array
-	 */
-	protected function populate_terms( $term_ids ) {
-		$terms = array();
-
-		if ( ! is_array( $term_ids ) ) {
-			return $terms;
-		}
-
-		foreach ( $term_ids as $key => $term_id ) {
-			$term = get_term( $term_id );
-			if ( $term instanceof WP_Term ) {
-				$terms[ $key ] = $term;
-			}
-		}
-
-		return $terms;
-	}
+	// refactored. protected function populate_terms( $term_ids ) {}
 }
