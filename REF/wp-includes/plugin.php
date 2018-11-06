@@ -499,17 +499,7 @@ function apply_filters_deprecated( $tag, $args, $version, $replacement = FALSE, 
 	}
 
 	_deprecated_hook( $tag, $version, $replacement, $message );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * @NOW 009: wp-includes/plugin.php
- */
+	return apply_filters_ref_array( $tag, $args );
 }
 
 //

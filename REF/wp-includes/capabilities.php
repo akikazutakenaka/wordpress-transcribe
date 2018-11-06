@@ -384,7 +384,6 @@ function map_meta_cap( $cap, $user_id )
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-user.php
  * @NOW 008: wp-includes/capabilities.php
- * -> wp-includes/plugin.php
  */
 				}
 			}
