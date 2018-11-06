@@ -270,6 +270,25 @@ function get_object_subtype( $object_type, $object_id )
 	switch ( $object_type ) {
 		case 'post':
 			$post_type = get_post_type( $object_id );
+
+			if ( ! empty( $post_type ) ) {
+				$object_subtype = $post_type;
+			}
+
+			break;
+
+		case 'term':
+			$term = get_term( $object_id );
+
+			if ( ! $term instanceof WP_Term ) {
+				break;
+			}
+
+			$object_subtype = $term->taxonomy;
+			break;
+
+		case 'comment':
+			$comment = get_comment( $object_id );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -280,6 +299,7 @@ function get_object_subtype( $object_type, $object_id )
  * <- wp-includes/class-wp-user.php
  * <- wp-includes/capabilities.php
  * @NOW 009: wp-includes/meta.php
+ * -> wp-includes/comment.php
  */
 	}
 }
