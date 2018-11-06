@@ -375,6 +375,66 @@ function map_meta_cap( $cap, $user_id )
 					 * @param string[] $caps      Array of the user's capabilities.
 					 */
 					$allowed = apply_filters_deprecated( "auth_{$object_type}_{$object_subtype}_meta_{$meta_key}", array( $allowed, $meta_key, $object_id, $user_id, $cap, $caps ), '4.9.8', "auth_{$object_type}_meta_{$meta_key}_for_{$object_subtype}" );
+				}
+
+				if ( ! $allowed ) {
+					$caps[] = $cap;
+				}
+			}
+
+			break;
+
+		case 'edit_comment':
+			$comment = get_comment( $args[0] );
+
+			if ( ! $comment ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			$post = get_post( $comment->comment_post_ID );
+
+			/**
+			 * If the post doesn't exist, we have an orphaned comment.
+			 * Fall back to the edit_posts capability, instead.
+			 */
+			$caps = $post
+				? map_meta_cap( 'edit_post', $user_id, $post->ID )
+				: map_meta_cap( 'edit_posts', $user_id );
+
+			break;
+
+		case 'unfiltered_upload':
+			$caps[] = defined( 'ALLOW_UNFILTERED_UPLOADS' )
+			       && ALLOW_UNFILTERED_UPLOADS
+			       && ( ! is_multisite() || is_super_admin( $user_id ) )
+				? $cap
+				: 'do_not_allow';
+
+			break;
+
+		case 'edit_css':
+		case 'unfiltered_html':
+			// Disallow unfiltered_html for all users, even admins and super admins.
+			$caps[] = defined( 'DISALLOW_UNFILTERED_HTML' ) && DISALLOW_UNFILTERED_HTML
+				? 'do_not_allow'
+				: ( is_multisite() && ! is_super_admin( $user_id )
+					? 'do_not_allow'
+					: 'unfiltered_html' );
+
+			break;
+
+		case 'edit_files':
+		case 'edit_plugins':
+		case 'edit_themes':
+			// Disallow the file editors.
+			$caps[] = defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT
+				? 'do_not_allow'
+				: ( ! wp_is_file_mod_allowed( 'capability_edit_themes' )
+					? 'do_not_allow'
+					: ( is_multisite() && ! is_super_admin()
+						? 'do_not_allow'
+						: $cap ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -385,8 +445,6 @@ function map_meta_cap( $cap, $user_id )
  * <- wp-includes/class-wp-user.php
  * @NOW 008: wp-includes/capabilities.php
  */
-				}
-			}
 	}
 }
 

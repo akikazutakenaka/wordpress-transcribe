@@ -259,26 +259,7 @@ function wp_doing_cron() {
 }
 
 // refactored. function is_wp_error( $thing ) {}
-
-/**
- * Determines whether file modifications are allowed.
- *
- * @since 4.8.0
- *
- * @param string $context The usage context.
- * @return bool True if file modification is allowed, false otherwise.
- */
-function wp_is_file_mod_allowed( $context ) {
-	/**
-	 * Filters whether file modifications are allowed.
-	 *
-	 * @since 4.8.0
-	 *
-	 * @param bool   $file_mod_allowed Whether file modifications are allowed.
-	 * @param string $context          The usage context.
-	 */
-	return apply_filters( 'file_mod_allowed', ! defined( 'DISALLOW_FILE_MODS' ) || ! DISALLOW_FILE_MODS, $context );
-}
+// refactored. function wp_is_file_mod_allowed( $context ) {}
 
 /**
  * Start scraping edited file errors.
