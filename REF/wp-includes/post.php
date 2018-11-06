@@ -675,6 +675,12 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 			? current_time( 'mysql' )
 			: get_date_from_gmt( $postarr['post_date_gmt'] ) )
 		: $postarr['post_date'];
+
+	// Validate the date.
+	$mm = substr( $post_date, 5, 2 );
+	$jj = substr( $post_date, 8, 2 );
+	$aa = substr( $post_date, 0, 4 );
+	$valid_date = wp_checkdate( $mm, $jj, $aa, $post_date );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php

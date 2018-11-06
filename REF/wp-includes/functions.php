@@ -1510,6 +1510,31 @@ function wp_is_stream( $path )
 }
 
 /**
+ * Test if the supplied date is valid for the Gregorian calendar.
+ *
+ * @since 3.5.0
+ * @see   checkdate()
+ *
+ * @param  int    $month       Month number.
+ * @param  int    $day         Day number.
+ * @param  int    $year        Year number.
+ * @param  string $source_date The date to filter.
+ * @return bool   True if valid date, false if not valid date.
+ */
+function wp_checkdate( $month, $day, $year, $source_date )
+{
+	/**
+	 * Filters whether the given date is valid for the Gregorian calendar.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param bool   $checkdate   Whether the given date is valid.
+	 * @param string $source_date Date to check.
+	 */
+	return apply_filters( 'wp_checkdate', checkdate( $month, $day, $year ), $source_date );
+}
+
+/**
  * Set the mbstring internal encoding to a binary safe encoding when func_overload is enabled.
  *
  * When mbstring.func_overload is in use for multi-byte encodings, the results from strlen() and similar functions respect the utf8 characters, causing binary data to return incorrect lengths.

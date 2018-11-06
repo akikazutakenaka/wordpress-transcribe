@@ -3842,31 +3842,7 @@ function _device_can_upload() {
 }
 
 // refactored. function wp_is_stream( $path ) {}
-
-/**
- * Test if the supplied date is valid for the Gregorian calendar.
- *
- * @since 3.5.0
- *
- * @see checkdate()
- *
- * @param  int    $month       Month number.
- * @param  int    $day         Day number.
- * @param  int    $year        Year number.
- * @param  string $source_date The date to filter.
- * @return bool True if valid date, false if not valid date.
- */
-function wp_checkdate( $month, $day, $year, $source_date ) {
-	/**
-	 * Filters whether the given date is valid for the Gregorian calendar.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @param bool   $checkdate   Whether the given date is valid.
-	 * @param string $source_date Date to check.
-	 */
-	return apply_filters( 'wp_checkdate', checkdate( $month, $day, $year ), $source_date );
-}
+// refactored. function wp_checkdate( $month, $day, $year, $source_date ) {}
 
 /**
  * Load the auth check for monitoring whether the user is still logged in.
