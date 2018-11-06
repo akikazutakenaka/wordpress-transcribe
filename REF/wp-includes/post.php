@@ -187,17 +187,21 @@ function get_post_status_object( $post_status )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * <- wp-includes/meta.php
- * @NOW 010: wp-includes/post.php
+ * Retrieves the post type of the current post or of a given post.
+ *
+ * @since 2.1.0
+ *
+ * @param  int|WP_Post|null $post Optional.
+ *                                Post ID or post object.
+ *                                Default is global $post.
+ * @return string|false     Post type on success, false on failure.
  */
+function get_post_type( $post = NULL )
+{
+	return ( $post = get_post( $post ) )
+		? $post->post_type
+		: FALSE;
+}
 
 /**
  * Retrieves a post type object by name.
