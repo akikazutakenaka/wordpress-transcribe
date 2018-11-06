@@ -417,21 +417,24 @@ EOQ
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-user.php
- * -> wp-includes/class-wp-user.php
  */
 		}
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * @NOW 008: wp-includes/class-wp-user.php
- */
+	/**
+	 * Convert numeric level to level capability name.
+	 *
+	 * Prepends 'level_' to level number.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param  int    $level Level number, 1 to 10.
+	 * @return string
+	 */
+	public function translate_level_to_cap( $level )
+	{
+		return 'level_' . $level;
+	}
 
 	/**
 	 * Sets the site to operate on.
