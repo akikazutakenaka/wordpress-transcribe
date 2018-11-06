@@ -43,7 +43,6 @@ function map_meta_cap( $cap, $user_id )
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-user.php
  * @NOW 008: wp-includes/capabilities.php
- * -> wp-includes/capabilities.php
  */
 	}
 }
@@ -150,16 +149,15 @@ function is_super_admin( $user_id = FALSE )
 
 	if ( is_multisite() ) {
 		$super_admins = get_super_admins();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * @NOW 009: wp-includes/capabilities.php
- */
+
+		if ( is_array( $super_admins ) && in_array( $user->user_login, $super_admins ) ) {
+			return TRUE;
+		}
+	} else {
+		if ( $user->has_cap( 'delete_users' ) ) {
+			return TRUE;
+		}
 	}
+
+	return FALSE;
 }
