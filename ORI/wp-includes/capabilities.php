@@ -631,29 +631,8 @@ function author_can( $post, $capability ) {
 	return call_user_func_array( array( $author, 'has_cap' ), $args );
 }
 
-/**
- * Whether a particular user has a specific capability.
- *
- * @since 3.1.0
- *
- * @param int|WP_User $user       User ID or object.
- * @param string      $capability Capability name.
- * @return bool Whether the user has the given capability.
- */
-function user_can( $user, $capability ) {
-	if ( ! is_object( $user ) )
-		$user = get_userdata( $user );
-
-	if ( ! $user || ! $user->exists() )
-		return false;
-
-	$args = array_slice( func_get_args(), 2 );
-	$args = array_merge( array( $capability ), $args );
-
-	return call_user_func_array( array( $user, 'has_cap' ), $args );
-}
-
-// refactored. function wp_roles() {}
+// refactored. function user_can( $user, $capability ) {}
+// :
 // refactored. function get_role( $role ) {}
 
 /**

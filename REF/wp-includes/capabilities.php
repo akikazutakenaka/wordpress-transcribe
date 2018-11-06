@@ -34,6 +34,30 @@ function map_meta_cap( $cap, $user_id )
 			$caps[] = isset( $args[0] ) && $user_id == $args[0] && ! is_super_admin( $user_id )
 				? 'do_not_allow'
 				: 'remove_users';
+
+			break;
+
+		case 'promote_user':
+		case 'add_users':
+			$caps[] = 'promote_users';
+			break;
+
+		case 'edit_user':
+		case 'edit_users':
+			// Allow user to edit itself
+			if ( 'edit_user' == $cap && isset( $args[0] ) && $user_id == $args[0] ) {
+				break;
+			}
+
+			/**
+			 * In multisite the user must have manage_network_users caps.
+			 * If editing a super admin, the user must be a super admin.
+			 */
+			$caps[] = is_multisite()
+			       && ( ! is_super_admin( $user_id ) && 'edit_user' === $cap && is_super_admin( $args[0] )
+			         || ! user_can( $user_id, 'manage_network_users' ) )
+				? 'do_not_allow'
+				: 'edit_users'; // edit_user maps to edit_users.
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -77,6 +101,30 @@ function current_user_can( $capability )
 	$args = array_slice( func_get_args(), 1 );
 	$args = array_merge( array( $capability ), $args );
 	return call_user_func_array( array( $current_user, 'has_cap' ), $args );
+}
+
+/**
+ * Whether a particular user has a specific capability.
+ *
+ * @since 3.1.0
+ *
+ * @param  int|WP_User $user       User ID or object.
+ * @param  string      $capability Capability name.
+ * @return bool        Whether the user has the given capability.
+ */
+function user_can( $user, $capability )
+{
+	if ( ! is_object( $user ) ) {
+		$user = get_userdata( $user );
+	}
+
+	if ( ! $user || ! $user->exists() ) {
+		return FALSE;
+	}
+
+	$args = array_slice( func_get_args(), 2 );
+	$args = array_merge( array( $capability ), $args );
+	return call_user_func_array( array( $user, 'has_cap' ), $args );
 }
 
 /**
