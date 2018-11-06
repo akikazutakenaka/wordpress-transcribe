@@ -8,6 +8,43 @@
 require( ABSPATH . WPINC . '/option.php' );
 
 /**
+ * Convert given date string into a different format.
+ *
+ * $format should be either a PHP date format string, e.g. 'U' for a Unix timestamp, or 'G' for a Unix timestamp assuming that $date is GMT.
+ *
+ * If $translate is true then the given date and format string will be passed to date_i18n() for translation.
+ *
+ * @since 0.71
+ *
+ * @param  string          $format    Format of the date to return.
+ * @param  string          $date      Date string to convert.
+ * @param  bool            $translate Whether the return date should be translated.
+ *                                    Default true.
+ * @return string|int|bool Formatted date string or Unix timestamp.
+ *                         False if $date is empty.
+ */
+function mysql2date( $format, $date, $translate = TRUE )
+{
+	if ( empty( $date ) ) {
+		return FALSE;
+	}
+
+	if ( 'G' == $format ) {
+		return strtotime( $date . ' +0000' );
+	}
+
+	$i = strtotime( $date );
+
+	if ( 'U' == $format ) {
+		return $i;
+	}
+
+	return $translate
+		? date_i18n( $format, $i )
+		: date( $format, $i );
+}
+
+/**
  * Retrieve the current time based on specified type.
  *
  * The 'mysql' type will return the time in the format for MySQL DATETIME field.
@@ -45,6 +82,16 @@ function current_time( $type, $gmt = 0 )
 				: date( $type, time() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	}
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/functions.php
+ */
 
 /**
  * Unserialize value only if it was serialized.

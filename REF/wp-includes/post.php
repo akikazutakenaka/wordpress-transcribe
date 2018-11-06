@@ -693,6 +693,20 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 			? get_gmt_from_date( $post_date )
 			: '0000-00-00 00:00:00' )
 		: $postarr['post_date_gmt'];
+
+	if ( $update || '0000-00-00 00:00:00' == $post_date ) {
+		$post_modified     = current_time( 'mysql' );
+		$post_modified_gmt = current_time( 'mysql', 1 );
+	} else {
+		$post_modified     = $post_date;
+		$post_modified_gmt = $post_date_gmt;
+	}
+
+	if ( 'attachment' !== $post_type ) {
+		if ( 'publish' == $post_status ) {
+			$now = gmdate( 'Y-m-d H:i:59' );
+
+			if ( mysql2date( 'U', $post_date_gmt, FALSE ) > mysql2date( 'U', $now, FALSE ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -700,7 +714,11 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/functions.php
  */
+			}
+		}
+	}
 }
 
 /**
