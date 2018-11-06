@@ -409,6 +409,11 @@ EOQ
 		if ( is_numeric( $cap ) ) {
 			_deprecated_argument( __FUNCTION__, '2.0.0', __( 'Usage of user levels is deprecated. Use capabilities instead.' ) );
 			$cap = $this->translate_level_to_cap( $cap );
+		}
+
+		$args = array_slice( func_get_args(), 1 );
+		$args = array_merge( array( $cap, $this->ID ), $args );
+		$caps = call_user_func_array( 'map_meta_cap', $args );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -417,8 +422,8 @@ EOQ
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-user.php
+ * -> wp-includes/capabilities.php
  */
-		}
 	}
 
 	/**
