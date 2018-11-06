@@ -176,19 +176,45 @@ final class WP_Comment
 	 */
 	protected $post_fields = array( 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count' );
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * <- wp-includes/meta.php
- * <- wp-includes/comment.php
- * @NOW 011: wp-includes/class-wp-comment.php
- */
+	/**
+	 * Retrieves a WP_Comment instance.
+	 *
+	 * @since  4.4.0
+	 * @static
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  int              $id Comment ID.
+	 * @return WP_Comment|false Comment object, otherwise false.
+	 */
+	public static function get_instance( $id )
+	{
+		global $wpdb;
+		$comment_id = ( int ) $id;
+
+		if ( ! $comment_id ) {
+			return FALSE;
+		}
+
+		$_comment = wp_cache_get( $comment_id, 'comment' );
+
+		if ( ! $_comment ) {
+			$_comment = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT *
+FROM $wpdb->comments
+WHERE comment_ID = %d
+LIMIT 1
+EOQ
+					, $comment_id ) );
+
+			if ( ! $_comment ) {
+				return FALSE;
+			}
+
+			wp_cache_add( $_comment->comment_ID, $_comment, 'comment' );
+		}
+
+		return new WP_Comment( $_comment );
+	}
 
 	/**
 	 * Constructor.

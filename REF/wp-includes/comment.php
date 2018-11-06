@@ -44,6 +44,5 @@ function get_comment( &$comment = NULL, $output = OBJECT )
  * <- wp-includes/capabilities.php
  * <- wp-includes/meta.php
  * @NOW 010: wp-includes/comment.php
- * -> wp-includes/class-wp-comment.php
  */
 }
