@@ -845,28 +845,7 @@ function get_post_type( $post = null ) {
 	return false;
 }
 
-/**
- * Retrieves a post type object by name.
- *
- * @since 3.0.0
- * @since 4.6.0 Object returned is now an instance of WP_Post_Type.
- *
- * @global array $wp_post_types List of post types.
- *
- * @see register_post_type()
- *
- * @param string $post_type The name of a registered post type.
- * @return WP_Post_Type|null WP_Post_Type object if it exists, null otherwise.
- */
-function get_post_type_object( $post_type ) {
-	global $wp_post_types;
-
-	if ( ! is_scalar( $post_type ) || empty( $wp_post_types[ $post_type ] ) ) {
-		return null;
-	}
-
-	return $wp_post_types[ $post_type ];
-}
+// refactored. function get_post_type_object( $post_type ) {}
 
 /**
  * Get a list of all registered post type objects.

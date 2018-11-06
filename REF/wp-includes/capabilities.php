@@ -58,6 +58,33 @@ function map_meta_cap( $cap, $user_id )
 			         || ! user_can( $user_id, 'manage_network_users' ) )
 				? 'do_not_allow'
 				: 'edit_users'; // edit_user maps to edit_users.
+
+			break;
+
+		case 'delete_post':
+		case 'delete_page':
+			$post = get_post( $args[0] );
+
+			if ( ! $post ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			if ( 'revision' == $post->post_type ) {
+				$post = get_post( $post->post_parent );
+
+				if ( ! $post ) {
+					$caps[] = 'do_not_allow';
+					break;
+				}
+			}
+
+			if ( get_option( 'page_for_posts' ) == $post->ID || get_option( 'page_on_front' ) == $post->ID ) {
+				$caps[] = 'manage_options';
+				break;
+			}
+
+			$post_type = get_post_type_object( $post->post_type );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
