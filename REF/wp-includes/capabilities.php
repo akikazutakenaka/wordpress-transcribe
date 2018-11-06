@@ -247,6 +247,56 @@ function map_meta_cap( $cap, $user_id )
 			}
 
 			$status_obj = get_post_status_object( $post->post_status );
+
+			if ( $status_obj->public ) {
+				$caps[] = $post_type->cap->read;
+				break;
+			}
+
+			if ( $post->post_author && $user_id == $post->post_author ) {
+				$caps[] = $post_type->cap->read;
+			} elseif ( $status_obj->private ) {
+				$caps[] = $post_type->cap->read_private_posts;
+			} else {
+				$caps = map_meta_cap( 'edit_post', $user_id, $post->ID );
+			}
+
+			break;
+
+		case 'publish_post':
+			$post = get_post( $args[0] );
+
+			if ( ! $post ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			$post_type = get_post_type_object( $post->post_type );
+
+			if ( ! $post_type ) {
+				_doing_it_wrong( __FUNCTION__, sprintf( __( 'The post type %1$s is not registered, so it may not be reliable to check the capability "%2$s" against a post of that type.' ), $post->post_type, $cap ), '4.4.0' );
+				$caps[] = 'edit_others_posts';
+				break;
+			}
+
+			$caps[] = $post_type->cap->publish_posts;
+			break;
+
+		case 'edit_post_meta':
+		case 'delete_post_meta':
+		case 'add_post_meta':
+		case 'edit_comment_meta':
+		case 'delete_comment_meta':
+		case 'add_comment_meta':
+		case 'edit_term_meta':
+		case 'delete_term_meta':
+		case 'add_term_meta':
+		case 'edit_user_meta':
+		case 'delete_user_meta':
+		case 'add_user_meta':
+			list( $_, $object_type, $_ ) = explode( '_', $cap );
+			$object_id = ( int ) $args[0];
+			$object_subtype = get_object_subtype( $object_type, $object_id );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -256,6 +306,7 @@ function map_meta_cap( $cap, $user_id )
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-user.php
  * @NOW 008: wp-includes/capabilities.php
+ * -> wp-includes/meta.php
  */
 	}
 }

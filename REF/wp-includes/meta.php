@@ -251,3 +251,36 @@ function _wp_register_meta_args_whitelist( $args, $default_args )
 {
 	return array_intersect_key( $args, $default_args );
 }
+
+/**
+ * Returns the object subtype for a given object ID of a specific type.
+ *
+ * @since 4.9.8
+ *
+ * @param  string $object_type Type of object to request metadata for.
+ *                             (e.g. comment, post, term, user)
+ * @param  int    $object_id   ID of the object to retrieve its subtype.
+ * @return string The object subtype or an empty string if unspecified subtype.
+ */
+function get_object_subtype( $object_type, $object_id )
+{
+	$object_id      = ( int ) $object_id;
+	$object_subtype = '';
+
+	switch ( $object_type ) {
+		case 'post':
+			$post_type = get_post_type( $object_id );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-user.php
+ * <- wp-includes/capabilities.php
+ * @NOW 009: wp-includes/meta.php
+ * -> wp-includes/post.php
+ */
+	}
+}

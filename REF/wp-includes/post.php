@@ -187,6 +187,19 @@ function get_post_status_object( $post_status )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-user.php
+ * <- wp-includes/capabilities.php
+ * <- wp-includes/meta.php
+ * @NOW 010: wp-includes/post.php
+ */
+
+/**
  * Retrieves a post type object by name.
  *
  * @since  3.0.0
