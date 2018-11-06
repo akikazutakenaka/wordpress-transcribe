@@ -1019,6 +1019,19 @@ function _deprecated_argument( $function, $version, $message = NULL )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-user.php
+ * <- wp-includes/capabilities.php
+ * <- wp-includes/plugin.php
+ * @NOW 010: wp-includes/functions.php
+ */
+
+/**
  * Mark something as being incorrectly called.
  *
  * There is ahook {@see 'doing_it_wrong_run'} that will be called that can be used to get the backtrace up to what file and function called the deprecated function.
