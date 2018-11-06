@@ -681,6 +681,18 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 	$jj = substr( $post_date, 8, 2 );
 	$aa = substr( $post_date, 0, 4 );
 	$valid_date = wp_checkdate( $mm, $jj, $aa, $post_date );
+
+	if ( ! $valid_date ) {
+		return $wp_error
+			? new WP_Error( 'invalid_date', __( 'Invalid date.' ) )
+			: 0;
+	}
+
+	$post_date_gmt = empty( $postarr['post_date_gmt'] ) || '0000-00-00 00:00:00' == $postarr['post_date_gmt']
+		? ( ! in_array( $post_status, array( 'draft', 'pending', 'auto-draft' ) )
+			? get_gmt_from_date( $post_date )
+			: '0000-00-00 00:00:00' )
+		: $postarr['post_date_gmt'];
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
