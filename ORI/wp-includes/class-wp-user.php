@@ -347,69 +347,7 @@ class WP_User {
 		$this->get_role_caps();
 	}
 
-	/**
-	 * Whether the user has a specific capability.
-	 *
-	 * While checking against a role in place of a capability is supported in part, this practice is discouraged as it
-	 * may produce unreliable results.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @see map_meta_cap()
-	 *
-	 * @param string $cap           Capability name.
-	 * @param int    $object_id,... Optional. ID of a specific object to check against if `$cap` is a "meta" capability.
-	 *                              Meta capabilities such as `edit_post` and `edit_user` are capabilities used by
-	 *                              by the `map_meta_cap()` function to map to primitive capabilities that a user or
-	 *                              role has, such as `edit_posts` and `edit_others_posts`.
-	 * @return bool Whether the user has the given capability, or, if `$object_id` is passed, whether the user has
-	 *              the given capability for that object.
-	 */
-	public function has_cap( $cap ) {
-		if ( is_numeric( $cap ) ) {
-			_deprecated_argument( __FUNCTION__, '2.0.0', __( 'Usage of user levels is deprecated. Use capabilities instead.' ) );
-			$cap = $this->translate_level_to_cap( $cap );
-		}
-
-		$args = array_slice( func_get_args(), 1 );
-		$args = array_merge( array( $cap, $this->ID ), $args );
-		$caps = call_user_func_array( 'map_meta_cap', $args );
-
-		// Multisite super admin has all caps by definition, Unless specifically denied.
-		if ( is_multisite() && is_super_admin( $this->ID ) ) {
-			if ( in_array('do_not_allow', $caps) )
-				return false;
-			return true;
-		}
-
-		/**
-		 * Dynamically filter a user's capabilities.
-		 *
-		 * @since 2.0.0
-		 * @since 3.7.0 Added the user object.
-		 *
-		 * @param array   $allcaps An array of all the user's capabilities.
-		 * @param array   $caps    Actual capabilities for meta capability.
-		 * @param array   $args    Optional parameters passed to has_cap(), typically object ID.
-		 * @param WP_User $user    The user object.
-		 */
-		$capabilities = apply_filters( 'user_has_cap', $this->allcaps, $caps, $args, $this );
-
-		// Everyone is allowed to exist.
-		$capabilities['exist'] = true;
-
-		// Nobody is allowed to do things they are not allowed to do.
-		unset( $capabilities['do_not_allow'] );
-
-		// Must have ALL requested caps.
-		foreach ( (array) $caps as $cap ) {
-			if ( empty( $capabilities[ $cap ] ) )
-				return false;
-		}
-
-		return true;
-	}
-
+	// refactored. public function has_cap( $cap ) {}
 	// refactored. public function translate_level_to_cap( $level ) {}
 
 	/**

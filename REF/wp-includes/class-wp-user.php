@@ -414,15 +414,41 @@ EOQ
 		$args = array_slice( func_get_args(), 1 );
 		$args = array_merge( array( $cap, $this->ID ), $args );
 		$caps = call_user_func_array( 'map_meta_cap', $args );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/class-wp-user.php
- */
+
+		// Multisite super admin has all caps by definition, unless specifically denied.
+		if ( is_multisite() && is_super_admin( $this->ID ) ) {
+			return in_array( 'do_not_allow', $caps )
+				? FALSE
+				: TRUE;
+		}
+
+		/**
+		 * Dynamically filter a user's capabilities.
+		 *
+		 * @since 2.0.0
+		 * @since 3.7.0 Added the user object.
+		 *
+		 * @param array   $allcaps An array of all the user's capabilities.
+		 * @param array   $caps    Actual capabilities for meta capability.
+		 * @param array   $args    Optional parameters passed to has_cap(), typically object ID.
+		 * @param WP_User $user    The user object.
+		 */
+		$capabilities = apply_filters( 'user_has_cap', $this->allcaps, $caps, $args, $this );
+
+		// Everyone is allowed to exist.
+		$capabilities['exist'] = TRUE;
+
+		// Nobody is allowed to do things they are not allowed to do.
+		unset( $capabilities['do_not_allow'] );
+
+		// Must have ALL requested caps.
+		foreach ( ( array ) $caps as $cap ) {
+			if ( empty( $capabilities[ $cap ] ) ) {
+				return FALSE;
+			}
+		}
+
+		return TRUE;
 	}
 
 	/**
