@@ -390,6 +390,25 @@ EOQ
 		return $this->allcaps;
 	}
 
+	/**
+	 * Whether the user has a specific capability.
+	 *
+	 * While checking against a role in place of a capability is supported in part, this practice is discouraged as it may produce unreliable results.
+	 *
+	 * @since 2.0.0
+	 * @see   map_meta_cap()
+	 *
+	 * @param  string $cap            Capability name.
+	 * @param  int    $object_id, ... Optional.
+	 *                                ID of a specific object to check against if `$cap` is a "meta" capability.
+	 *                                Meta capabilities such as `edit_post` and `edit_user` are capabilities used by the `map_meta_cap()` function to map to primitive capabilities that a user or role has, such as `edit_posts` and `edit_others_posts`.
+	 * @return bool   Whether the user has the given capability, or, if `$object_id` is passed, whether the user has the given capability for that object.
+	 */
+	public function has_cap( $cap )
+	{
+		if ( is_numeric( $cap ) ) {
+			_deprecated_argument( __FUNCTION__, '2.0.0', __( 'Usage of user levels is deprecated. Use capabilities instead.' ) );
+			$cap = $this->translate_level_to_cap( $cap );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -398,6 +417,20 @@ EOQ
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-user.php
+ * -> wp-includes/class-wp-user.php
+ */
+		}
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-user.php
+ * @NOW 008: wp-includes/class-wp-user.php
  */
 
 	/**
