@@ -237,6 +237,31 @@ function _get_meta_table( $type )
 }
 
 /**
+ * Determine whether a meta key is protected.
+ *
+ * @since 3.1.3
+ *
+ * @param  string      $meta_key  Meta key
+ * @param  string|null $meta_type
+ * @return bool        True if the key is protected, false otherwise.
+ */
+function is_protected_meta( $meta_key, $meta_type = NULL )
+{
+	$protected = '_' == $meta_key[0];
+
+	/**
+	 * Filters whether a meta key is protected.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param bool   $protected Whether the key is protected.
+	 * @param string $meta_key  Meta key.
+	 * @param string $meta_type Meta type.
+	 */
+	return apply_filters( 'is_protected_meta', $protected, $meta_key, $meta_type );
+}
+
+/**
  * Filter out `register_meta()` args based on a whitelist.
  * `register_meta()` args may change over time, so requiring the whitelist to be explicitly turned off is a warranty seal of sorts.
  *

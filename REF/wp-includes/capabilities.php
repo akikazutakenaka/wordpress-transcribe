@@ -297,6 +297,20 @@ function map_meta_cap( $cap, $user_id )
 			list( $_, $object_type, $_ ) = explode( '_', $cap );
 			$object_id = ( int ) $args[0];
 			$object_subtype = get_object_subtype( $object_type, $object_id );
+
+			if ( empty( $object_subtype ) ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			$caps = map_meta_cap( "edit_{$object_type}", $user_id, $object_id );
+
+			$meta_key = isset( $args[1] )
+				? $args[1]
+				: FALSE;
+
+			if ( $meta_key ) {
+				$allowed = ! is_protected_meta( $meta_key, $object_type );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -307,6 +321,7 @@ function map_meta_cap( $cap, $user_id )
  * <- wp-includes/class-wp-user.php
  * @NOW 008: wp-includes/capabilities.php
  */
+			}
 	}
 }
 
