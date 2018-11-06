@@ -289,16 +289,34 @@ function get_object_subtype( $object_type, $object_id )
 
 		case 'comment':
 			$comment = get_comment( $object_id );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * @NOW 009: wp-includes/meta.php
- */
+
+			if ( ! $comment ) {
+				break;
+			}
+
+			$object_subtype = 'comment';
+			break;
+
+		case 'user':
+			$user = get_user_by( 'id', $object_id );
+
+			if ( ! $user ) {
+				break;
+			}
+
+			$object_subtype = 'user';
+			break;
 	}
+
+	/**
+	 * Filters the object subtype identifier for a non standard object type.
+	 *
+	 * The dynamic portion of the hook, `$object_type`, refers to the object type (post, comment, term, or user).
+	 *
+	 * @since 4.9.8
+	 *
+	 * @param string $object_subtype Empty string to override.
+	 * @param int    $object_id      ID of the object to get the subtype for.
+	 */
+	return apply_filters( "get_object_subtype_{$object_type}", $object_subtype, $object_id );
 }
