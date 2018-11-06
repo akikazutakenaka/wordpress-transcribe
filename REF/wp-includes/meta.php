@@ -299,7 +299,6 @@ function get_object_subtype( $object_type, $object_id )
  * <- wp-includes/class-wp-user.php
  * <- wp-includes/capabilities.php
  * @NOW 009: wp-includes/meta.php
- * -> wp-includes/class-wp-comment.php
  */
 	}
 }

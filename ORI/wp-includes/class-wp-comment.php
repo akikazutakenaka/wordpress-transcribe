@@ -15,18 +15,7 @@
 final class WP_Comment {
 	// refactored. public $comment_ID;
 	// :
-	// refactored. public function __construct( $comment ) {}
-
-	/**
-	 * Convert object to array.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @return array Object as array.
-	 */
-	public function to_array() {
-		return get_object_vars( $this );
-	}
+	// refactored. public function to_array() {}
 
 	/**
 	 * Get the children of a comment.
