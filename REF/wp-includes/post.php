@@ -649,6 +649,32 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 
 	// Don't allow contributors to set the post slug for pending review posts.
 	if ( 'pending' == $post_status && ! current_user_can( 'publish_posts' ) ) {
+		$post_name = '';
+	}
+
+	/**
+	 * Create a valid post name.
+	 * Drafts and pending posts are allowed to have an empty post name.
+	 */
+	if ( empty( $post_name ) ) {
+		$post_name = ! in_array( $post_status, array( 'draft', 'pending', 'auto-draft' ) )
+			? sanitize_title( $post_title )
+			: '';
+	} else {
+		// On updates, we need to check to see if it's using the old, fixed sanitization context.
+		$check_name = sanitize_title( $post_name, '', 'old-save' );
+
+		$post_name = $update && strtolower( urlencode( $post_name ) ) == $check_name && get_post_field( 'post_name', $post_ID ) == $check_name
+			? $check_name
+			: sanitize_title( $post_name ); // New post, or slug has changed.
+	}
+
+	// If the post date is empty (due to having been new or a draft) and status is not 'draft' or 'pending', set date to now.
+	$post_date = empty( $postarr['post_date'] ) || '0000-00-00 00:00:00' == $postarr['post_date']
+		? ( empty( $postarr['post_date_gmt'] ) || '0000-00-00 00:00:00' == $postarr['post_date_gmt']
+			? current_time( 'mysql' )
+			: get_date_from_gmt( $postarr['post_date_gmt'] ) )
+		: $postarr['post_date'];
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -657,7 +683,6 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
  */
-	}
 }
 
 /**

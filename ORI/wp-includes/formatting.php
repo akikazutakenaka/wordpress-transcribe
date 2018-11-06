@@ -914,36 +914,7 @@ function get_gmt_from_date( $string, $format = 'Y-m-d H:i:s' ) {
 	return $string_gmt;
 }
 
-/**
- * Converts a GMT date into the correct format for the blog.
- *
- * Requires and returns a date in the Y-m-d H:i:s format. If there is a
- * timezone_string available, the returned date is in that timezone, otherwise
- * it simply adds the value of gmt_offset. Return format can be overridden
- * using the $format parameter
- *
- * @since 1.2.0
- *
- * @param string $string The date to be converted.
- * @param string $format The format string for the returned date (default is Y-m-d H:i:s)
- * @return string Formatted date relative to the timezone / GMT offset.
- */
-function get_date_from_gmt( $string, $format = 'Y-m-d H:i:s' ) {
-	$tz = get_option( 'timezone_string' );
-	if ( $tz ) {
-		$datetime = date_create( $string, new DateTimeZone( 'UTC' ) );
-		if ( ! $datetime )
-			return date( $format, 0 );
-		$datetime->setTimezone( new DateTimeZone( $tz ) );
-		$string_localtime = $datetime->format( $format );
-	} else {
-		if ( ! preg_match('#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches) )
-			return date( $format, 0 );
-		$string_time = gmmktime( $matches[4], $matches[5], $matches[6], $matches[2], $matches[3], $matches[1] );
-		$string_localtime = gmdate( $format, $string_time + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-	}
-	return $string_localtime;
-}
+// refactored. function get_date_from_gmt( $string, $format = 'Y-m-d H:i:s' ) {}
 
 /**
  * Computes an offset in seconds from an iso8601 timezone.
