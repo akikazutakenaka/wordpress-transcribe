@@ -113,17 +113,21 @@ function get_role( $role )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * <- wp-includes/capabilities.php
- * @NOW 010: wp-includes/capabilities.php
+ * Retrieve a list of super admins.
+ *
+ * @since  3.0.0
+ * @global array $super_admins
+ *
+ * @return array List of super admin logins.
  */
+function get_super_admins()
+{
+	global $super_admins;
+
+	return isset( $super_admins )
+		? $super_admins
+		: get_site_option( 'site_admins', array( 'admin' ) );
+}
 
 /**
  * Determine if user is a site admin.
@@ -156,7 +160,6 @@ function is_super_admin( $user_id = FALSE )
  * <- wp-includes/class-wp-user.php
  * <- wp-includes/capabilities.php
  * @NOW 009: wp-includes/capabilities.php
- * -> wp-includes/capabilities.php
  */
 	}
 }

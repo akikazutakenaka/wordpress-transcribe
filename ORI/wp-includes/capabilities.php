@@ -684,23 +684,7 @@ function remove_role( $role ) {
 	wp_roles()->remove_role( $role );
 }
 
-/**
- * Retrieve a list of super admins.
- *
- * @since 3.0.0
- *
- * @global array $super_admins
- *
- * @return array List of super admin logins
- */
-function get_super_admins() {
-	global $super_admins;
-
-	if ( isset($super_admins) )
-		return $super_admins;
-	else
-		return get_site_option( 'site_admins', array('admin') );
-}
+// refactored. function get_super_admins() {}
 
 /**
  * Determine if user is a site admin.
