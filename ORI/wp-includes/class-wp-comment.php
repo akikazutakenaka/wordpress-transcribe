@@ -51,20 +51,7 @@ final class WP_Comment {
 		return new WP_Comment( $_comment );
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * Populates properties with object vars.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param WP_Comment $comment Comment object.
-	 */
-	public function __construct( $comment ) {
-		foreach ( get_object_vars( $comment ) as $key => $value ) {
-			$this->$key = $value;
-		}
-	}
+	// refactored. public function __construct( $comment ) {}
 
 	/**
 	 * Convert object to array.
