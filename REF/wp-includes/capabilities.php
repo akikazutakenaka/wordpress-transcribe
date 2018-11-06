@@ -121,5 +121,42 @@ function get_role( $role )
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-user.php
  * <- wp-includes/capabilities.php
- * @NOW 009: wp-includes/capabilities.php
+ * <- wp-includes/capabilities.php
+ * @NOW 010: wp-includes/capabilities.php
  */
+
+/**
+ * Determine if user is a site admin.
+ *
+ * @since 3.0.0
+ *
+ * @param  int  $user_id (Optional) The ID of a user.
+ *                       Defaults to the current user.
+ * @return bool True if the user is a site admin.
+ */
+function is_super_admin( $user_id = FALSE )
+{
+	$user = ! $user_id || $user_id == get_current_user_id()
+		? wp_get_current_user()
+		: get_userdata( $user_id );
+
+	if ( ! $user || ! $user->exists() ) {
+		return FALSE;
+	}
+
+	if ( is_multisite() ) {
+		$super_admins = get_super_admins();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-user.php
+ * <- wp-includes/capabilities.php
+ * @NOW 009: wp-includes/capabilities.php
+ * -> wp-includes/capabilities.php
+ */
+	}
+}
