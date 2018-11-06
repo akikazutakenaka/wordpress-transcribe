@@ -33,16 +33,25 @@ function get_comment( &$comment = NULL, $output = OBJECT )
 		: ( is_object( $comment )
 			? new WP_Comment( $comment )
 			: WP_Comment::get_instance( $comment ) );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * <- wp-includes/meta.php
- * @NOW 010: wp-includes/comment.php
- */
+
+	if ( ! $_comment ) {
+		return NULL;
+	}
+
+	/**
+	 * Fires after a comment is retrieved.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param mixed $_comment Comment data.
+	 */
+	$_comment = apply_filters( 'get_comment', $_comment );
+
+	return $output == OBJECT
+		? $_comment
+		: ( $output == ARRAY_A
+			? $_comment->to_array()
+			: ( $output == ARRAY_N
+				? array_values( $_comment->to_array() )
+				: $_comment ) );
 }
