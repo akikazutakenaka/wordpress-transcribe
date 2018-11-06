@@ -1474,22 +1474,7 @@ function get_all_post_type_supports( $post_type ) {
 	return array();
 }
 
-/**
- * Check a post type's support for a given feature.
- *
- * @since 3.0.0
- *
- * @global array $_wp_post_type_features
- *
- * @param string $post_type The post type being checked.
- * @param string $feature   The feature being checked.
- * @return bool Whether the post type supports the given feature.
- */
-function post_type_supports( $post_type, $feature ) {
-	global $_wp_post_type_features;
-
-	return ( isset( $_wp_post_type_features[$post_type][$feature] ) );
-}
+// refactored. function post_type_supports( $post_type, $feature ) {}
 
 /**
  * Retrieves a list of post type names that support a specific feature.

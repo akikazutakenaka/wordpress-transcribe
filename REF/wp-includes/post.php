@@ -168,6 +168,22 @@ function get_post_field( $field, $post = NULL, $context = 'display' )
 }
 
 /**
+ * Check a post type's support for a given feature.
+ *
+ * @since  3.0.0
+ * @global array $_wp_post_type_features
+ *
+ * @param  string $post_type The post type being checked.
+ * @param  string $feature   The feature being checked.
+ * @return bool   Whether the post type supports the given feature.
+ */
+function post_type_supports( $post_type, $feature )
+{
+	global $_wp_post_type_features;
+	return isset( $_wp_post_type_features[ $post_type ][ $feature ] );
+}
+
+/**
  * Retrieve post meta field for a post.
  *
  * @since 1.5.0
@@ -514,6 +530,24 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 		}
 
 		$guid = get_post_field( 'guid', $post_ID );
+		$previous_status = get_post_field( 'post_status', $post_ID );
+	} else {
+		$previous_status = 'new';
+	}
+
+	$post_type = empty( $postarr['post_type'] )
+		? 'post'
+		: $postarr['post_type'];
+
+	$post_title   = $postarr['post_title'];
+	$post_content = $postarr['post_content'];
+	$post_excerpt = $postarr['post_excerpt'];
+
+	$post_name = isset( $postarr['post_name'] )
+		? $postarr['post_name']
+		: $post_before->post_name; // For an update, don't modify the post_name if it wasn't supplied as an argument.
+
+	$maybe_empty = 'attachment' !== $post_type && ! $post_content && ! $post_title && ! $post_excerpt && post_type_supports( $post_type, 'editor' ) && post_type_supports( $post_type, 'title' ) && post_type_supports( $post_type, 'excerpt' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -522,7 +556,6 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
  */
-	}
 }
 
 /**
