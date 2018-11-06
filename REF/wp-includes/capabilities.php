@@ -435,17 +435,190 @@ function map_meta_cap( $cap, $user_id )
 					: ( is_multisite() && ! is_super_admin()
 						? 'do_not_allow'
 						: $cap ) );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * @NOW 008: wp-includes/capabilities.php
- */
+
+			break;
+
+		case 'update_plugins':
+		case 'delete_plugins':
+		case 'install_plugins':
+		case 'upload_plugins':
+		case 'update_themes':
+		case 'delete_themes':
+		case 'install_themes':
+		case 'upload_themes':
+		case 'update_core':
+			/**
+			 * Disallow anything that creates, deletes, or updates core, plugin, or theme files.
+			 * Files in uploads are excepted.
+			 */
+			$caps[] = ! wp_is_file_mod_allowed( 'capability_update_core' )
+				? 'do_not_allow'
+				: ( is_multisite() && ! is_super_admin( $user_id )
+					? 'do_not_allow'
+					: ( 'upload_themes' === $cap
+						? 'install_themes'
+						: ( 'upload_plugins' === $cap
+							? 'install_plugins'
+							: $cap ) ) );
+
+			break;
+
+		case 'install_languages':
+		case 'update_languages':
+			$caps[] = ! wp_is_file_mod_allowed( 'can_install_language_pack' )
+				? 'do_not_allow'
+				: ( is_multisite() && ! is_super_admin( $user_id )
+					? 'do_not_allow'
+					: 'install_languages' );
+
+			break;
+
+		case 'activate_plugins':
+		case 'deactivate_plugins':
+		case 'activate_plugin':
+		case 'deactivate_plugin':
+			$caps[] = 'activate_plugins';
+
+			if ( is_multisite() ) {
+				// update_, install_, and delete_ are handled above with is_super_admin().
+				$menu_perms = get_site_option( 'menu_items', array() );
+
+				if ( empty( $menu_perms['plugins'] ) ) {
+					$caps[] = 'manage_network_plugins';
+				}
+			}
+
+			break;
+
+		case 'delete_user':
+		case 'delete_users':
+			// If multisite only super admins can delete users.
+			$caps[] = is_multisite() && ! is_super_admin( $user_id )
+				? 'do_not_allow'
+				: 'delete_users'; // delete_user maps to delete_users.
+
+			break;
+
+		case 'create_users':
+			$caps[] = ! is_multisite()
+				? $cap
+				: ( is_super_admin( $user_id ) || get_site_option( 'add_new_users' )
+					? $cap
+					: 'do_not_allow' );
+
+			break;
+
+		case 'manage_links':
+			$caps[] = get_option( 'link_manager_enabled' )
+				? $cap
+				: 'do_not_allow';
+
+			break;
+
+		case 'customize':
+			$caps[] = 'edit_theme_options';
+			break;
+
+		case 'delete_site':
+			$caps[] = is_multisite()
+				? 'manage_options'
+				: 'do_not_allow';
+
+			break;
+
+		case 'edit_term':
+		case 'delete_term':
+		case 'assign_term':
+			$term_id = ( int ) $args[0];
+			$term = get_term( $term_id );
+
+			if ( ! $term || is_wp_error( $term ) ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			$tax = get_taxonomy( $term->taxonomy );
+
+			if ( ! $tax ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			if ( 'delete_term' === $cap && $term->term_id == get_option( 'default_' . $term->taxonomy ) ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			$taxo_cap = $cap . 's';
+			$caps = map_meta_cap( $tax->cap->$taxo_cap, $user_id, $term_id );
+			break;
+
+		case 'manage_post_tags':
+		case 'edit_categories':
+		case 'edit_post_tags':
+		case 'delete_categories':
+		case 'delete_post_tags':
+			$caps[] = 'manage_categories';
+			break;
+
+		case 'assign_categories':
+		case 'assign_post_tags':
+			$caps[] = 'edit_posts';
+			break;
+
+		case 'create_sites':
+		case 'delete_sites':
+		case 'manage_network':
+		case 'manage_sites':
+		case 'manage_network_users':
+		case 'manage_network_plugins':
+		case 'manage_network_themes':
+		case 'manage_network_options':
+		case 'upgrade_network':
+			$caps[] = $cap;
+			break;
+
+		case 'setup_network':
+			$caps[] = is_multisite()
+				? 'manage_network_options'
+				: 'manage_options';
+
+			break;
+
+		case 'export_others_personal_data':
+		case 'erase_others_personal_data':
+		case 'manage_privacy_options':
+			$caps[] = is_multisite()
+				? 'manage_network'
+				: 'manage_options';
+
+			break;
+
+		default:
+			// Handle meta capabilities for custom post types.
+			global $post_type_meta_caps;
+
+			if ( isset( $post_type_meta_caps[ $cap ] ) ) {
+				$args = array_merge( array( $post_type_meta_caps[ $cap ], $user_id ), $args );
+				return call_user_func_array( 'map_meta_cap', $args );
+			}
+
+			// If no meta caps match, return the original cap.
+			$caps[] = $cap;
 	}
+
+	/**
+	 * Filters a user's capabilities depending on specific context and/or privilege.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array  $caps    Returns the user's actual capabilities.
+	 * @param string $cap     Capability name.
+	 * @param int    $user_id The user ID.
+	 * @param array  $args    Adds the context to the cap.
+	 *                        Typically the object ID.
+	 */
+	return apply_filters( 'map_meta_cap', $caps, $cap, $user_id, $args );
 }
 
 /**
