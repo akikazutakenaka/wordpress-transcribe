@@ -85,6 +85,168 @@ function map_meta_cap( $cap, $user_id )
 			}
 
 			$post_type = get_post_type_object( $post->post_type );
+
+			if ( ! $post_type ) {
+				_doing_it_wrong( __FUNCTION__, sprintf( __( 'The post type %1$s is not registered, so it may not be reliable to check the capability "%2$s" against a post of that type.' ), $post->post_type, $cap ), '4.4.0' );
+				$caps[] = 'edit_others_posts';
+				break;
+			}
+
+			if ( ! $post_type->map_meta_cap ) {
+				$caps[] = $post_type->cap->$cap;
+
+				// Prior to 3.1 we would re-call map_meta_cap here.
+				if ( 'delete_post' == $cap ) {
+					$cap = $post_type->cap->$cap;
+				}
+
+				break;
+			}
+
+			// If the post author is set and the user is the author...
+			if ( $post->post_author && $user_id == $post->post_author ) {
+				// If the post is published or scheduled...
+				if ( in_array( $post->post_status, array( 'publish', 'future' ), TRUE ) ) {
+					$caps[] = $post_type->cap->delete_published_posts;
+				} elseif ( 'trash' == $post->post_status ) {
+					$status = get_post_meta( $post->ID, '_wp_trash_meta_status', TRUE );
+
+					$caps[] = in_array( $status, array( 'publish', 'future' ), TRUE )
+						? $post_type->cap->delete_published_posts
+						: $post_type->cap->delete_posts;
+				} else {
+					// If the post is draft...
+					$caps[] = $post_type->cap->delete_posts;
+				}
+			} else {
+				// The user is trying to edit someone else's post.
+				$caps[] = $post_type->cap->delete_others_posts;
+
+				// The post is published or scheduled, extra cap required.
+				if ( in_array( $post->post_status, array( 'publish', 'future' ), TRUE ) ) {
+					$caps[] = $post_type->cap->delete_published_posts;
+				} elseif ( 'private' == $post->post_status ) {
+					$caps[] = $post_type->cap->delete_private_posts;
+				}
+			}
+
+			//Setting the privacy policy page requires `manage_privacy_options`, so deleting it should require that too.
+			if ( ( int ) get_option( 'wp_page_for_privacy_policy' ) === $post->ID ) {
+				$caps = array_merge( $caps, map_meta_cap( 'manage_privacy_options', $user_id ) );
+			}
+
+			break;
+
+		case 'edit_post':
+		case 'edit_page':
+			// edit_post breaks down to edit_posts, edit_published_posts, or edit_others_posts
+			$post = get_post( $args[0] );
+
+			if ( ! $post ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			if ( 'revision' == $post->post_type ) {
+				$post = get_post( $post->post_parent );
+
+				if ( ! $post ) {
+					$caps[] = 'do_not_allow';
+					break;
+				}
+			}
+
+			$post_type = get_post_type_object( $post->post_type );
+
+			if ( ! $post_type ) {
+				_doing_it_wrong( __FUNCTION__, sprintf( __( 'The post type %1$s is not registered, so it may not be reliable to check the capability "%2$s" against a post of that type.' ), $post->post_type, $cap ), '4.4.0' );
+				$caps[] = 'edit_others_posts';
+				break;
+			}
+
+			if ( ! $post_type->map_meta_cap ) {
+				$caps[] = $post_type->cap->$cap;
+
+				// Prior to 3.1 we would re-call map_meta_cap here.
+				if ( 'edit_post' == $cap ) {
+					$cap = $post_type->cap->$cap;
+				}
+
+				break;
+			}
+
+			// If the post author is set and the user is the author...
+			if ( $post->post_author && $user_id == $post->post_author ) {
+				// If the post is published or scheduled...
+				if ( in_array( $post->post_status, array( 'publish', 'future' ), TRUE ) ) {
+					$caps[] = $post_type->cap->edit_published_posts;
+				} elseif ( 'trash' == $post->post_status ) {
+					$status = get_post_meta( $post->ID, '_wp_trash_meta_status', TRUE );
+
+					$caps[] = in_array( $status, array( 'publish', 'future' ), TRUE )
+						? $post_type->cap->edit_published_posts
+						: $post_type->cap->edit_posts;
+				} else {
+					// If the post is draft...
+					$caps[] = $post_type->cap->edit_posts;
+				}
+			} else {
+				// The user is trying to edit someone else's post.
+				$caps[] = $post_type->cap->edit_others_posts;
+
+				// The post is published or scheduled, extra cap required.
+				if ( in_array( $post->post_status, array( 'publish', 'future' ), TRUE ) ) {
+					$caps[] = $post_type->cap->edit_published_posts;
+				} elseif ( 'private' == $post->post_status ) {
+					$caps[] = $post_type->cap->edit_private_posts;
+				}
+			}
+
+			// Setting the privacy policy page requires `manage_privacy_options`, so editing it should require that too.
+			if ( ( int ) get_option( 'wp_page_for_privacy_policy' ) === $post->ID ) {
+				$caps = array_merge( $caps, map_meta_cap( 'manage_privacy_options', $user_id ) );
+			}
+
+			break;
+
+		case 'read_post':
+		case 'read_page':
+			$post = get_post( $args[0] );
+
+			if ( ! $post ) {
+				$caps[] = 'do_not_allow';
+				break;
+			}
+
+			if ( 'revision' == $post->post_type ) {
+				$post = get_post( $post->post_parent );
+
+				if ( ! $post ) {
+					$caps[] = 'do_not_allow';
+					break;
+				}
+			}
+
+			$post_type = get_post_type_object( $post->post_type );
+
+			if ( ! $post_type ) {
+				_doing_it_wrong( __FUNCTION__, sprintf( __( 'The post type %1$s is not registered, so it may not be reliable to check the capability "%2$s" against a post of that type.' ), $post->post_type, $cap ), '4.4.0' );
+				$caps[] = 'edit_others_posts';
+				break;
+			}
+
+			if ( ! $post_type->map_meta_cap ) {
+				$caps[] = $post_type->cap->$cap;
+
+				// Prior to 3.1 we would re-call map_meta_cap here.
+				if ( 'read_post' == $cap ) {
+					$cap = $post_type->cap->$cap;
+				}
+
+				break;
+			}
+
+			$status_obj = get_post_status_object( $post->post_status );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php

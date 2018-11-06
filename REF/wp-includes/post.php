@@ -168,6 +168,25 @@ function get_post_field( $field, $post = NULL, $context = 'display' )
 }
 
 /**
+ * Retrieve a post status object by name.
+ *
+ * @since  3.0.0
+ * @global array $wp_post_statuses List of post statuses.
+ * @see    register_post_status()
+ *
+ * @param  string      $post_status The name of a registered post status.
+ * @return object|null A post status object.
+ */
+function get_post_status_object( $post_status )
+{
+	global $wp_post_statuses;
+
+	return empty( $wp_post_statuses[ $post_status ] )
+		? NULL
+		: $wp_post_statuses[ $post_status ];
+}
+
+/**
  * Retrieves a post type object by name.
  *
  * @since  3.0.0
