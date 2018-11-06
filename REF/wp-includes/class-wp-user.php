@@ -390,6 +390,16 @@ EOQ
 		return $this->allcaps;
 	}
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/class-wp-user.php
+ */
+
 	/**
 	 * Sets the site to operate on.
 	 * Defaults to the current site.

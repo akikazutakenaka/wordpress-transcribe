@@ -548,6 +548,51 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 		: $post_before->post_name; // For an update, don't modify the post_name if it wasn't supplied as an argument.
 
 	$maybe_empty = 'attachment' !== $post_type && ! $post_content && ! $post_title && ! $post_excerpt && post_type_supports( $post_type, 'editor' ) && post_type_supports( $post_type, 'title' ) && post_type_supports( $post_type, 'excerpt' );
+
+	/**
+	 * Filters whether the post should be considered "empty".
+	 *
+	 * The post is considered "empty" if both:
+	 * 1. The post type supports the title, editor, and excerpt fields
+	 * 2. The title, editor, and excerpt fields are all empty
+	 *
+	 * Returning a truthy value to the filter will effectively short-circuit the new post being inserted, returning 0.
+	 * If $wp_error is true, a WP_Error will be returned instead.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param bool  $maybe_empty Whether the post should be considered "empty".
+	 * @param array $postarr     Array of post data.
+	 */
+	if ( apply_filters( 'wp_insert_post_empty_content', $maybe_empty, $postarr ) ) {
+		return $wp_error
+			? new WP_Error( 'empty_content', __( 'Content, title, and excerpt are empty.' ) )
+			: 0;
+	}
+
+	$post_status = empty( $postarr['post_status'] )
+		? 'draft'
+		: $postarr['post_status'];
+
+	if ( 'attachment' === $post_type && ! in_array( $post_status, array( 'inherit', 'private', 'trash', 'auto-draft' ), TRUE ) ) {
+		$post_status = 'inherit';
+	}
+
+	if ( ! empty( $postarr['post_category'] ) ) {
+		// Filter out empty terms.
+		$post_category = array_filter( $postarr['post_category'] );
+	}
+
+	// Make sure we set a valid category.
+	if ( empty( $post_category ) || 0 == count( $post_category ) || ! is_array( $post_category ) ) {
+		// 'post' requires at least one category.
+		$post_category = 'post' == $post_type && 'auto-draft' != $post_status
+			? array( get_option( 'default_category' ) )
+			: array();
+	}
+
+	// Don't allow contributors to set the post slug for pending review posts.
+	if ( 'pending' == $post_status && ! current_user_can( 'publish_posts' ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -555,7 +600,9 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/class-wp-user.php
  */
+	}
 }
 
 /**
