@@ -509,7 +509,6 @@ function apply_filters_deprecated( $tag, $args, $version, $replacement = FALSE, 
  * <- wp-includes/class-wp-user.php
  * <- wp-includes/capabilities.php
  * @NOW 009: wp-includes/plugin.php
- * -> wp-includes/functions.php
  */
 }
 

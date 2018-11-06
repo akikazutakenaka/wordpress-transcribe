@@ -1019,17 +1019,58 @@ function _deprecated_argument( $function, $version, $message = NULL )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-user.php
- * <- wp-includes/capabilities.php
- * <- wp-includes/plugin.php
- * @NOW 010: wp-includes/functions.php
+ * Marks a deprecated action or filter hook as deprecated and throws a notice.
+ *
+ * Use the {@see 'deprecated_hook_run'} action to get the backtrace describing where the deprecated hook was called.
+ *
+ * Default behavior is to trigger a user error if `WP_DEBUG` is true.
+ *
+ * This function is called by the do_action_deprecated() and apply_filters_deprecated() functions, and so generally does not need to be called directly.
+ *
+ * @since  4.6.0
+ * @access private
+ *
+ * @param string $hook        The hook that was used.
+ * @param string $version     The version of WordPress that deprecated the hook.
+ * @param string $replacement Optional.
+ *                            The hook that should have been used.
+ * @param string $message     Optional.
+ *                            A message regarding the change.
  */
+function _deprecated_hook( $hook, $version, $replacement = NULL, $message = NULL )
+{
+	/**
+	 * Filters when a deprecated hook is called.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param string $hook        The hook that was called.
+	 * @param string $replacement The hook that should be used as a replacement.
+	 * @param string $version     The version of WordPress that deprecated the argument used.
+	 * @param string $message     A message regarding the change.
+	 */
+	do_action( 'deprecated_hook_run', $hook, $replacement, $version, $message );
+
+	/**
+	 * Filters whether to trigger deprecated hook errors.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param bool $trigger Whether to trigger deprecated hook errors.
+	 *                      Requires `WP_DEBUG` to be defined true.
+	 */
+	if ( WP_DEBUG && apply_filters( 'deprecated_hook_trigger_error', TRUE ) ) {
+		$message = empty( $message )
+			? ''
+			: ' ' . $message;
+
+		if ( ! is_null( $replacement ) ) {
+			trigger_error( sprintf( __( '%1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.' ), $hook, $version, $replacement ) . $message );
+		} else {
+			trigger_error( sprintf( __( '%1$s is <strong>deprecated</strong> since version %2$s with no alternative available.' ), $hook, $version ) . $message );
+		}
+	}
+}
 
 /**
  * Mark something as being incorrectly called.
