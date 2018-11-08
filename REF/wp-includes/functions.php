@@ -120,6 +120,7 @@ function date_i18n( $dateformatstring, $unixtimestamp = FALSE, $gmt = FALSE )
 		$datemonth = $wp_locale->get_month( date( 'm', $i ) );
 		$datemonth_abbrev = $wp_locale->get_month_abbrev( $datemonth );
 		$dateweekday = $wp_locale->get_weekday( date( 'w', $i ) );
+		$dateweekday_abbrev = $wp_locale->get_weekday_abbrev( $dateweekday );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php

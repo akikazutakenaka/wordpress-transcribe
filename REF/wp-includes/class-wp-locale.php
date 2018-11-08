@@ -275,6 +275,21 @@ class WP_Locale
 	}
 
 	/**
+	 * Retrieve the translated weekday abbreviation.
+	 *
+	 * The weekday abbreviation is retrieved by the translated full weekday word.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param  string $weekday_name Full translated weekday word.
+	 * @return string Translated weekday abbreviation.
+	 */
+	public function get_weekday_abbrev( $weekday_name )
+	{
+		return $this->weekday_abbrev[ $weekday_name ];
+	}
+
+	/**
 	 * Retrieve the full translated month by month number.
 	 *
 	 * The $month_number parameter has to be a string because it must have the '0' in front of any number that is less than 10.

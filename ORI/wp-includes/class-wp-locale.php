@@ -35,22 +35,8 @@ class WP_Locale {
 		return $this->weekday_initial[$weekday_name];
 	}
 
-	/**
-	 * Retrieve the translated weekday abbreviation.
-	 *
-	 * The weekday abbreviation is retrieved by the translated
-	 * full weekday word.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string $weekday_name Full translated weekday word
-	 * @return string Translated weekday abbreviation
-	 */
-	public function get_weekday_abbrev($weekday_name) {
-		return $this->weekday_abbrev[$weekday_name];
-	}
-
-	// refactored. public function get_month($month_number) {}
+	// refactored. public function get_weekday_abbrev($weekday_name) {}
+	// :
 	// refactored. public function get_month_abbrev($month_name) {}
 
 	/**
