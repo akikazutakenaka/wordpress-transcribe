@@ -724,6 +724,21 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 			? 'closed'
 			: get_default_comment_status( $post_type ) )
 		: $postarr['comment_status'];
+
+	// These variables are needed by compact() later.
+	$post_content_filtered = $postarr['post_content_filtered'];
+
+	$post_author = isset( $postarr['post_author'] )
+		? $postarr['post_author']
+		: $user_id;
+
+	$ping_status = empty( $postarr['ping_status'] )
+		? get_default_comment_status( $post_type, 'pingback' )
+		: $postarr['ping_status'];
+
+	$to_ping = isset( $postarr['to_ping'] )
+		? sanitize_trackback_urls( $postarr['to_ping'] )
+		: '';
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
