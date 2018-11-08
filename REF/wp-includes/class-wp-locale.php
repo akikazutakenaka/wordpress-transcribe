@@ -259,6 +259,22 @@ class WP_Locale
 	}
 
 	/**
+	 * Retrieve the full translated weekday word.
+	 *
+	 * Week starts on translated Sunday and can be fetched by using 0 (zero).
+	 * So the week starts with 0 (zero) and ends on Saturday with is fetched by using 6 (six).
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param  int    $weekday_number 0 for Sunday through 6 Saturday.
+	 * @return string Full translated weekday.
+	 */
+	public function get_weekday( $weekday_number )
+	{
+		return $this->weekday[ $weekday_number ];
+	}
+
+	/**
 	 * Retrieve the full translated month by month number.
 	 *
 	 * The $month_number parameter has to be a string because it must have the '0' in front of any number that is less than 10.
