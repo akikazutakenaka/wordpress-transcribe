@@ -258,6 +258,17 @@ class WP_Locale
 		echo '<div class="error"><p>' . sprintf( __( 'The %s directory of the develop repository must be used for RTL.' ), '<code>build</code>' ) . '</p></div>';
 	}
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/functions.php
+ * @NOW 008: wp-includes/class-wp-locale.php
+ */
+
 	/**
 	 * Global variables are deprecated.
 	 *

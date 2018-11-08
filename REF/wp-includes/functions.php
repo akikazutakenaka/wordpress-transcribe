@@ -84,6 +84,41 @@ function current_time( $type, $gmt = 0 )
 }
 
 /**
+ * Retrieve the date in localized format, based on timestamp.
+ *
+ * If the locale specifies the locale month and weekday, then the locale will take over the format for the date.
+ * If it isn't, then the date format string will be used instead.
+ *
+ * @since  0.71
+ * @global WP_Locale
+ *
+ * @param  string   $dateformatstring Format to display the date.
+ * @param  bool|int $unixtimestamp    Optional.
+ *                                    Unix timestamp.
+ *                                    Default false.
+ * @param  bool     $gmt              Optional.
+ *                                    Whether to use GMT timezone.
+ *                                    Default false.
+ * @return string   The date, translated if locale specifies it.
+ */
+function date_i18n( $dateformatstring, $unixtimestamp = FALSE, $gmt = FALSE )
+{
+	global $wp_locale;
+	$i = $unixtimestamp;
+
+	if ( FALSE === $i ) {
+		$i = current_time( 'timestamp', $gmt );
+	}
+
+	/**
+	 * Store original value for language with untypical grammars.
+	 * See https://core.trac.wordpress.org/ticket/9396
+	 */
+	$req_format = $dateformatstring;
+
+	if ( ! empty( $wp_locale->month ) && ! empty( $wp_locale->weekday ) ) {
+		$datemonth = $wp_locale->get_month( date( 'm', $i ) );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -91,7 +126,10 @@ function current_time( $type, $gmt = 0 )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/functions.php
+ * -> wp-includes/class-wp-locale.php
  */
+	}
+}
 
 /**
  * Unserialize value only if it was serialized.
