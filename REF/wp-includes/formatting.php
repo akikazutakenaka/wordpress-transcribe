@@ -1859,6 +1859,17 @@ function format_to_edit( $content, $rich_text = FALSE )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/functions.php
+ * @NOW 008: wp-includes/formatting.php
+ */
+
+/**
  * Appends a trailing slash.
  *
  * Will remove trailing forward and backslashes if it exists already before adding a trailing forward slash.

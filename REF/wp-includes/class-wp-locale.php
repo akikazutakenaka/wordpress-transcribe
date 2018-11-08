@@ -258,16 +258,23 @@ class WP_Locale
 		echo '<div class="error"><p>' . sprintf( __( 'The %s directory of the develop repository must be used for RTL.' ), '<code>build</code>' ) . '</p></div>';
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/functions.php
- * @NOW 008: wp-includes/class-wp-locale.php
- */
+	/**
+	 * Retrieve the full translated month by month number.
+	 *
+	 * The $month_number parameter has to be a string because it must have the '0' in front of any number that is less than 10.
+	 * Starts from '01' and ends at '12'.
+	 *
+	 * You can use an integer instead and it will add the '0' before the numbers less than 10 for you.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param  string|int $month_number '01' through '12'
+	 * @return string     Translated full month name.
+	 */
+	public function get_month( $month_number )
+	{
+		return $this->month[ zeroise( $month_number, 2 ) ];
+	}
 
 	/**
 	 * Global variables are deprecated.
