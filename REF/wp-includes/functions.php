@@ -126,7 +126,6 @@ function date_i18n( $dateformatstring, $unixtimestamp = FALSE, $gmt = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/functions.php
- * -> wp-includes/formatting.php
  */
 	}
 }
