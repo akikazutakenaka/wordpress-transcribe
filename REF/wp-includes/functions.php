@@ -122,6 +122,9 @@ function date_i18n( $dateformatstring, $unixtimestamp = FALSE, $gmt = FALSE )
 		$dateweekday = $wp_locale->get_weekday( date( 'w', $i ) );
 		$dateweekday_abbrev = $wp_locale->get_weekday_abbrev( $dateweekday );
 		$datemeridiem = $wp_locale->get_meridiem( date( 'a', $i ) );
+		$datemeridiem_captial = $wp_locale->get_meridiem( date( 'A', $i ) );
+		$dateformatstring = ' ' . $dateformatstring;
+		$dateformatstring = preg_replace( "/([^\\\])D/", "\\1" . backslashit( $dateweekday_abbrev ), $dateformatstring );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php

@@ -1879,6 +1879,23 @@ function zeroise( $number, $threshold )
 }
 
 /**
+ * Adds backslashes before letters and before a number at the start of a string.
+ *
+ * @since 0.71
+ *
+ * @param  string $string Value to which backslashes will be added.
+ * @return string String with backslashes inserted.
+ */
+function backslashit( $string )
+{
+	if ( isset( $string[0] ) && $string[0] >= '0' && $string[0] <= '9' ) {
+		$string = '\\\\' . $string;
+	}
+
+	return addcslashes( $string, 'A..Za..z' );
+}
+
+/**
  * Appends a trailing slash.
  *
  * Will remove trailing forward and backslashes if it exists already before adding a trailing forward slash.
