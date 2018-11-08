@@ -37,23 +37,6 @@ class WP_Locale {
 
 	// refactored. public function get_weekday_abbrev($weekday_name) {}
 	// :
-	// refactored. public function get_month_abbrev($month_name) {}
-
-	/**
-	 * Retrieve translated version of meridiem string.
-	 *
-	 * The $meridiem parameter is expected to not be translated.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string $meridiem Either 'am', 'pm', 'AM', or 'PM'. Not translated version.
-	 * @return string Translated version
-	 */
-	public function get_meridiem($meridiem) {
-		return $this->meridiem[$meridiem];
-	}
-
-	// refactored. public function register_globals() {}
 	// refactored. public function is_rtl() {}
 
 	/**

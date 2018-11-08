@@ -323,6 +323,22 @@ class WP_Locale
 	}
 
 	/**
+	 * Retrieve translated version of meridiem string.
+	 *
+	 * The $meridiem parameter is expected to not be translated.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param  string $meridiem Either 'am', 'pm', 'AM', or 'PM'.
+	 *                          Not translated version.
+	 * @return string Translated version.
+	 */
+	public function get_meridiem( $meridiem )
+	{
+		return $this->meridiem[ $meridiem ];
+	}
+
+	/**
 	 * Global variables are deprecated.
 	 *
 	 * For backward compatibility only.
