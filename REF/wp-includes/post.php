@@ -707,6 +707,23 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 			$now = gmdate( 'Y-m-d H:i:59' );
 
 			if ( mysql2date( 'U', $post_date_gmt, FALSE ) > mysql2date( 'U', $now, FALSE ) ) {
+				$post_status = 'future';
+			}
+		} elseif ( 'future' == $post_status ) {
+			$now = gmdate( 'Y-m-d H:i:59' );
+
+			if ( mysql2date( 'U', $post_date_gmt, FALSE ) <= mysql2date( 'U', $now, FALSE ) ) {
+				$post_status = 'publish';
+			}
+		}
+	}
+
+	// Comment status.
+	$comment_status = empty( $postarr['comment_status'] )
+		? ( $update
+			? 'closed'
+			: get_default_comment_status( $post_type ) )
+		: $postarr['comment_status'];
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -715,9 +732,6 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
  */
-			}
-		}
-	}
 }
 
 /**
