@@ -118,6 +118,7 @@ function date_i18n( $dateformatstring, $unixtimestamp = FALSE, $gmt = FALSE )
 
 	if ( ! empty( $wp_locale->month ) && ! empty( $wp_locale->weekday ) ) {
 		$datemonth = $wp_locale->get_month( date( 'm', $i ) );
+		$datemonth_abbrev = $wp_locale->get_month_abbrev( $datemonth );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php

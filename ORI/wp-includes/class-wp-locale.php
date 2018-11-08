@@ -67,21 +67,7 @@ class WP_Locale {
 	}
 
 	// refactored. public function get_month($month_number) {}
-
-	/**
-	 * Retrieve translated version of month abbreviation string.
-	 *
-	 * The $month_name parameter is expected to be the translated or
-	 * translatable version of the month.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string $month_name Translated month to get abbreviated version
-	 * @return string Translated abbreviated month
-	 */
-	public function get_month_abbrev($month_name) {
-		return $this->month_abbrev[$month_name];
-	}
+	// refactored. public function get_month_abbrev($month_name) {}
 
 	/**
 	 * Retrieve translated version of meridiem string.
