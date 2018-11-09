@@ -1037,29 +1037,6 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
 }
 
 /**
- * Adds a trashed suffix for a given post.
- *
- * Store its desired (i.e. current) slug so it can try to reclaim it if the post is untrashed.
- *
- * For internal use.
- *
- * @since  4.5.0
- * @access private
- *
- * @param  WP_Post $post The post.
- * @return string  New slug for the post.
- */
-function wp_add_trashed_suffix_to_post_name_for_post( $post )
-{
-	global $wpdb;
-	$post = get_post( $post );
-
-	if ( '__trashed' === substr( $post->post_name, -9 ) ) {
-		return $post->post_name;
-	}
-
-	add_post_meta( $post->ID, '_wp_desired_post_slug', $post->post_name );
-/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -1068,4 +1045,3 @@ function wp_add_trashed_suffix_to_post_name_for_post( $post )
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
  */
-}
