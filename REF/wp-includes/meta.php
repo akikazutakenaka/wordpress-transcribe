@@ -11,6 +11,18 @@
  */
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 009: wp-includes/meta.php
+ */
+
+/**
  * Delete metadata for the specified post.
  *
  * @since  2.9.0
