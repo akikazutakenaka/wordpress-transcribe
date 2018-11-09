@@ -239,20 +239,7 @@ function wp_get_post_autosave( $post_id, $user_id = 0 ) {
 	return false;
 }
 
-/**
- * Determines if the specified post is a revision.
- *
- * @since 2.6.0
- *
- * @param int|WP_Post $post Post ID or post object.
- * @return false|int False if not a revision, ID of revision's parent otherwise.
- */
-function wp_is_post_revision( $post ) {
-	if ( !$post = wp_get_post_revision( $post ) )
-		return false;
-
-	return (int) $post->post_parent;
-}
+// refactored. function wp_is_post_revision( $post ) {}
 
 /**
  * Determines if the specified post is an autosave.
