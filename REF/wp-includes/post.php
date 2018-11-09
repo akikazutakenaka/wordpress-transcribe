@@ -240,6 +240,40 @@ function post_type_supports( $post_type, $feature )
 }
 
 /**
+ * Remove metadata matching criteria from a post.
+ *
+ * You can match based on the key, or key and value.
+ * Removing based on key and value, will keep from removing duplicate metadata with the same key.
+ * It also allows removing all metadata matching key, if needed.
+ *
+ * @since 1.5.0
+ *
+ * @param  int    $post_id    Post ID.
+ * @param  string $meta_key   Metadata name.
+ * @param  mixed  $meta_value Optional.
+ *                            Metadata value.
+ *                            Must be serializable if non-scalar.
+ *                            Default empty.
+ * @return bool   True on success, false on failure.
+ */
+function delete_post_meta( $post_id, $meta_key, $meta_value = '' )
+{
+	// Make sure meta is added to the post, not a revision.
+	if ( $the_post = wp_is_post_revision( $post_id ) ) {
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ * -> wp-includes/revision.php
+ */
+	}
+}
+
+/**
  * Retrieve post meta field for a post.
  *
  * @since 1.5.0
@@ -739,6 +773,53 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 	$to_ping = isset( $postarr['to_ping'] )
 		? sanitize_trackback_urls( $postarr['to_ping'] )
 		: '';
+
+	$pinged = isset( $postarr['pinged'] )
+		? $postarr['pinged']
+		: '';
+
+	$import_id = isset( $postarr['import_id'] )
+		? $postarr['import_id']
+		: 0;
+
+	/**
+	 * The 'wp_insert_post_parent' filter expects all variables to be present.
+	 * Previously, these variables would have already been extracted.
+	 */
+	$menu_order = isset( $postarr['menu_order'] )
+		? ( int ) $postarr['menu_order']
+		: 0;
+
+	$post_password = isset( $postarr['post_password'] )
+		? $postarr['post_password']
+		: '';
+
+	if ( 'private' == $post_status ) {
+		$post_password = '';
+	}
+
+	$post_parent = isset( $postarr['post_parent'] )
+		? ( int ) $postarr['post_parent']
+		: 0;
+
+	/**
+	 * Filters the post parent -- used to check for and prevent hierarchy loops.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param int   $post_parent Post parent ID.
+	 * @param int   $post_ID     Post ID.
+	 * @param array $new_postarr Array of parsed post data.
+	 * @param array $postarr     Array of saintized, but otherwise unmodified post data.
+	 */
+	$post_parent = apply_filters( 'wp_insert_post_parent', $post_parent, $post_ID, compact( array_keys( $postarr ) ), $postarr );
+
+	// If the postis being untrashed and it has a desired slug stored in post meta, reassign it.
+	if ( 'trash' === $previous_status && 'trash' !== $post_status ) {
+		$desired_post_slug = get_post_meta( $post_ID, '_wp_desired_post_slug', TRUE );
+
+		if ( $desired_post_slug ) {
+			delete_post_meta( $post_ID, '_wp_desired_post_slug' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -746,7 +827,10 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
+		}
+	}
 }
 
 /**
