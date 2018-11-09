@@ -302,35 +302,7 @@ function _wp_put_post_revision( $post = null, $autosave = false ) {
 	return $revision_id;
 }
 
-/**
- * Gets a post revision.
- *
- * @since 2.6.0
- *
- * @param int|WP_Post $post   The post ID or object.
- * @param string      $output Optional. The required return type. One of OBJECT, ARRAY_A, or ARRAY_N, which correspond to
- *                            a WP_Post object, an associative array, or a numeric array, respectively. Default OBJECT.
- * @param string      $filter Optional sanitation filter. See sanitize_post().
- * @return WP_Post|array|null WP_Post (or array) on success, or null on failure.
- */
-function wp_get_post_revision(&$post, $output = OBJECT, $filter = 'raw') {
-	if ( !$revision = get_post( $post, OBJECT, $filter ) )
-		return $revision;
-	if ( 'revision' !== $revision->post_type )
-		return null;
-
-	if ( $output == OBJECT ) {
-		return $revision;
-	} elseif ( $output == ARRAY_A ) {
-		$_revision = get_object_vars($revision);
-		return $_revision;
-	} elseif ( $output == ARRAY_N ) {
-		$_revision = array_values(get_object_vars($revision));
-		return $_revision;
-	}
-
-	return $revision;
-}
+// refactored. function wp_get_post_revision(&$post, $output = OBJECT, $filter = 'raw') {}
 
 /**
  * Restores a post to the specified revision.
