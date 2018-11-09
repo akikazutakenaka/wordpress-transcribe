@@ -1579,33 +1579,7 @@ function add_post_meta( $post_id, $meta_key, $meta_value, $unique = false ) {
 	return $added;
 }
 
-/**
- * Remove metadata matching criteria from a post.
- *
- * You can match based on the key, or key and value. Removing based on key and
- * value, will keep from removing duplicate metadata with the same key. It also
- * allows removing all metadata matching key, if needed.
- *
- * @since 1.5.0
- *
- * @param int    $post_id    Post ID.
- * @param string $meta_key   Metadata name.
- * @param mixed  $meta_value Optional. Metadata value. Must be serializable if
- *                           non-scalar. Default empty.
- * @return bool True on success, false on failure.
- */
-function delete_post_meta( $post_id, $meta_key, $meta_value = '' ) {
-	// Make sure meta is added to the post, not a revision.
-	if ( $the_post = wp_is_post_revision($post_id) )
-		$post_id = $the_post;
-
-	$deleted = delete_metadata( 'post', $post_id, $meta_key, $meta_value );
-	if ( $deleted ) {
-		wp_cache_set( 'last_changed', microtime(), 'posts' );
-	}
-	return $deleted;
-}
-
+// refactored. function delete_post_meta( $post_id, $meta_key, $meta_value = '' ) {}
 // refactored. function get_post_meta( $post_id, $key = '', $single = false ) {}
 
 /**

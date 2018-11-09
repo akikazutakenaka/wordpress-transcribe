@@ -264,15 +264,12 @@ function delete_post_meta( $post_id, $meta_key, $meta_value = '' )
 	}
 
 	$deleted = delete_metadata( 'post', $post_id, $meta_key, $meta_value );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/post.php
- */
+
+	if ( $deleted ) {
+		wp_cache_set( 'last_changed', microtime(), 'posts' );
+	}
+
+	return $deleted;
 }
 
 /**
@@ -829,7 +826,6 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/post.php
  */
 		}
 	}
