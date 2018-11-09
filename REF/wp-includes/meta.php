@@ -70,7 +70,6 @@ function delete_metadata( $meta_type, $object_id, $meta_key, $meta_value = '', $
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/meta.php
- * -> wp-includes/formatting.php
  */
 }
 

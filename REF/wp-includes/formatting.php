@@ -3104,16 +3104,19 @@ function wp_slash( $value )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/meta.php
- * @NOW 009: wp-includes/formatting.php
+ * Remove slashes from a string or array of strings.
+ *
+ * This should be used to remove slashes from data passed to core API that expects data to be unslashed.
+ *
+ * @since 3.6.0
+ *
+ * @param  string|array $value String or array of strings to unslash.
+ * @return string|array Unslashed value.
  */
+function wp_unslash( $value )
+{
+	return stripslashes_deep( $value );
+}
 
 /**
  * Returns the regexp for common whitespace characters.
