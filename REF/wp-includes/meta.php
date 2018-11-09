@@ -63,7 +63,6 @@ function add_metadata( $meta_type, $object_id, $meta_key, $meta_value, $unique =
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/meta.php
- * -> wp-includes/meta.php
  */
 }
 
@@ -504,17 +503,47 @@ function is_protected_meta( $meta_key, $meta_type = NULL )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/meta.php
- * @NOW 010: wp-includes/meta.php
+ * Sanitize meta value.
+ *
+ * @since 3.1.3
+ * @since 4.9.8 The `$object_type` parameter was added.
+ *
+ * @param  string $meta_key    Meta key.
+ * @param  mixed  $meta_value  Meta value to sanitize.
+ * @param  string $object_type Type of object the meta is registered to.
+ * @return mixed  Sanitized $meta_value.
  */
+function sanitize_meta( $meta_key, $meta_value, $object_type, $object_subtype = '' )
+{
+	if ( ! empty( $object_subtype ) && has_filter( "sanitize_{$object_type}_meta_{$meta_key}_for_{$object_subtype}" ) ) {
+		/**
+		 * Filters the sanitization of a specific meta key of a specific meta type and subtype.
+		 *
+		 * The dynamic portions of the hook name, `$object_type`, `$meta_key`, and `$object_subtype`, refer to the metadata object type (comment, post, or user), the meta key value, and the object subtype respectively.
+		 *
+		 * @since 4.9.8
+		 *
+		 * @param mixed  $meta_value     Meta value to sanitize.
+		 * @param string $meta_key       Meta key.
+		 * @param string $object_type    Object type.
+		 * @param string $object_subtype Object subtype.
+		 */
+		return apply_filters( "sanitize_{$object_type}_meta_{$meta_key}_for_{$object_subtype}", $meta_value, $meta_key, $object_type, $object_subtype );
+	}
+
+	/**
+	 * Filters the sanitization of a specific meta key of a specific meta type.
+	 *
+	 * The dynamic portions of the hook name, `$meta_type`, and `$meta_key`, refer to the metadata object type (comment, post, or user) and the meta key value, respectively.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param mixed  $meta_value  Meta value to sanitize.
+	 * @param string $meta_key    Meta key.
+	 * @param string $object_type Object type.
+	 */
+	return apply_filters( "sanitize_{$object_type}_meta_{$meta_key}", $meta_value, $meta_key, $object_type );
+}
 
 /**
  * Filter out `register_meta()` args based on a whitelist.
