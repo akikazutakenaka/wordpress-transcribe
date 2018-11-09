@@ -61,16 +61,138 @@ function delete_metadata( $meta_type, $object_id, $meta_key, $meta_value = '', $
 
 	// expected_slashed ($meta_key)
 	$meta_key = wp_unslash( $meta_key );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 008: wp-includes/meta.php
- */
+	$meta_value = wp_unslash( $meta_value );
+
+	/**
+	 * Filters whether to delete metadata of a specific type.
+	 *
+	 * The dynamic portion of the hook, `$meta_type`, refers to the meta object type (comment, post, or user).
+	 * Returning a non-null value will effectively short-circuit the function.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param null|bool $delete     Whether to allow metadata deletion of the given type.
+	 * @param int       $object_id  Object ID.
+	 * @param string    $meta_key   Meta key.
+	 * @param mixed     $meta_value Meta value.
+	 *                              Must be serializable if non-scalar.
+	 * @param bool      $delete_all Whether to delete the matching metadata entries for all objects, ignoring the specified $object_id.
+	 *                              Default false.
+	 */
+	$check = apply_filters( "delete_{$meta_type}_metadata", NULL, $object_id, $meta_key, $meta_value, $delete_all );
+
+	if ( NULL !== $check ) {
+		return ( bool ) $check;
+	}
+
+	$_meta_value = $meta_value;
+	$meta_value = maybe_serialize( $meta_value );
+	$query = $wpdb->prepare( <<<EOQ
+SELECT $id_column
+FROM $table
+WHERE meta_key = %s
+EOQ
+		, $meta_key );
+
+	if ( ! $delete_all ) {
+		$query .= $wpdb->prepare( " AND $type_column = %d", $object_id );
+	}
+
+	if ( '' !== $meta_value && NULL !== $meta_value && FALSE !== $meta_value ) {
+		$query .= $wpdb->prepare( " AND meta_value = %s", $meta_value );
+	}
+
+	$meta_ids = $wpdb->get_col( $query );
+
+	if ( ! count( $meta_ids ) ) {
+		return FALSE;
+	}
+
+	if ( $delete_all ) {
+		$object_ids = '' !== $meta_value && NULL !== $meta_value && FALSE !== $meta_value
+			? $wpdb->get_col( $wpdb->prepare( <<<EOQ
+SELECT $type_column
+FROM $table
+WHERE meta_key = %s
+  AND meta_value = %s
+EOQ
+					, $meta_key, $meta_value ) )
+			: $wpdb->get_col( $wpdb->prepare( <<<EOQ
+SELECT $type_column
+FROM $table
+WHERE meta_key = %s
+EOQ
+					, $meta_key ) );
+	}
+
+	/**
+	 * Fires immediately before deleting metadata of a specific type.
+	 *
+	 * The dynamic portion of the hook, `$meta_type`, refers to the meta object type (comment, post, or user).
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param array  $meta_ids   An array of metadata entry IDs to delete.
+	 * @param int    $object_id  Object ID.
+	 * @param string $meta_key   Meta key.
+	 * @param mixed  $meta_value Meta value.
+	 */
+	do_action( "delete_{$meta_type}_meta", $meta_ids, $object_id, $meta_key, $meta_value );
+
+	// Old-style action.
+	if ( 'post' == $meta_type ) {
+		/**
+		 * Fires immediately before deleting metadata for a post.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array $meta_ids An array of post metadata entry IDs to delete.
+		 */
+		do_action( 'delete_postmeta' ,$meta_ids );
+	}
+
+	$query = "DELETE FROM $table WHERE $id_column IN( " . implode( ',', $meta_ids ) . " )";
+	$count = $wpdb->query( $query );
+
+	if ( ! $count ) {
+		return FALSE;
+	}
+
+	if ( $delete_all ) {
+		foreach ( ( array ) $object_ids as $o_id ) {
+			wp_cache_delete( $o_id, $meta_type . '_meta' );
+		}
+	} else {
+		wp_cache_delete( $object_id, $meta_type . '_meta' );
+	}
+
+	/**
+	 * Fires immediately after deleting metadata of a specific type.
+	 *
+	 * The dynamic portion of the hook name, `$meta_type`, refers to the meta object type (comment, post, or user).
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array  $meta_ids   An array of deleted metadata entry IDs.
+	 * @param int    $object_id  Object ID.
+	 * @param string $meta_key   Meta key.
+	 * @param mixed  $meta_value Meta value.
+	 */
+	do_action( "deleted_{$meta_type}_meta", $meta_ids, $object_id, $meta_key, $meta_value );
+
+	// Old-style action.
+	if ( 'post' == $meta_type ) {
+		/**
+		 * Fires immediately after deleting metadata for a post.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array $meta_ids An array of deleted post metadata entry IDs.
+		 */
+		do_action( 'deleted_postmeta', $meta_ids );
+	}
+
+	return TRUE;
 }
 
 /**
