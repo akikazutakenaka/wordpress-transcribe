@@ -1553,33 +1553,8 @@ function get_posts( $args = null ) {
 // Post meta functions
 //
 
-/**
- * Add meta data field to a post.
- *
- * Post meta data is called "Custom Fields" on the Administration Screen.
- *
- * @since 1.5.0
- *
- * @param int    $post_id    Post ID.
- * @param string $meta_key   Metadata name.
- * @param mixed  $meta_value Metadata value. Must be serializable if non-scalar.
- * @param bool   $unique     Optional. Whether the same key should not be added.
- *                           Default false.
- * @return int|false Meta ID on success, false on failure.
- */
-function add_post_meta( $post_id, $meta_key, $meta_value, $unique = false ) {
-	// Make sure meta is added to the post, not a revision.
-	if ( $the_post = wp_is_post_revision($post_id) )
-		$post_id = $the_post;
-
-	$added = add_metadata( 'post', $post_id, $meta_key, $meta_value, $unique );
-	if ( $added ) {
-		wp_cache_set( 'last_changed', microtime(), 'posts' );
-	}
-	return $added;
-}
-
-// refactored. function delete_post_meta( $post_id, $meta_key, $meta_value = '' ) {}
+// refactored. function add_post_meta( $post_id, $meta_key, $meta_value, $unique = false ) {}
+// :
 // refactored. function get_post_meta( $post_id, $key = '', $single = false ) {}
 
 /**

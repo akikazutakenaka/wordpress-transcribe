@@ -267,16 +267,12 @@ function add_post_meta( $post_id, $meta_key, $meta_value, $unique = FALSE )
 	}
 
 	$added = add_metadata( 'post', $post_id, $meta_key, $meta_value, $unique );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 008: wp-includes/post.php
- */
+
+	if ( $added ) {
+		wp_cache_set( 'last_changed', microtime(), 'posts' );
+	}
+
+	return $added;
 }
 
 /**
@@ -1071,6 +1067,5 @@ function wp_add_trashed_suffix_to_post_name_for_post( $post )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
- * -> wp-includes/post.php
  */
 }
