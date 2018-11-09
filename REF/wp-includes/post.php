@@ -239,6 +239,21 @@ function post_type_supports( $post_type, $feature )
 	return isset( $_wp_post_type_features[ $post_type ][ $feature ] );
 }
 
+//
+// Post meta functions
+//
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 008: wp-includes/post.php
+ */
+
 /**
  * Remove metadata matching criteria from a post.
  *
@@ -819,6 +834,13 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 
 		if ( $desired_post_slug ) {
 			delete_post_meta( $post_ID, '_wp_desired_post_slug' );
+			$post_name = $desired_post_slug;
+		}
+	}
+
+	// If a trashed post has the desired slug, change it and let this post have it.
+	if ( 'trash' !== $post_status && $post_name ) {
+		wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post_ID );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -826,8 +848,8 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
-		}
 	}
 }
 
@@ -991,4 +1013,39 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
  * -> wp-includes/post.php
  */
 	}
+}
+
+/**
+ * Adds a trashed suffix for a given post.
+ *
+ * Store its desired (i.e. current) slug so it can try to reclaim it if the post is untrashed.
+ *
+ * For internal use.
+ *
+ * @since  4.5.0
+ * @access private
+ *
+ * @param  WP_Post $post The post.
+ * @return string  New slug for the post.
+ */
+function wp_add_trashed_suffix_to_post_name_for_post( $post )
+{
+	global $wpdb;
+	$post = get_post( $post );
+
+	if ( '__trashed' === substr( $post->post_name, -9 ) ) {
+		return $post->post_name;
+	}
+
+	add_post_meta( $post->ID, '_wp_desired_post_slug', $post->post_name );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ * -> wp-includes/post.php
+ */
 }
