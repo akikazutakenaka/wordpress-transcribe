@@ -276,7 +276,6 @@ function add_post_meta( $post_id, $meta_key, $meta_value, $unique = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/post.php
- * -> wp-includes/meta.php
  */
 }
 
