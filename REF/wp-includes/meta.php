@@ -11,6 +11,49 @@
  */
 
 /**
+ * Add metadata for the specified object.
+ *
+ * @since  2.9.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  string    $meta_type  Type of object metadata is for (e.g., comment, post, or user).
+ * @param  int       $object_id  ID of the object metadata is for.
+ * @param  string    $meta_key   Metadata key.
+ * @param  mixed     $meta_value Metadata value.
+ *                               Must be serializable if non-scalar.
+ * @param  bool      $unique     Optional, default is false.
+ *                               Whether the specified metadata key should be unique for the object.
+ *                               If true, and the object already has a value for the specified metadata key, no change will be made.
+ * @return int|false The meta ID on success, false on failure.
+ */
+function add_metadata( $meta_type, $object_id, $meta_key, $meta_value, $unique = FALSE )
+{
+	global $wpdb;
+
+	if ( ! $meta_type || ! $meta_key || ! is_numeric( $object_id ) ) {
+		return FALSE;
+	}
+
+	$object_id = absint( $object_id );
+
+	if ( ! $object_id ) {
+		return FALSE;
+	}
+
+	$table = _get_meta_table( $meta_type );
+
+	if ( ! $table ) {
+		return FALSE;
+	}
+
+	$meta_subtype = get_object_subtype( $meta_type, $object_id );
+	$column = sanitize_key( $meta_type . '_id' );
+
+	// expected_slashed ($meta_key)
+	$meta_key = wp_unslash( $meta_key );
+	$meta_value = wp_unslash( $meta_value );
+	$meta_value = sanitize_meta( $meta_key, $meta_value, $meta_type, $meta_subtype );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -20,7 +63,9 @@
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/meta.php
+ * -> wp-includes/meta.php
  */
+}
 
 /**
  * Delete metadata for the specified post.
@@ -457,6 +502,19 @@ function is_protected_meta( $meta_key, $meta_type = NULL )
 	 */
 	return apply_filters( 'is_protected_meta', $protected, $meta_key, $meta_type );
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/meta.php
+ * @NOW 010: wp-includes/meta.php
+ */
 
 /**
  * Filter out `register_meta()` args based on a whitelist.
