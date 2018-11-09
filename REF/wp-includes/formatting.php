@@ -3104,6 +3104,18 @@ function wp_slash( $value )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/meta.php
+ * @NOW 009: wp-includes/formatting.php
+ */
+
+/**
  * Returns the regexp for common whitespace characters.
  *
  * By default, spaces include new lines, tabs, nbsp entities, and the UTF-8 nbsp.
