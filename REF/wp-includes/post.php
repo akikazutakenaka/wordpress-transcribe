@@ -239,6 +239,17 @@ function post_type_supports( $post_type, $feature )
 	return isset( $_wp_post_type_features[ $post_type ][ $feature ] );
 }
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 008: wp-includes/post.php
+ */
+
 //
 // Post meta functions
 //
@@ -1037,6 +1048,30 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
 }
 
 /**
+ * Adds a suffix if any trashed posts have a given slug.
+ *
+ * Store its desired (i.e. current) slug so it can try to reclaim it if the post is untrashed.
+ *
+ * For internal use.
+ *
+ * @since  4.5.0
+ * @access private
+ *
+ * @param string $post_name Slug.
+ * @param string $post_ID   Optional.
+ *                          Post ID that should be ignored.
+ *                          Default 0.
+ */
+function wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post_ID = 0 )
+{
+	$trashed_posts_with_desired_slug = get_posts( array(
+			'name'         => $post_name,
+			'post_status'  => 'trash',
+			'post_type'    => 'any',
+			'nopaging'     => TRUE,
+			'post__not_in' => array( $post_ID )
+		) );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -1044,4 +1079,6 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
+ * -> wp-includes/post.php
  */
+}
