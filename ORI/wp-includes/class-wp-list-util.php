@@ -40,57 +40,7 @@ class WP_List_Util {
 		return $this->output;
 	}
 
-	/**
-	 * Filters the list, based on a set of key => value arguments.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param array  $args     Optional. An array of key => value arguments to match
-	 *                         against each object. Default empty array.
-	 * @param string $operator Optional. The logical operation to perform. 'AND' means
-	 *                         all elements from the array must match. 'OR' means only
-	 *                         one element needs to match. 'NOT' means no elements may
-	 *                         match. Default 'AND'.
-	 * @return array Array of found values.
-	 */
-	public function filter( $args = array(), $operator = 'AND' ) {
-		if ( empty( $args ) ) {
-			return $this->output;
-		}
-
-		$operator = strtoupper( $operator );
-
-		if ( ! in_array( $operator, array( 'AND', 'OR', 'NOT' ), true ) ) {
-			return array();
-		}
-
-		$count = count( $args );
-		$filtered = array();
-
-		foreach ( $this->output as $key => $obj ) {
-			$to_match = (array) $obj;
-
-			$matched = 0;
-			foreach ( $args as $m_key => $m_value ) {
-				if ( array_key_exists( $m_key, $to_match ) && $m_value == $to_match[ $m_key ] ) {
-					$matched++;
-				}
-			}
-
-			if (
-				( 'AND' == $operator && $matched == $count ) ||
-				( 'OR' == $operator && $matched > 0 ) ||
-				( 'NOT' == $operator && 0 == $matched )
-			) {
-				$filtered[$key] = $obj;
-			}
-		}
-
-		$this->output = $filtered;
-
-		return $this->output;
-	}
-
+	// refactored. public function filter( $args = array(), $operator = 'AND' ) {}
 	// refactored. public function pluck( $field, $index_key = null ) {}
 
 	/**

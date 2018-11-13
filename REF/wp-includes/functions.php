@@ -1035,7 +1035,6 @@ function wp_filter_object_list( $list, $args = array(), $operator = 'and', $fiel
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/class-wp-query.php
  * @NOW 012: wp-includes/functions.php
- * -> wp-includes/class-wp-list-util.php
  */
 }
 
