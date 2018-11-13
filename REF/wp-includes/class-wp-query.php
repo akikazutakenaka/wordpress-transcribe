@@ -1070,19 +1070,21 @@ class WP_Query
 
 		if ( '404' == $qv['error'] ) {
 			$this->set_404();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/class-wp-query.php
- */
 		}
+
+		$this->is_embed = $this->is_embed
+		               && ( $this->is_singular || $this->is_404 );
+		$this->query_vars_hash = md5( serialize( $this->query_vars ) );
+		$this->query_vars_changed = FALSE;
+
+		/**
+		 * Fires after the main query vars have been parsed.
+		 *
+		 * @since 1.5.0
+		 *
+		 * @param WP_Query $this The WP_Query instance (passed by reference).
+		 */
+		do_action_ref_array( 'parse_query', array( &$this ) );
 	}
 
 	/**
@@ -1355,7 +1357,6 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-query.php
  */
 	}
 
