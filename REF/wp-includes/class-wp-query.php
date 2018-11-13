@@ -547,19 +547,35 @@ class WP_Query
 		$this->init_query_flags();
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * @NOW 011: wp-includes/class-wp-query.php
- */
+	/**
+	 * Fills in the query variables, which do not exist within the parameter.
+	 *
+	 * @since 2.1.0
+	 * @since 4.4.0 Removed the `comments_popup` public query variable.
+	 *
+	 * @param  array $array Defined query variables.
+	 * @return array Complete query variables with undefined ones filled in empty.
+	 */
+	public function fill_query_vars( $array )
+	{
+		$keys = array( 'error', 'm', 'p', 'post_parent', 'subpost', 'subpost_id', 'attachment', 'attachment_id', 'name', 'static', 'pagename', 'page_id', 'second', 'minute', 'hour', 'day', 'monthnum', 'year', 'w', 'category_name', 'tag', 'cat', 'tag_id', 'author', 'author_name', 'feed', 'tb', 'paged', 'meta_key', 'meta_value', 'preview', 's', 'sentence', 'title', 'fields', 'menu_order', 'embed' );
+
+		foreach ( $keys as $key ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				$array[ $key ] = '';
+			}
+		}
+
+		$array_keys = array( 'category__in', 'category__not_in', 'category__and', 'post__in', 'post__not_in', 'post_name__in', 'tag__in', 'tag__not_in', 'tag__and', 'tag_slug__in', 'tag_slug__and', 'post_parent__in', 'post_parent__not_in', 'author__in', 'author__not_in' );
+
+		foreach ( $array_keys as $key ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				$array[ $key ] = array();
+			}
+		}
+
+		return $array;
+	}
 
 	/**
 	 * Parse a query string and set query type booleans.
@@ -729,7 +745,6 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-query.php
  */
 	}
 
