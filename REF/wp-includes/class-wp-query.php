@@ -483,18 +483,42 @@ class WP_Query
 	private $compat_fields = array( 'query_vars_hash', 'query_vars_changed' );
 	private $compat_methods = array( 'init_query_flags', 'parse_tax_query' );
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/class-wp-query.php
- */
+	/**
+	 * Resets query flags to false.
+	 *
+	 * The query flags are what page info WordPress was able to figure out.
+	 *
+	 * @since 2.0.0
+	 */
+	private function init_query_flags()
+	{
+		$this->is_single = FALSE;
+		$this->is_preview = FALSE;
+		$this->is_page = FALSE;
+		$this->is_archive = FALSE;
+		$this->is_date = FALSE;
+		$this->is_year = FALSE;
+		$this->is_month = FALSE;
+		$this->is_day = FALSE;
+		$this->is_time = FALSE;
+		$this->is_author = FALSE;
+		$this->is_category = FALSE;
+		$this->is_tag = FALSE;
+		$this->is_tax = FALSE;
+		$this->is_search = FALSE;
+		$this->is_feed = FALSE;
+		$this->is_comment_feed = FALSE;
+		$this->is_trackback = FALSE;
+		$this->is_home = FALSE;
+		$this->is_404 = FALSE;
+		$this->is_paged = FALSE;
+		$this->is_admin = FALSE;
+		$this->is_attachment = FALSE;
+		$this->is_singular = FALSE;
+		$this->is_robots = FALSE;
+		$this->is_posts_page = FALSE;
+		$this->is_post_type_archive = FALSE;
+	}
 
 	/**
 	 * Initiates object properties and sets default values.
@@ -544,7 +568,6 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-query.php
  */
 	}
 

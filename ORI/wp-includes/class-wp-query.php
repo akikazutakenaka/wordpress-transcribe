@@ -18,44 +18,6 @@
 class WP_Query {
 	// refactored. public $query;
 	// :
-	// refactored. private $compat_methods = array( 'init_query_flags', 'parse_tax_query' );
-
-	/**
-	 * Resets query flags to false.
-	 *
-	 * The query flags are what page info WordPress was able to figure out.
-	 *
-	 * @since 2.0.0
-	 */
-	private function init_query_flags() {
-		$this->is_single = false;
-		$this->is_preview = false;
-		$this->is_page = false;
-		$this->is_archive = false;
-		$this->is_date = false;
-		$this->is_year = false;
-		$this->is_month = false;
-		$this->is_day = false;
-		$this->is_time = false;
-		$this->is_author = false;
-		$this->is_category = false;
-		$this->is_tag = false;
-		$this->is_tax = false;
-		$this->is_search = false;
-		$this->is_feed = false;
-		$this->is_comment_feed = false;
-		$this->is_trackback = false;
-		$this->is_home = false;
-		$this->is_404 = false;
-		$this->is_paged = false;
-		$this->is_admin = false;
-		$this->is_attachment = false;
-		$this->is_singular = false;
-		$this->is_robots = false;
-		$this->is_posts_page = false;
-		$this->is_post_type_archive = false;
-	}
-
 	// refactored. public function init() {}
 
 	/**
