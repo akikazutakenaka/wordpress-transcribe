@@ -2736,19 +2736,7 @@ class WP_Query {
 		}
 	}
 
-	/**
-	 * Sets up the WordPress query by parsing query string.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string|array $query URL query string or array of query arguments.
-	 * @return array List of posts.
-	 */
-	public function query( $query ) {
-		$this->init();
-		$this->query = $this->query_vars = wp_parse_args( $query );
-		return $this->get_posts();
-	}
+	// refactored. public function query( $query ) {}
 
 	/**
 	 * Retrieve queried object.
