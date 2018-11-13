@@ -889,6 +889,130 @@ class WP_Query
 
 			$this->query_vars_hash = FALSE;
 			$this->parse_tax_query( $qv );
+
+			foreach ( $this->tax_query->queries as $tax_query ) {
+				if ( ! is_array( $tax_query ) ) {
+					continue;
+				}
+
+				if ( isset( $tax_query['operator'] ) && 'NOT IN' != $tax_query['operator'] ) {
+					switch ( $tax_query['taxonomy'] ) {
+						case 'category':
+							$this->is_category = TRUE;
+							break;
+
+						case 'post_tag':
+							$this->is_tag = TRUE;
+							break;
+
+						default:
+							$this->is_tax = TRUE;
+					}
+				}
+			}
+
+			unset( $tax_query );
+
+			$this->is_author = empty( $qv['author'] ) || $qv['author'] == '0'
+				? FALSE
+				: TRUE;
+
+			if ( '' != $qv['author_name'] ) {
+				$this->is_author = TRUE;
+			}
+
+			if ( ! empty( $qv['post_type'] ) && ! is_array( $qv['post_type'] ) ) {
+				$post_type_obj = get_post_type_object( $qv['post_type'] );
+
+				if ( ! empty( $post_type_obj->has_archive ) ) {
+					$this->is_post_type_archive = TRUE;
+				}
+			}
+
+			if ( $this->is_post_type_archive || $this->is_date || $this->is_author || $this->is_category || $this->is_tag || $this->is_tax ) {
+				$this->is_archive = TRUE;
+			}
+		}
+
+		if ( '' != $qv['feed'] ) {
+			$this->is_feed = TRUE;
+		}
+
+		if ( '' != $qv['embed'] ) {
+			$this->is_embed = TRUE;
+		}
+
+		if ( '' != $qv['tb'] ) {
+			$this->is_trackback = TRUE;
+		}
+
+		if ( '' != $qv['paged'] && intval( $qv['paged'] ) > 1 ) {
+			$this->is_paged = 1;
+		}
+
+		// If we're previewing inside the write screen
+		if ( '' != $qv['preview'] ) {
+			$this->is_preview = TRUE;
+		}
+
+		if ( is_admin() ) {
+			$this->is_admin = TRUE;
+		}
+
+		if ( FALSE !== strpos( $qv['feed'], 'comments-' ) ) {
+			$qv['feed'] = str_replace( 'comments-', '', $qv['feed'] );
+			$qv['withcomments'] = 1;
+		}
+
+		$this->is_singular = $this->is_single || $this->is_page || $this->is_attachment;
+
+		if ( $this->is_feed
+		  && ( ! empty( $qv['withcomments'] )
+		    || empty( $qv['withoutcomments'] ) && $this->is_singular ) ) {
+			$this->is_comment_feed = TRUE;
+		}
+
+		if ( ! ( $this->is_singular
+		      || $this->is_archive
+		      || $this->is_search
+		      || $this->is_feed
+		      || defined( 'REST_REQUEST' ) && REST_REQUEST
+		      || $this->is_trackback
+		      || $this->is_404
+		      || $this->is_admin
+		      || $this->is_robots ) ) {
+			$this->is_home = TRUE;
+		}
+
+		// Correct is_* for page_on_front and page_for_posts.
+		if ( $this->is_home && 'pgae' == get_option( 'show_on_front' ) && get_option( 'page_on_front' ) ) {
+			$_query = wp_parse_args( $this->query );
+
+			/**
+			 * pagename can be set and empty depending on matched rewrite rules.
+			 * Ignore an empty pagename.
+			 */
+			if ( isset( $_query['pagename'] ) && '' == $_query['pagename'] ) {
+				unset( $_query['pagename'] );
+			}
+
+			unset( $_query['embed'] );
+
+			if ( empty( $_query ) || ! array_diff( array_keys( $_query ), array( 'preview', 'page', 'paged', 'cpage' ) ) ) {
+				$this->is_page = TRUE;
+				$this->is_home = FALSE;
+				$qv['page_id'] = get_option( 'page_on_front' );
+
+				// Correct <!--nextpage--> for page_on_front
+				if ( ! empty( $qv['paged'] ) ) {
+					$qv['page'] = $qv['paged'];
+					unset( $qv['paged'] );
+				}
+			}
+		}
+
+		if ( '' != $qv['pagename'] ) {
+			$this->queried_object = get_page_by_path( $qv['pagename'] );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
