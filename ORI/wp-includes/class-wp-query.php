@@ -789,19 +789,7 @@ class WP_Query {
 		}
 	}
 
-	/**
-	 * Sets the 404 property and saves whether query is feed.
-	 *
-	 * @since 2.0.0
-	 */
-	public function set_404() {
-		$is_feed = $this->is_feed;
-
-		$this->init_query_flags();
-		$this->is_404 = true;
-
-		$this->is_feed = $is_feed;
-	}
+	// refactored. public function set_404() {}
 
 	/**
 	 * Retrieve query variable.

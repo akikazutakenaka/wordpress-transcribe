@@ -1013,6 +1013,63 @@ class WP_Query
 
 		if ( '' != $qv['pagename'] ) {
 			$this->queried_object = get_page_by_path( $qv['pagename'] );
+
+			if ( $this->queried_object && 'attachment' == $this->queried_object->post_type ) {
+				if ( preg_match( "/^[^%]*%(?:postname)%/", get_option( 'permalink_structure' ) ) ) {
+					// See if we also have a post with the same slug.
+					$post = get_page_by_path( $qv['pagename'], OBJECT, 'post' );
+
+					if ( $post ) {
+						$this->queried_object = $post;
+						$this->is_page = FALSE;
+						$this->is_single = TRUE;
+					}
+				}
+			}
+
+			if ( ! empty( $this->queried_object ) ) {
+				$this->queried_object_id = ( int ) $this->queried_object->ID;
+			} else {
+				unset( $this->queried_object );
+			}
+
+			if ( 'page' == get_option( 'show_on_front' ) && isset( $this->queried_object_id ) && $this->queried_object_id == get_option( 'page_for_posts' ) ) {
+				$this->is_page = FALSE;
+				$this->is_home = TRUE;
+				$this->is_posts_page = TRUE;
+			}
+		}
+
+		if ( $qv['page_id'] ) {
+			if ( 'page' == get_option( 'show_on_front' ) && $qv['page_id'] == get_option( 'page_for_posts' ) ) {
+				$this->is_page = FALSE;
+				$this->is_home = TRUE;
+				$this->is_posts_page = TRUE;
+			}
+		}
+
+		if ( ! empty( $qv['post_type'] ) ) {
+			$qv['post_type'] = is_array( $qv['post_type'] )
+				? array_map( 'sanitize_key', $qv['post_type'] )
+				: sanitize_key( $qv['post_type'] );
+		}
+
+		if ( ! empty( $qv['post_status'] ) ) {
+			$qv['post_status'] = is_array( $qv['post_status'] )
+				? array_map( 'sanitize_key', $qv['post_status'] )
+				: preg_replace( '{^a-z0-9_,-]|', '', $qv['post_status'] );
+		}
+
+		if ( $this->is_posts_page
+		  && ( ! isset( $qv['withcomments'] ) || ! $qv['withcomments'] ) ) {
+			$this->is_comment_feed = FALSE;
+		}
+
+		$this->is_singular = $this->is_single || $this->is_page || $this->is_attachment;
+		// Done correcting is_* for page_on_front and page_for_posts.
+
+		if ( '404' == $qv['error'] ) {
+			$this->set_404();
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1260,6 +1317,19 @@ class WP_Query
 		 * @param WP_Query $this The WP_Query instance.
 		 */
 		do_action( 'parse_tax_query', $this );
+	}
+
+	/**
+	 * Sets the 404 property and saves whether query is feed.
+	 *
+	 * @since 2.0.0
+	 */
+	public function set_404()
+	{
+		$is_feed = $this->is_feed;
+		$this->init_query_flags();
+		$this->is_404 = TRUE;
+		$this->is_feed = $is_feed;
 	}
 
 	/**
