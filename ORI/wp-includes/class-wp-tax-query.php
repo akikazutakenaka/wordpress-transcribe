@@ -99,26 +99,7 @@ class WP_Tax_Query {
 	}
 
 	// refactored. public function sanitize_relation( $relation ) {}
-
-	/**
-	 * Determine whether a clause is first-order.
-	 *
-	 * A "first-order" clause is one that contains any of the first-order
-	 * clause keys ('terms', 'taxonomy', 'include_children', 'field',
-	 * 'operator'). An empty clause also counts as a first-order clause,
-	 * for backward compatibility. Any clause that doesn't meet this is
-	 * determined, by process of elimination, to be a higher-order query.
-	 *
-	 * @since 4.1.0
-	 *
-	 * @static
-	 *
-	 * @param array $query Tax query arguments.
-	 * @return bool Whether the query clause is a first-order clause.
-	 */
-	protected static function is_first_order_clause( $query ) {
-		return is_array( $query ) && ( empty( $query ) || array_key_exists( 'terms', $query ) || array_key_exists( 'taxonomy', $query ) || array_key_exists( 'include_children', $query ) || array_key_exists( 'field', $query ) || array_key_exists( 'operator', $query ) );
-	}
+	// refactored. protected static function is_first_order_clause( $query ) {}
 
 	/**
 	 * Generates SQL clauses to be appended to a main query.
