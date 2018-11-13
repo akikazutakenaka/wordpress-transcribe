@@ -7,19 +7,35 @@
  */
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * @NOW 012: wp-includes/taxonomy.php
+ * Retrieves a list of registered taxonomy names or objects.
+ *
+ * @since  3.0.0
+ * @global array $wp_taxonomies The registered taxonomies.
+ *
+ * @param  array  $args     Optional.
+ *                          An array of `key => value` arguments to match against the taxonomy objects.
+ *                          Default empty array.
+ * @param  string $output   Optional.
+ *                          The type of output to return in the array.
+ *                          Accepts either taxonomy 'names' or 'objects'.
+ *                          Default 'names'.
+ * @param  array  $operator Optional.
+ *                          The logical operation to perform.
+ *                          Accepts 'and' or 'or'.
+ *                          'or' means only one element from the array needs to match; 'and' means all elements must match.
+ *                          Default 'and'.
+ * @return array  A list of taxonomy names or objects.
  */
+function get_taxonomies( $args = array(), $output = 'names', $operator = 'and' )
+{
+	global $wp_taxonomies;
+
+	$field = 'names' == $output
+		? 'name'
+		: FALSE;
+
+	return wp_filter_object_list( $wp_taxonomies, $args, $operator, $field );
+}
 
 /**
  * Return the names or objects of the taxonomies which are registered for the requested object or object type, such as a post object or post type name.

@@ -997,6 +997,21 @@ function wp_array_slice_assoc( $array, $keys )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 012: wp-includes/functions.php
+ */
+
+/**
  * Pluck a certain field out of each object in a list.
  *
  * This has the same functionality and prototype of array_column() (PHP 5.5) but also supports objects.

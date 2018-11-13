@@ -943,7 +943,7 @@ class WP_Query
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/class-wp-query.php
  * @NOW 011: wp-includes/class-wp-query.php
- * -> wp-includes/taxonomy.php
+ * -> wp-includes/functions.php
  */
 		}
 	}
