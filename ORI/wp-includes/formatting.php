@@ -1781,21 +1781,6 @@ function sanitize_textarea_field( $str ) {
 }
 
 // refactored. function _sanitize_text_fields( $str, $keep_newlines = false ) {}
-
-/**
- * i18n friendly version of basename()
- *
- * @since 3.1.0
- *
- * @param string $path   A path.
- * @param string $suffix If the filename ends in suffix this will also be cut off.
- * @return string
- */
-function wp_basename( $path, $suffix = '' ) {
-	return urldecode( basename( str_replace( array( '%2F', '%5C' ), '/', urlencode( $path ) ), $suffix ) );
-}
-
-// refactored. function capital_P_dangit( $text ) {}
 // :
 // refactored. function wp_unslash( $value ) {}
 

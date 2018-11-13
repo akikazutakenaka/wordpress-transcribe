@@ -2988,6 +2988,20 @@ function _sanitize_text_fields( $str, $keep_newlines = FALSE )
 }
 
 /**
+ * i18n friendly version of basename().
+ *
+ * @since 3.1.0
+ *
+ * @param  string $path   A path.
+ * @param  string $suffix If the filename ends in suffix this will also be cut off.
+ * @return string
+ */
+function wp_basename( $path, $suffix = '' )
+{
+	return urldecode( basename( str_replace( array( '%2F', '%5C' ), '/', urlencode( $path ) ), $suffix ) );
+}
+
+/**
  * Forever eliminate "Wordpress" from the planet (or at least the little bit we can influence).
  *
  * Violating our coding standards for a good function name.

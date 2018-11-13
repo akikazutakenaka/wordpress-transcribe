@@ -931,6 +931,18 @@ class WP_Query
 		}
 
 		foreach ( get_taxonomies( array(), 'objects' ) as $taxonomy => $t ) {
+			if ( 'post_tag' == $taxonomy ) {
+				continue; // Handled further down in the $q['tag'] block.
+			}
+
+			if ( $t->query_var && ! empty( $q[ $t->query_var ] ) ) {
+				$tax_query_defaults = array(
+					'taxonomy' => $taxonomy,
+					'field'    => 'slug'
+				);
+
+				if ( isset( $t->rewrite['hierarchical'] ) && $t->rewrite['hierarchical'] ) {
+					$q[ $t->query_var ] = wp_basename( $q[ $t->query_var ] );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -944,6 +956,8 @@ class WP_Query
  * <- wp-includes/class-wp-query.php
  * @NOW 011: wp-includes/class-wp-query.php
  */
+				}
+			}
 		}
 	}
 
