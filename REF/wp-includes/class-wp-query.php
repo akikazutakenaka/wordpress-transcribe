@@ -492,8 +492,34 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * <- wp-includes/post.php
- * @NOW 009: wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 010: wp-includes/class-wp-query.php
  */
+
+	/**
+	 * Sets up the WordPress query by parsing query string.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param  string|array $query URL query string or array of query arguments.
+	 * @return array        List of posts.
+	 */
+	public function query( $query )
+	{
+		$this->init();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/class-wp-query.php
+ */
+	}
 
 	/**
 	 * Constructor.
