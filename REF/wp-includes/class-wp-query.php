@@ -556,8 +556,36 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * <- wp-includes/post.php
- * @NOW 009: wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 010: wp-includes/class-wp-query.php
  */
+
+	/**
+	 * Retrieve the posts based on query variables.
+	 *
+	 * There are a few filters and actions that can be used to modify the post database query.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return array List of posts.
+	 */
+	public function get_posts()
+	{
+		global $wpdb;
+		$this->parse_query();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/class-wp-query.php
+ */
+	}
 
 	/**
 	 * Sets up the WordPress query by parsing query string.
