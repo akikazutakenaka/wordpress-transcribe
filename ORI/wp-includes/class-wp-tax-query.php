@@ -22,43 +22,7 @@
 class WP_Tax_Query {
 	// refactored. public $queries = array();
 	// :
-	// refactored. public $primary_id_column;
-
-	/**
-	 * Constructor.
-	 *
-	 * @since 3.1.0
-	 * @since 4.1.0 Added support for `$operator` 'NOT EXISTS' and 'EXISTS' values.
-	 *
-	 * @param array $tax_query {
-	 *     Array of taxonomy query clauses.
-	 *
-	 *     @type string $relation Optional. The MySQL keyword used to join
-	 *                            the clauses of the query. Accepts 'AND', or 'OR'. Default 'AND'.
-	 *     @type array {
-	 *         Optional. An array of first-order clause parameters, or another fully-formed tax query.
-	 *
-	 *         @type string           $taxonomy         Taxonomy being queried. Optional when field=term_taxonomy_id.
-	 *         @type string|int|array $terms            Term or terms to filter by.
-	 *         @type string           $field            Field to match $terms against. Accepts 'term_id', 'slug',
-	 *                                                 'name', or 'term_taxonomy_id'. Default: 'term_id'.
-	 *         @type string           $operator         MySQL operator to be used with $terms in the WHERE clause.
-	 *                                                  Accepts 'AND', 'IN', 'NOT IN', 'EXISTS', 'NOT EXISTS'.
-	 *                                                  Default: 'IN'.
-	 *         @type bool             $include_children Optional. Whether to include child terms.
-	 *                                                  Requires a $taxonomy. Default: true.
-	 *     }
-	 * }
-	 */
-	public function __construct( $tax_query ) {
-		if ( isset( $tax_query['relation'] ) ) {
-			$this->relation = $this->sanitize_relation( $tax_query['relation'] );
-		} else {
-			$this->relation = 'AND';
-		}
-
-		$this->queries = $this->sanitize_query( $tax_query );
-	}
+	// refactored. public function __construct( $tax_query ) {}
 
 	/**
 	 * Ensure the 'tax_query' argument passed to the class constructor is well-formed.

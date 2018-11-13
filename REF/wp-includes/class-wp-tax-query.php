@@ -127,6 +127,10 @@ class WP_Tax_Query
 		$this->relation = isset( $tax_query['relation'] )
 			? $this->sanitize_relation( $tax_query['relation'] )
 			: 'AND';
+
+		$this->queries = $this->sanitize_query( $tax_query );
+	}
+
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -141,7 +145,6 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-query.php
  * @NOW 012: wp-includes/class-wp-tax-query.php
  */
-	}
 
 	/**
 	 * Sanitize a 'relation' operator.
