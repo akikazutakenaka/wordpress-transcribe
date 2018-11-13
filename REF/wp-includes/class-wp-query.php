@@ -900,7 +900,6 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-query.php
  */
 		}
 	}
@@ -1128,19 +1127,15 @@ class WP_Query
 		}
 
 		$this->tax_query = new WP_Tax_Query( $tax_query );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * @NOW 011: wp-includes/class-wp-query.php
- */
+
+		/**
+		 * Fires after taxonomy-related query vars have been parsed.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param WP_Query $this The WP_Query instance.
+		 */
+		do_action( 'parse_tax_query', $this );
 	}
 
 	/**
