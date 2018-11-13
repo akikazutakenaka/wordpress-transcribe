@@ -156,22 +156,43 @@ class WP_Tax_Query
 			if ( 'relation' === $key ) {
 				$cleaned_query['relation'] = $this->sanitize_relation( $query );
 			} elseif ( self::is_first_order_clause( $query ) ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * @NOW 012: wp-includes/class-wp-tax-query.php
- */
+				$cleaned_clause = array_merge( $defaults, $query );
+				$cleaned_clause['terms'] = ( array ) $cleaned_clause['terms'];
+				$cleaned_query[] = $cleaned_clause;
+
+				// Keep a copy of the clause in the flate $queried_terms array, for use in WP_Query.
+				if ( ! empty( $cleaned_clause['taxonomy'] ) && 'NOT IN' !== $cleaned_clause['operator'] ) {
+					$taxonomy = $cleaned_clause['taxonomy'];
+
+					if ( ! isset( $this->queried_terms[ $taxonomy ] ) ) {
+						$this->queried_terms[ $taxonomy ] = array();
+					}
+
+					// Backward compatibility: Only store the first 'terms' and 'field' found for a given taxonomy.
+					if ( ! empty( $cleaned_clause['terms'] ) && ! isset( $this->queried_terms[ $taxonomy ]['terms'] ) ) {
+						$this->queried_terms[ $taxonomy ]['terms'] = $cleaned_clause['terms'];
+					}
+
+					if ( ! empty( $cleaned_clause['field'] ) && ! isset( $this->queried_terms[ $taxonomy ]['field'] ) ) {
+						$this->queried_terms[ $taxonomy ]['field'] = $cleaned_clause['field'];
+					}
+				}
+			} elseif ( is_array( $query ) ) {
+				// Otherwise, it's a nested query, so we recurse.
+				$cleaned_subquery = $this->sanitize_query( $query );
+
+				if ( ! empty( $cleaned_subquery ) ) {
+					// All queries with children must have a relation.
+					if ( ! isset( $cleaned_subquery['relation'] ) ) {
+						$cleaned_subquery['relation'] = 'AND';
+					}
+
+					$cleaned_query[] = $cleaned_subquery;
+				}
 			}
 		}
+
+		return $cleaned_query;
 	}
 
 	/**
