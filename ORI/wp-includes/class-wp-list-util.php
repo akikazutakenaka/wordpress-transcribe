@@ -29,18 +29,8 @@ class WP_List_Util {
 		return $this->input;
 	}
 
-	/**
-	 * Returns the output array.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @return array The output array.
-	 */
-	public function get_output() {
-		return $this->output;
-	}
-
-	// refactored. public function filter( $args = array(), $operator = 'AND' ) {}
+	// refactored. public function get_output() {}
+	// :
 	// refactored. public function pluck( $field, $index_key = null ) {}
 
 	/**
