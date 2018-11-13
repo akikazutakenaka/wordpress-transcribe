@@ -134,21 +134,7 @@ class WP_Tax_Query {
 		return $cleaned_query;
 	}
 
-	/**
-	 * Sanitize a 'relation' operator.
-	 *
-	 * @since 4.1.0
-	 *
-	 * @param string $relation Raw relation key from the query argument.
-	 * @return string Sanitized relation ('AND' or 'OR').
-	 */
-	public function sanitize_relation( $relation ) {
-		if ( 'OR' === strtoupper( $relation ) ) {
-			return 'OR';
-		} else {
-			return 'AND';
-		}
-	}
+	// refactored. public function sanitize_relation( $relation ) {}
 
 	/**
 	 * Determine whether a clause is first-order.

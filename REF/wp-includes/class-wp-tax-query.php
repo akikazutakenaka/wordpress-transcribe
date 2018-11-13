@@ -140,23 +140,21 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/class-wp-query.php
  * @NOW 012: wp-includes/class-wp-tax-query.php
- * -> wp-includes/class-wp-tax-query.php
  */
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-tax-query.php
- * @NOW 013: wp-includes/class-wp-tax-query.php
- */
+	/**
+	 * Sanitize a 'relation' operator.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  string $relation Raw relation key from the query argument.
+	 * @return string Sanitized relation ('AND' or 'OR').
+	 */
+	public function sanitize_relation( $relation )
+	{
+		return 'OR' === strtoupper( $relation )
+			? 'OR'
+			: 'AND';
+	}
 }
