@@ -2905,20 +2905,7 @@ class WP_Query {
 		return 0;
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * Sets up the WordPress query, if parameter is not empty.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string|array $query URL query string or array of vars.
-	 */
-	public function __construct( $query = '' ) {
-		if ( ! empty( $query ) ) {
-			$this->query( $query );
-		}
-	}
+	// refactored. public function __construct( $query = '' ) {}
 
 	/**
 	 * Make private properties readable for backward compatibility.

@@ -494,4 +494,20 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
+
+	/**
+	 * Constructor.
+	 *
+	 * Sets up the WordPress query, if parameter is not empty.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string|array $query URL query string or array of vars.
+	 */
+	public function __construct( $query = '' )
+	{
+		if ( ! empty( $query ) ) {
+			$this->query( $query );
+		}
+	}
 }
