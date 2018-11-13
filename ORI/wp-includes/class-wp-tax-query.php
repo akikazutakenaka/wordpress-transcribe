@@ -20,69 +20,9 @@
  * @since 3.1.0
  */
 class WP_Tax_Query {
-
-	/**
-	 * Array of taxonomy queries.
-	 *
-	 * See WP_Tax_Query::__construct() for information on tax query arguments.
-	 *
-	 * @since 3.1.0
-	 * @var array
-	 */
-	public $queries = array();
-
-	/**
-	 * The relation between the queries. Can be one of 'AND' or 'OR'.
-	 *
-	 * @since 3.1.0
-	 * @var string
-	 */
-	public $relation;
-
-	/**
-	 * Standard response when the query should not return any rows.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @static
-	 * @var string
-	 */
-	private static $no_results = array( 'join' => array( '' ), 'where' => array( '0 = 1' ) );
-
-	/**
-	 * A flat list of table aliases used in the JOIN clauses.
-	 *
-	 * @since 4.1.0
-	 * @var array
-	 */
-	protected $table_aliases = array();
-
-	/**
-	 * Terms and taxonomies fetched by this query.
-	 *
-	 * We store this data in a flat array because they are referenced in a
-	 * number of places by WP_Query.
-	 *
-	 * @since 4.1.0
-	 * @var array
-	 */
-	public $queried_terms = array();
-
-	/**
-	 * Database table that where the metadata's objects are stored (eg $wpdb->users).
-	 *
-	 * @since 4.1.0
-	 * @var string
-	 */
-	public $primary_table;
-
-	/**
-	 * Column in 'primary_table' that represents the ID of the object.
-	 *
-	 * @since 4.1.0
-	 * @var string
-	 */
-	public $primary_id_column;
+	// refactored. public $queries = array();
+	// :
+	// refactored. public $primary_id_column;
 
 	/**
 	 * Constructor.
