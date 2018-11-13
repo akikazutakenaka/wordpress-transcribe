@@ -56,6 +56,22 @@ class WP_List_Util
 		$this->output = $this->input = $input;
 	}
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/functions.php
+ * @NOW 013: wp-includes/class-wp-list-util.php
+ */
+
 	/**
 	 * Plucks a certain field out of each object in the list.
 	 *
