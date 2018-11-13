@@ -1022,20 +1022,12 @@ function wp_filter_object_list( $list, $args = array(), $operator = 'and', $fiel
 
 	$util = new WP_List_Util( $list );
 	$util->filter( $args, $operator );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * @NOW 012: wp-includes/functions.php
- */
+
+	if ( $field ) {
+		$util->pluck( $field );
+	}
+
+	return $util->get_output();
 }
 
 /**

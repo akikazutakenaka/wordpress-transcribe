@@ -56,6 +56,21 @@ class WP_List_Util
 		$this->output = $this->input = $input;
 	}
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 012: wp-includes/class-wp-list-util.php
+ */
+
 	/**
 	 * Filters the list, based on a set of key => value arguments.
 	 *
