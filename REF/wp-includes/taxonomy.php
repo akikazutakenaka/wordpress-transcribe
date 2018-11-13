@@ -7,6 +7,21 @@
  */
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 012: wp-includes/taxonomy.php
+ */
+
+/**
  * Return the names or objects of the taxonomies which are registered for the requested object or object type, such as a post object or post type name.
  *
  * Example:

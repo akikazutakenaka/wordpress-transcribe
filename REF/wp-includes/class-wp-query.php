@@ -734,6 +734,161 @@ class WP_Query
 		}
 
 		$this->query_vars = $this->fill_query_vars( $this->query_vars );
+		$qv = &$this->query_vars;
+		$this->query_vars_changed = TRUE;
+
+		if ( ! empty( $qv['robots'] ) ) {
+			$this->is_robots = TRUE;
+		}
+
+		if ( ! is_scalar( $qv['p'] ) || $qv['p'] < 0 ) {
+			$qv['p'] = 0;
+			$qv['error'] = 404;
+		} else {
+			$qv['p'] = intval( $qv['p'] );
+		}
+
+		$qv['page_id'] = absint( $qv['page_id'] );
+		$qv['year'] = absint( $qv['year'] );
+		$qv['monthnum'] = absint( $qv['monthnum'] );
+		$qv['day'] = absint( $qv['day'] );
+		$qv['w'] = absint( $qv['w'] );
+
+		$qv['m'] = is_scalar( $qv['m'] )
+			? preg_replace( '|[^0-9]|', '', $qv['m'] )
+			: '';
+
+		$qv['paged'] = absint( $qv['paged'] );
+		$qv['cat'] = preg_replace( '|[^0-9,-]|', '', $qv['cat'] ); // Comma separated list of positive or negative integers
+		$qv['author'] = preg_replace( '|[^0-9,-]|', '', $qv['author'] ); // Comma separated list of positive or negative integers
+		$qv['pagename'] = trim( $qv['pagename'] );
+		$qv['name'] = trim( $qv['name'] );
+		$qv['title'] = trim( $qv['title'] );
+
+		if ( '' !== $qv['hour'] ) {
+			$qv['hour'] = absint( $qv['hour'] );
+		}
+
+		if ( '' !== $qv['minute'] ) {
+			$qv['minute'] = absint( $qv['minute'] );
+		}
+
+		if ( '' !== $qv['second'] ) {
+			$qv['second'] = absint( $qv['second'] );
+		}
+
+		if ( '' !== $qv['menu_order'] ) {
+			$qv['menu_order'] = absint( $qv['menu_order'] );
+		}
+
+		// Fairly insane upper bound for search string lengths.
+		if ( ! is_scalar( $qv['s'] )
+		  || ! empty( $qv['s'] ) && strlen( $qv['s'] ) > 1600 ) {
+			$qv['s'] = '';
+		}
+
+		/**
+		 * Compat.
+		 * Map subpost to attachment.
+		 */
+		if ( '' != $qv['subpost'] ) {
+			$qv['attachment'] = $qv['subpost'];
+		}
+
+		if ( '' != $qv['subpost_id'] ) {
+			$qv['attachment_id'] = $qv['subpost_id'];
+		}
+
+		$qv['attachment_id'] = absint( $qv['attachment_id'] );
+
+		if ( '' != $qv['attachment'] || ! empty( $qv['attachment_id'] ) ) {
+			$this->is_single = TRUE;
+			$this->is_attachment = TRUE;
+		} elseif ( '' != $qv['name'] ) {
+			$this->is_single = TRUE;
+		} elseif ( $qv['p'] ) {
+			$this->is_single = TRUE;
+		} elseif ( '' !== $qv['hour'] && '' !== $qv['minute'] && '' !== $qv['second'] && '' != $qv['year'] && '' != $qv['monthnum'] && '' != $qv['day'] ) {
+			// If year, month, day, hour, minute, and second are set, a single post is being queried.
+			$this->is_single = TRUE;
+		} elseif ( '' != $qv['static'] || '' != $qv['pagename'] || ! empty( $qv['page_id'] ) ) {
+			$this->is_page = TRUE;
+			$this->is_single = FALSE;
+		} else {
+			/**
+			 * Look for archive queries.
+			 * Dates, categories, authors, search, post type archives.
+			 */
+			if ( isset( $this->query['s'] ) ) {
+				$this->is_search = TRUE;
+			}
+
+			if ( '' !== $qv['second'] ) {
+				$this->is_time = TRUE;
+				$this->is_date = TRUE;
+			}
+
+			if ( '' !== $qv['minute'] ) {
+				$this->is_time = TRUE;
+				$this->is_date = TRUE;
+			}
+
+			if ( '' !== $qv['hour'] ) {
+				$this->is_time = TRUE;
+				$this->is_date = TRUE;
+			}
+
+			if ( $qv['day'] ) {
+				if ( ! $this->is_date ) {
+					$date = sprintf( '%04d-%02d-%02d', $qv['year'], $qv['monthnum'], $qv['day'] );
+
+					if ( $qv['monthnum'] && $qv['year'] && ! wp_checkdate( $qv['monthnum'], $qv['day'], $qv['year'], $date ) ) {
+						$qv['error'] = '404';
+					} else {
+						$this->is_day = TRUE;
+						$this->is_date = TRUE;
+					}
+				}
+			}
+
+			if ( $qv['monthnum'] ) {
+				if ( ! $this->is_date ) {
+					if ( 12 < $qv['monthnum'] ) {
+						$qv['error'] = '404';
+					} else {
+						$this->is_month = TRUE;
+						$this->is_date = TRUE;
+					}
+				}
+			}
+
+			if ( $qv['year'] ) {
+				if ( ! $this->is_date ) {
+					$this->is_year = TRUE;
+					$this->is_date = TRUE;
+				}
+			}
+
+			if ( $qv['m'] ) {
+				$this->is_date = TRUE;
+
+				if ( strlen( $qv['m'] ) > 9 ) {
+					$this->is_time = TRUE;
+				} elseif ( strlen( $qv['m'] ) > 7 ) {
+					$this->is_day = TRUE;
+				} elseif ( strlen( $qv['m'] ) > 5 ) {
+					$this->is_month = TRUE;
+				} else {
+					$this->is_year = TRUE;
+				}
+			}
+
+			if ( '' != $qv['w'] ) {
+				$this->is_date = TRUE;
+			}
+
+			$this->query_vars_hash = FALSE;
+			$this->parse_tax_query( $qv );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -745,7 +900,52 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/class-wp-query.php
+ * -> wp-includes/class-wp-query.php
  */
+		}
+	}
+
+	/**
+	 * Parses various taxonomy related query vars.
+	 *
+	 * For BC, this method is not marked as protected.
+	 * See [28987].
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param array $q The query variables.
+	 *                 Passed by reference.
+	 */
+	public function parse_tax_query( &$q )
+	{
+		$tax_query = ! empty( $q['tax_query'] ) && is_array( $q['tax_query'] )
+			? $q['tax_query']
+			: array();
+
+		if ( ! empty( $q['taxonomy'] ) && ! empty( $q['term'] ) ) {
+			$tax_query[] = array(
+				'taxonomy' => $q['taxonomy'],
+				'terms'    => array( $q['term'] ),
+				'field'    => 'slug'
+			);
+		}
+
+		foreach ( get_taxonomies( array(), 'objects' ) as $taxonomy => $t ) {
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 011: wp-includes/class-wp-query.php
+ * -> wp-includes/taxonomy.php
+ */
+		}
 	}
 
 	/**
