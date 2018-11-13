@@ -131,6 +131,31 @@ class WP_Tax_Query
 		$this->queries = $this->sanitize_query( $tax_query );
 	}
 
+	/**
+	 * Ensure the 'tax_query' argument passed to the class constructor is well-formed.
+	 *
+	 * Ensures that each query-level clause has a 'relation' key, and that each first-order clause contains all the necessary keys from `$defaults`.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $queries Array of queries clauses.
+	 * @return array Sanitized array of query clauses.
+	 */
+	public function sanitize_query( $queries )
+	{
+		$cleaned_query = array();
+		$defaults = array(
+			'taxonomy'         => '',
+			'terms'            => array(),
+			'field'            => 'term_id',
+			'operator'         => 'IN',
+			'include_children' => TRUE
+		);
+
+		foreach ( $queries as $key => $query ) {
+			if ( 'relation' === $key ) {
+				$cleaned_query['relation'] = $this->sanitize_relation( $query );
+			} elseif ( self::is_first_order_clause( $query ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -144,7 +169,11 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/class-wp-query.php
  * @NOW 012: wp-includes/class-wp-tax-query.php
+ * -> wp-includes/class-wp-query.php
  */
+			}
+		}
+	}
 
 	/**
 	 * Sanitize a 'relation' operator.
@@ -160,4 +189,20 @@ class WP_Tax_Query
 			? 'OR'
 			: 'AND';
 	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * @NOW 013: wp-includes/class-wp-query.php
+ */
 }
