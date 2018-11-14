@@ -259,6 +259,7 @@ class WP_Date_Query
 
 		// Validate the dates passed in the query.
 		if ( $this->is_first_order_clause( $queries ) ) {
+			$this->validate_date_values( $queries );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -304,6 +305,167 @@ class WP_Date_Query
 		return ! empty( $query['compare'] ) && in_array( $query['compare'], array( '=', '!=', '>', '>=', '<', '<=', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) )
 			? strtoupper( $query['compare'] )
 			: $this->compare;
+	}
+
+	/**
+	 * Validates the given date_query values and triggers errors if something is not valid.
+	 *
+	 * Note that date queries with invalid date ranges are allowed to continue (though of course no items will be found for impossible dates).
+	 * This method only generates debug notices for these cases.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $date_query The date_query array.
+	 * @return bool  True if all values in the query are valid, false if one or more fail.
+	 */
+	public function validate_date_values( $date_query = array() )
+	{
+		if ( empty( $date_query ) ) {
+			return FALSE;
+		}
+
+		$valid = TRUE;
+
+		// Validate 'before' and 'after' up front, then let the validation routne continue to be sure that all invalid values generate errors to.
+		if ( array_key_exists( 'before', $date_query ) && is_array( $date_query['before'] ) ) {
+			$valid = $this->validate_date_values( $date_query['before'] );
+		}
+
+		if ( array_key_exists( 'after', $date_query ) && is_array( $date_query['after'] ) ) {
+			$valid = $this->validate_date_values( $date_query['after'] );
+		}
+
+		// Array containing all min-max checks.
+		$min_max_checks = array();
+
+		// Days per year.
+		if ( array_key_exists( 'year', $date_query ) ) {
+			/**
+			 * If a year exists in the date query, we can use it to get the days.
+			 * If multiple years are provided (as in a BETWEEN), use the first one.
+			 */
+			$_year = is_array( $date_query['year'] )
+				? reset( $date_query['year'] )
+				: $date_query['year'];
+
+			$max_days_of_year = date( 'z', mktime( 0, 0, 0, 12, 31, $_year ) ) + 1;
+		} else {
+			// Otherwise we use the max of 366 (leap-year).
+			$max_days_of_year = 366;
+		}
+
+		$min_max_checks['dayofyear'] = array(
+			'min' => 1,
+			'max' => $max_days_of_year
+		);
+
+		// Days per week.
+		$min_max_checks['dayofweek'] = array(
+			'min' => 1,
+			'max' => 7
+		);
+
+		// Days per week.
+		$min_max_checks['dayofweek_iso'] = array(
+			'min' => 1,
+			'max' => 7
+		);
+
+		// Months per year.
+		$min_max_checks['month'] = array(
+			'min' => 1,
+			'max' => 12
+		);
+
+		// Weeks per year.
+		$week_count = isset( $_year )
+			? /**
+			   * If we have a specific year, use it to calculate number of weeks.
+			   * Note: The number of weeks in a year is the date in which Dec 28 appears.
+			   */
+				date( 'W', mktime( 0, 0, 0, 12, 28, $_year ) )
+			: // Otherwise set the week-count to a maximum of 53.
+				53;
+
+		$min_max_checks['week'] = array(
+			'min' => 1,
+			'max' => $week_count
+		);
+
+		// Days per month.
+		$min_max_checks['day'] = array(
+			'min' => 1,
+			'max' => 31
+		);
+
+		// Hours per day.
+		$min_max_checks['hour'] = array(
+			'min' => 0,
+			'max' => 23
+		);
+
+		// Minutes per hour.
+		$min_max_checks['minute'] = array(
+			'min' => 0,
+			'max' => 59
+		);
+
+		// Seconds per minute.
+		$min_max_checks['second'] = array(
+			'min' => 0,
+			'max' => 59
+		);
+
+		// Concatenate and throw a notice for each invalid value.
+		foreach ( $min_max_checks as $key => $check ) {
+			if ( ! array_key_exists( $key, $date_query ) ) {
+				continue;
+			}
+
+			// Throw a notice for each failing value.
+			foreach ( ( array ) $date_query[ $key ] as $_value ) {
+				$is_between = $_value >= $check['min'] && $_value <= $check['max'];
+
+				if ( ! is_numeric( $_value ) || ! $is_between ) {
+					$error = sprintf( __( 'Invalid value %1$s for %2$s. Expected value should be between %3$s and %4$s.' ), '<code>' . esc_html( $_value ) . '</code>', '<code>' . esc_html( $key ) . '</code>', '<code>' . esc_html( $check['min'] ) . '</code>', '<code>' . esc_html( $check['max'] ) . '</code>' );
+					_doing_it_wrong( __CLASS__, $error, '4.1.0' );
+					$valid = FALSE;
+				}
+			}
+		}
+
+		// If we already have invalid date messages, don't bother running through checkdate().
+		if ( ! $valid ) {
+			return $valid;
+		}
+
+		$day_month_year_error_msg = '';
+		$day_exists   = array_key_exists( 'day', $date_query ) && is_numeric( $date_query['day'] );
+		$month_exists = array_key_exists( 'month', $date_query ) && is_numeric( $date_query['month'] );
+		$year_exists  = array_key_exists( 'year', $date_query ) && is_numeric( $date_query['year'] );
+
+		if ( $day_exists && $month_exists && $year_exists ) {
+			// 1. Checking day, month, year combination.
+			if ( ! wp_checkdate( $date_query['month'], $date_query['day'], $date_query['year'], sprintf( '%s-%s-%s', $date_query['year'], $date_query['month'], $date_query['day'] ) ) ) {
+				$day_month_year_error_msg = sprintf( __( 'The following values do not describe a valid date: year %1$s, month %2$s, day %3$s.' ), '<code>' . esc_html( $date_query['day'] ) . '</code>', '<code>' . esc_html( $date_query['month'] ) . '</code>', '<code>' . esc_html( $date_query['day'] ) . '</code>' );
+				$valid = FALSE;
+			}
+		} elseif ( $day_exists && $month_exists ) {
+			/**
+			 * 2. Checking day, month combination.
+			 * We use 2012 because, as a leap year, it's the most permissive.
+			 */
+			if ( ! wp_checkdate( $date_query['month'], $date_query['day'], 2012, sprintf( '2012-%s-%s', $date_query['month'], $date_query['day'] ) ) ) {
+				$day_month_year_error_msg = sprintf( __( 'The following values do not describe a valid date: month %1$s, day %2$s.' ), '<code>' . esc_html( $date_query['month'] ) . '</code>', '<code>' . esc_html( $date_query['day'] ) . '</code>' );
+				$valid = FALSE;
+			}
+		}
+
+		if ( ! empty( $day_month_year_error_msg ) ) {
+			_doing_it_wrong( __CLASS__, $day_month_year_error_msg, '4.1.0' );
+		}
+
+		return $valid;
 	}
 
 	/**
