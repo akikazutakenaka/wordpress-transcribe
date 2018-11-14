@@ -532,18 +532,17 @@ class WP_Date_Query
 	public function get_sql()
 	{
 		$sql = $this->get_sql_clauses();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/date.php
- */
+		$where = $sql['where'];
+
+		/**
+		 * Filters the date query WHERE clause.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string        $where WHERE clause of the date query.
+		 * @param WP_Date_Query $this  The WP_Date_Query instance.
+		 */
+		return apply_filters( 'get_date_sql', $where, $this );
 	}
 
 	/**

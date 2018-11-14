@@ -17,32 +17,6 @@
 class WP_Date_Query {
 	// refactored. public $queries = array();
 	// :
-	// refactored. public function validate_column( $column ) {}
-
-	/**
-	 * Generate WHERE clause to be appended to a main query.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @return string MySQL WHERE clause.
-	 */
-	public function get_sql() {
-		$sql = $this->get_sql_clauses();
-
-		$where = $sql['where'];
-
-		/**
-		 * Filters the date query WHERE clause.
-		 *
-		 * @since 3.7.0
-		 *
-		 * @param string        $where WHERE clause of the date query.
-		 * @param WP_Date_Query $this  The WP_Date_Query instance.
-		 */
-		return apply_filters( 'get_date_sql', $where, $this );
-	}
-
-	// refactored. protected function get_sql_clauses() {}
 	// refactored. protected function get_sql_for_query( $query, $depth = 0 ) {}
 
 	/**
