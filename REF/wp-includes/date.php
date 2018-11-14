@@ -260,19 +260,22 @@ class WP_Date_Query
 		// Validate the dates passed in the query.
 		if ( $this->is_first_order_clause( $queries ) ) {
 			$this->validate_date_values( $queries );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/date.php
- */
 		}
+
+		foreach ( $queries as $key => $q ) {
+			if ( ! is_array( $q ) || in_array( $key, $this->time_keys, TRUE ) ) {
+				/**
+				 * This is a first-order query.
+				 * Trust the values and sanitize when building SQL.
+				 */
+				$cleaned_query[ $key ] = $q;
+			} else {
+				// Any array without a time key is another query, so we recurse.
+				$cleaned_query[] = $this->sanitize_query( $q, $queries );
+			}
+		}
+
+		return $cleaned_query;
 	}
 
 	/**
