@@ -1400,24 +1400,44 @@ class WP_Query
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/class-wp-query.php
  * @NOW 011: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-query.php
  */
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * @NOW 012: wp-includes/class-wp-query.php
- */
+	/**
+	 * Retrieve stopwords used when parsing search terms.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return array Stopwords.
+	 */
+	protected function get_search_stopwords()
+	{
+		if ( isset( $this->stopwords ) ) {
+			return $this->stopwords;
+		}
+
+		$words = explode( ',', _x( 'about,an,are,as,at,be,by,com,for,from,how,in,is,it,of,on,or,that,the,this,to,was,what,when,where,who,will,with,www', 'Comma-separated list of search stopwords in your language' ) );
+		$stopwords = array();
+
+		foreach ( $words as $word ) {
+			$word = trim( $word, "\r\n\t " );
+
+			if ( $word ) {
+				$stopwords[] = $word;
+			}
+		}
+
+		/**
+		 * Filters stopwords used when parsing search terms.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param array $stopwords Stopwords.
+		 */
+		$this->stopwords = apply_filters( 'wp_search_stopwords', $stopwords );
+
+		return $this->stopwords;
+	}
 
 	/**
 	 * Sets the 404 property and saves whether query is feed.
