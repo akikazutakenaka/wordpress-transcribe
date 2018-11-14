@@ -642,6 +642,47 @@ class WP_Date_Query
 		}
 	}
 
+	/**
+	 * Turns a first-order date query into SQL for a WHERE clause.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $query        Date query clause.
+	 * @param  array $parent_query Parent query of the current date query.
+	 * @return array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	protected function get_sql_for_clause( $query, $parent_query )
+	{
+		global $wpdb;
+
+		// The sub-parts of a $where part.
+		$where_parts = array();
+
+		$column = ! empty( $query['column'] )
+			? esc_sql( $query['column'] )
+			: $this->column;
+
+		$column = $this->validate_column( $column );
+		$compare = $this->get_compare( $query );
+		$inclusive = ! empty( $query['inclusive'] );
+
+		// Assign greater- and less-than values.
+		$lt = '<';
+		$gt = '>';
+
+		if ( $inclusive ) {
+			$lt .= '=';
+			$gt .= '=';
+		}
+
+		// Range queries.
+		if ( ! empty( $query['after'] ) ) {
+			$where_parts[] = $wpdb->prepare( "$column $gt %s", $this->build_mysql_datetime( $query['after'], ! $inclusive ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -656,5 +697,25 @@ class WP_Date_Query
  * <- wp-includes/date.php
  * <- wp-includes/date.php
  * @NOW 013: wp-includes/date.php
+ * -> wp-includes/date.php
+ */
+		}
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/date.php
+ * <- wp-includes/date.php
+ * <- wp-includes/date.php
+ * <- wp-includes/date.php
+ * @NOW 014: wp-includes/date.php
  */
 }
