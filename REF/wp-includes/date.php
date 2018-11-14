@@ -213,6 +213,9 @@ class WP_Date_Query
 
 		$this->column = $this->validate_column( $this->column );
 		$this->compare = $this->get_compare( $date_query );
+		$this->queries = $this->sanitize_query( $date_query );
+	}
+
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -225,7 +228,6 @@ class WP_Date_Query
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/date.php
  */
-	}
 
 	/**
 	 * Determines and validates what comparison operator to use.
