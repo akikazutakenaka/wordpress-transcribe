@@ -216,6 +216,49 @@ class WP_Date_Query
 		$this->queries = $this->sanitize_query( $date_query );
 	}
 
+	/**
+	 * Recursive-friendly query sanitizer.
+	 *
+	 * Ensures that each query-level clause has a 'relation' key, and that each first-order clause contains all the necessary keys from `$defaults`.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $queries
+	 * @param  array $parent_query
+	 * @return array Sanitized queries.
+	 */
+	public function sanitize_query( $queries, $parent_query = NULL )
+	{
+		$cleaned_query = array();
+		$defaults = array(
+			'column'   => 'post_date',
+			'compare'  => '=',
+			'relation' => 'AND'
+		);
+
+		// Numeric keys should always have array values.
+		foreach ( $queries as $qkey => $qvalue ) {
+			if ( is_numeric( $qkey ) && ! is_array( $qvalue ) ) {
+				unset( $queries[ $qkey ] );
+			}
+		}
+
+		/**
+		 * Each query should have a value for each default key.
+		 * Inherit from the parent when possible.
+		 */
+		foreach ( $defaults as $dkey => $dvalue ) {
+			if ( isset( $queries[ $dkey ] ) ) {
+				continue;
+			}
+
+			$queries[ $dkey ] = isset( $parent_query[ $dkey ] )
+				? $parent_query[ $dkey ]
+				: $dvalue;
+		}
+
+		// Validate the dates passed in the query.
+		if ( $this->is_first_order_clause( $queries ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -227,6 +270,23 @@ class WP_Date_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/date.php
+ * -> wp-includes/date.php
+ */
+		}
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/date.php
+ * @NOW 011: wp-includes/date.php
  */
 
 	/**
