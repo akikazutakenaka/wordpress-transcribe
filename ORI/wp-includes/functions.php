@@ -3631,32 +3631,8 @@ function send_nosniff_header() {
 	@header( 'X-Content-Type-Options: nosniff' );
 }
 
-/**
- * Return a MySQL expression for selecting the week number based on the start_of_week option.
- *
- * @ignore
- * @since 3.0.0
- *
- * @param string $column Database column.
- * @return string SQL clause.
- */
-function _wp_mysql_week( $column ) {
-	switch ( $start_of_week = (int) get_option( 'start_of_week' ) ) {
-	case 1 :
-		return "WEEK( $column, 1 )";
-	case 2 :
-	case 3 :
-	case 4 :
-	case 5 :
-	case 6 :
-		return "WEEK( DATE_SUB( $column, INTERVAL $start_of_week DAY ), 0 )";
-	case 0 :
-	default :
-		return "WEEK( $column, 0 )";
-	}
-}
-
-// refactored. function wp_find_hierarchy_loop( $callback, $start, $start_parent, $callback_args = array() ) {}
+// refactored. function _wp_mysql_week( $column ) {}
+// :
 // refactored. function wp_find_hierarchy_loop_tortoise_hare( $callback, $start, $override = array(), $callback_args = array(), $_return_loop = false ) {}
 
 /**

@@ -691,6 +691,18 @@ class WP_Date_Query
 
 		// Specific value queries.
 		if ( isset( $query['year'] ) && $value = $this->build_value( $compare, $query['year'] ) ) {
+			$where_parts[] = "YEAR( $column ) $compare $value";
+		}
+
+		if ( isset( $query['month'] ) && $value = $this->build_value( $compare, $query['month'] ) ) {
+			$where_parts[] = "MONTH( $column ) $compare $value";
+		} elseif ( isset( $query['monthnum'] ) && $value = $this->build_value( $compare, $query['monthnum'] ) ) {
+			$where_parts[] = "MONTH( $column ) $compare $value";
+		}
+
+		if ( isset( $query['week'] ) && FALSE !== ( $value = $this->build_value( $compare, $query['week'] ) ) ) {
+			$where_parts[] = _wp_mysql_week( $column ) . " $compare $value";
+		}
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -706,7 +718,6 @@ class WP_Date_Query
  * <- wp-includes/date.php
  * @NOW 013: wp-includes/date.php
  */
-		}
 	}
 
 	/**
