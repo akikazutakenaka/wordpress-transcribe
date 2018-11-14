@@ -42,31 +42,7 @@ class WP_Date_Query {
 		return apply_filters( 'get_date_sql', $where, $this );
 	}
 
-	/**
-	 * Generate SQL clauses to be appended to a main query.
-	 *
-	 * Called by the public WP_Date_Query::get_sql(), this method is abstracted
-	 * out to maintain parity with the other Query classes.
-	 *
-	 * @since 4.1.0
-	 *
-	 * @return array {
-	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
-	 *
-	 *     @type string $join  SQL fragment to append to the main JOIN clause.
-	 *     @type string $where SQL fragment to append to the main WHERE clause.
-	 * }
-	 */
-	protected function get_sql_clauses() {
-		$sql = $this->get_sql_for_query( $this->queries );
-
-		if ( ! empty( $sql['where'] ) ) {
-			$sql['where'] = ' AND ' . $sql['where'];
-		}
-
-		return $sql;
-	}
-
+	// refactored. protected function get_sql_clauses() {}
 	// refactored. protected function get_sql_for_query( $query, $depth = 0 ) {}
 
 	/**

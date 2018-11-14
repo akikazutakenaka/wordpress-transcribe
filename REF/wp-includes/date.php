@@ -543,7 +543,6 @@ class WP_Date_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/date.php
- * -> wp-includes/date.php
  */
 	}
 
@@ -564,19 +563,12 @@ class WP_Date_Query
 	protected function get_sql_clauses()
 	{
 		$sql = $this->get_sql_for_query( $this->queries );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/date.php
- * @NOW 011: wp-includes/date.php
- */
+
+		if ( ! empty( $sql['where'] ) ) {
+			$sql['where'] = ' AND ' . $sql['where'];
+		}
+
+		return $sql;
 	}
 
 	/**
