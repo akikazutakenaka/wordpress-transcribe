@@ -547,6 +547,23 @@ class WP_Date_Query
  */
 	}
 
+	/**
+	 * Generate SQL clauses to be appended to a main query.
+	 *
+	 * Called by the public WP_Date_Query::get_sql(), this method is abstracted out to maintain parity with the other Query classes.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @return array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	protected function get_sql_clauses()
+	{
+		$sql = $this->get_sql_for_query( $this->queries );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -559,5 +576,22 @@ class WP_Date_Query
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/date.php
  * @NOW 011: wp-includes/date.php
+ * -> wp-includes/date.php
+ */
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/date.php
+ * <- wp-includes/date.php
+ * @NOW 012: wp-includes/date.php
  */
 }
