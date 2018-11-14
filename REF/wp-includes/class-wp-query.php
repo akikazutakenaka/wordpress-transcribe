@@ -1570,6 +1570,7 @@ class WP_Query
 
 		if ( $date_parameters ) {
 			$date_query = new WP_Date_Query( array( $date_parameters ) );
+			$where .= $date_query->get_sql();
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1580,6 +1581,7 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/date.php
  */
 		}
 	}

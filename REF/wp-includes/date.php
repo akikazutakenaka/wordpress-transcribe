@@ -521,4 +521,43 @@ class WP_Date_Query
 		// Remove unsafe characters.
 		return preg_replace( '/[^a-zA-Z0-9_$\.]/', '', $column );
 	}
+
+	/**
+	 * Generate WHERE clause to be appended to a main query.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return string MySQL WHERE clause.
+	 */
+	public function get_sql()
+	{
+		$sql = $this->get_sql_clauses();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 010: wp-includes/date.php
+ * -> wp-includes/date.php
+ */
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/date.php
+ * @NOW 011: wp-includes/date.php
+ */
 }
