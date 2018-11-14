@@ -115,44 +115,7 @@ class WP_Query {
 		return $search;
 	}
 
-	/**
-	 * Check if the terms are suitable for searching.
-	 *
-	 * Uses an array of stopwords (terms) that are excluded from the separate
-	 * term matching when searching for posts. The list of English stopwords is
-	 * the approximate search engines list, and is translatable.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @param array $terms Terms to check.
-	 * @return array Terms that are not stopwords.
-	 */
-	protected function parse_search_terms( $terms ) {
-		$strtolower = function_exists( 'mb_strtolower' ) ? 'mb_strtolower' : 'strtolower';
-		$checked = array();
-
-		$stopwords = $this->get_search_stopwords();
-
-		foreach ( $terms as $term ) {
-			// keep before/after spaces when term is for exact match
-			if ( preg_match( '/^".+"$/', $term ) )
-				$term = trim( $term, "\"'" );
-			else
-				$term = trim( $term, "\"' " );
-
-			// Avoid single A-Z and single dashes.
-			if ( ! $term || ( 1 === strlen( $term ) && preg_match( '/^[a-z\-]$/i', $term ) ) )
-				continue;
-
-			if ( in_array( call_user_func( $strtolower, $term ), $stopwords, true ) )
-				continue;
-
-			$checked[] = $term;
-		}
-
-		return $checked;
-	}
-
+	// refactored. protected function parse_search_terms( $terms ) {}
 	// refactored. protected function get_search_stopwords() {}
 
 	/**

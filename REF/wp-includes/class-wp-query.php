@@ -1363,7 +1363,6 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-query.php
  */
 			}
 		}
@@ -1388,19 +1387,27 @@ class WP_Query
 
 		$checked = array();
 		$stopwords = $this->get_search_stopwords();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-query.php
- * @NOW 011: wp-includes/class-wp-query.php
- */
+
+		foreach ( $terms as $term ) {
+			// Keep before/after spaces when term is for exact match.
+			$term = preg_match( '/^".+"$/', $term )
+				? trim( $term, "\"'" )
+				: trim( $term, "\"' " );
+
+			// Avoid single A-Z and single dashes.
+			if ( ! $term
+			  || 1 === strlen( $term ) && preg_match( '/^[a-z\-]$/i', $term ) ) {
+				continue;
+			}
+
+			if ( in_array( call_user_func( $strtolower, $term ), $stopwords, TRUE ) ) {
+				continue;
+			}
+
+			$checked[] = $term;
+		}
+
+		return $checked;
 	}
 
 	/**
