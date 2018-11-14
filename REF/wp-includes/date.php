@@ -270,24 +270,26 @@ class WP_Date_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/date.php
- * -> wp-includes/date.php
  */
 		}
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/date.php
- * @NOW 011: wp-includes/date.php
- */
+	/**
+	 * Determine whether this is a first-order clause.
+	 *
+	 * Checks to see if the current clause has any time-related keys.
+	 * If so, it's first-order.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $query Query clause.
+	 * @return bool  True if this is a first-order clause.
+	 */
+	protected function is_first_order_clause( $query )
+	{
+		$time_keys = array_intersect( $this->time_keys, array_keys( $query ) );
+		return ! empty( $time_keys );
+	}
 
 	/**
 	 * Determines and validates what comparison operator to use.
