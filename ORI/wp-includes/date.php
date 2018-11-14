@@ -15,47 +15,9 @@
  * @since 3.7.0
  */
 class WP_Date_Query {
-	/**
-	 * Array of date queries.
-	 *
-	 * See WP_Date_Query::__construct() for information on date query arguments.
-	 *
-	 * @since 3.7.0
-	 * @var array
-	 */
-	public $queries = array();
-
-	/**
-	 * The default relation between top-level queries. Can be either 'AND' or 'OR'.
-	 *
-	 * @since 3.7.0
-	 * @var string
-	 */
-	public $relation = 'AND';
-
-	/**
-	 * The column to query against. Can be changed via the query arguments.
-	 *
-	 * @since 3.7.0
-	 * @var string
-	 */
-	public $column = 'post_date';
-
-	/**
-	 * The value comparison operator. Can be changed via the query arguments.
-	 *
-	 * @since 3.7.0
-	 * @var array
-	 */
-	public $compare = '=';
-
-	/**
-	 * Supported time-related parameter keys.
-	 *
-	 * @since 4.1.0
-	 * @var array
-	 */
-	public $time_keys = array( 'after', 'before', 'year', 'month', 'monthnum', 'week', 'w', 'dayofyear', 'day', 'dayofweek', 'dayofweek_iso', 'hour', 'minute', 'second' );
+	// refactored. public $queries = array();
+	// :
+	// refactored. public $time_keys = array( 'after', 'before', 'year', 'month', 'monthnum', 'week', 'w', 'dayofyear', 'day', 'dayofweek', 'dayofweek_iso', 'hour', 'minute', 'second' );
 
 	/**
 	 * Constructor.
