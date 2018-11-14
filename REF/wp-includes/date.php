@@ -223,21 +223,57 @@ class WP_Date_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/date.php
- * -> wp-includes/date.php
  */
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/date.php
- * @NOW 011: wp-includes/date.php
- */
+	/**
+	 * Validate a column name parameter.
+	 *
+	 * Column names without a table prefix (like 'post_date') are checked against a whitelist of known tables, and then, if found, have a table prefix (such as 'wp_posts.') prepended.
+	 * Prefixed column names (such as 'wp_posts.post_date') bypass this whitelist check, and are only sanitized to remove illegal characters.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param  string $column The user-supplied column name.
+	 * @return string A validated column name value.
+	 */
+	public function validate_column( $column )
+	{
+		global $wpdb;
+		$valid_columns = array( 'post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt', 'comment_date', 'comment_date_gmt', 'user_registered', 'registered', 'last_updated' );
+
+		// Attempt to detect a table prefix.
+		if ( FALSE === strpos( $column, '.' ) ) {
+			/**
+			 * Filters the list of valid date query columns.
+			 *
+			 * @since 3.7.0
+			 * @since 4.1.0 Added 'user_registered' to the default recognized columns.
+			 *
+			 * @param array $valid_columns An array of valid date columns.
+			 *                             Defaults are 'post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt', 'comment_date', 'comment_date_gmt', 'user_registered'.
+			 */
+			if ( ! in_array( $column, apply_filters( 'date_query_valid_columns', $valid_columns ) ) ) {
+				$column = 'post_date';
+			}
+
+			$known_columns = array(
+				$wpdb->posts    = array( 'post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt' ),
+				$wpdb->comments = array( 'comment_date', 'comment_date_gmt' ),
+				$wpdb->users    = array( 'user_registered' ),
+				$wpdb->blogs    = array( 'registered', 'last_updated' )
+			);
+
+			// If it's a known column name, add the appropriate table prefix.
+			foreach ( $known_columns as $table_name => $table_columns ) {
+				if ( in_array( $column, $table_columns ) ) {
+					$column = $table_name . '.' . $column;
+					break;
+				}
+			}
+		}
+
+		// Remove unsafe characters.
+		return preg_replace( '/[^a-zA-Z0-9_$\.]/', '', $column );
+	}
 }
