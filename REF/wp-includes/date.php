@@ -702,7 +702,35 @@ class WP_Date_Query
 
 		if ( isset( $query['week'] ) && FALSE !== ( $value = $this->build_value( $compare, $query['week'] ) ) ) {
 			$where_parts[] = _wp_mysql_week( $column ) . " $compare $value";
+		} elseif ( isset( $query['w'] ) && FALSE !== ( $value = $this->build_value( $compare, $query['w'] ) ) ) {
+			$where_parts[] = _wp_mysql_week( $column ) . " $compare $value";
 		}
+
+		if ( isset( $query['dayofyear'] ) && $value = $this->build_value( $compare, $query['dayofyear'] ) ) {
+			$where_parts[] = "DAYOFYEAR( $column ) $compare $value";
+		}
+
+		if ( isset( $query['day'] ) && $value = $this->build_value( $compare, $query['day'] ) ) {
+			$where_parts[] = "DAYOFMONTH( $column ) $compare $value";
+		}
+
+		if ( isset( $query['dayofweek'] ) && $value = $this->build_value( $compare, $query['dayofweek'] ) ) {
+			$where_parts[] = "DAYOFWEEK( $column ) $compare $value";
+		}
+
+		if ( isset( $query['dayofweek_iso'] ) && $value = $this->build_value( $compare, $query['dayofweek_iso'] ) ) {
+			$where_parts[] = "WEEKDAY( $column ) + 1 $compare $value";
+		}
+
+		if ( isset( $query['hour'] ) || isset( $query['minute'] ) || isset( $query['second'] ) ) {
+			// Avoid notices.
+			foreach ( array( 'hour', 'minute', 'second' ) as $unit ) {
+				if ( ! isset( $query[ $unit ] ) ) {
+					$query[ $unit ] = NULL;
+				}
+			}
+
+			if ( $time_query = $this->build_time_query( $column, $compare, $query['hour'], $query['minute'], $query['second'] ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -718,6 +746,8 @@ class WP_Date_Query
  * <- wp-includes/date.php
  * @NOW 013: wp-includes/date.php
  */
+			}
+		}
 	}
 
 	/**
@@ -867,5 +897,93 @@ class WP_Date_Query
 		}
 
 		return sprintf( '%04d-%02d-%02d %02d:%02d:%02d', $datetime['year'], $datetime['month'], $datetime['day'], $datetime['hour'], $datetime['minute'], $datetime['second'] );
+	}
+
+	/**
+	 * Builds a query string for comparing time values (hour, minute, second).
+	 *
+	 * If just hour, minute, or second is set than a normal comparison will be done.
+	 * However if multiple values are passed, a pseudo-decimal time will be created in order to be able to accurately compare against.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param  string       $column  The column to query against.
+	 *                               Needs to be pre-validated!
+	 * @param  string       $compare The comparison operator.
+	 *                               Needs to be pre-validated!
+	 * @param  int|null     $hour    Optional.
+	 *                               An hour value (0-23).
+	 * @param  int|null     $minute  Optional.
+	 *                               A minute value (0-59).
+	 * @param  int|null     $second  Optional.
+	 *                               A second value (0-59).
+	 * @return string|false A query part or false on failure.
+	 */
+	public function build_time_query( $column, $compare, $hour = NULL, $minute = NULL, $second = NULL )
+	{
+		global $wpdb;
+
+		// Have to have at least one
+		if ( ! isset( $hour ) && ! isset( $minute ) && ! isset( $second ) ) {
+			return FALSE;
+		}
+
+		// Complex combined queries aren't supported for multi-value queries.
+		if ( in_array( $compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+			$return = array();
+
+			if ( isset( $hour ) && FALSE !== ( $value = $this->build_value( $compare, $hour ) ) ) {
+				$return[] = "HOUR( $column ) $compare $value";
+			}
+
+			if ( isset( $minute ) && FALSE !== ( $value = $this->build_value( $compare, $minute ) ) ) {
+				$return[] = "MINUTE( $column ) $compare $value";
+			}
+
+			if ( isset( $second ) && FALSE !== ( $value = $this->build_value( $compare, $second ) ) ) {
+				$return[] = "SECOND( $column ) $compare $value";
+			}
+
+			return implode( ' AND ', $return );
+		}
+
+		// Cases where just one unit is set.
+		if ( isset( $hour ) && ! isset( $minute ) && ! isset( $second ) && FALSE !== ( $value = $this->build_value( $compare, $hour ) ) ) {
+			return "HOUR( $column ) $compare $value";
+		} elseif ( ! isset( $hour ) && isset( $minute ) && ! isset( $second ) && FALSE !== ( $value = $this->build_value( $compare, $minute ) ) ) {
+			return "MINUTE( $column ) $compare $value";
+		} elseif ( ! isset( $hour ) && ! isset( $minute ) && isset( $second ) && FALSE !== ( $value = $this->build_value( $compare, $second ) ) ) {
+			return "SECOND( $column ) $compare $value";
+		}
+
+		/**
+		 * Single units were already handled.
+		 * Since hour & second isn't allowed, minute must to be set.
+		 */
+		if ( ! isset( $minute ) ) {
+			return FALSE;
+		}
+
+		$format = $time = '';
+
+		// Hour
+		if ( NULL !== $hour ) {
+			$format .= '%H.';
+			$time   .= sprintf( '%02d', $hour ) . '.';
+		} else {
+			$format .= '0.';
+			$time   .= '0.';
+		}
+
+		// Minute
+		$format .= '%i';
+		$time   .= sprintf( '%02d', $minute );
+
+		if ( isset( $second ) ) {
+			$format .= '%s';
+			$time   .= sprintf( '%02d', $second );
+		}
+
+		return $wpdb->prepare( "DATE_FORMAT( $column, %s ) $compare %f", $format, $time );
 	}
 }
