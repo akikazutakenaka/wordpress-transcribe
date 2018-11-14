@@ -216,20 +216,7 @@ class WP_Date_Query {
 		return ! empty( $time_keys );
 	}
 
-	/**
-	 * Determines and validates what comparison operator to use.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @param array $query A date query or a date subquery.
-	 * @return string The comparison operator.
-	 */
-	public function get_compare( $query ) {
-		if ( ! empty( $query['compare'] ) && in_array( $query['compare'], array( '=', '!=', '>', '>=', '<', '<=', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) )
-			return strtoupper( $query['compare'] );
-
-		return $this->compare;
-	}
+	// refactored. public function get_compare( $query ) {}
 
 	/**
 	 * Validates the given date_query values and triggers errors if something is not valid.

@@ -212,6 +212,7 @@ class WP_Date_Query
 			: esc_sql( $default_column );
 
 		$this->column = $this->validate_column( $this->column );
+		$this->compare = $this->get_compare( $date_query );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -224,6 +225,21 @@ class WP_Date_Query
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/date.php
  */
+	}
+
+	/**
+	 * Determines and validates what comparison operator to use.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param  array  $query A date query or a date subquery.
+	 * @return string The comparison operator.
+	 */
+	public function get_compare( $query )
+	{
+		return ! empty( $query['compare'] ) && in_array( $query['compare'], array( '=', '!=', '>', '>=', '<', '<=', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) )
+			? strtoupper( $query['compare'] )
+			: $this->compare;
 	}
 
 	/**
