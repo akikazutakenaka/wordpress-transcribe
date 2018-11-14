@@ -683,6 +683,14 @@ class WP_Date_Query
 		// Range queries.
 		if ( ! empty( $query['after'] ) ) {
 			$where_parts[] = $wpdb->prepare( "$column $gt %s", $this->build_mysql_datetime( $query['after'], ! $inclusive ) );
+		}
+
+		if ( ! empty( $query['before'] ) ) {
+			$where_parts[] = $wpdb->prepare( "$column $lt %s", $this->build_mysql_datetime( $query['before'], $inclusive ) );
+		}
+
+		// Specific value queries.
+		if ( isset( $query['year'] ) && $value = $this->build_value( $compare, $query['year'] ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -698,6 +706,60 @@ class WP_Date_Query
  * <- wp-includes/date.php
  * @NOW 013: wp-includes/date.php
  */
+		}
+	}
+
+	/**
+	 * Builds and validates a value string based on the comparison operator.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param  string           $compare The compare operator to use.
+	 * @param  string|array     $value   The value.
+	 * @return string|false|int The value to be used in SQL or false on error.
+	 */
+	public function build_value( $compare, $value )
+	{
+		if ( ! isset( $value ) ) {
+			return FALSE;
+		}
+
+		switch ( $compare ) {
+			case 'IN':
+			case 'NOT IN':
+				$value = ( array ) $value;
+
+				// Remove non-numeric values.
+				$value = array_filter( $value, 'is_numeric' );
+
+				if ( empty( $value ) ) {
+					return FALSE;
+				}
+
+				return '(' . implode( ',', array_map( 'intval', $value ) ) . ')';
+
+			case 'BETWEEN':
+			case 'NOT BETWEEN':
+				$value = ! is_array( $value ) || 2 != count( $value )
+					? array( $value, $value )
+					: array_values( $value );
+
+				// If either value is non-numeric, bail.
+				foreach ( $value as $v ) {
+					if ( ! is_numeric( $v ) ) {
+						return FALSE;
+					}
+				}
+
+				$value = array_map( 'intval', $value );
+				return $value[0] . ' AND ' . $value[1];
+
+			default:
+				if ( ! is_numeric( $value ) ) {
+					return FALSE;
+				}
+
+				return ( int ) $value;
 		}
 	}
 
