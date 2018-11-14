@@ -1339,6 +1339,19 @@ class WP_Query
 		$q['s'] = stripslashes( $q['s'] );
 
 		if ( empty( $_GET['s'] ) && $this->is_main_query() ) {
+			$q['s'] = urldecode( $q['s'] );
+		}
+
+		// There are no line breaks in <input /> fields.
+		$q['s'] = str_replace( array( "\r", "\n" ), '', $q['s'] );
+		$q['search_terms_count'] = 1;
+
+		if ( ! empty( $q['sentence'] ) ) {
+			$q['search_terms'] = array( $q['s'] );
+		} else {
+			if ( preg_match_all( '/".*?("|$)|((?<=[\t ",+])|^)[^\t ",+]+/', $q['s'], $matches ) ) {
+				$q['search_terms_count'] = count( $matches[0] );
+				$q['search_terms'] = $this->parse_search_terms( $matches[0] );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1350,9 +1363,61 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/class-wp-query.php
+ * -> wp-includes/class-wp-query.php
  */
+			}
 		}
 	}
+
+	/**
+	 * Check if the terms are suitable for searching.
+	 *
+	 * Uses an array of stopwords (terms) that are excluded from the separate term matching when searching for posts.
+	 * The list of English stopwords is the approximate search engines list, and is translatable.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param  array $terms Terms to check.
+	 * @return array Terms that are not stopwords.
+	 */
+	protected function parse_search_terms( $terms )
+	{
+		$strtolower = function_exists( 'mb_strtolower' )
+			? 'mb_strtolower'
+			: 'strtolower';
+
+		$checked = array();
+		$stopwords = $this->get_search_stopwords();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 011: wp-includes/class-wp-query.php
+ * -> wp-includes/class-wp-query.php
+ */
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 012: wp-includes/class-wp-query.php
+ */
 
 	/**
 	 * Sets the 404 property and saves whether query is feed.
