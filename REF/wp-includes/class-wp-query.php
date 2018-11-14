@@ -1322,6 +1322,39 @@ class WP_Query
 	}
 
 	/**
+	 * Generates SQL for the WHERE clause based on passed search terms.
+	 *
+	 * @since  3.7.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  array  $q Query variables.
+	 * @return string WHERE clause.
+	 */
+	protected function parse_search( &$q )
+	{
+		global $wpdb;
+		$search = '';
+
+		// Added slashes screw with quote grouping when done early, so done later.
+		$q['s'] = stripslashes( $q['s'] );
+
+		if ( empty( $_GET['s'] ) && $this->is_main_query() ) {
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 010: wp-includes/class-wp-query.php
+ */
+		}
+	}
+
+	/**
 	 * Sets the 404 property and saves whether query is feed.
 	 *
 	 * @since 2.0.0
@@ -1571,6 +1604,139 @@ class WP_Query
 		if ( $date_parameters ) {
 			$date_query = new WP_Date_Query( array( $date_parameters ) );
 			$where .= $date_query->get_sql();
+		}
+
+		unset( $date_parameters, $date_query );
+
+		// Handle complex date queries.
+		if ( ! empty( $q['date_query'] ) ) {
+			$this->date_query = new WP_Date_Query( $q['date_query'] );
+			$where .= $this->date_query->get_sql();
+		}
+
+		// If we've got a post_type AND it's not "any" post_type.
+		if ( ! empty( $q['post_type'] ) && 'any' != $q['post_type'] ) {
+			foreach ( ( array ) $q['post_type'] as $_post_type ) {
+				$ptype_obj = get_post_type_object( $_post_type );
+
+				if ( ! $ptype_obj || ! $ptype_obj->query_var || empty( $q[ $ptype_obj->query_var ] ) ) {
+					continue;
+				}
+
+				if ( ! $$ptype_obj->hierarchical ) {
+					// Non-hierarchical post types can directly use 'name'.
+					$q['name'] = $q[ $ptype_obj->query_var ];
+				} else {
+					// Hierarchical post types will operate through 'pagename'.
+					$q['pagename'] = $q[ $ptype_obj->query_var ];
+					$q['name'] = '';
+				}
+
+				// Only one request for a slug is possible, this is why name & pagename are overwritten above.
+				break;
+			}
+
+			unset( $ptype_obj );
+		}
+
+		if ( '' !== $q['title'] ) {
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_title = %s", stripslashes( $q['title'] ) );
+		}
+
+		// Parameters related to 'post_name'.
+		if ( '' != $q['name'] ) {
+			$q['name'] = sanitize_title_for_query( $q['name'] );
+			$where .= " AND {$wpdb->posts}.post_name = '" . $q['name'] . "'";
+		} elseif ( '' != $q['pagename'] ) {
+			if ( isset( $this->queried_object_id ) ) {
+				$reqpage = $this->queried_object_id;
+			} else {
+				if ( 'page' != $q['post_type'] ) {
+					foreach ( ( array ) $q['post_type'] as $_post_type ) {
+						$ptype_obj = get_post_type_object( $_post_type );
+
+						if ( ! $ptype_obj || ! $ptype_obj->hierarchical ) {
+							continue;
+						}
+
+						$reqpage = get_page_by_path( $q['pagename'], OBJECT, $_post_type );
+
+						if ( $reqpage ) {
+							break;
+						}
+					}
+
+					unset( $ptype_obj );
+				} else {
+					$reqpage = get_page_by_path( $q['pagename'] );
+				}
+
+				$reqpage = ! empty( $reqpage )
+					? $reqpage->ID
+					: 0;
+			}
+
+			$page_for_posts = get_option( 'page_for_posts' );
+
+			if ( 'page' != get_option( 'show_on_front' ) || empty( $page_for_posts ) || $reqpage != $page_for_posts ) {
+				$q['pagename'] = sanitize_title_for_query( wp_basename( $q['pagename'] ) );
+				$q['name'] = $q['pagename'];
+				$where .= " AND ({$wpdb->posts}.ID = '$reqpage')";
+				$reqpage_obj = get_post( $reqpage );
+
+				if ( is_object( $reqpage_obj ) && 'attachment' == $reqpage_obj->post_type ) {
+					$this->is_attachment = TRUE;
+					$post_type = $q['post_type'] = 'attachment';
+					$this->is_page = TRUE;
+					$q['attachment_id'] = $reqpage;
+				}
+			}
+		} elseif ( '' != $q['attachment'] ) {
+			$q['attachment'] = sanitize_title_for_query( wp_basename( $q['attachment'] ) );
+			$q['name'] = $q['attachment'];
+			$where .= " AND {$wpdb->posts}.post_name = '" . $q['attachment'] . "'";
+		} elseif ( is_array( $q['post_name__in'] ) && ! empty( $q['post_name__in'] ) ) {
+			$q['post_name__in'] = array_map( 'sanitize_title_for_query', $q['post_name__in'] );
+			$post_name__in = "'" . implode( "','", $q['post_name__in'] ) . "'";
+			$where .= " AND {$wpdb->posts}.post_name IN ($post_name__in)";
+		}
+
+		// If an attachment is requested by number, let it supersede any post number.
+		if ( $q['attachment_id'] ) {
+			$q['p'] = absint( $q['attachment_id'] );
+		}
+
+		// If a post number is specified, load that post.
+		if ( $q['p'] ) {
+			$where .= " AND {$wpdb->posts}.ID = " . $q['p'];
+		} elseif ( $q['post__in'] ) {
+			$post__in = implode( ',', array_map( 'absint', $q['post__in'] ) );
+			$where .= " AND {$wpdb->posts}.ID IN ($post__in)";
+		} elseif ( $q['post__not_in'] ) {
+			$post__not_in = implode( ',', array_map( 'absint', $q['post__not_in'] ) );
+			$where .= " AND {$wpdb->posts}.ID NOT IN ($post__not_in)";
+		}
+
+		if ( is_numeric( $q['post_parent'] ) ) {
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_parent = %d ", $q['post_parent'] );
+		} elseif ( $q['post_parent__in'] ) {
+			$post_parent__in = implode( ',', array_map( 'absint', $q['post_parent__in'] ) );
+			$where .= " AND {$wpdb->posts}.post_parent IN ($post_parent__in)";
+		} elseif ( $q['post_parent__not_in'] ) {
+			$post_parent__not_in = implode( ',', array_map( 'absint', $q['post_parent__not_in'] ) );
+			$where .= " AND {$wpdb->posts}.post_parent NOT IN ($post_parent__not_in)";
+		}
+
+		if ( $q['page_id'] ) {
+			if ( 'page' != get_option( 'show_on_front' ) || $q['page_id'] != get_option( 'page_for_posts' ) ) {
+				$q['p'] = $q['page_id'];
+				$where = " AND {$wpdb->posts}.ID = " . $q['page_id'];
+			}
+		}
+
+		// If a search pattern is specified, load the posts that match.
+		if ( strlen( $q['s'] ) ) {
+			$search = $this->parse_search( $q );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1581,6 +1747,7 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/class-wp-query.php
  */
 		}
 	}
@@ -1614,5 +1781,19 @@ class WP_Query
 		if ( ! empty( $query ) ) {
 			$this->query( $query );
 		}
+	}
+
+	/**
+	 * Is the query the main query?
+	 *
+	 * @since  3.3.0
+	 * @global WP_Query $wp_query Global WP_Query instance.
+	 *
+	 * @return bool
+	 */
+	public function is_main_query()
+	{
+		global $wp_the_query;
+		return $wp_the_query === $this;
 	}
 }
