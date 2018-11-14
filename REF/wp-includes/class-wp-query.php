@@ -1347,6 +1347,229 @@ class WP_Query
 	{
 		global $wpdb;
 		$this->parse_query();
+
+		/**
+		 * Fires after the query variable object is created, but before the actual query is run.
+		 *
+		 * Note: If using conditional tags, use the method versions within the passed instance (e.g. $this->is_main_query() instead of is_main_query()).
+		 * This is because the functions like is_main_query() test against the global $wp_query instance, not the passed one.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param WP_Query $this The WP_Query instance (passed by reference).
+		 */
+		do_action_ref_array( 'pre_get_posts', array( &$this ) );
+
+		// Shorthand.
+		$q = &$this->query_vars;
+
+		// Fill again in case pre_get_posts unset some vars.
+		$q = $this->fill_query_vars( $q );
+
+		// Parse meta query.
+		$this->meta_query = new WP_Meta_Query();
+		$this->meta_query->parse_query_vars( $q );
+
+		// Set a flag if a pre_get_posts hook changed the query vars.
+		$hash = md5( serialize( $this->query_vars ) );
+
+		if ( $hash != $this->query_vars_hash ) {
+			$this->query_vars_changed = TRUE;
+			$this->query_vars_hash = $hash;
+		}
+
+		unset( $hash );
+
+		// First let's clear some variables.
+		$distinct = '';
+		$whichauthor = '';
+		$whichmimetype = '';
+		$where = '';
+		$limits = '';
+		$join = '';
+		$search = '';
+		$groupby = '';
+		$post_status_join = FALSE;
+		$page = 1;
+
+		if ( isset( $q['caller_get_posts'] ) ) {
+			_deprecated_argument( 'WP_Query', '3.1.0', sprintf( __( '%1$s is deprecated. Use %2$s instead.' ), '<code>caller_get_posts</code>', '<code>ignore_sticky_posts</code>' ) );
+
+			if ( ! isset( $q['ignore_sticky_posts'] ) ) {
+				$q['ignore_sticky_posts'] = $q['caller_get_posts'];
+			}
+		}
+
+		if ( ! isset( $q['ignore_sticky_posts'] ) ) {
+			$q['ignore_sticky_posts'] = FALSE;
+		}
+
+		if ( ! isset( $q['suppress_filters'] ) ) {
+			$q['suppress_filters'] = FALSE;
+		}
+
+		if ( ! isset( $q['cache_results'] ) ) {
+			$q['cache_results'] = wp_using_ext_object_cache()
+				? FALSE
+				: TRUE;
+		}
+
+		if ( ! isset( $q['update_post_term_cache'] ) ) {
+			$q['update_post_term_cache'] = TRUE;
+		}
+
+		if ( ! isset( $q['lazy_load_term_meta'] ) ) {
+			$q['lazy_load_term_meta'] = $q['update_post_term_cache'];
+		}
+
+		if ( ! isset( $q['update_post_meta_cache'] ) ) {
+			$q['update_post_meta_cache'] = TRUE;
+		}
+
+		if ( ! isset( $q['post_type'] ) ) {
+			$q['post_type'] = $this->is_search
+				? 'any'
+				: '';
+		}
+
+		$post_type = $q['post_type'];
+
+		if ( empty( $q['posts_per_page'] ) ) {
+			$q['posts_per_page'] = get_option( 'posts_per_page' );
+		}
+
+		if ( isset( $q['showposts'] ) && $q['showposts'] ) {
+			$q['showposts'] = ( int ) $q['showposts'];
+			$q['posts_per_page'] = $q['showposts'];
+		}
+
+		if ( isset( $q['posts_per_archive_page'] )
+		  && $q['posts_per_archive_page'] != 0
+		  && ( $this->is_archive || $this->is_search ) ) {
+			$q['posts_per_page'] = $q['posts_per_archive_page'];
+		}
+
+		if ( ! isset( $q['nopaging'] ) ) {
+			$q['nopaging'] = $q['posts_per_page'] == -1
+				? TRUE
+				: FALSE;
+		}
+
+		if ( $this->is_feed ) {
+			// This overrides posts_per_page.
+			$q['posts_per_page'] = ! empty( $q['posts_per_rss'] )
+				? $q['posts_per_rss']
+				: get_option( 'posts_per_rss' );
+
+			$q['nopaging'] = FALSE;
+		}
+
+		$q['posts_per_page'] = ( int ) $q['posts_per_page'];
+
+		if ( $q['posts_per_page'] < -1 ) {
+			$q['posts_per_page'] = abs( $q['posts_per_page'] );
+		} elseif ( $q['posts_per_page'] == 0 ) {
+			$q['posts_per_page'] = 1;
+		}
+
+		if ( ! isset( $q['comments_per_page'] ) || $q['comments_per_page'] == 0 ) {
+			$q['comments_per_page'] = get_option( 'comments_per_page' );
+		}
+
+		if ( $this->is_home
+		  && ( empty( $this->query ) || $q['preview'] == 'true' )
+		  && 'page' == get_option( 'show_on_front' )
+		  && get_option( 'page_on_front' ) ) {
+			$this->is_page = TRUE;
+			$this->is_home = FALSE;
+			$q['page_id'] = get_option( 'page_on_front' );
+		}
+
+		if ( isset( $q['page'] ) ) {
+			$q['page'] = trim( $q['page'], '/' );
+			$q['page'] = absint( $q['page'] );
+		}
+
+		// If true, forcibly turns off SQL_CALC_FOUND_ROWS even when limits are present.
+		$q['no_found_rows'] = isset( $q['no_found_rows'] )
+			? ( bool ) $q['no_found_rows']
+			: FALSE;
+
+		switch ( $q['fields'] ) {
+			case 'ids':
+				$fields = "{$wpdb->posts}.ID";
+				break;
+
+			case 'id=>parent':
+				$fields = "{$wpdb->posts}.ID, {$wpdb->posts}.post_parent";
+				break;
+
+			default:
+				$fields = "{$wpdb->posts}.*";
+		}
+
+		if ( '' !== $q['menu_order'] ) {
+			$where .= " AND {$wpdb->posts}.menu_order = " . $q['menu_order'];
+		}
+
+		// The "m" parameter is meant for months but accepts datetimes of varying specificity.
+		if ( $q['m'] ) {
+			$where .= " AND YEAR({$wpdb->posts}.post_date)=" . substr( $q['m'], 0, 4 );
+
+			if ( strlen( $q['m'] ) > 5 ) {
+				$where .= " AND MONTH({$wpdb->posts}.post_date)=" . substr( $q['m'], 4, 2 );
+			}
+
+			if ( strlen( $q['m'] ) > 7 ) {
+				$where .= " AND DAYOFMONTH({$wpdb->posts}.post_date)=" . substr( $q['m'], 6, 2 );
+			}
+
+			if ( strlen( $q['m'] ) > 9 ) {
+				$where .= " AND HOUR({$wpdb->posts}.post_date)=" . substr( $q['m'], 8, 2 );
+			}
+
+			if ( strlen( $q['m'] ) > 11 ) {
+				$where .= " AND MINUTE({$wpdb->posts}.post_date)=" . substr( $q['m'], 10, 2 );
+			}
+
+			if ( strlen( $q['m'] ) > 13 ) {
+				$where .= " AND SECOND({$wpdb->posts}.post_date)=" . substr( $q['m'], 12, 2 );
+			}
+		}
+
+		// Handle the other individual date parameters.
+		$date_parameters = array();
+
+		if ( '' !== $q['hour'] ) {
+			$date_parameters['hour'] = $q['hour'];
+		}
+
+		if ( '' !== $q['minute'] ) {
+			$date_parameters['minute'] = $q['minute'];
+		}
+
+		if ( '' !== $q['second'] ) {
+			$date_parameters['second'] = $q['second'];
+		}
+
+		if ( $q['year'] ) {
+			$date_parameters['year'] = $q['year'];
+		}
+
+		if ( $q['monthnum'] ) {
+			$date_parameters['monthnum'] = $q['monthnum'];
+		}
+
+		if ( $q['w'] ) {
+			$date_parameters['week'] = $q['w'];
+		}
+
+		if ( $q['day'] ) {
+			$date_parameters['day'] = $q['day'];
+		}
+
+		if ( $date_parameters ) {
+			$date_query = new WP_Date_Query( array( $date_parameters ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1357,7 +1580,9 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/date.php
  */
+		}
 	}
 
 	/**
