@@ -635,7 +635,6 @@ class WP_Date_Query
  * <- wp-includes/date.php
  * <- wp-includes/date.php
  * @NOW 012: wp-includes/date.php
- * -> wp-includes/date.php
  */
 				}
 			}
@@ -731,23 +730,15 @@ class WP_Date_Query
 			}
 
 			if ( $time_query = $this->build_time_query( $column, $compare, $query['hour'], $query['minute'], $query['second'] ) ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/date.php
- * <- wp-includes/date.php
- * <- wp-includes/date.php
- * @NOW 013: wp-includes/date.php
- */
+				$where_parts[] = $time_query;
 			}
 		}
+
+		// Return an array of 'join' and 'where' for compatibility with other query classes.
+		return array(
+			'where' => $where_parts,
+			'join'  => array()
+		);
 	}
 
 	/**
