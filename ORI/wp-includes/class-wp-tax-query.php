@@ -253,59 +253,7 @@ class WP_Tax_Query {
 		return $sql;
 	}
 
-	/**
-	 * Identify an existing table alias that is compatible with the current query clause.
-	 *
-	 * We avoid unnecessary table joins by allowing each clause to look for
-	 * an existing table alias that is compatible with the query that it
-	 * needs to perform.
-	 *
-	 * An existing alias is compatible if (a) it is a sibling of `$clause`
-	 * (ie, it's under the scope of the same relation), and (b) the combination
-	 * of operator and relation between the clauses allows for a shared table
-	 * join. In the case of WP_Tax_Query, this only applies to 'IN'
-	 * clauses that are connected by the relation 'OR'.
-	 *
-	 * @since 4.1.0
-	 *
-	 * @param array       $clause       Query clause.
-	 * @param array       $parent_query Parent query of $clause.
-	 * @return string|false Table alias if found, otherwise false.
-	 */
-	protected function find_compatible_table_alias( $clause, $parent_query ) {
-		$alias = false;
-
-		// Sanity check. Only IN queries use the JOIN syntax .
-		if ( ! isset( $clause['operator'] ) || 'IN' !== $clause['operator'] ) {
-			return $alias;
-		}
-
-		// Since we're only checking IN queries, we're only concerned with OR relations.
-		if ( ! isset( $parent_query['relation'] ) || 'OR' !== $parent_query['relation'] ) {
-			return $alias;
-		}
-
-		$compatible_operators = array( 'IN' );
-
-		foreach ( $parent_query as $sibling ) {
-			if ( ! is_array( $sibling ) || ! $this->is_first_order_clause( $sibling ) ) {
-				continue;
-			}
-
-			if ( empty( $sibling['alias'] ) || empty( $sibling['operator'] ) ) {
-				continue;
-			}
-
-			// The sibling must both have compatible operator to share its alias.
-			if ( in_array( strtoupper( $sibling['operator'] ), $compatible_operators ) ) {
-				$alias = $sibling['alias'];
-				break;
-			}
-		}
-
-		return $alias;
-	}
-
-	// refactored. private function clean_query( &$query ) {}
+	// refactored. protected function find_compatible_table_alias( $clause, $parent_query ) {}
+	// :
 	// refactored. public function transform_query( &$query, $resulting_field ) {}
 }

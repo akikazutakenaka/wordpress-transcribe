@@ -372,6 +372,23 @@ class WP_Tax_Query
 		);
 		$join = $where = '';
 		$this->clean_query( $clause );
+
+		if ( is_wp_error( $clause ) ) {
+			return self::$no_results;
+		}
+
+		$terms = $clause['terms'];
+		$operator = strtoupper( $clause['operator'] );
+
+		if ( 'IN' == $operator ) {
+			if ( empty( $terms ) ) {
+				return self::$no_results;
+			}
+
+			$terms = implode( ',', $terms );
+
+			// Before creating another table join, see if this clause has a sibling with an existing join that can be shared.
+			$alias = $this->find_compatible_table_alias( $clause, $parent_query );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -386,6 +403,59 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-tax-query.php
  * @NOW 012: wp-includes/class-wp-tax-query.php
  */
+		}
+	}
+
+	/**
+	 * Identify an existing table alias that is compatible with the current query clause.
+	 *
+	 * We avoid unnecessary table joins by allowing each clause to look for an existing table alias that is compatible with the query that it needs to perform.
+	 *
+	 * An existing alias is compatible if (a) it is a sibling of `$clause` (i.e., it's under the scope of the same relation), and (b) the combination of operator and relation between the clauses allows for a shared table join.
+	 * In the case of WP_Tax_Query, this only applies to 'IN' clauses that are connected by the relation 'OR'.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array        $clause       Query clause.
+	 * @param  array        $parent_query Parent query of $clause.
+	 * @return string|false Table alias if found, otherwise false.
+	 */
+	protected function find_compatible_table_alias( $clause, $parent_query )
+	{
+		$alias = FALSE;
+
+		/**
+		 * Sanity check.
+		 * Only IN queries use the JOIN syntax.
+		 */
+		if ( ! isset( $clause['operator'] ) || 'IN' !== $clause['operator'] ) {
+			return $alias;
+		}
+
+		// Since we're only checking IN queries, we're only concerned with OR relations.
+		if ( ! isset( $parent_query['relation'] ) || 'OR' !== $parent_query['relation'] ) {
+			return $alias;
+		}
+
+		$compatible_operators = array( 'IN' );
+
+		foreach ( $parent_query as $sibling ) {
+			if ( ! is_array( $sibling ) || ! $this->is_first_order_clause( $sibling ) ) {
+				continue;
+			}
+
+			if ( empty( $sibling['alias'] ) || empty( $sibling['operator'] ) ) {
+				continue;
+			}
+
+			// The sibling must both have compatible operator to share its alias.
+			if ( in_array( strtoupper( $sibling['operator'] ), $compatible_operators ) ) {
+				$alias = $sibling['alias'];
+				break;
+			}
+		}
+
+		return $alias;
 	}
 
 	/**
