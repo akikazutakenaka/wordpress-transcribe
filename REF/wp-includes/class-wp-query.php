@@ -1998,6 +1998,71 @@ class WP_Query
 		// Author/user stuff
 		if ( ! empty( $q['author'] ) && $q['author'] != '0' ) {
 			$q['author'] = addslashes_gpc( '' . urldecode( $q['author'] ) );
+			$authors = array_unique( array_map( 'intval', preg_split( '/[,\s]+/', $q['author'] ) ) );
+
+			foreach ( $authors as $author ) {
+				$key = $author > 0
+					? 'author__in'
+					: 'author__not_in';
+
+				$q[ $key ][] = abs( $author );
+			}
+
+			$q['author'] = implode( ',', $authors );
+		}
+
+		if ( ! empty( $q['author__not_in'] ) ) {
+			$author__not_in = implode( ',', array_map( 'absint', array_unique( ( array ) $q['author__not_in'] ) ) );
+			$where .= " AND {$wpdb->posts}.post_author NOT IN ($author__not_in) ";
+		} elseif ( ! empty( $q['author__in'] ) ) {
+			$author__in = implode( ',', array_map( 'absint', array_unique( ( array ) $q['author__in'] ) ) );
+			$where .= " AND {$wpdb->posts}.post_author IN ($author__in) ";
+		}
+
+		// Author stuff for nice URLs
+		if ( '' != $q['author_name'] ) {
+			if ( strpos( $q['author_name'], '/' ) !== FALSE ) {
+				$q['author_name'] = explode( '/', $q['author_name'] );
+
+				$q['author_name'] = $q['author_name'][ count( $q['author_name'] ) - 1 ]
+					? $q['author_name'][ count( $q['author_name'] ) - 1 ] // No trailing slash
+					: $q['author_name'][ count( $q['author_name'] ) - 2 ]; // There was a trailing slash
+			}
+
+			$q['author_name'] = sanitize_title_for_query( $q['author_name'] );
+			$q['author'] = get_user_by( 'slug', $q['author_name'] );
+
+			if ( $q['author'] ) {
+				$q['author'] = $q['author']->ID;
+			}
+
+			$whichauthor .= " AND ({$wpdb->posts}.post_author = " . absint( $q['author'] ) . ')';
+		}
+
+		// Matching by comment count.
+		if ( isset( $q['comment_count'] ) ) {
+			// Numeric comment count is converted to array format.
+			if ( is_numeric( $q['comment_count'] ) ) {
+				$q['comment_count'] = array( 'value' => intval( $q['comment_count'] ) );
+			}
+
+			if ( isset( $q['comment_count']['value'] ) ) {
+				$q['comment_count'] = array_merge( array( 'compare' => '=' ), $q['comment_count'] );
+
+				// Fallback for invalid compare operators is '='.
+				$compare_operators = array( '=', '!=', '>', '>=', '<', '<=' );
+
+				if ( ! in_array( $q['comment_count']['compare'], $compare_operators, TRUE ) ) {
+					$q['comment_count']['compare'] = '=';
+				}
+
+				$where .= $wpdb->prepare( " AND {$wpdb->posts}.comment_count {$q['comment_count']['compare']} %d", $q['comment_count']['value'] );
+			}
+		}
+
+		// MIME-Type stuff for attachment browsing
+		if ( isset( $q['post_mime_type'] ) && '' != $q['post_mime_type'] ) {
+			$whichmimetype = wp_post_mime_type_where( $q['post_mime_type'], $wpdb->posts );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
