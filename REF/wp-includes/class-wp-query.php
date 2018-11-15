@@ -1493,6 +1493,64 @@ class WP_Query
 	}
 
 	/**
+	 * Generates SQL for the ORDER BY condition based on passed search terms.
+	 *
+	 * @since  3.7.0
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 *
+	 * @param  array  $q Query variables.
+	 * @return string ORDER BY clause.
+	 */
+	protected function parse_search_order( &$q )
+	{
+		global $wpdb;
+
+		if ( $q['search_terms_count'] > 1 ) {
+			$num_terms = count( $q['search_orderby_title'] );
+
+			// If the search terms contain negative queries, don't bother ordering by sentence matches.
+			$like = '';
+
+			if ( ! preg_match( '/(?:\s|^)\-/', $q['s'] ) ) {
+				$like = '%' . $wpdb->esc_like( $q['s'] ) . '%';
+			}
+
+			$search_orderby = '';
+
+			// Sentence match in 'post_title'
+			if ( $like ) {
+				$search_orderby .= $wpdb->prepare( "WHEN {$wpdb->posts}.post_title LIKE %s THEN 1 ", $like );
+			}
+
+			// Sanity limit, sort as sentence when more than 6 terms (few searches are longer than 6 terms and most titles are not).
+			if ( $num_terms < 7 ) {
+				// All words in title
+				$search_orderby .= 'WHEN ' . implode( ' AND ', $q['search_orderby_title'] ) . ' THEN 2 ';
+
+				// Any word in title, not needed when $num_terms == 1
+				if ( $num_terms > 1 ) {
+					$search_orderby .= 'WHEN ' . implode( ' OR ', $q['search_orderby_title'] ) . ' THEN 3 ';
+				}
+			}
+
+			// Sentence match in 'post_content' and 'post_excerpt'.
+			if ( $like ) {
+				$search_orderby .= $wpdb->prepare( "WHEN {$wpdb->posts}.post_excerpt LIKE %s THEN 4 ", $like );
+				$search_orderby .= $wpdb->prepare( "WHEN {$wpdb->posts}.post_content LIKE %s THEN 5 ", $like );
+			}
+
+			if ( $search_orderby ) {
+				$search_orderby = '(CASE ' . $search_orderby . 'ELSE 6 END)';
+			}
+		} else {
+			// Single word or sentence search
+			$search_orderby = reset( $q['search_orderby_title'] ) . ' DESC';
+		}
+
+		return $search_orderby;
+	}
+
+	/**
 	 * Converts the given orderby alias (if allowed) to a properly-prefixed value.
 	 *
 	 * @since  4.0.0
@@ -2217,6 +2275,47 @@ class WP_Query
 				foreach ( $q['orderby'] as $_orderby => $order ) {
 					$orderby = addslashes_gpc( urldecode( $_orderby ) );
 					$parsed = $this->parse_orderby( $orderby );
+
+					if ( ! $parsed ) {
+						continue;
+					}
+
+					$orderby_array[] = $parsed . ' ' . $this->parse_order( $order );
+				}
+
+				$orderby = implode( ', ', $orderby_array );
+			} else {
+				$q['orderby'] = urldecode( $q['orderby'] );
+				$q['orderby'] = addslashes_gpc( $q['orderby'] );
+
+				foreach ( explode( ' ', $q['orderby'] ) as $i => $orderby ) {
+					$parsed = $this->parse_orderby( $orderby );
+
+					// Only allow certain values for safety.
+					if ( ! $parsed ) {
+						continue;
+					}
+
+					$orderby_array[] = $parsed;
+				}
+
+				$orderby = implode( ' ' . $q['order'] . ', ', $orderby_array );
+
+				if ( empty( $orderby ) ) {
+					$orderby = "{$wpdb->posts}.post_date " . $q['order'];
+				} elseif ( ! empty( $q['order'] ) ) {
+					$orderby .= " {$q['order']}";
+				}
+			}
+		}
+
+		// Order search results by relevance only when another "orderby" is not specified in the query.
+		if ( ! empty( $q['s'] ) ) {
+			$search_orderby = '';
+
+			if ( ! empty( $q['search_orderby_title'] ) && empty( $q['orderby'] ) && ! $this->is_feed
+			  || isset( $q['orderby'] ) && 'relevance' === $q['orderby'] ) {
+				$search_orderby = $this->parse_search_order( $q );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2228,7 +2327,6 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
-				}
 			}
 		}
 	}

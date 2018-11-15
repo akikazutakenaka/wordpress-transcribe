@@ -31,66 +31,6 @@ class WP_Query {
 
 	// refactored. public function fill_query_vars($array) {}
 	// :
-	// refactored. protected function get_search_stopwords() {}
-
-	/**
-	 * Generates SQL for the ORDER BY condition based on passed search terms.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
-	 *
-	 * @param array $q Query variables.
-	 * @return string ORDER BY clause.
-	 */
-	protected function parse_search_order( &$q ) {
-		global $wpdb;
-
-		if ( $q['search_terms_count'] > 1 ) {
-			$num_terms = count( $q['search_orderby_title'] );
-
-			// If the search terms contain negative queries, don't bother ordering by sentence matches.
-			$like = '';
-			if ( ! preg_match( '/(?:\s|^)\-/', $q['s'] ) ) {
-				$like = '%' . $wpdb->esc_like( $q['s'] ) . '%';
-			}
-
-			$search_orderby = '';
-
-			// sentence match in 'post_title'
-			if ( $like ) {
-				$search_orderby .= $wpdb->prepare( "WHEN {$wpdb->posts}.post_title LIKE %s THEN 1 ", $like );
-			}
-
-			// sanity limit, sort as sentence when more than 6 terms
-			// (few searches are longer than 6 terms and most titles are not)
-			if ( $num_terms < 7 ) {
-				// all words in title
-				$search_orderby .= 'WHEN ' . implode( ' AND ', $q['search_orderby_title'] ) . ' THEN 2 ';
-				// any word in title, not needed when $num_terms == 1
-				if ( $num_terms > 1 )
-					$search_orderby .= 'WHEN ' . implode( ' OR ', $q['search_orderby_title'] ) . ' THEN 3 ';
-			}
-
-			// Sentence match in 'post_content' and 'post_excerpt'.
-			if ( $like ) {
-				$search_orderby .= $wpdb->prepare( "WHEN {$wpdb->posts}.post_excerpt LIKE %s THEN 4 ", $like );
-				$search_orderby .= $wpdb->prepare( "WHEN {$wpdb->posts}.post_content LIKE %s THEN 5 ", $like );
-			}
-
-			if ( $search_orderby ) {
-				$search_orderby = '(CASE ' . $search_orderby . 'ELSE 6 END)';
-			}
-		} else {
-			// single word or sentence search
-			$search_orderby = reset( $q['search_orderby_title'] ) . ' DESC';
-		}
-
-		return $search_orderby;
-	}
-
-	// refactored. protected function parse_orderby( $orderby ) {}
-	// :
 	// refactored. public function set_404() {}
 
 	/**
