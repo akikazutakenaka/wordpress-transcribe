@@ -1352,20 +1352,66 @@ class WP_Query
 			if ( preg_match_all( '/".*?("|$)|((?<=[\t ",+])|^)[^\t ",+]+/', $q['s'], $matches ) ) {
 				$q['search_terms_count'] = count( $matches[0] );
 				$q['search_terms'] = $this->parse_search_terms( $matches[0] );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/class-wp-query.php
- */
+
+				// If the search string has only short terms or stopwords, or is 10+ terms long, match it as sentence.
+				if ( empty( $q['search_terms'] ) || count( $q['search_terms'] ) > 9 ) {
+					$q['search_terms'] = array( $q['s'] );
+				}
+			} else {
+				$q['search_terms'] = array( $q['s'] );
 			}
 		}
+
+		$n = ! empty( $q['exact'] )
+			? ''
+			: '%';
+
+		$searchand = '';
+		$q['search_orderby_title'] = array();
+
+		/**
+		 * Filters the prefix that indicates that a search term should be excluded from results.
+		 *
+		 * @since 4.7.0
+		 *
+		 * @param string $exclusion_prefix The prefix.
+		 *                                 Default '-'.
+		 *                                 Returning an empty value disables exclusions.
+		 */
+		$exclusion_prefix = apply_filters( 'wp_query_search_exclusion_prefix', '-' );
+
+		foreach ( $q['search_terms'] as $term ) {
+			// If there is an $exclusion_prefix, terms prefixed with it should be excluded.
+			$exclude = $exclusion_prefix && $exclusion_prefix === substr( $term, 0, 1 );
+
+			if ( $exclude ) {
+				$like_op  = 'NOT LIKE';
+				$andor_op = 'AND';
+				$term     = substr( $term, 1 );
+			} else {
+				$like_op  = 'LIKE';
+				$andor_op = 'OR';
+			}
+
+			if ( $n && ! $exclude ) {
+				$like = '%' . $wpdb->esc_like( $term ) . '%';
+				$q['search_orderby_title'][] = $wpdb->prepare( "{$wpdb->posts}.post_title LIKE %s", $like );
+			}
+
+			$like = $n . $wpdb->esc_like( $term ) . $n;
+			$search .= $wpdb->prepare( "{$searchand}(({$wpdb->posts}.post_title $like_op %s) $andor_op ({$wpdb->posts}.post_excerpt $like_op %s) $andor_op ({$wpdb->posts}.post_content $like_op %s))", $like, $like, $like );
+			$searchand = ' AND ';
+		}
+
+		if ( ! empty( $search ) ) {
+			$search = " AND ({$search})";
+
+			if ( ! is_user_logged_in() ) {
+				$search .= " AND ({$wpdb->posts}.post_password = '') ";
+			}
+		}
+
+		return $search;
 	}
 
 	/**
@@ -1839,7 +1885,6 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-query.php
  */
 		}
 	}
