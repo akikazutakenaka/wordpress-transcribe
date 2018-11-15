@@ -284,7 +284,6 @@ class WP_Tax_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/class-wp-tax-query.php
- * -> wp-includes/class-wp-tax-query.php
  */
 	}
 
@@ -328,23 +327,45 @@ class WP_Tax_Query
 				$relation = $query['relation'];
 			} elseif ( is_array( $clause ) ) {
 				if ( $this->is_first_order_clause( $clause ) ) {
+					// This is a first-order clause.
 					$clause_sql = $this->get_sql_for_clause( $clause, $query );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-tax-query.php
- * @NOW 011: wp-includes/class-wp-tax-query.php
- */
+					$where_count = count( $clause_sql['where'] );
+
+					$sql_chunks['where'][] = ! $where_count
+						? ''
+						: ( 1 === $where_count
+							? $clause_sql['where'][0]
+							: '( ' . implode( ' AND ', $clause_sql['where'] ) . ' )' );
+
+					$sql_chunks['join'] = array_merge( $sql_chunks['join'], $clause_sql['join'] );
+				} else {
+					// This is a subquery, so we recurse.
+					$clause_sql = $this->get_sql_for_query( $clause, $depth + 1 );
+					$sql_chunks['where'][] = $clause_sql['where'];
+					$sql_chunks['join'][]  = $clause_sql['join'];
 				}
 			}
 		}
+
+		// Filter to remove empties.
+		$sql_chunks['join']  = array_filter( $sql_chunks['join'] );
+		$sql_chunks['where'] = array_filter( $sql_chunks['where'] );
+
+		if ( empty( $relation ) ) {
+			$relation = 'AND';
+		}
+
+		// Filter duplicate JOIN clauses and combine into a single string.
+		if ( ! empty( $sql_chunks['join'] ) ) {
+			$sql['join'] = implode( ' ', array_unique( $sql_chunks['join'] ) );
+		}
+
+		// Generate a single WHERE clause with proper brackets and indentation.
+		if ( ! empty( $sql_chunks['where'] ) ) {
+			$sql['where'] = '( ' . "\n  " . $indent . implode( ' ' . "\n  " . $indent . $relation . ' ' . "\n  " . $indent, $sql_chunks['where'] ) . "\n" . $indent . ')';
+		}
+
+		return $sql;
 	}
 
 	/**
