@@ -65,3 +65,38 @@ function get_attachment_taxonomies( $attachment, $output = 'names' )
 
 	return $taxonomies;
 }
+
+/**
+ * Retrieves all of the taxonomy names that are registered for attachments.
+ *
+ * Handles mime-type-specific taxonomies such as attachment:image and attachment:video.
+ *
+ * @since 3.5.0
+ * @see   get_taxonomies()
+ *
+ * @param  string $output Optional.
+ *                        The type of taxonomy output to return.
+ *                        Accepts 'names' or 'objects'.
+ *                        Default 'names'.
+ * @return array  The names of all taxonomy of $object_type.
+ */
+function get_taxonomies_for_attachments( $output = 'names' )
+{
+	$taxonomies = array();
+
+	foreach ( get_taxonomies( array(), 'objects' ) as $taxonomy ) {
+		foreach ( $taxonomy->object_type as $object_type ) {
+			if ( 'attachment' == $object_type || 0 === strpos( $object_type, 'attachment:' ) ) {
+				if ( 'names' == $output ) {
+					$taxonomies[] = $taxonomy->name;
+				} else {
+					$taxonomies[ $taxonomy->name ] = $taxonomy;
+				}
+
+				break;
+			}
+		}
+	}
+
+	return $taxonomies;
+}

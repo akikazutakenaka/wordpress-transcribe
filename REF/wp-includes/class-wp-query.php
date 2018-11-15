@@ -1904,6 +1904,9 @@ class WP_Query
 				$taxonomies = array_keys( $this->tax_query->queried_terms );
 
 				foreach ( get_post_types( array( 'exclude_from_search' => FALSE ) ) as $pt ) {
+					$object_taxonomies = $pt === 'attachment'
+						? get_taxonomies_for_attachments()
+						: get_object_taxonomies( $pt );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
