@@ -1493,6 +1493,23 @@ class WP_Query
 	}
 
 	/**
+	 * Parse an 'order' query variable and cast it to ASC or DESC as necessary.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param  string $order The 'order' query variable.
+	 * @return string The sanitized 'order' query variable.
+	 */
+	protected function parse_order( $order )
+	{
+		return ! is_string( $order ) || empty( $order )
+			? 'DESC'
+			: ( 'ASC' === strtoupper( $order )
+				? 'ASC'
+				: 'DESC' );
+	}
+
+	/**
 	 * Sets the 404 property and saves whether query is feed.
 	 *
 	 * @since 2.0.0
@@ -2063,6 +2080,25 @@ class WP_Query
 		// MIME-Type stuff for attachment browsing
 		if ( isset( $q['post_mime_type'] ) && '' != $q['post_mime_type'] ) {
 			$whichmimetype = wp_post_mime_type_where( $q['post_mime_type'], $wpdb->posts );
+		}
+
+		$where .= $search . $whichauthor . $whichmimetype;
+
+		if ( ! empty( $this->meta_query->queries ) ) {
+			$clauses = $this->meta_query->get_sql( 'post', $wpdb->posts, 'ID', $this );
+			$join  .= $clauses['join'];
+			$where .= $clauses['where'];
+		}
+
+		$rand = isset( $q['orderby'] ) && 'rand' === $q['orderby'];
+
+		$q['order'] = ! isset( $q['order'] )
+			? ( $rand
+				? ''
+				: 'DESC' )
+			: ( $rand
+				? ''
+				: $this->parse_order( $q['order'] ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2074,7 +2110,6 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
-		}
 	}
 
 	/**
