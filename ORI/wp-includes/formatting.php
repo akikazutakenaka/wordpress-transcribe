@@ -363,27 +363,6 @@ function sanitize_html_class( $class, $fallback = '' ) {
 
 // refactored. function convert_chars( $content, $deprecated = '' ) {}
 // :
-// refactored. function untrailingslashit( $string ) {}
-
-/**
- * Adds slashes to escape strings.
- *
- * Slashes will first be removed if magic_quotes_gpc is set, see {@link
- * https://secure.php.net/magic_quotes} for more details.
- *
- * @since 0.71
- *
- * @param string $gpc The string returned from HTTP request data.
- * @return string Returns a string escaped with slashes.
- */
-function addslashes_gpc($gpc) {
-	if ( get_magic_quotes_gpc() )
-		$gpc = stripslashes($gpc);
-
-	return wp_slash($gpc);
-}
-
-// refactored. function stripslashes_deep( $value ) {}
 // refactored. function stripslashes_from_strings_only( $value ) {}
 
 /**

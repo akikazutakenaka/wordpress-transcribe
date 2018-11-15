@@ -1973,6 +1973,31 @@ class WP_Query
 
 					if ( $the_cat ) {
 						$this->set( 'cat', $the_cat->term_id );
+						$this->set( 'category_name', $the_cat->slug );
+					}
+
+					unset( $the_cat );
+				}
+
+				if ( 'post_tag' === $queried_taxonomy ) {
+					$the_tag = get_term_by( $queried_items['field'], $queried_items['terms'][0], 'post_tag' );
+
+					if ( $the_tag ) {
+						$this->set( 'tag_id', $the_tag->term_id );
+					}
+
+					unset( $the_tag );
+				}
+			}
+		}
+
+		if ( ! empty( $this->tax_query->queries ) || ! empty( $meta_query->queries ) ) {
+			$groupby = "{$wpdb->posts}.ID";
+		}
+
+		// Author/user stuff
+		if ( ! empty( $q['author'] ) && $q['author'] != '0' ) {
+			$q['author'] = addslashes_gpc( '' . urldecode( $q['author'] ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1984,9 +2009,6 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
-					}
-				}
-			}
 		}
 	}
 

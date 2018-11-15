@@ -1931,6 +1931,25 @@ function untrailingslashit( $string )
 }
 
 /**
+ * Adds slashes to escape strings.
+ *
+ * Slashes will first be removed if magic_quotes_gpc is set, see {@link https://secure.php.net/magic_quotes} for more details.
+ *
+ * @since 0.71
+ *
+ * @param  string $gpc The string returned from HTTP request data.
+ * @return string Returns a string escaped with slashes.
+ */
+function addslashes_gpc( $gpc )
+{
+	if ( get_magic_quotes_gpc() ) {
+		$gpc = stripslashes( $gpc );
+	}
+
+	return wp_slash( $gpc );
+}
+
+/**
  * Navigates through an array, object, or scalar, and removes slashes from the values.
  *
  * @since 2.0.0
