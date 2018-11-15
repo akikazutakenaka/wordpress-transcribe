@@ -251,6 +251,28 @@ class WP_Tax_Query
 		return $this->get_sql_clauses();
 	}
 
+	/**
+	 * Generate SQL clauses to be appended to a main query.
+	 *
+	 * Called by the public WP_Tax_Query::get_sql(), this method is abstracted out to maintain parity with the other Query classes.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @return array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	protected function get_sql_clauses()
+	{
+		/**
+		 * $queries are passed by reference to get_sql_for_query() for recursion.
+		 * To keep $this->queries unaltered, pass a copy.
+		 */
+		$queries = $this->queries;
+		$sql = $this->get_sql_for_query( $queries );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -262,5 +284,21 @@ class WP_Tax_Query
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/class-wp-tax-query.php
+ * -> wp-includes/class-wp-tax-query.php
+ */
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * @NOW 011: wp-includes/class-wp-tax-query.php
  */
 }
