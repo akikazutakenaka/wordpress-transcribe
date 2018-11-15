@@ -301,7 +301,7 @@ class WP_Tax_Query
 	 *                      Used to calculate indentation.
 	 *                      Default 0.
 	 * @return array {
-	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *     Array containing JOIN and WHERE SQL clauses to append to a single query array.
 	 *
 	 *     @type string $join  SQL fragment to append to the main JOIN clause.
 	 *     @type string $where SQL fragment to append to the main WHERE clause.
@@ -348,6 +348,30 @@ class WP_Tax_Query
 		}
 	}
 
+	/**
+	 * Generate SQL JOIN and WHERE clauses for a "first-order" query clause.
+	 *
+	 * @since  4.1.0
+	 * @global wpdb $wpdb The WordPress database abstraction object.
+	 *
+	 * @param  array $clause       Query clause (passed by reference).
+	 * @param  array $parent_query Parent query array.
+	 * @return array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to a first-order query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	public function get_sql_for_clause( &$clause, $parent_query )
+	{
+		global $wpdb;
+		$sql = array(
+			'where' => array(),
+			'join'  => array()
+		);
+		$join = $where = '';
+		$this->clean_query( $clause );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -361,5 +385,23 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-tax-query.php
  * <- wp-includes/class-wp-tax-query.php
  * @NOW 012: wp-includes/class-wp-tax-query.php
+ * -> wp-includes/class-wp-tax-query.php
+ */
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * @NOW 013: wp-includes/class-wp-tax-query.php
  */
 }
