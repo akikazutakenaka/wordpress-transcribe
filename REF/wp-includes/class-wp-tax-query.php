@@ -430,25 +430,87 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-tax-query.php
  * <- wp-includes/class-wp-tax-query.php
  * @NOW 013: wp-includes/class-wp-tax-query.php
- * -> wp-includes/class-wp-tax-query.php
  */
 		}
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-tax-query.php
- * <- wp-includes/class-wp-tax-query.php
- * <- wp-includes/class-wp-tax-query.php
- * <- wp-includes/class-wp-tax-query.php
- * @NOW 014: wp-includes/class-wp-tax-query.php
- */
+	/**
+	 * Transforms a single query, from one field to another.
+	 *
+	 * Operates on the `$query` object by reference.
+	 * In the case of error, `$query` is converted to a WP_Error object.
+	 *
+	 * @since  3.2.0
+	 * @global wpdb $wpdb The WordPress database abstraction object.
+	 *
+	 * @param array  $query           The single query.
+	 *                                Passed by reference.
+	 * @param string $resulting_field The resulting field.
+	 *                                Accepts 'slug', 'name', 'term_taxonomy_id', or 'term_id'.
+	 *                                Default 'term_id'.
+	 */
+	public function transform_query( &$query, $resulting_field )
+	{
+		if ( empty( $query['terms'] ) ) {
+			return;
+		}
+
+		if ( $query['field'] == $resulting_field ) {
+			return;
+		}
+
+		$resulting_field = sanitize_key( $resulting_field );
+
+		// Empty 'terms' always results in a null transformation.
+		$terms = array_filter( $query['terms'] );
+
+		if ( empty( $terms ) ) {
+			$query['terms'] = array();
+			$query['field'] = $resulting_field;
+			return;
+		}
+
+		$args = array(
+			'get'                    => 'all',
+			'number'                 => 0,
+			'taxonomy'               => $query['taxonomy'],
+			'update_term_meta_cache' => FALSE,
+			'orderby'                => 'none'
+		);
+
+		// Term query parameter name depends on the 'field' being searched on.
+		switch ( $query['field'] ) {
+			case 'slug':
+				$args['slug'] = $terms;
+				break;
+
+			case 'name':
+				$args['name'] = $terms;
+				break;
+
+			case 'term_taxonomy_id':
+				$args['term_taxonomy_id'] = $terms;
+				break;
+
+			default:
+				$args['include'] = wp_parse_id_list( $terms );
+				break;
+		}
+
+		$term_query = new WP_Term_Query();
+		$term_list  = $term_query->query( $args );
+
+		if ( is_wp_error( $term_list ) ) {
+			$query = $term_list;
+			break;
+		}
+
+		if ( 'AND' == $query['operator'] && count( $term_list ) < count( $query['terms'] ) ) {
+			$query = new WP_Error( 'inexistent_terms', __( 'Inexistent terms.' ) );
+			return;
+		}
+
+		$query['terms'] = wp_list_pluck( $term_list, $resulting_field );
+		$query['field'] = $resulting_field;
+	}
 }
