@@ -273,18 +273,12 @@ class WP_Tax_Query
 		 */
 		$queries = $this->queries;
 		$sql = $this->get_sql_for_query( $queries );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/class-wp-tax-query.php
- */
+
+		if ( ! empty( $sql['where'] ) ) {
+			$sql['where'] = ' AND ' . $sql['where'];
+		}
+
+		return $sql;
 	}
 
 	/**

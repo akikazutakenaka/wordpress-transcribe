@@ -1903,7 +1903,6 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
- * -> wp-includes/class-wp-tax-query.php
  */
 		}
 	}
