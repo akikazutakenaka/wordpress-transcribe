@@ -1893,6 +1893,17 @@ class WP_Query
 		if ( ! $this->is_singular ) {
 			$this->parse_tax_query( $q );
 			$clauses = $this->tax_query->get_sql( $wpdb->posts, 'ID' );
+			$join  .= $clauses['join'];
+			$where .= $clauses['where'];
+		}
+
+		if ( $this->is_tax ) {
+			if ( empty( $post_type ) ) {
+				// Do a fully inclusive search for currently registered post types of queried taxonomies.
+				$post_type = array();
+				$taxonomies = array_keys( $this->tax_query->queried_terms );
+
+				foreach ( get_post_types( array( 'exclude_from_search' => FALSE ) ) as $pt ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1904,6 +1915,8 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
+				}
+			}
 		}
 	}
 
