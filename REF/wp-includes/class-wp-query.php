@@ -1907,6 +1907,56 @@ class WP_Query
 					$object_taxonomies = $pt === 'attachment'
 						? get_taxonomies_for_attachments()
 						: get_object_taxonomies( $pt );
+
+					if ( array_intersect( $taxonomies, $object_taxonomies ) ) {
+						$post_type[] = $pt;
+					}
+				}
+
+				if ( ! $post_type ) {
+					$post_type = 'any';
+				} elseif ( count( $post_type ) == 1 ) {
+					$post_type = $post_type[0];
+				}
+
+				$post_status_join = TRUE;
+			} elseif ( in_array( 'attachment', ( array ) $post_type ) ) {
+				$post_status_join = TRUE;
+			}
+		}
+
+		// Ensure that 'taxonomy', 'term', 'term_id', 'cat', and 'category_name' vars are set for backward compatibility.
+		if ( ! empty( $this->tax_query->queried_terms ) ) {
+			// Set 'taxonomy', 'term', and 'term_id' to the first taxonomy other than 'post_tag' or 'category'.
+			if ( ! isset( $q['taxonomy'] ) ) {
+				foreach ( $this->tax_query->queried_terms as $queried_taxonomy => $queried_items ) {
+					if ( empty( $queried_items['terms'][0] ) ) {
+						continue;
+					}
+
+					if ( ! in_array( $queried_taxonomy, array( 'category', 'post_tag' ) ) ) {
+						$q['taxonomy'] = $queried_taxonomy;
+
+						if ( 'slug' === $queried_items['field'] ) {
+							$q['term'] = $queried_items['terms'][0];
+						} else {
+							$q['term_id'] = $queried_items['terms'][0];
+						}
+
+						// Take the first one we find.
+						break;
+					}
+				}
+			}
+
+			// 'cat', 'category_name', 'tag_id'
+			foreach ( $this->tax_query->queried_terms as $queried_taxonomy => $queried_items ) {
+				if ( empty( $queried_items['terms'][0] ) ) {
+					continue;
+				}
+
+				if ( 'category' === $queried_taxonomy ) {
+					$the_cat = get_term_by( $queried_items['field'], $queried_items['terms'][0], 'category' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
