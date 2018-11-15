@@ -341,7 +341,6 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/class-wp-tax-query.php
  * @NOW 011: wp-includes/class-wp-tax-query.php
- * -> wp-includes/class-wp-tax-query.php
  */
 				}
 			}
@@ -389,21 +388,74 @@ class WP_Tax_Query
 
 			// Before creating another table join, see if this clause has a sibling with an existing join that can be shared.
 			$alias = $this->find_compatible_table_alias( $clause, $parent_query );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-tax-query.php
- * <- wp-includes/class-wp-tax-query.php
- * @NOW 012: wp-includes/class-wp-tax-query.php
- */
+
+			if ( FALSE === $alias ) {
+				$i = count( $this->table_aliases );
+
+				$alias = $i
+					? 'tt' . $i
+					: $wpdb->term_relationships;
+
+				// Store the alias as part of a flat array to build future iterators.
+				$this->table_aliases[] = $alias;
+
+				// Store the alias with this clause, so later siblings can use it.
+				$clause['alias'] = $alias;
+
+				$join .= " LEFT JOIN $wpdb->term_relationships";
+
+				$join .= $i
+					? " AS $alias"
+					: '';
+
+				$join .= " ON ($this->primary_table.$this->primary_id_column = $alias.object_id)";
+			}
+
+			$where = "$alias.term_taxonomy_id $operator ($terms)";
+		} elseif ( 'NOT IN' == $operator ) {
+			if ( empty( $terms ) ) {
+				return $sql;
+			}
+
+			$terms = implode( ',', $terms );
+			$where = <<<EOQ
+$this->primary_table.$this->primary_id_column NOT IN (
+  SELECT object_id
+  FROM $wpdb->term_relationships
+  WHERE term_taxonomy_id IN ($terms)
+)
+EOQ;
+		} elseif ( 'AND' == $operator ) {
+			if ( empty( $terms ) ) {
+				return $sql;
+			}
+
+			$num_terms = count( $terms );
+			$terms = implode( ',', $terms );
+			$where = <<<EOQ
+(
+  SELECT COUNT(1)
+  FROM $wpdb->term_relationships
+  WHERE term_taxonomy_id IN ($terms)
+    AND object_id = $this->primary_table.$this->primary_id_column
+) = $num_terms
+EOQ;
+		} elseif ( 'NOT EXISTS' === $operator || 'EXISTS' === $operator ) {
+			$where = $wpdb->prepare( <<<EOQ
+$operator (
+  SELECT 1
+  FROM $wpdb->term_relationships
+  INNER JOIN $wpdb->term_taxonomy ON $wpdb->term_taxonomy.term_taxonomy_id = $wpdb->term_relationships.term_taxonomy_id
+  WHERE $wpdb->term_taxonomy.taxonomy = %s
+    AND $wpdb->term_relationships.object_id = $this->primary_table.$this->primary_id_column
+)
+EOQ
+				, $clause['taxonomy'] );
 		}
+
+		$sql['join'][]  = $join;
+		$sql['where'][] = $where;
+		return $sql;
 	}
 
 	/**
