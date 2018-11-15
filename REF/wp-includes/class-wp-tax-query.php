@@ -288,6 +288,47 @@ class WP_Tax_Query
  */
 	}
 
+	/**
+	 * Generate SQL clauses for a single query array.
+	 *
+	 * If nested subqueries are found, this method recurses the tree to produce the properly nested SQL.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  array $query Query to parse (passed by reference).
+	 * @param  int   $depth Optional.
+	 *                      Number of tree levels deep we currently are.
+	 *                      Used to calculate indentation.
+	 *                      Default 0.
+	 * @return array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	protected function get_sql_for_query( &$query, $depth = 0 )
+	{
+		$sql_chunks = array(
+			'join'  => array(),
+			'where' => array()
+		);
+		$sql = array(
+			'join'  => '',
+			'where' => ''
+		);
+		$indent = '';
+
+		for ( $i = 0; $i < $depth; $i++ ) {
+			$indent .= "  ";
+		}
+
+		foreach ( $query as $key => &$clause ) {
+			if ( 'relation' === $key ) {
+				$relation = $query['relation'];
+			} elseif ( is_array( $clause ) ) {
+				if ( $this->is_first_order_clause( $clause ) ) {
+					$clause_sql = $this->get_sql_for_clause( $clause, $query );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -300,5 +341,25 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/class-wp-tax-query.php
  * @NOW 011: wp-includes/class-wp-tax-query.php
+ * -> wp-includes/class-wp-tax-query.php
+ */
+				}
+			}
+		}
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * @NOW 012: wp-includes/class-wp-tax-query.php
  */
 }
