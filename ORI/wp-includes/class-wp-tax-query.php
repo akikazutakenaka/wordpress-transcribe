@@ -22,30 +22,7 @@
 class WP_Tax_Query {
 	// refactored. public $queries = array();
 	// :
-	// refactored. protected static function is_first_order_clause( $query ) {}
-
-	/**
-	 * Generates SQL clauses to be appended to a main query.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @static
-	 *
-	 * @param string $primary_table     Database table where the object being filtered is stored (eg wp_users).
-	 * @param string $primary_id_column ID column for the filtered object in $primary_table.
-	 * @return array {
-	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
-	 *
-	 *     @type string $join  SQL fragment to append to the main JOIN clause.
-	 *     @type string $where SQL fragment to append to the main WHERE clause.
-	 * }
-	 */
-	public function get_sql( $primary_table, $primary_id_column ) {
-		$this->primary_table = $primary_table;
-		$this->primary_id_column = $primary_id_column;
-
-		return $this->get_sql_clauses();
-	}
+	// refactored. public function get_sql( $primary_table, $primary_id_column ) {}
 
 	/**
 	 * Generate SQL clauses to be appended to a main query.

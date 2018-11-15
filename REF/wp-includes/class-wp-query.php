@@ -1875,6 +1875,24 @@ class WP_Query
 		// If a search pattern is specified, load the posts that match.
 		if ( strlen( $q['s'] ) ) {
 			$search = $this->parse_search( $q );
+		}
+
+		if ( ! $q['suppress_filters'] ) {
+			/**
+			 * Filters the search SQL that is used in the WHERE clause of WP_Query.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param string   $search Search SQL for WHERE clause.
+			 * @param WP_Query $this   The current WP_Query object.
+			 */
+			$search = apply_filters_ref_array( 'posts_search', array( $search, &$this ) );
+		}
+
+		// Taxonomies
+		if ( ! $this->is_singular ) {
+			$this->parse_tax_query( $q );
+			$clauses = $this->tax_query->get_sql( $wpdb->posts, 'ID' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1885,6 +1903,7 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/class-wp-tax-query.php
  */
 		}
 	}

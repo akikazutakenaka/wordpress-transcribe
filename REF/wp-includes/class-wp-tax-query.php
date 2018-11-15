@@ -228,4 +228,39 @@ class WP_Tax_Query
 		return is_array( $query )
 		    && ( empty( $query ) || array_key_exists( 'terms', $query ) || array_key_exists( 'taxonomy', $query ) || array_key_exists( 'include_children', $query ) || array_key_exists( 'field', $query ) || array_key_exists( 'operator', $query ) );
 	}
+
+	/**
+	 * Generates SQL clauses to be appended to a main query.
+	 *
+	 * @since  3.1.0
+	 * @static
+	 *
+	 * @param  string $primary_table     Database table where the object being filtered is stored (e.g. wp_users).
+	 * @param  string $primary_id_column ID column for the filtered object in $primary_table.
+	 * @return array {
+	 *     Array containing JOIN and WHERE SQL clauses to append to the main query.
+	 *
+	 *     @type string $join  SQL fragment to append to the main JOIN clause.
+	 *     @type string $where SQL fragment to append to the main WHERE clause.
+	 * }
+	 */
+	public function get_sql( $primary_table, $primary_id_column )
+	{
+		$this->primary_table = $primary_table;
+		$this->primary_id_column = $primary_id_column;
+		return $this->get_sql_clauses();
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 010: wp-includes/class-wp-tax-query.php
+ */
 }
