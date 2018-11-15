@@ -306,45 +306,6 @@ class WP_Tax_Query {
 		return $alias;
 	}
 
-	/**
-	 * Validates a single query.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @param array $query The single query. Passed by reference.
-	 */
-	private function clean_query( &$query ) {
-		if ( empty( $query['taxonomy'] ) ) {
-			if ( 'term_taxonomy_id' !== $query['field'] ) {
-				$query = new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
-				return;
-			}
-
-			// so long as there are shared terms, include_children requires that a taxonomy is set
-			$query['include_children'] = false;
-		} elseif ( ! taxonomy_exists( $query['taxonomy'] ) ) {
-			$query = new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
-			return;
-		}
-
-		$query['terms'] = array_unique( (array) $query['terms'] );
-
-		if ( is_taxonomy_hierarchical( $query['taxonomy'] ) && $query['include_children'] ) {
-			$this->transform_query( $query, 'term_id' );
-
-			if ( is_wp_error( $query ) )
-				return;
-
-			$children = array();
-			foreach ( $query['terms'] as $term ) {
-				$children = array_merge( $children, get_term_children( $term, $query['taxonomy'] ) );
-				$children[] = $term;
-			}
-			$query['terms'] = $children;
-		}
-
-		$this->transform_query( $query, 'term_taxonomy_id' );
-	}
-
+	// refactored. private function clean_query( &$query ) {}
 	// refactored. public function transform_query( &$query, $resulting_field ) {}
 }

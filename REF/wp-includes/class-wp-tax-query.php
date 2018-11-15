@@ -385,7 +385,6 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-tax-query.php
  * <- wp-includes/class-wp-tax-query.php
  * @NOW 012: wp-includes/class-wp-tax-query.php
- * -> wp-includes/class-wp-tax-query.php
  */
 	}
 
@@ -416,22 +415,22 @@ class WP_Tax_Query
 
 		if ( is_taxonomy_hierarchical( $query['taxonomy'] ) && $query['include_children'] ) {
 			$this->transform_query( $query, 'term_id' );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/class-wp-tax-query.php
- * <- wp-includes/class-wp-tax-query.php
- * <- wp-includes/class-wp-tax-query.php
- * @NOW 013: wp-includes/class-wp-tax-query.php
- */
+
+			if ( is_wp_error( $query ) ) {
+				return;
+			}
+
+			$children = array();
+
+			foreach ( $query['terms'] as $term ) {
+				$children = array_merge( $children, get_term_children( $term, $query['taxonomy'] ) );
+				$children[] = $term;
+			}
+
+			$query['terms'] = $children;
 		}
+
+		$this->transform_query( $query, 'term_taxonomy_id' );
 	}
 
 	/**
