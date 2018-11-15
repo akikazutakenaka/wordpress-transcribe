@@ -1506,6 +1506,19 @@ class WP_Query
 	}
 
 	/**
+	 * Set query variable.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $query_var Query variable key.
+	 * @param mixed  $value     Query variable value.
+	 */
+	public function set( $query_var, $value )
+	{
+		$this->query_vars[ $query_var ] = $value;
+	}
+
+	/**
 	 * Retrieve the posts based on query variables.
 	 *
 	 * There are a few filters and actions that can be used to modify the post database query.
@@ -1957,6 +1970,9 @@ class WP_Query
 
 				if ( 'category' === $queried_taxonomy ) {
 					$the_cat = get_term_by( $queried_items['field'], $queried_items['terms'][0], 'category' );
+
+					if ( $the_cat ) {
+						$this->set( 'cat', $the_cat->term_id );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1968,6 +1984,7 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
+					}
 				}
 			}
 		}

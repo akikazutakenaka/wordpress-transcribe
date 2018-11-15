@@ -223,17 +223,7 @@ class WP_Query {
 		return $default;
 	}
 
-	/**
-	 * Set query variable.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $query_var Query variable key.
-	 * @param mixed  $value     Query variable value.
-	 */
-	public function set($query_var, $value) {
-		$this->query_vars[$query_var] = $value;
-	}
+	// refactored. public function set($query_var, $value) {}
 
 	/**
 	 * Retrieve the posts based on query variables.
