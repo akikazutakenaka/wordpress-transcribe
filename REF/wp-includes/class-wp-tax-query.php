@@ -389,6 +389,33 @@ class WP_Tax_Query
  */
 	}
 
+	/**
+	 * Validates a single query.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param array $query The single query.
+	 *                     Passed by reference.
+	 */
+	private function clean_query( &$query )
+	{
+		if ( empty( $query['taxonomy'] ) ) {
+			if ( 'term_taxonomy_id' !== $query['field'] ) {
+				$query = new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+				return;
+			}
+
+			// So long as there are shared terms, include_children requires that a taxonomy is set.
+			$query['include_children'] = FALSE;
+		} elseif ( ! taxonomy_exists( $query['taxonomy'] ) ) {
+			$query = new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+			return;
+		}
+
+		$query['terms'] = array_unique( ( array ) $query['terms'] );
+
+		if ( is_taxonomy_hierarchical( $query['taxonomy'] ) && $query['include_children'] ) {
+			$this->transform_query( $query, 'term_id' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -403,5 +430,25 @@ class WP_Tax_Query
  * <- wp-includes/class-wp-tax-query.php
  * <- wp-includes/class-wp-tax-query.php
  * @NOW 013: wp-includes/class-wp-tax-query.php
+ * -> wp-includes/class-wp-tax-query.php
+ */
+		}
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * <- wp-includes/class-wp-tax-query.php
+ * @NOW 014: wp-includes/class-wp-tax-query.php
  */
 }
