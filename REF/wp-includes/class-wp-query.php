@@ -2316,6 +2316,111 @@ class WP_Query
 			if ( ! empty( $q['search_orderby_title'] ) && empty( $q['orderby'] ) && ! $this->is_feed
 			  || isset( $q['orderby'] ) && 'relevance' === $q['orderby'] ) {
 				$search_orderby = $this->parse_search_order( $q );
+			}
+
+			if ( ! $q['suppress_filters'] ) {
+				/**
+				 * Filters the ORDER BY used when ordering search results.
+				 *
+				 * @since 3.7.0
+				 *
+				 * @param string   $search_orderby The ORDER BY clause.
+				 * @param WP_Query $this           The current WP_Query instance.
+				 */
+				$search_orderby = apply_filters( 'posts_search_orderby', $search_orderby, $this );
+			}
+
+			if ( $search_orderby ) {
+				$orderby = $orderby
+					? $search_orderby . ', ' . $orderby
+					: $search_orderby;
+			}
+		}
+
+		if ( is_array( $post_type ) && count( $post_type ) > 1 ) {
+			$post_type_cap = 'multiple_post_type';
+		} else {
+			if ( is_array( $post_type ) ) {
+				$post_type = reset( $post_type );
+			}
+
+			$post_type_object = get_post_type_object( $post_type );
+
+			if ( empty( $post_type_object ) ) {
+				$post_type_cap = $post_type;
+			}
+		}
+
+		if ( isset( $q['post_password'] ) ) {
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_password = %s", $q['post_password'] );
+
+			if ( empty( $q['perm'] ) ) {
+				$q['perm'] = 'readable';
+			}
+		} elseif ( isset( $q['has_password'] ) ) {
+			$where .= sprintf( " AND {$wpdb->posts}.post_password %s ''", $q['has_password']
+					? '!='
+					: '=' );
+		}
+
+		if ( ! empty( $q['comment_status'] ) ) {
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.comment_status = %s ", $q['comment_status'] );
+		}
+
+		if ( ! empty( $q['ping_status'] ) ) {
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.ping_status = %s ", $q['ping_status'] );
+		}
+
+		if ( 'any' == $post_type ) {
+			$in_search_post_types = get_post_types( array( 'exclude_from_search' => FALSE ) );
+
+			$where .= empty( $in_search_post_types )
+				? ' AND 1=0 '
+				: " AND {$wpdb->posts}.post_type IN ('" . join( "', '", array_map( 'esc_sql', $in_search_post_types ) ) . "')";
+		} elseif ( ! empty( $post_type ) && is_array( $post_type ) ) {
+			$where .= " AND {$wpdb->posts}.post_type IN ('" . join( "', '", esc_sql( $post_type ) ) . "')";
+		} elseif ( ! empty( $post_type ) ) {
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_type = %s", $post_type );
+			$post_type_object = get_post_type_object( $post_type );
+		} elseif ( $this->is_attachment ) {
+			$where .= " AND {$wpdb->posts}.post_type = 'attachment'";
+			$post_type_object = get_post_type_object( 'attachment' );
+		} elseif ( $this->is_page ) {
+			$where .= " AND {$wpdb->posts}.post_type = 'page'";
+			$post_type_object = get_post_type_object( 'page' );
+		} else {
+			$where .= " AND {$wpdb->posts}.post_type = 'post'";
+			$post_type_object = get_post_type_object( 'post' );
+		}
+
+		$edit_cap = 'edit_post';
+		$read_cap = 'read_post';
+
+		if ( ! empty( $post_type_object ) ) {
+			$edit_others_cap  = $post_type_object->cap->edit_others_posts;
+			$read_private_cap = $post_type_object->cap->read_private_posts;
+		} else {
+			$edit_others_cap  = 'edit_others_' . $post_type_cap . 's';
+			$read_private_cap = 'read_private_' . $post_type_cap . 's';
+		}
+
+		$user_id = get_current_user_id();
+		$q_status = array();
+
+		if ( ! empty( $q['post_status'] ) ) {
+			$statuswheres = array();
+			$q_status = $q['post_status'];
+
+			if ( ! is_array( $q_status ) ) {
+				$q_status = explode( ',', $q_status );
+			}
+
+			$r_status = array();
+			$p_status = array();
+			$e_status = array();
+
+			if ( in_array( 'any', $q_status ) ) {
+				foreach ( get_post_stati( array( 'exclude_from_search' => TRUE ) ) as $status ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2327,6 +2432,7 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
+				}
 			}
 		}
 	}
