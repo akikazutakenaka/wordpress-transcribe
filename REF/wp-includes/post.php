@@ -1288,8 +1288,48 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 011: wp-includes/post.php
  */
+
+/**
+ * Call major cache updating functions for list of Post objects.
+ *
+ * @since 1.5.0
+ *
+ * @param array  $posts             Array of Post objects.
+ * @param string $post_type         Optional.
+ *                                  Post type.
+ *                                  Default 'post'.
+ * @param bool   $update_term_cache Optional.
+ *                                  Whether to update the term cache.
+ *                                  Default true.
+ * @param bool   $update_meta_cache Optional.
+ *                                  Whether to update the meta cache.
+ *                                  Default true.
+ */
+function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = TRUE, $update_meta_cache = TRUE )
+{
+	// No point in doing all this work if we didn't match any posts.
+	if ( ! $posts ) {
+		return;
+	}
+
+	update_post_cache( $posts );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 010: wp-includes/post.php
+ * -> wp-includes/post.php
+ */
+}
 
 /**
  * Check the given subset of the post hierarchy for hierarchy loops.
