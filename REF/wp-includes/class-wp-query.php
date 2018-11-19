@@ -3015,6 +3015,68 @@ class WP_Query
 					$this->posts = $ids;
 					$this->set_found_posts( $q, $limits );
 					_prime_post_caches( $ids, $q['update_post_term_cache'], $q['update_post_meta_cache'] );
+				} else {
+					$this->posts = array();
+				}
+			} else {
+				$this->posts = $wpdb->get_results( $this->request );
+				$this->set_found_posts( $q, $limits );
+			}
+		}
+
+		// Convert to WP_Post objects.
+		if ( $this->posts ) {
+			$this->posts = array_map( 'get_post', $this->posts );
+		}
+
+		if ( ! $q['suppress_filters'] ) {
+			/**
+			 * Filters the raw post results array, prior to status checks.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param array    $posts The post results array.
+			 * @param WP_Query $this  The WP_Query instance (passed by reference).
+			 */
+			$this->posts = apply_filters_ref_array( 'posts_results', array( $this->posts, &$this ) );
+		}
+
+		if ( ! empty( $this->posts ) && $this->is_comment_feed && $this->is_singular ) {
+			// This filter is documented in wp-includes/query.php
+			$cjoin = apply_filters_ref_array( 'comment_feed_join', array( '', &$this ) );
+
+			// This filter is documented in wp-includes/query.php
+			$cwhere = apply_filters_ref_array( 'comment_feed_where', array( "WHERE comment_post_ID = '{$this->posts[0]->ID}' AND comment_approved = '1'", &$this ) );
+
+			// This filter is documented in wp-includes/query.php
+			$cgroupby = apply_filters_ref_array( 'comment_feed_groupby', array( '', &$this ) );
+
+			$cgroupby = ! empty( $cgroupby )
+				? 'GROUP BY ' . $cgroupby
+				: '';
+
+			// This filter is documented in wp-includes/query.php
+			$corderby = apply_filters_ref_array( 'comment_feed_orderby', array( 'comment_date_gmt DESC', &$this ) );
+
+			$corderby = ! empty( $corderby )
+				? 'ORDER BY ' . $corderby
+				: '';
+
+			// This filter is documented in wp-includes/query.php
+			$climits = apply_filters_ref_array( 'comment_feed_limits', array( 'LIMIT ' . get_option( 'posts_per_rss' ), &$this ) );
+
+			$comments_request = "SELECT {$wpdb->comments}.* FROM {$wpdb->comments} $cjoin $cwhere $cgroupby $corderby $climits";
+			$comments = $wpdb->get_results( $comments_request );
+
+			// Convert to WP_Comment
+			$this->comments = array_map( 'get_comment', $comments );
+			$this->comment_count = count( $this->comments );
+		}
+
+		// Check post status to determine if post should be displayed.
+		if ( ! empty( $this->posts )
+		  && ( $this->is_single || $this->is_page ) ) {
+			$status = get_post_status( $this->posts[0] );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -3026,8 +3088,6 @@ class WP_Query
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
  */
-				}
-			}
 		}
 	}
 

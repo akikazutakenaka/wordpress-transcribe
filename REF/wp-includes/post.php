@@ -168,6 +168,57 @@ function get_post_field( $field, $post = NULL, $context = 'display' )
 }
 
 /**
+ * Retrieve the post status based on the Post ID.
+ *
+ * If the post ID is of an attachment, then the parent post status will be given instead.
+ *
+ * @since 2.0.0
+ *
+ * @param  int|WP_Post  $ID Optional.
+ *                          Post ID or post object.
+ *                          Default empty.
+ * @return string|false Post status on success, false on failure.
+ */
+function get_post_status( $ID = '' )
+{
+	$post = get_post( $ID );
+
+	if ( ! is_object( $post ) ) {
+		return FALSE;
+	}
+
+	if ( 'attachment' == $post->post_type ) {
+		if ( 'private' == $post->post_status ) {
+			return 'private';
+		}
+
+		// Unattached attachments are assumed to be published.
+		if ( 'inherit' == $post->post_status && 0 == $post->post_parent ) {
+			return 'publish';
+		}
+
+		// Inherit status from the parent.
+		if ( $post->post_parent && $post->ID != $post->post_parent ) {
+			$parent_post_status = get_post_status( $post->post_parent );
+
+			return 'trash' == $parent_post_status
+				? get_post_meta( $post->post_parent, '_wp_trash_meta_status', TRUE )
+				: $parent_post_status;
+		}
+	}
+
+	/**
+	 * Filters the post status.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param string  $post_status The post status.
+	 * @param WP_Post $post        The post object.
+	 */
+	return apply_filters( 'get_post_status', $post->post_status, $post );
+}
+
+/**
  * Retrieve a post status object by name.
  *
  * @since  3.0.0
