@@ -268,6 +268,17 @@ function get_post_stati( $args = array(), $output = 'names', $operator = 'and' )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 008: wp-includes/post.php
+ */
+
+/**
  * Retrieves the post type of the current post or of a given post.
  *
  * @since 2.1.0
@@ -1113,6 +1124,9 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 	// If a trashed post has the desired slug, change it and let this post have it.
 	if ( 'trash' !== $post_status && $post_name ) {
 		wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post_ID );
+	}
+
+	$post_name = wp_unique_post_slug( $post_name, $post_ID, $post_status, $post_type, $post_parent );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1120,8 +1134,8 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
-	}
 }
 
 /**
@@ -1182,6 +1196,80 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
 	return $postarr['post_type'] == 'attachment'
 		? wp_insert_attachment( $postarr )
 		: wp_insert_post( $postarr, $wp_error );
+}
+
+/**
+ * Computes a unique slug for the post, when given the desired slug and some post details.
+ *
+ * @since  2.8.0
+ * @global wpdb       $wpdb       WordPress database abstraction object.
+ * @global WP_Rewrite $wp_rewrite
+ *
+ * @param  string $slug        The desired slug (post_name).
+ * @param  int    $post_ID     Post ID.
+ * @param  string $post_status No uniqueness checks are made if the post is still draft or pending.
+ * @param  string $post_type   Post type.
+ * @param  int    $post_parent Post parent ID.
+ * @return string Unique slug for the post, based on $post_name (with a -1, -2, etc. suffix).
+ */
+function wp_unique_post_slug( $slug, $post_ID, $post_status, $post_type, $post_parent )
+{
+	if ( in_array( $post_status, array( 'draft', 'pending', 'auto-draft' ) )
+	  || 'inherit' == $post_status && 'revision' == $post_type
+	  || 'user_request' === $post_type ) {
+		return $slug;
+	}
+
+	global $wpdb, $wp_rewrite;
+	$original_slug = $slug;
+	$feeds = $wp_rewrite->feeds;
+
+	if ( ! is_array( $feeds ) ) {
+		$feeds = array();
+	}
+
+	if ( 'attachment' == $post_type ) {
+		// Attachment slugs must be unique across all types.
+		$check_sql = <<<EOQ
+SELECT post_name
+FROM $wpdb->posts
+WHERE post_name = %s
+  AND ID != %d
+LIMIT 1
+EOQ;
+		$post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $slug, $post_ID ) );
+
+		/**
+		 * Filters whether the post slug would make a bad attachment slug.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool   $bad_slug Whether the slug would be bad as an attachment slug.
+		 * @param string $slug     The post slug.
+		 */
+		if ( $post_name_check || in_array( $slug, $feeds ) || 'embed' === $slug || apply_filters( 'wp_unique_post_slug_is_bad_attachment_slug', FALSE, $slug ) ) {
+			$suffix = 2;
+
+			do {
+				$alt_post_name = _truncate_post_slug( $slug, 200 - ( strlen( $suffix ) + 1 ) ) . "-$suffix";
+				$post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $alt_post_name, $post_ID ) );
+				$suffix++;
+			} while ( $post_name_check );
+
+			$slug = $alt_post_name;
+		}
+	} elseif ( is_post_type_hierarchical( $post_type ) ) {
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ * -> wp-includes/post.php
+ */
+	}
 }
 
 /**
