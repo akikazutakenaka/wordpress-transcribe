@@ -126,17 +126,6 @@ function wp_queue_comments_for_comment_meta_lazyload( $comments )
 
 	if ( $comment_ids ) {
 		$lazyloader = wp_metadata_lazyloader();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * @NOW 010: wp-includes/comment.php
- */
+		$lazyloader->queue_objects( 'comment', $comment_ids );
 	}
 }
