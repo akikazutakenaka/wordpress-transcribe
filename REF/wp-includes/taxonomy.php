@@ -528,6 +528,17 @@ function update_termmeta_cache( $term_ids )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 008: wp-includes/taxonomy.php
+ */
+
+/**
  * Sanitize Term all fields.
  *
  * Relies on sanitize_term_field() to sanitize the term.
@@ -859,6 +870,59 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
 }
 
 /**
+ * Create Term and Taxonomy Relationships.
+ *
+ * Relates an object (post, link etc) to a term and taxonomy type.
+ * Creates the term and taxonomy relationship if it doesn't already exist.
+ * Creates a term if it doesn't exist (using the slug).
+ *
+ * A relationship means that the term is grouped in or belongs to the taxonomy.
+ * A term has no meaning until it is given context by defining which taxonomy it exists under.
+ *
+ * @since  2.3.0
+ * @global wpdb $wpdb The WordPress database abstraction object.
+ *
+ * @param  int              $object_id The object to relate to.
+ * @param  string|int|array $terms     A single term slug, single term id, or array of either term slugs or ids.
+ *                                     Will replace all existing related terms in this taxonomy.
+ *                                     Passing an empty value will remove all related terms.
+ * @param  string           $taxonomy  The context in which to relate the term to the object.
+ * @param  bool             $append    Optional.
+ *                                     If false will delete difference of terms.
+ *                                     Default false.
+ * @return array|WP_Error   Term taxonomy IDs of the affected terms.
+ */
+function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
+{
+	global $wpdb;
+	$object_id = ( int ) $object_id;
+
+	if ( ! taxonomy_exists( $taxonomy ) ) {
+		return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+	}
+
+	if ( ! is_array( $terms ) ) {
+		$terms = array( $terms );
+	}
+
+	$old_tt_ids = ! $append
+		? wp_get_object_terms( $object_id, $taxonomy, array(
+				'fields'  => 'tt_ids',
+				'orderby' => 'none'
+			) )
+		: array();
+
+	$tt_ids = array();
+	$term_ids = array();
+	$new_tt_ids = array();
+
+	foreach ( ( array ) $terms as $term ) {
+		if ( ! strlen( trim( $term ) ) ) {
+			continue;
+		}
+
+		if ( ! $term_info = term_exists( $term, $taxonomy ) ) {
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -866,7 +930,11 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
  */
+		}
+	}
+}
 
 //
 // Cache
