@@ -859,6 +859,18 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 009: wp-includes/taxonomy.php
+ */
+
+/**
  * Retrieves the taxonomy relationship to the term object id.
  *
  * Upstream functions (like get_the_terms() and is_object_in_term()) are responsible for populating the object-term relationship cache.

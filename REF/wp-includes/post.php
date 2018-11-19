@@ -1364,6 +1364,50 @@ function update_post_cache( &$posts )
 }
 
 /**
+ * Will clean the post in the cache.
+ *
+ * Cleaning means delete from the cache of the post.
+ * Will call to clean the term object cache associated with the post ID.
+ *
+ * This function not run if $_wp_suspend_cache_invalidation is not empty.
+ * See wp_suspend_cache_invalidation().
+ *
+ * @since  2.0.0
+ * @global bool $_wp_suspend_cache_invalidation
+ *
+ * @param int|WP_Post $post Post ID or post object to remove from the cache.
+ */
+function clean_post_cache( $post )
+{
+	global $_wp_suspend_cache_invalidation;
+
+	if ( ! empty( $_wp_suspend_cache_invalidation ) ) {
+		return;
+	}
+
+	$post = get_post( $post );
+
+	if ( empty( $post ) ) {
+		return;
+	}
+
+	wp_cache_delete( $post->ID, 'posts' );
+	wp_cache_delete( $post->ID, 'post_meta' );
+	clean_object_term_cache( $post->ID, $post->post_type );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 008: wp-includes/post.php
+ * -> wp-includes/taxonomy.php
+ */
+}
+
+/**
  * Call major cache updating functions for list of Post objects.
  *
  * @since 1.5.0
@@ -1627,6 +1671,8 @@ function wp_add_trashed_suffix_to_post_name_for_post( $post )
 
 	add_post_meta( $post->ID, '_wp_desired_post_slug', $post->post_name );
 	$post_name = _truncate_post_slug( $post->post_name, 191 ) . '__trashed';
+	$wpdb->update( $wpdb->posts, array( 'post_name' => $post_name ), array( 'ID' => $post->ID ) );
+	clean_post_cache( $post->ID );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1635,5 +1681,6 @@ function wp_add_trashed_suffix_to_post_name_for_post( $post )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
+ * -> wp-includes/post.php
  */
 }
