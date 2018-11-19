@@ -29,21 +29,8 @@
  * @since 4.5.0
  */
 class WP_Metadata_Lazyloader {
-	/**
-	 * Pending objects queue.
-	 *
-	 * @since 4.5.0
-	 * @var array
-	 */
-	protected $pending_objects;
-
-	/**
-	 * Settings for supported object types.
-	 *
-	 * @since 4.5.0
-	 * @var array
-	 */
-	protected $settings = array();
+	// refactored. protected $pending_objects;
+	// refactored. protected $settings = array();
 
 	/**
 	 * Constructor.
