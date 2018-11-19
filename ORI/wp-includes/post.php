@@ -3230,29 +3230,7 @@ function wp_unique_post_slug( $slug, $post_ID, $post_status, $post_type, $post_p
 	return apply_filters( 'wp_unique_post_slug', $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug );
 }
 
-/**
- * Truncate a post slug.
- *
- * @since 3.6.0
- * @access private
- *
- * @see utf8_uri_encode()
- *
- * @param string $slug   The slug to truncate.
- * @param int    $length Optional. Max length of the slug. Default 200 (characters).
- * @return string The truncated slug.
- */
-function _truncate_post_slug( $slug, $length = 200 ) {
-	if ( strlen( $slug ) > $length ) {
-		$decoded_slug = urldecode( $slug );
-		if ( $decoded_slug === $slug )
-			$slug = substr( $slug, 0, $length );
-		else
-			$slug = utf8_uri_encode( $decoded_slug, $length );
-	}
-
-	return rtrim( $slug, '-' );
-}
+// refactored. function _truncate_post_slug( $slug, $length = 200 ) {}
 
 /**
  * Add tags to a post.

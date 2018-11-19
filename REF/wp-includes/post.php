@@ -1206,17 +1206,9 @@ function _truncate_post_slug( $slug, $length = 200 )
 		$slug = $decoded_slug === $slug
 			? substr( $slug, 0, $length )
 			: utf8_uri_encode( $decoded_slug, $length );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 008: wp-includes/post.php
- */
 	}
+
+	return rtrim( $slug, '-' );
 }
 
 /**
@@ -1643,6 +1635,5 @@ function wp_add_trashed_suffix_to_post_name_for_post( $post )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
- * -> wp-includes/post.php
  */
 }
