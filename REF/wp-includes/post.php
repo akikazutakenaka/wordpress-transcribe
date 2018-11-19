@@ -281,17 +281,11 @@ function get_post_stati( $args = array(), $output = 'names', $operator = 'and' )
 function is_post_type_hierarchical( $post_type )
 {
 	if ( ! post_type_exists( $post_type ) ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 008: wp-includes/post.php
- */
+		return FALSE;
 	}
+
+	$post_type = get_post_type_object( $post_type );
+	return $post_type->hierarchical;
 }
 
 /**
@@ -1297,7 +1291,6 @@ EOQ;
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
- * -> wp-includes/post.php
  */
 	}
 }

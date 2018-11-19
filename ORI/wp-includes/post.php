@@ -705,29 +705,6 @@ function register_post_status( $post_status, $args = array() ) {
 }
 
 // refactored. function get_post_status_object( $post_status ) {}
-// refactored. function get_post_stati( $args = array(), $output = 'names', $operator = 'and' ) {}
-
-/**
- * Whether the post type is hierarchical.
- *
- * A false return value might also mean that the post type does not exist.
- *
- * @since 3.0.0
- *
- * @see get_post_type_object()
- *
- * @param string $post_type Post type name
- * @return bool Whether post type is hierarchical.
- */
-function is_post_type_hierarchical( $post_type ) {
-	if ( ! post_type_exists( $post_type ) )
-		return false;
-
-	$post_type = get_post_type_object( $post_type );
-	return $post_type->hierarchical;
-}
-
-// refactored. function post_type_exists( $post_type ) {}
 // :
 // refactored. function get_post_types( $args = array(), $output = 'names', $operator = 'and' ) {}
 
