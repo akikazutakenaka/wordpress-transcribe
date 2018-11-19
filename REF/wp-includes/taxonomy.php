@@ -858,17 +858,53 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
 	return apply_filters( 'wp_get_object_terms', $terms, $object_ids, $taxonomies, $args );
 }
 
+//
+// Cache
+//
+
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 009: wp-includes/taxonomy.php
+ * Removes the taxonomy relationship to terms from the cache.
+ *
+ * Will remove the entire taxonomy relationship containing term `$object_id`.
+ * The term IDs have to exist within the taxonomy `$object_type` for the deletion to take place.
+ *
+ * @since  2.3.0
+ * @global bool $_wp_suspend_cache_invalidation
+ * @see    get_object_taxonomies() for more on $object_type.
+ *
+ * @param int|array    $object_ids  Single or list of term object ID(s).
+ * @param array|string $object_type The taxonomy object type.
  */
+function clean_object_term_cache( $object_ids, $object_type )
+{
+	global $_wp_suspend_cache_invalidation;
+
+	if ( ! empty( $_wp_suspend_cache_invalidation ) ) {
+		return;
+	}
+
+	if ( ! is_array( $object_ids ) ) {
+		$object_ids = array( $object_ids );
+	}
+
+	$taxonomies = get_object_taxonomies( $object_type );
+
+	foreach ( $object_ids as $id ) {
+		foreach ( $taxonomies as $taxonomy ) {
+			wp_cache_delete( $id, "{$taxonomy}_relationships" );
+		}
+	}
+
+	/**
+	 * Fires after the object term cache has been cleaned.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param array  $object_ids  An array of object IDs.
+	 * @param string $object_type Object type.
+	 */
+	do_action( 'clean_object_term_cache', $object_ids, $object_type );
+}
 
 /**
  * Retrieves the taxonomy relationship to the term object id.

@@ -1403,7 +1403,6 @@ function clean_post_cache( $post )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/post.php
- * -> wp-includes/taxonomy.php
  */
 }
 
