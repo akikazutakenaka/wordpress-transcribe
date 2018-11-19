@@ -74,6 +74,44 @@ class WP_Metadata_Lazyloader
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/comment.php
  * <- wp-includes/meta.php
- * @NOW 012: wp-includes/class-wp-metadata-lazyloader.php
+ * <- wp-includes/class-wp-metadata-lazyloader.php
+ * @NOW 013: wp-includes/class-wp-metadata-lazyloader.php
  */
+
+	/**
+	 * Lazy-loads term meta for queued terms.
+	 *
+	 * This method is public so that it can be used as a filter callback.
+	 * As a rule, there is no need to invoke it directly.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param  mixed $check The `$check` param passed from the 'get_term_metadata' hook.
+	 * @return mixed In order not to short-circuit `get_metadata()`.
+	 *               Generally, this is `null`, but it could be another value if filtered by a plugin.
+	 */
+	public function lazyload_term_meta( $check )
+	{
+		if ( ! empty( $this->pending_objects['term'] ) ) {
+			update_termmeta_cache( array_keys( $this->pending_objects['term'] ) );
+
+			// No need to run again for this set of terms.
+			$this->reset_queue( 'term' );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/comment.php
+ * <- wp-includes/meta.php
+ * @NOW 012: wp-includes/class-wp-metadata-lazyloader.php
+ * -> wp-includes/class-wp-metadata-lazyloader.php
+ */
+		}
+	}
 }
