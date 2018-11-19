@@ -1186,6 +1186,27 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
 }
 
 /**
+ * Truncate a post slug.
+ *
+ * @since  3.6.0
+ * @access private
+ * @see    utf8_uri_encode()
+ *
+ * @param  string $slug   The slug to truncate.
+ * @param  int    $length Optional.
+ *                        Max length of the slug.
+ *                        Default 200 (characters).
+ * @return The truncated slug.
+ */
+function _truncate_post_slug( $slug, $length = 200 )
+{
+	if ( strlen( $slug ) > $length ) {
+		$decoded_slug = urldecode( $slug );
+
+		$slug = $decoded_slug === $slug
+			? substr( $slug, 0, $length )
+			: utf8_uri_encode( $decoded_slug, $length );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -1194,7 +1215,10 @@ function wp_update_post( $postarr = array(), $wp_error = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/post.php
+ * -> wp-includes/formatting.php
  */
+	}
+}
 
 /**
  * Retrieves a page given its path.

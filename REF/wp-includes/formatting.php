@@ -1036,6 +1036,18 @@ function wp_check_invalid_utf8( $string, $strip = FALSE )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 009: wp-includes/formatting.php
+ */
+
+/**
  * Converts all accent characters to ASCII characters.
  *
  * If there are no accent characters, then the string given is just returned.
