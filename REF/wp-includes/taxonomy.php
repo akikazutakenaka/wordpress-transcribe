@@ -528,15 +528,115 @@ function update_termmeta_cache( $term_ids )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * @NOW 008: wp-includes/taxonomy.php
+ * Check if Term exists.
+ *
+ * Formerly is_term(), introduced in 2.3.0.
+ *
+ * @since  3.0.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  int|string $term     The term to check.
+ *                              Accepts term ID, slug, or name.
+ * @param  string     $taxonomy The taxonomy name to use.
+ * @param  int        $parent   Optional.
+ *                              ID of parent term under which to confine the exists.
+ * @return mixed      Returns null if the term does not exist.
+ *                    Returns the term ID if no taxonomy is specified and the term ID exists.
+ *                    Returns an array of the term ID and the term taxonomy ID the taxonomy is specified and the pairing exists.
  */
+function term_exists( $term, $taxonomy = '', $parent = NULL )
+{
+	global $wpdb;
+	$select = <<<EOQ
+SELECT term_id
+FROM $wpdb->terms AS t
+WHERE 
+EOQ;
+	$tax_select = <<<EOQ
+SELECT tt.term_id, tt.term_taxonomy_id
+FROM $wpdb->terms AS t
+INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id
+WHERE 
+EOQ;
+
+	if ( is_int( $term ) ) {
+		if ( 0 == $term ) {
+			return 0;
+		}
+
+		$where = 't.term_id = %d';
+
+		return ! empty( $taxonomy )
+			? $wpdb->get_row( $wpdb->prepare( $tax_select . $where . " AND tt.taxonomy = %s", $term, $taxonomy ), ARRAY_A )
+			: $wpdb->get_var( $wpdb->prepare( $select . $where, $term ) );
+	}
+
+	$term = trim( wp_unslash( $term ) );
+	$slug = sanitize_title( $term );
+	$where = 't.slug = %s';
+	$else_where = 't.name = %s';
+	$where_fields = array( $slug );
+	$else_where_fields = array( $term );
+	$orderby = 'ORDER BY t.term_id ASC';
+	$limit = 'LIMIT 1';
+
+	if ( ! empty( $taxonomy ) ) {
+		if ( is_numeric( $parent ) ) {
+			$parent = ( int ) $parent;
+			$where_fields[] = $parent;
+			$else_where_parent[] = $parent;
+			$where .= ' AND tt.parent = %d';
+			$else_where .= ' AND tt.parent = %d';
+		}
+
+		$where_fields[] = $taxonomy;
+		$else_where_fields[] = $taxonomy;
+
+		if ( $result = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT tt.term_id, tt.term_taxonomy_id
+FROM $wpdb->terms AS t
+INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id
+WHERE $where
+  AND tt.taxonomy = %s
+$orderby
+$limit
+EOQ
+					, $where_fields ), ARRAY_A ) ) {
+			return $result;
+		}
+
+		return $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT tt.term_id, tt.term_taxonomy_id
+FROM $wpdb->term AS t
+INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id
+WHERE $else_where
+  AND tt.taxonomy = %s
+$orderby
+$limit
+EOQ
+				, $else_where_fields ), ARRAY_A );
+	}
+
+	if ( $result = $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT term_id
+FROM $wpdb->terms AS t
+WHERE $where
+$orderby
+$limit
+EOQ
+				, $where_fields ) ) ) {
+		return $result;
+	}
+
+	return $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT term_id
+FROM $wpdb->terms AS t
+WHERE $else_where
+$orderby
+$limit
+EOQ
+			, $else_where_fields ) );
+}
 
 /**
  * Sanitize Term all fields.
@@ -930,7 +1030,6 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 		}
 	}
