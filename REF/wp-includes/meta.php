@@ -524,6 +524,19 @@ EOQ
 }
 
 /**
+ * Retrieves the queue for lazy-loading metadata.
+ *
+ * @since 4.5.0
+ *
+ * @return WP_Metadata_Lazyloader $lazyloader Metadata lazyloader queue.
+ */
+function wp_metadata_lazyloader()
+{
+	static $wp_metadata_lazyloader;
+
+	if ( NULL === $wp_metadata_lazyloader ) {
+		$wp_metadata_lazyloader = new WP_Metadata_Lazyloader();
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -535,7 +548,10 @@ EOQ
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/comment.php
  * @NOW 011: wp-includes/meta.php
+ * -> wp-includes/class-wp-metadata-lazyloader.php
  */
+	}
+}
 
 /**
  * Retrieve the name of the metadata table for the specified object type.
