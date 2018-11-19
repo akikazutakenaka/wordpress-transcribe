@@ -5154,20 +5154,7 @@ function _get_last_post_time( $timezone, $field, $post_type = 'any' ) {
 	return false;
 }
 
-/**
- * Updates posts in cache.
- *
- * @since 1.5.1
- *
- * @param array $posts Array of post objects (passed by reference).
- */
-function update_post_cache( &$posts ) {
-	if ( ! $posts )
-		return;
-
-	foreach ( $posts as $post )
-		wp_cache_add( $post->ID, $post, 'posts' );
-}
+// refactored. function update_post_cache( &$posts ) {}
 
 /**
  * Will clean the post in the cache.

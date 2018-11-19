@@ -1279,18 +1279,22 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/post.php
- * @NOW 011: wp-includes/post.php
+ * Updates posts in cache.
+ *
+ * @since 1.5.1
+ *
+ * @param array $posts Array of post objects (passed by reference).
  */
+function update_post_cache( &$posts )
+{
+	if ( ! $posts ) {
+		return;
+	}
+
+	foreach ( $posts as $post ) {
+		wp_cache_add( $post->ID, $post, 'posts' );
+	}
+}
 
 /**
  * Call major cache updating functions for list of Post objects.
@@ -1327,7 +1331,6 @@ function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = 
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/post.php
- * -> wp-includes/post.php
  */
 }
 
