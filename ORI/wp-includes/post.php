@@ -3131,41 +3131,7 @@ function wp_set_post_terms( $post_id = 0, $tags = '', $taxonomy = 'post_tag', $a
 	return wp_set_object_terms( $post_id, $tags, $taxonomy, $append );
 }
 
-/**
- * Set categories for a post.
- *
- * If the post categories parameter is not set, then the default category is
- * going used.
- *
- * @since 2.1.0
- *
- * @param int       $post_ID         Optional. The Post ID. Does not default to the ID
- *                                   of the global $post. Default 0.
- * @param array|int $post_categories Optional. List of categories or ID of category.
- *                                   Default empty array.
- * @param bool      $append         If true, don't delete existing categories, just add on.
- *                                  If false, replace the categories with the new categories.
- * @return array|false|WP_Error Array of term taxonomy IDs of affected categories. WP_Error or false on failure.
- */
-function wp_set_post_categories( $post_ID = 0, $post_categories = array(), $append = false ) {
-	$post_ID = (int) $post_ID;
-	$post_type = get_post_type( $post_ID );
-	$post_status = get_post_status( $post_ID );
-	// If $post_categories isn't already an array, make it one:
-	$post_categories = (array) $post_categories;
-	if ( empty( $post_categories ) ) {
-		if ( 'post' == $post_type && 'auto-draft' != $post_status ) {
-			$post_categories = array( get_option('default_category') );
-			$append = false;
-		} else {
-			$post_categories = array();
-		}
-	} elseif ( 1 == count( $post_categories ) && '' == reset( $post_categories ) ) {
-		return true;
-	}
-
-	return wp_set_post_terms( $post_ID, $post_categories, 'category', $append );
-}
+// refactored. function wp_set_post_categories( $post_ID = 0, $post_categories = array(), $append = false ) {}
 
 /**
  * Fires actions related to the transitioning of a post's status.

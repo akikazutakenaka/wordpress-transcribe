@@ -1151,6 +1151,101 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
 	}
 
 	$post_name = wp_unique_post_slug( $post_name, $post_ID, $post_status, $post_type, $post_parent );
+
+	// Don't unslash.
+	$post_mime_type = isset( $postarr['post_mime_type'] )
+		? $postarr['post_mime_type']
+		: '';
+
+	// Expected_slashed (everything!).
+	$data = compact( 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_content_filtered', 'post_title', 'post_excerpt', 'post_status', 'post_type', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_parent', 'menu_order', 'post_mime_type', 'guid' );
+
+	$emoji_fields = array( 'post_title', 'post_content', 'post_excerpt' );
+
+	foreach ( $emoji_fields as $emoji_field ) {
+		if ( isset( $data[ $emoji_field ] ) ) {
+			$charset = $wpdb->get_col_charset( $wpdb->posts, $emoji_field );
+
+			if ( 'utf8' === $charset ) {
+				$data[ $emoji_field ] = wp_encode_emoji( $data[ $emoji_field ] );
+			}
+		}
+	}
+
+	$data = 'attachment' === $post_type
+		? /**
+		   * Filters attachment post data before it is updated in or added to the database.
+		   *
+		   * @since 3.9.0
+		   *
+		   * @param array $data    An array of sanitized attachment post data.
+		   * @param array $postarr An array of unsanitized attachment post data.
+		   */
+			apply_filters( 'wp_insert_attachment_data', $data, $postarr )
+		: /**
+		   * Filteres slashed post data just before it is inserted into the database.
+		   *
+		   * @since 2.7.0
+		   *
+		   * @param array $data    An array of slashed post data.
+		   * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+		   */
+			apply_filters( 'wp_insert_post_data', $data, $postarr );
+
+	$data = wp_unslash( $data );
+	$where = array( 'ID' => $post_ID );
+
+	if ( $update ) {
+		/**
+		 * Fires immediately before an existing post is updated in the database.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param int   $post_ID Post ID.
+		 * @param array $data    Array of unslashed post data.
+		 */
+		do_action( 'pre_post_update', $post_ID, $data );
+
+		if ( FALSE === $wpdb->update( $wpdb->posts, $data, $where ) ) {
+			return $wp_error
+				? new WP_Error( 'db_update_error', __( 'Could not update post in the database' ), $wpdb->last_error )
+				: 0;
+		}
+	} else {
+		// If there is a suggested ID, use it if not already present.
+		if ( ! empty( $import_id ) ) {
+			$import_id = ( int ) $import_id;
+
+			if ( ! $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT ID
+FROM $wpdb->posts
+WHERE ID = %d
+EOQ
+						, $import_id ) ) ) {
+				$data['ID'] = $import_id;
+			}
+		}
+
+		if ( FALSE === $wpdb->insert( $wpdb->posts, $data ) ) {
+			return $wp_error
+				? new WP_Error( 'db_insert_error', __( 'Could not insert post into the database' ), $wpdb->last_error )
+				: 0;
+		}
+
+		$post_ID = ( int ) $wpdb->insert_id;
+
+		// Use the newly generated $post_ID.
+		$where = array( 'ID' => $post_ID );
+	}
+
+	if ( empty( $data['post_name'] ) && ! in_array( $data['post_status'], array( 'draft', 'pending', 'auto-draft' ) ) ) {
+		$data['post_name'] = wp_unique_post_slug( sanitize_title( $data['post_title'], $post_ID ), $post_ID, $data['post_status'], $post_type, $post_parent );
+		$wpdb->update( $wpdb->posts, array( 'post_name' => $data['post_name'] ), $where );
+		clean_post_cache( $post_ID );
+	}
+
+	if ( is_object_in_taxonomy( $post_type, 'category' ) ) {
+		wp_set_post_categories( $post_ID, $post_category );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1158,7 +1253,9 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
+	}
 }
 
 /**
@@ -1420,6 +1517,58 @@ function _truncate_post_slug( $slug, $length = 200 )
 	}
 
 	return rtrim( $slug, '-' );
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ */
+
+/**
+ * Set categories for a post.
+ *
+ * If the post categories parameter is not set, then the default category is going used.
+ *
+ * @since 2.1.0
+ *
+ * @param  int                  $post_ID         Optional.
+ *                                               The Post ID.
+ *                                               Does not default to the ID of the global $post.
+ *                                               Default 0.
+ * @param  array|int            $post_categories Optional.
+ *                                               List of categories or ID of category.
+ *                                               Default empty array.
+ * @param  bool                 $append          If true, don't delete existing categories, just add on.
+ *                                               If false, replace the categories with the new categories.
+ * @return array|false|WP_Error Array of term taxonomy IDs of affected categories.
+ *                              WP_Error or false on failure.
+ */
+function wp_set_post_categories( $post_ID = 0, $post_categories = array(), $append = FALSE )
+{
+	$post_ID = ( int ) $post_ID;
+	$post_type = get_post_type( $post_ID );
+	$post_status = get_post_status( $post_ID );
+
+	// If $post_categories isn't already an array, make it one.
+	$post_categories = ( array ) $post_categories;
+
+	if ( empty( $post_categories ) ) {
+		if ( 'post' == $post_type && 'auto-draft' != $post_status ) {
+			$post_categories = array( get_option( 'default_category' ) );
+			$append = FALSE;
+		} else {
+			$post_categories = array();
+		}
+	} elseif ( 1 == count( $post_categories ) && '' == reset( $post_categories ) ) {
+		return TRUE;
+	}
+
+	return wp_set_post_terms( $post_ID, $post_categories, 'category', $append );
 }
 
 /**
