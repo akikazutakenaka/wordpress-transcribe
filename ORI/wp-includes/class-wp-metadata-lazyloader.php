@@ -75,29 +75,7 @@ class WP_Metadata_Lazyloader {
 	}
 
 	// refactored. public function reset_queue( $object_type ) {}
-
-	/**
-	 * Lazy-loads term meta for queued terms.
-	 *
-	 * This method is public so that it can be used as a filter callback. As a rule, there
-	 * is no need to invoke it directly.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param mixed $check The `$check` param passed from the 'get_term_metadata' hook.
-	 * @return mixed In order not to short-circuit `get_metadata()`. Generally, this is `null`, but it could be
-	 *               another value if filtered by a plugin.
-	 */
-	public function lazyload_term_meta( $check ) {
-		if ( ! empty( $this->pending_objects['term'] ) ) {
-			update_termmeta_cache( array_keys( $this->pending_objects['term'] ) );
-
-			// No need to run again for this set of terms.
-			$this->reset_queue( 'term' );
-		}
-
-		return $check;
-	}
+	// refactored. public function lazyload_term_meta( $check ) {}
 
 	/**
 	 * Lazy-loads comment meta for queued comments.

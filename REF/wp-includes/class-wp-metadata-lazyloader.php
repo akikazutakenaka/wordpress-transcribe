@@ -100,6 +100,11 @@ class WP_Metadata_Lazyloader
 
 			// No need to run again for this set of terms.
 			$this->reset_queue( 'term' );
+		}
+
+		return $check;
+	}
+
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -114,6 +119,4 @@ class WP_Metadata_Lazyloader
  * <- wp-includes/meta.php
  * @NOW 012: wp-includes/class-wp-metadata-lazyloader.php
  */
-		}
-	}
 }
