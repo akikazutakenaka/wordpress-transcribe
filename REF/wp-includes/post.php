@@ -1158,7 +1158,6 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/post.php
  */
 }
 
@@ -1283,16 +1282,118 @@ EOQ;
 			$slug = $alt_post_name;
 		}
 	} elseif ( is_post_type_hierarchical( $post_type ) ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/post.php
- */
+		if ( 'nav_menu_item' == $post_type ) {
+			return $slug;
+		}
+
+		/**
+		 * Page slugs must be unique within their own trees.
+		 * Pages are in a separate namespace than posts so page slugs are allowed to overlap post slugs.
+		 */
+		$check_sql = <<<EOQ
+SELECT post_name
+FROM $wpdb->posts
+WHERE post_name = %s
+  AND post_type IN ( %s, 'attachment' )
+  AND ID != %d
+  AND post_parent = %d
+LIMIT 1
+EOQ;
+		$post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $slug, $post_type, $post_ID, $post_parent ) );
+
+		/**
+		 * Filters whether the post slug would make a bad hierarchical post slug.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool   $bad_slug    Whether the post slug would be bad in a hierarchical post context.
+		 * @param string $slug        The post slug.
+		 * @param string $post_type   Post type.
+		 * @param int    $post_parent Post parent ID.
+		 */
+		if ( $post_name_check || in_array( $slug, $feeds ) || 'embed' === $slug || preg_match( "@^($wp_rewrite->pagination_base)?\d+$@", $slug ) || apply_filters( 'wp_unique_post_slug_is_bad_hierarchical_slug', FALSE, $slug, $post_type, $post_parent ) ) {
+			$suffix = 2;
+
+			do {
+				$alt_post_name = _truncate_post_slug( $slug, 200 - ( strlen( $suffix ) + 1 ) ) . "-$suffix";
+				$post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $alt_post_name, $post_type, $post_ID, $post_parent ) );
+				$suffix++;
+			} while ( $post_name_check );
+
+			$slug = $alt_post_name;
+		}
+	} else {
+		// Post slugs must be unique across all posts.
+		$check_sql = <<<EOQ
+SELECT post_name
+FROM $wpdb->posts
+WHERE post_name = %s
+  AND post_type = %s
+  AND ID != %d
+LIMIT 1
+EOQ;
+		$post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $slug, $post_type, $post_ID ) );
+
+		// Prevent new post slugs that could result in URLs that conflict with date archives.
+		$post = get_post( $post_ID );
+		$conflicts_with_date_archive = FALSE;
+
+		if ( 'post' === $post_type
+		  && ( ! $post || $post->post_name !== $slug )
+		  && preg_match( '/^[0-9]+$/', $slug )
+		  && $slug_num = intval( $slug ) ) {
+			$permastructs   = array_values( array_filter( explode( '/', get_option( 'permalink_structure' ) ) ) );
+			$postname_index = array_search( '%postname%', $permastructs );
+
+			/**
+			 * Potential date clashes are as follows:
+			 *
+			 * - Any integer in the first permastruct position could be a year.
+			 * - An integer between 1 and 12 that follows 'year' conflicts with 'monthnum'.
+			 * - An integer between 1 and 31 that follows 'monthnum' conflicts with 'day'.
+			 */
+			if ( 0 === $postname_index
+			  || $postname_index && '%year%' === $permastructs[ $postname_index - 1 ] && 13 > $slug_num
+			  || $postname_index && '%monthnum%' === $permastructs[ $postname_index - 1 ] && 32 > $slug_num ) {
+				$conflicts_with_date_archive = TRUE;
+			}
+		}
+
+		/**
+		 * Filters whether the post slug would be bad as a flat slug.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool   $bad_slug  Whether the post slug would be bad as a flat slug.
+		 * @param string $slug      The post slug.
+		 * @param string $post_type Post type.
+		 */
+		if ( $post_name_check || in_array( $slug, $feeds ) || 'embed' === $slug || $conflicts_with_date_archive || apply_filters( 'wp_unique_post_slug_is_bad_flat_slug', FALSE, $slug, $post_type ) ) {
+			$suffix = 2;
+
+			do {
+				$alt_post_name = _truncate_post_slug( $slug, 200 - ( strlen( $suffix ) + 1 ) ) . "-$suffix";
+				$post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $alt_post_name, $psot_type, $post_ID ) );
+				$suffix++;
+			} while ( $post_name_check );
+
+			$slug = $alt_post_name;
+		}
 	}
+
+	/**
+	 * Filters the unique post slug.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param string $slug          The post slug.
+	 * @param int    $post_ID       Post ID.
+	 * @param string $post_status   The post status.
+	 * @param string $post_type     Post type.
+	 * @param int    $post_parent   Post parent ID.
+	 * @param string $original_slug The original post slug.
+	 */
+	return apply_filters( 'wp_unique_post_slug', $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug );
 }
 
 /**
