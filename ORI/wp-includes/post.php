@@ -5605,30 +5605,7 @@ function _update_term_count_on_transition_post_status( $new_status, $old_status,
 	}
 }
 
-/**
- * Adds any posts from the given ids to the cache that do not already exist in cache
- *
- * @since 3.4.0
- * @access private
- *
- * @see update_post_caches()
- *
- * @global wpdb $wpdb WordPress database abstraction object.
- *
- * @param array $ids               ID list.
- * @param bool  $update_term_cache Optional. Whether to update the term cache. Default true.
- * @param bool  $update_meta_cache Optional. Whether to update the meta cache. Default true.
- */
-function _prime_post_caches( $ids, $update_term_cache = true, $update_meta_cache = true ) {
-	global $wpdb;
-
-	$non_cached_ids = _get_non_cached_ids( $ids, 'posts' );
-	if ( !empty( $non_cached_ids ) ) {
-		$fresh_posts = $wpdb->get_results( sprintf( "SELECT $wpdb->posts.* FROM $wpdb->posts WHERE ID IN (%s)", join( ",", $non_cached_ids ) ) );
-
-		update_post_caches( $fresh_posts, 'any', $update_term_cache, $update_meta_cache );
-	}
-}
+// refactored. function _prime_post_caches( $ids, $update_term_cache = true, $update_meta_cache = true ) {}
 
 /**
  * Adds a suffix if any trashed posts have a given slug.

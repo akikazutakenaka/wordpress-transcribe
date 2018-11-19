@@ -1279,6 +1279,19 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * @NOW 010: wp-includes/post.php
+ */
+
+/**
  * Check the given subset of the post hierarchy for hierarchy loops.
  *
  * Prevents loops from forming and breaks those that it finds.
@@ -1335,6 +1348,38 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
  * @NOW 005: wp-includes/post.php
  * -> wp-includes/post.php
  */
+	}
+}
+
+/**
+ * Adds any posts from the given ids to the cache that do not already exist in the cache.
+ *
+ * @since  3.4.0
+ * @access private
+ * @see    update_post_caches()
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param array $ids               ID list.
+ * @param bool  $update_term_cache Optional.
+ *                                 Whether to update the term cache.
+ *                                 Default true.
+ * @param bool  $update_meta_cache Optional.
+ *                                 Whether to update the meta cache.
+ *                                 Default true.
+ */
+function _prime_post_cache( $ids, $update_term_cache = TRUE, $update_meta_cache = FALSE )
+{
+	global $wpdb;
+	$non_cached_ids = _get_non_cached_ids( $ids, 'posts' );
+
+	if ( ! empty( $non_cached_ids ) ) {
+		$fresh_posts = $wpdb->get_results( sprintf( <<<EOQ
+SELECT $wpdb->posts.*
+FROM $wpdb->posts
+WHERE ID IN (%s)
+EOQ
+				, join( ",", $non_cached_ids ) ) );
+		update_post_caches( $fresh_posts, 'any', $update_term_cache, $update_meta_cache );
 	}
 }
 

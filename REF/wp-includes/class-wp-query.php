@@ -2958,6 +2958,63 @@ class WP_Query
 			$this->posts = array_map( 'intval', $this->posts );
 			$this->post_count = count( $this->posts );
 			$this->set_found_posts( $q, $limits );
+			return $this->posts;
+		}
+
+		if ( 'id=>parent' == $q['fields'] ) {
+			if ( NULL === $this->posts ) {
+				$this->posts = $wpdb->get_results( $this->request );
+			}
+
+			$this->post_count = count( $this->posts );
+			$this->set_found_posts( $q, $limits );
+			$r = array();
+
+			foreach ( $this->posts as $key => $post ) {
+				$this->posts[ $key ]->ID = ( int ) $post->ID;
+				$this->posts[ $key ]->post_parent = ( int ) $post->post_parent;
+				$r[ ( int ) $post->ID ] = ( int ) $post->post_parent;
+			}
+
+			return $r;
+		}
+
+		if ( NULL === $this->posts ) {
+			$split_the_query = $old_request == $this->request && "{$wpdb->posts}.*" == $fields && ! empty( $limits ) && $q['posts_per_page'] < 500;
+
+			/**
+			 * Filters whether to split the query.
+			 *
+			 * Splitting the query will cause it to fetch just the IDs of the found posts (and then individually fetch each post by ID), rather than fetching every complete row at once.
+			 * One massive result vs many small results.
+			 *
+			 * @since 3.4.0
+			 *
+			 * @param bool     $split_the_query Whether or not to split the query.
+			 * @param WP_Query $this            The WP_Query instance.
+			 */
+			$split_the_query = apply_filters( 'split_the_query', $split_the_query, $this );
+
+			if ( $split_the_query ) {
+				// First get the IDs and then fill in the objects.
+				$this->request = "SELECT $found_rows $distinct {$wpdb->posts}.ID FROM {$wpdb->posts} $join WHERE 1=1 $where $groupby $orderby $limits";
+
+				/**
+				 * Filters the Post IDs SQL request before sending.
+				 *
+				 * @since 3.4.0
+				 *
+				 * @param string   $request The post ID request.
+				 * @param WP_Query $this    The WP_Query instance.
+				 */
+				$this->request = apply_filters( 'posts_request_ids', $this->request, $this );
+
+				$ids = $wpdb->get_col( $this->request );
+
+				if ( $ids ) {
+					$this->posts = $ids;
+					$this->set_found_posts( $q, $limits );
+					_prime_post_caches( $ids, $q['update_post_term_cache'], $q['update_post_meta_cache'] );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2968,7 +3025,10 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/post.php
  */
+				}
+			}
 		}
 	}
 
