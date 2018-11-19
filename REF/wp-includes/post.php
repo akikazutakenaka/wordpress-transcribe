@@ -1394,16 +1394,32 @@ function clean_post_cache( $post )
 	wp_cache_delete( $post->ID, 'posts' );
 	wp_cache_delete( $post->ID, 'post_meta' );
 	clean_object_term_cache( $post->ID, $post->post_type );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 008: wp-includes/post.php
- */
+	wp_cache_delete( 'wp_get_archives', 'general' );
+
+	/**
+	 * Fires immediately after the given post's cache is cleaned.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
+	 */
+	do_action( 'clean_post_cache', $post->ID, $post );
+
+	if ( 'page' == $post->post_type ) {
+		wp_cache_delete( 'all_page_ids', 'posts' );
+
+		/**
+		 * Fires immediately after the given page's cache is cleaned.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param int $post_id Post ID.
+		 */
+		do_action( 'clean_page_cache', $post->ID );
+	}
+
+	wp_cache_set( 'last_changed', microtime(), 'posts' );
 }
 
 /**
@@ -1680,6 +1696,5 @@ function wp_add_trashed_suffix_to_post_name_for_post( $post )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
- * -> wp-includes/post.php
  */
 }

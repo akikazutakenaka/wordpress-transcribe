@@ -5033,66 +5033,7 @@ function _get_last_post_time( $timezone, $field, $post_type = 'any' ) {
 }
 
 // refactored. function update_post_cache( &$posts ) {}
-
-/**
- * Will clean the post in the cache.
- *
- * Cleaning means delete from the cache of the post. Will call to clean the term
- * object cache associated with the post ID.
- *
- * This function not run if $_wp_suspend_cache_invalidation is not empty. See
- * wp_suspend_cache_invalidation().
- *
- * @since 2.0.0
- *
- * @global bool $_wp_suspend_cache_invalidation
- *
- * @param int|WP_Post $post Post ID or post object to remove from the cache.
- */
-function clean_post_cache( $post ) {
-	global $_wp_suspend_cache_invalidation;
-
-	if ( ! empty( $_wp_suspend_cache_invalidation ) )
-		return;
-
-	$post = get_post( $post );
-	if ( empty( $post ) )
-		return;
-
-	wp_cache_delete( $post->ID, 'posts' );
-	wp_cache_delete( $post->ID, 'post_meta' );
-
-	clean_object_term_cache( $post->ID, $post->post_type );
-
-	wp_cache_delete( 'wp_get_archives', 'general' );
-
-	/**
-	 * Fires immediately after the given post's cache is cleaned.
-	 *
-	 * @since 2.5.0
-	 *
-	 * @param int     $post_id Post ID.
-	 * @param WP_Post $post    Post object.
-	 */
-	do_action( 'clean_post_cache', $post->ID, $post );
-
-	if ( 'page' == $post->post_type ) {
-		wp_cache_delete( 'all_page_ids', 'posts' );
-
-		/**
-		 * Fires immediately after the given page's cache is cleaned.
-		 *
-		 * @since 2.5.0
-		 *
-		 * @param int $post_id Post ID.
-		 */
-		do_action( 'clean_page_cache', $post->ID );
-	}
-
-	wp_cache_set( 'last_changed', microtime(), 'posts' );
-}
-
-// refactored. function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = true, $update_meta_cache = true ) {}
+// :
 // refactored. function update_postmeta_cache( $post_ids ) {}
 
 /**
