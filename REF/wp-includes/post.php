@@ -268,6 +268,20 @@ function get_post_stati( $args = array(), $output = 'names', $operator = 'and' )
 }
 
 /**
+ * Whether the post type is hierarchical.
+ *
+ * A false return value might also mean that the post type does not exist.
+ *
+ * @since 3.0.0
+ * @see   get_post_type_object()
+ *
+ * @param  string $post_type Post type name.
+ * @return bool   Whether post type is hierarchical.
+ */
+function is_post_type_hierarchical( $post_type )
+{
+	if ( ! post_type_exists( $post_type ) ) {
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -276,6 +290,21 @@ function get_post_stati( $args = array(), $output = 'names', $operator = 'and' )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/post.php
+ * -> wp-includes/post.php
+ */
+	}
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 009: wp-includes/post.php
  */
 
 /**
