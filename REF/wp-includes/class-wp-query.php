@@ -3077,6 +3077,109 @@ class WP_Query
 		if ( ! empty( $this->posts )
 		  && ( $this->is_single || $this->is_page ) ) {
 			$status = get_post_status( $this->posts[0] );
+
+			if ( 'attachment' === $this->posts[0]->post_type && 0 === ( int ) $this->posts[0]->post_parent ) {
+				$this->is_page = FALSE;
+				$this->is_single = TRUE;
+				$this->is_attachment = TRUE;
+			}
+
+			$post_status_obj = get_post_status_object( $status );
+
+			// If the post_status was specifically requested, let it pass through.
+			if ( ! $post_status_obj->public && ! in_array( $status, $q_status ) ) {
+				if ( ! is_user_logged_in() ) {
+					// User must be logged in to view unpublished posts.
+					$this->posts = array();
+				} else {
+					if ( $post_status_obj->protected ) {
+						// User must have edit permissions on the draft to preview.
+						if ( ! current_user_can( $edit_cap, $this->posts[0]->ID ) ) {
+							$this->posts = array();
+						} else {
+							$this->is_preview = TRUE;
+
+							if ( 'future' != $status ) {
+								$this->posts[0]->post_date = current_time( 'mysql' );
+							}
+						}
+					} elseif ( $post_status_obj->private ) {
+						if ( ! current_user_can( $read_cap, $this->posts[0]->ID ) ) {
+							$this->posts = array();
+						}
+					} else {
+						$this->posts = array();
+					}
+				}
+			}
+
+			if ( $this->is_preview && $this->posts && current_user_can( $edit_cap, $this->posts[0]->ID ) ) {
+				/**
+				 * Filters the single post for preview mode.
+				 *
+				 * @since 2.7.0
+				 *
+				 * @param WP_Post  $post_preview The Post object.
+				 * @param WP_Query $this         The WP_Query instance (passed by reference).
+				 */
+				$this->posts[0] = get_post( apply_filters_ref_array( 'the_preview', array( $this->posts[0], &$this ) ) );
+			}
+		}
+
+		// Put sticky posts at the top of the posts array.
+		$sticky_posts = get_option( 'sticky_posts' );
+
+		if ( $this->is_home && $page <= 1 && is_array( $sticky_posts ) && ! empty( $sticky_posts ) && ! $q['ignore_sticky_posts'] ) {
+			$num_posts = count( $this->posts );
+			$sticky_offset = 0;
+
+			// Loop over posts and relocate stickies to the front.
+			for ( $i = 0; $i < $num_posts; $i++ ) {
+				if ( in_array( $this->posts[ $i ]->ID, $sticky_posts ) ) {
+					$sticky_post = $this->posts[ $i ];
+
+					// Remove sticky from current position.
+					array_splice( $this->posts, $i, 1 );
+
+					// Move to front, after other stickies.
+					array_splice( $this->posts, $sticky_offset, 0, array( $sticky_post ) );
+
+					/**
+					 * Increment the sticky offset.
+					 * The next sticky will be placed at this offset.
+					 */
+					$sticky_offset++;
+
+					// Remove post from sticky posts array.
+					$offset = array_search( $sticky_post->ID, $sticky_posts );
+					unset( $sticky_posts[ $offset ] );
+				}
+			}
+
+			// If any posts have been excluded specifically, ignore those that are sticky.
+			if ( ! empty( $sticky_posts ) && ! empty( $q['post__not_in'] ) ) {
+				$sticky_posts = array_diff( $sticky_posts, $q['post__not_in'] );
+			}
+
+			// Fetch sticky posts that weren't in the query results.
+			if ( ! empty( $sticky_posts ) ) {
+				$stickies = get_posts( array(
+						'post__in'    => $sticky_posts,
+						'post_type'   => $post_type,
+						'post_status' => 'publish',
+						'nopaging'    => TRUE
+					) );
+
+				foreach ( $stickies as $sticky_post ) {
+					array_splice( $this->posts, $sticky_offset, 0, array( $sticky_post ) );
+					$sticky_offset++;
+				}
+			}
+		}
+
+		// If comments have been fetched as part of the query, make sure comment meta lazy-loading is set up.
+		if ( ! empty( $this->comments ) ) {
+			wp_queue_comments_for_comment_meta_lazyload( $this->comments );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -3087,6 +3190,7 @@ class WP_Query
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 009: wp-includes/class-wp-query.php
+ * -> wp-includes/comment.php
  */
 		}
 	}

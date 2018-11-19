@@ -524,6 +524,20 @@ EOQ
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-query.php
+ * <- wp-includes/comment.php
+ * @NOW 011: wp-includes/meta.php
+ */
+
+/**
  * Retrieve the name of the metadata table for the specified object type.
  *
  * @since  2.9.0
