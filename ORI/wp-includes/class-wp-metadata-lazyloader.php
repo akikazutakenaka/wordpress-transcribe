@@ -74,24 +74,7 @@ class WP_Metadata_Lazyloader {
 		do_action( 'metadata_lazyloader_queued_objects', $object_ids, $object_type, $this );
 	}
 
-	/**
-	 * Resets lazy-load queue for a given object type.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param string $object_type Object type. Accepts 'comment' or 'term'.
-	 * @return bool|WP_Error True on success, WP_Error on failure.
-	 */
-	public function reset_queue( $object_type ) {
-		if ( ! isset( $this->settings[ $object_type ] ) ) {
-			return new WP_Error( 'invalid_object_type', __( 'Invalid object type' ) );
-		}
-
-		$type_settings = $this->settings[ $object_type ];
-
-		$this->pending_objects[ $object_type ] = array();
-		remove_filter( $type_settings['filter'], $type_settings['callback'] );
-	}
+	// refactored. public function reset_queue( $object_type ) {}
 
 	/**
 	 * Lazy-loads term meta for queued terms.

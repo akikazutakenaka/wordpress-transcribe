@@ -62,21 +62,24 @@ class WP_Metadata_Lazyloader
 			) );
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/comment.php
- * <- wp-includes/meta.php
- * <- wp-includes/class-wp-metadata-lazyloader.php
- * @NOW 013: wp-includes/class-wp-metadata-lazyloader.php
- */
+	/**
+	 * Resets lazy-load queue for a given object type.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param  string
+	 * @return bool|WP_Error True on success, WP_Error on failure.
+	 */
+	public function reset_queue( $object_type )
+	{
+		if ( ! isset( $this->settings[ $object_type ] ) ) {
+			return new WP_Error( 'invalid_object_type', __( 'Invalid object type' ) );
+		}
+
+		$type_settings = $this->settings[ $object_type ];
+		$this->pending_objects[ $object_type ] = array();
+		remove_filter( $type_settings['filter'], $type_settings['callback'] );
+	}
 
 	/**
 	 * Lazy-loads term meta for queued terms.
@@ -110,7 +113,6 @@ class WP_Metadata_Lazyloader
  * <- wp-includes/comment.php
  * <- wp-includes/meta.php
  * @NOW 012: wp-includes/class-wp-metadata-lazyloader.php
- * -> wp-includes/class-wp-metadata-lazyloader.php
  */
 		}
 	}
