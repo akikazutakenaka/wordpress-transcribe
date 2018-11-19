@@ -30,25 +30,8 @@
  */
 class WP_Metadata_Lazyloader {
 	// refactored. protected $pending_objects;
-	// refactored. protected $settings = array();
-
-	/**
-	 * Constructor.
-	 *
-	 * @since 4.5.0
-	 */
-	public function __construct() {
-		$this->settings = array(
-			'term' => array(
-				'filter'   => 'get_term_metadata',
-				'callback' => array( $this, 'lazyload_term_meta' ),
-			),
-			'comment' => array(
-				'filter'   => 'get_comment_metadata',
-				'callback' => array( $this, 'lazyload_comment_meta' ),
-			),
-		);
-	}
+	// :
+	// refactored. public function __construct() {}
 
 	/**
 	 * Adds objects to the metadata lazy-load queue.
