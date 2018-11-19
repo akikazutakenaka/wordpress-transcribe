@@ -1120,7 +1120,6 @@ function wp_insert_post( $postarr, $wp_error = FALSE )
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/post.php
  */
 	}
 }
@@ -1688,13 +1687,5 @@ function wp_add_trashed_suffix_to_post_name_for_post( $post )
 	$post_name = _truncate_post_slug( $post->post_name, 191 ) . '__trashed';
 	$wpdb->update( $wpdb->posts, array( 'post_name' => $post_name ), array( 'ID' => $post->ID ) );
 	clean_post_cache( $post->ID );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/post.php
- */
+	return $post_name;
 }

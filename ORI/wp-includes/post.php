@@ -5317,36 +5317,8 @@ function _update_term_count_on_transition_post_status( $new_status, $old_status,
 }
 
 // refactored. function _prime_post_caches( $ids, $update_term_cache = true, $update_meta_cache = true ) {}
-// refactored. function wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post_ID = 0 ) {}
-
-/**
- * Adds a trashed suffix for a given post.
- *
- * Store its desired (i.e. current) slug so it can try to reclaim it
- * if the post is untrashed.
- *
- * For internal use.
- *
- * @since 4.5.0
- * @access private
- *
- * @param WP_Post $post The post.
- * @return string New slug for the post.
- */
-function wp_add_trashed_suffix_to_post_name_for_post( $post ) {
-	global $wpdb;
-
-	$post = get_post( $post );
-
-	if ( '__trashed' === substr( $post->post_name, -9 ) ) {
-		return $post->post_name;
-	}
-	add_post_meta( $post->ID, '_wp_desired_post_slug', $post->post_name );
-	$post_name = _truncate_post_slug( $post->post_name, 191 ) . '__trashed';
-	$wpdb->update( $wpdb->posts, array( 'post_name' => $post_name ), array( 'ID' => $post->ID ) );
-	clean_post_cache( $post->ID );
-	return $post_name;
-}
+// :
+// refactored. function wp_add_trashed_suffix_to_post_name_for_post( $post ) {}
 
 /**
  * Filter the SQL clauses of an attachment query to include filenames.
