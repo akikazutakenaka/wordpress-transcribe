@@ -75,27 +75,6 @@ class WP_Metadata_Lazyloader {
 	}
 
 	// refactored. public function reset_queue( $object_type ) {}
-	// refactored. public function lazyload_term_meta( $check ) {}
-
-	/**
-	 * Lazy-loads comment meta for queued comments.
-	 *
-	 * This method is public so that it can be used as a filter callback. As a rule, there is no need to invoke it
-	 * directly, from either inside or outside the `WP_Query` object.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param mixed $check The `$check` param passed from the {@see 'get_comment_metadata'} hook.
-	 * @return mixed The original value of `$check`, so as not to short-circuit `get_comment_metadata()`.
-	 */
-	public function lazyload_comment_meta( $check ) {
-		if ( ! empty( $this->pending_objects['comment'] ) ) {
-			update_meta_cache( 'comment', array_keys( $this->pending_objects['comment'] ) );
-
-			// No need to run again for this set of comments.
-			$this->reset_queue( 'comment' );
-		}
-
-		return $check;
-	}
+	// :
+	// refactored. public function lazyload_comment_meta( $check ) {}
 }

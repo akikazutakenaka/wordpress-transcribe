@@ -548,7 +548,6 @@ function wp_metadata_lazyloader()
  * <- wp-includes/class-wp-query.php
  * <- wp-includes/comment.php
  * @NOW 011: wp-includes/meta.php
- * -> wp-includes/class-wp-metadata-lazyloader.php
  */
 	}
 }
