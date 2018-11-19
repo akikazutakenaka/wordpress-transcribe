@@ -3180,6 +3180,37 @@ class WP_Query
 		// If comments have been fetched as part of the query, make sure comment meta lazy-loading is set up.
 		if ( ! empty( $this->comments ) ) {
 			wp_queue_comments_for_comment_meta_lazyload( $this->comments );
+		}
+
+		if ( ! $q['suppress_filters'] ) {
+			/**
+			 * Filters the array of retrieved posts after they've been fetched and internally processed.
+			 *
+			 * @since 1.5.0
+			 *
+			 * @param array    $posts The array of retrieved posts.
+			 * @param WP_Query $this  The WP_Query instance (passed by reference).
+			 */
+			$this->posts = apply_filters_ref_array( 'the_posts', array( $this->posts, &$this ) );
+		}
+
+		// Ensure that any posts added/modified via one of the filters above are of the type WP_Post and are filtered.
+		if ( $this->posts ) {
+			$this->post_count = count( $this->posts );
+			$this->posts = array_map( 'get_post', $this->posts );
+
+			if ( $q['cache_results'] ) {
+				update_post_caches( $this->posts, $post_type, $q['update_post_term_cache'], $q['update_post_meta_cache'] );
+			}
+
+			$this->post = reset( $this->posts );
+		} else {
+			$this->post_count = 0;
+			$this->posts = array();
+		}
+
+		if ( $q['lazy_load_term_meta'] ) {
+			wp_queue_posts_for_term_meta_lazyload( $this->posts );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php

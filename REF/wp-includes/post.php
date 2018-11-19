@@ -1484,6 +1484,46 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
 }
 
 /**
+ * Queues posts for lazy-loading of term meta.
+ *
+ * @since 4.5.0
+ *
+ * @param array $posts Array of WP_Post objects.
+ */
+function wp_queue_posts_for_term_meta_lazyload( $posts )
+{
+	$post_type_taxonomies = $term_ids = array();
+
+	foreach ( $posts as $post ) {
+		if ( ! ( $post instanceof WP_Post ) ) {
+			continue;
+		}
+
+		if ( ! isset( $post_type_taxonomies[ $post->post_type ] ) ) {
+			$post_type_taxonomies[ $post->post_type ] = get_object_taxonomies( $post->post_type );
+		}
+
+		foreach ( $post_type_taxonomies[ $post->post_type ] as $taxonomy ) {
+			// Term cache should already be primed by `update_post_term_cache()`.
+			$terms = get_object_term_cache( $post->ID, $taxonomy );
+
+			if ( FALSE !== $terms ) {
+				foreach ( $terms as $term ) {
+					if ( ! isset( $term_ids[ $term->term_id ] ) ) {
+						$term_ids[] = $term->term_id;
+					}
+				}
+			}
+		}
+	}
+
+	if ( $term_ids ) {
+		$lazyloader = wp_metadata_lazyloader();
+		$lazyloader->queue_objects( 'term', $term_ids );
+	}
+}
+
+/**
  * Adds any posts from the given ids to the cache that do not already exist in the cache.
  *
  * @since  3.4.0
