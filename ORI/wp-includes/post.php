@@ -1398,61 +1398,7 @@ function is_post_type_viewable( $post_type ) {
 	return $post_type->publicly_queryable || ( $post_type->_builtin && $post_type->public );
 }
 
-/**
- * Retrieve list of latest posts or posts matching criteria.
- *
- * The defaults are as follows:
- *
- * @since 1.2.0
- *
- * @see WP_Query::parse_query()
- *
- * @param array $args {
- *     Optional. Arguments to retrieve posts. See WP_Query::parse_query() for all
- *     available arguments.
- *
- *     @type int        $numberposts      Total number of posts to retrieve. Is an alias of $posts_per_page
- *                                        in WP_Query. Accepts -1 for all. Default 5.
- *     @type int|string $category         Category ID or comma-separated list of IDs (this or any children).
- *                                        Is an alias of $cat in WP_Query. Default 0.
- *     @type array      $include          An array of post IDs to retrieve, sticky posts will be included.
- *                                        Is an alias of $post__in in WP_Query. Default empty array.
- *     @type array      $exclude          An array of post IDs not to retrieve. Default empty array.
- *     @type bool       $suppress_filters Whether to suppress filters. Default true.
- * }
- * @return array List of posts.
- */
-function get_posts( $args = null ) {
-	$defaults = array(
-		'numberposts' => 5,
-		'category' => 0, 'orderby' => 'date',
-		'order' => 'DESC', 'include' => array(),
-		'exclude' => array(), 'meta_key' => '',
-		'meta_value' =>'', 'post_type' => 'post',
-		'suppress_filters' => true
-	);
-
-	$r = wp_parse_args( $args, $defaults );
-	if ( empty( $r['post_status'] ) )
-		$r['post_status'] = ( 'attachment' == $r['post_type'] ) ? 'inherit' : 'publish';
-	if ( ! empty($r['numberposts']) && empty($r['posts_per_page']) )
-		$r['posts_per_page'] = $r['numberposts'];
-	if ( ! empty($r['category']) )
-		$r['cat'] = $r['category'];
-	if ( ! empty($r['include']) ) {
-		$incposts = wp_parse_id_list( $r['include'] );
-		$r['posts_per_page'] = count($incposts);  // only the number of posts included
-		$r['post__in'] = $incposts;
-	} elseif ( ! empty($r['exclude']) )
-		$r['post__not_in'] = wp_parse_id_list( $r['exclude'] );
-
-	$r['ignore_sticky_posts'] = true;
-	$r['no_found_rows'] = true;
-
-	$get_posts = new WP_Query;
-	return $get_posts->query($r);
-
-}
+// refactored. function get_posts( $args = null ) {}
 
 //
 // Post meta functions

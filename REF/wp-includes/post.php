@@ -422,16 +422,7 @@ function get_posts( $args = NULL )
 	$r['ignore_sticky_posts'] = TRUE;
 	$r['no_found_rows'] = TRUE;
 	$get_posts = new WP_Query;
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 008: wp-includes/post.php
- */
+	return $get_posts->query( $r );
 }
 
 //
@@ -1586,6 +1577,5 @@ function wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
- * -> wp-includes/post.php
  */
 }
