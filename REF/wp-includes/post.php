@@ -431,7 +431,6 @@ function get_posts( $args = NULL )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/post.php
- * -> wp-includes/class-wp-query.php
  */
 }
 
