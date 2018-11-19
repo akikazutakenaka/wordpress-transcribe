@@ -80,66 +80,7 @@ function wp_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
 }
 
 // refactored. function wp_check_invalid_utf8( $string, $strip = false ) {}
-
-/**
- * Encode the Unicode values to be used in the URI.
- *
- * @since 1.5.0
- *
- * @param string $utf8_string
- * @param int    $length Max  length of the string
- * @return string String with Unicode encoded for URI.
- */
-function utf8_uri_encode( $utf8_string, $length = 0 ) {
-	$unicode = '';
-	$values = array();
-	$num_octets = 1;
-	$unicode_length = 0;
-
-	mbstring_binary_safe_encoding();
-	$string_length = strlen( $utf8_string );
-	reset_mbstring_encoding();
-
-	for ($i = 0; $i < $string_length; $i++ ) {
-
-		$value = ord( $utf8_string[ $i ] );
-
-		if ( $value < 128 ) {
-			if ( $length && ( $unicode_length >= $length ) )
-				break;
-			$unicode .= chr($value);
-			$unicode_length++;
-		} else {
-			if ( count( $values ) == 0 ) {
-				if ( $value < 224 ) {
-					$num_octets = 2;
-				} elseif ( $value < 240 ) {
-					$num_octets = 3;
-				} else {
-					$num_octets = 4;
-				}
-			}
-
-			$values[] = $value;
-
-			if ( $length && ( $unicode_length + ($num_octets * 3) ) > $length )
-				break;
-			if ( count( $values ) == $num_octets ) {
-				for ( $j = 0; $j < $num_octets; $j++ ) {
-					$unicode .= '%' . dechex( $values[ $j ] );
-				}
-
-				$unicode_length += $num_octets * 3;
-
-				$values = array();
-				$num_octets = 1;
-			}
-		}
-	}
-
-	return $unicode;
-}
-
+// :
 // refactored. function remove_accents( $string ) {}
 
 /**

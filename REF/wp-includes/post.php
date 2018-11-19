@@ -1215,7 +1215,6 @@ function _truncate_post_slug( $slug, $length = 200 )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/post.php
- * -> wp-includes/formatting.php
  */
 	}
 }
