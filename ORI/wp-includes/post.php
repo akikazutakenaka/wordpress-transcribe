@@ -5214,51 +5214,7 @@ function clean_post_cache( $post ) {
 	wp_cache_set( 'last_changed', microtime(), 'posts' );
 }
 
-/**
- * Call major cache updating functions for list of Post objects.
- *
- * @since 1.5.0
- *
- * @param array  $posts             Array of Post objects
- * @param string $post_type         Optional. Post type. Default 'post'.
- * @param bool   $update_term_cache Optional. Whether to update the term cache. Default true.
- * @param bool   $update_meta_cache Optional. Whether to update the meta cache. Default true.
- */
-function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = true, $update_meta_cache = true ) {
-	// No point in doing all this work if we didn't match any posts.
-	if ( !$posts )
-		return;
-
-	update_post_cache($posts);
-
-	$post_ids = array();
-	foreach ( $posts as $post )
-		$post_ids[] = $post->ID;
-
-	if ( ! $post_type )
-		$post_type = 'any';
-
-	if ( $update_term_cache ) {
-		if ( is_array($post_type) ) {
-			$ptypes = $post_type;
-		} elseif ( 'any' == $post_type ) {
-			$ptypes = array();
-			// Just use the post_types in the supplied posts.
-			foreach ( $posts as $post ) {
-				$ptypes[] = $post->post_type;
-			}
-			$ptypes = array_unique($ptypes);
-		} else {
-			$ptypes = array($post_type);
-		}
-
-		if ( ! empty($ptypes) )
-			update_object_term_cache($post_ids, $ptypes);
-	}
-
-	if ( $update_meta_cache )
-		update_postmeta_cache($post_ids);
-}
+// refactored. function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = true, $update_meta_cache = true ) {}
 
 /**
  * Updates metadata cache for list of post IDs.

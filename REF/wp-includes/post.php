@@ -1348,6 +1348,14 @@ function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = 
 
 		if ( ! empty( $ptypes ) ) {
 			update_object_term_cache( $post_ids, $ptypes );
+		}
+	}
+
+	if ( $update_meta_cache ) {
+		update_postmeta_cache( $post_ids );
+	}
+}
+
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1360,9 +1368,6 @@ function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = 
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/post.php
  */
-		}
-	}
-}
 
 /**
  * Check the given subset of the post hierarchy for hierarchy loops.
