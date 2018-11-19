@@ -858,6 +858,16 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
 	return apply_filters( 'wp_get_object_terms', $terms, $object_ids, $taxonomies, $args );
 }
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/taxonomy.php
+ */
+
 //
 // Cache
 //

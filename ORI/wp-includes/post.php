@@ -3089,48 +3089,7 @@ function wp_set_post_tags( $post_id = 0, $tags = '', $append = false ) {
 	return wp_set_post_terms( $post_id, $tags, 'post_tag', $append);
 }
 
-/**
- * Set the terms for a post.
- *
- * @since 2.8.0
- *
- * @see wp_set_object_terms()
- *
- * @param int          $post_id  Optional. The Post ID. Does not default to the ID of the global $post.
- * @param string|array $tags     Optional. An array of terms to set for the post, or a string of terms
- *                               separated by commas. Default empty.
- * @param string       $taxonomy Optional. Taxonomy name. Default 'post_tag'.
- * @param bool         $append   Optional. If true, don't delete existing terms, just add on. If false,
- *                               replace the terms with the new terms. Default false.
- * @return array|false|WP_Error Array of term taxonomy IDs of affected terms. WP_Error or false on failure.
- */
-function wp_set_post_terms( $post_id = 0, $tags = '', $taxonomy = 'post_tag', $append = false ) {
-	$post_id = (int) $post_id;
-
-	if ( !$post_id )
-		return false;
-
-	if ( empty($tags) )
-		$tags = array();
-
-	if ( ! is_array( $tags ) ) {
-		$comma = _x( ',', 'tag delimiter' );
-		if ( ',' !== $comma )
-			$tags = str_replace( $comma, ',', $tags );
-		$tags = explode( ',', trim( $tags, " \n\t\r\0\x0B," ) );
-	}
-
-	/*
-	 * Hierarchical taxonomies must always pass IDs rather than names so that
-	 * children with the same names but different parents aren't confused.
-	 */
-	if ( is_taxonomy_hierarchical( $taxonomy ) ) {
-		$tags = array_unique( array_map( 'intval', $tags ) );
-	}
-
-	return wp_set_object_terms( $post_id, $tags, $taxonomy, $append );
-}
-
+// refactored. function wp_set_post_terms( $post_id = 0, $tags = '', $taxonomy = 'post_tag', $append = false ) {}
 // refactored. function wp_set_post_categories( $post_ID = 0, $post_categories = array(), $append = false ) {}
 
 /**
