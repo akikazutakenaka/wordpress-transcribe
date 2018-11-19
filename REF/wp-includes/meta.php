@@ -536,20 +536,9 @@ function wp_metadata_lazyloader()
 
 	if ( NULL === $wp_metadata_lazyloader ) {
 		$wp_metadata_lazyloader = new WP_Metadata_Lazyloader();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-query.php
- * <- wp-includes/comment.php
- * @NOW 011: wp-includes/meta.php
- */
 	}
+
+	return $wp_metadata_lazyloader;
 }
 
 /**

@@ -402,23 +402,7 @@ function delete_metadata_by_mid( $meta_type, $meta_id ) {
 }
 
 // refactored. function update_meta_cache($meta_type, $object_ids) {}
-
-/**
- * Retrieves the queue for lazy-loading metadata.
- *
- * @since 4.5.0
- *
- * @return WP_Metadata_Lazyloader $lazyloader Metadata lazyloader queue.
- */
-function wp_metadata_lazyloader() {
-	static $wp_metadata_lazyloader;
-
-	if ( null === $wp_metadata_lazyloader ) {
-		$wp_metadata_lazyloader = new WP_Metadata_Lazyloader();
-	}
-
-	return $wp_metadata_lazyloader;
-}
+// refactored. function wp_metadata_lazyloader() {}
 
 /**
  * Given a meta query, generates SQL clauses to be appended to a main query.

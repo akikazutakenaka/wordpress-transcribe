@@ -137,7 +137,6 @@ function wp_queue_comments_for_comment_meta_lazyload( $comments )
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/comment.php
- * -> wp-includes/meta.php
  */
 	}
 }
