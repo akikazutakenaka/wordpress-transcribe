@@ -727,21 +727,7 @@ function is_post_type_hierarchical( $post_type ) {
 	return $post_type->hierarchical;
 }
 
-/**
- * Check if a post type is registered.
- *
- * @since 3.0.0
- *
- * @see get_post_type_object()
- *
- * @param string $post_type Post type name.
- * @return bool Whether post type is registered.
- */
-function post_type_exists( $post_type ) {
-	return (bool) get_post_type_object( $post_type );
-}
-
-// refactored. function get_post_type( $post = null ) {}
+// refactored. function post_type_exists( $post_type ) {}
 // :
 // refactored. function get_post_types( $args = array(), $output = 'names', $operator = 'and' ) {}
 

@@ -290,22 +290,23 @@ function is_post_type_hierarchical( $post_type )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/post.php
- * -> wp-includes/post.php
  */
 	}
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 009: wp-includes/post.php
+ * Check if a post type is registered.
+ *
+ * @since 3.0.0
+ * @see   get_post_type_object()
+ *
+ * @param  string $post_type Post type name.
+ * @return bool   Whether post type is registered.
  */
+function post_type_exists( $post_type )
+{
+	return ( bool ) get_post_type_object( $post_type );
+}
 
 /**
  * Retrieves the post type of the current post or of a given post.
