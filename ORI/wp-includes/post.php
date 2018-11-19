@@ -5398,36 +5398,7 @@ function _update_term_count_on_transition_post_status( $new_status, $old_status,
 }
 
 // refactored. function _prime_post_caches( $ids, $update_term_cache = true, $update_meta_cache = true ) {}
-
-/**
- * Adds a suffix if any trashed posts have a given slug.
- *
- * Store its desired (i.e. current) slug so it can try to reclaim it
- * if the post is untrashed.
- *
- * For internal use.
- *
- * @since 4.5.0
- * @access private
- *
- * @param string $post_name Slug.
- * @param string $post_ID   Optional. Post ID that should be ignored. Default 0.
- */
-function wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post_ID = 0 ) {
-	$trashed_posts_with_desired_slug = get_posts( array(
-		'name' => $post_name,
-		'post_status' => 'trash',
-		'post_type' => 'any',
-		'nopaging' => true,
-		'post__not_in' => array( $post_ID )
-	) );
-
-	if ( ! empty( $trashed_posts_with_desired_slug ) ) {
-		foreach ( $trashed_posts_with_desired_slug as $_post ) {
-			wp_add_trashed_suffix_to_post_name_for_post( $_post );
-		}
-	}
-}
+// refactored. function wp_add_trashed_suffix_to_post_name_for_trashed_posts( $post_name, $post_ID = 0 ) {}
 
 /**
  * Adds a trashed suffix for a given post.
