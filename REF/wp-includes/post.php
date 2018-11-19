@@ -1320,6 +1320,34 @@ function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = 
 	}
 
 	update_post_cache( $posts );
+	$post_ids = array();
+
+	foreach ( $posts as $post ) {
+		$post_ids[] = $post->ID;
+	}
+
+	if ( ! $post_type ) {
+		$post_type = 'any';
+	}
+
+	if ( $update_term_cache ) {
+		if ( is_array( $post_type ) ) {
+			$ptypes = $post_type;
+		} elseif ( 'any' == $post_type ) {
+			$ptypes = array();
+
+			// Just use the post_types in the supplied posts.
+			foreach ( $posts as $post ) {
+				$ptypes[] = $post->post_type;
+			}
+
+			$ptypes = array_unique( $ptypes );
+		} else {
+			$ptypes = array( $post_type );
+		}
+
+		if ( ! empty( $ptypes ) ) {
+			update_object_term_cache( $post_ids, $ptypes );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1332,6 +1360,8 @@ function update_post_caches( &$posts, $post_type = 'post', $update_term_cache = 
  * <- wp-includes/class-wp-query.php
  * @NOW 010: wp-includes/post.php
  */
+		}
+	}
 }
 
 /**
