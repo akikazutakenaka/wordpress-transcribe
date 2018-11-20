@@ -1186,8 +1186,165 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
- * @NOW 009: wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 010: wp-includes/taxonomy.php
  */
+
+/**
+ * Update term based on arguments provided.
+ *
+ * The $args will indiscriminately override all values with the same field name.
+ * Care must be taken to not override important information need to update or update will fail (or perhaps create a new term, neither would be acceptable).
+ *
+ * Defaults will set 'alias_of', 'description', 'parent', and 'slug' if not defined in $args already.
+ *
+ * 'alias_of' will create a term group, if it doesn't already exist, and update it for the $term.
+ *
+ * If the 'slug' argument in $args is missing, then the 'name' in $args will be used.
+ * It should also be noted that if you set 'slug' and it isn't unique then a WP_Error will be passed back.
+ * If you don't pass any slug, then a unique one will be created for you.
+ *
+ * For what can be overrode in `$args`, check the term scheme can contain and stay away from the term keys.
+ *
+ * @since  2.3.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  int            $term_id  The ID of the term.
+ * @param  string         $taxonomy The context ini which to relate the term to the object.
+ * @param  array|string   $args     Optional.
+ *                                  Array of get_terms() arguments.
+ *                                  Default empty array.
+ * @return array|WP_Error Returns Term ID and Taxonomy Term ID.
+ */
+function wp_update_term( $term_id, $taxonomy, $args = array() )
+{
+	global $wpdb;
+
+	if ( ! taxonomy_exists( $taxonomy ) ) {
+		return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+	}
+
+	$term_id = ( int ) $term_id;
+
+	// First, get all of the original args.
+	$term = get_term( $term_id, $taxonomy );
+
+	if ( is_wp_error( $term ) ) {
+		return $term;
+	}
+
+	if ( ! $term ) {
+		return new WP_Error( 'invalid_term', __( 'Empty Term.' ) );
+	}
+
+	$term = ( array ) $term->data;
+
+	// Escape data pulled from DB.
+	$term = wp_slash( $term );
+
+	// Merge old and new args with new args overwriting old ones.
+	$args = array_merge( $term, $args );
+
+	$defaults = array(
+		'alias_of'    => '',
+		'description' => '',
+		'parent'      => 0,
+		'slug'        => ''
+	);
+	$args = wp_parse_args( $args, $defaults );
+	$args = sanitize_term( $args, $taxonomy, 'db' );
+	$parsed_args = $args;
+
+	// Expected_slashed ($name)
+	$name = wp_unslash( $args['name'] );
+	$description = wp_unslash( $args['description'] );
+
+	$parsed_args['name'] = $name;
+	$parsed_args['description'] = $description;
+
+	if ( '' == trim( $name ) ) {
+		return new WP_Error( 'empty_term_name', __( 'A name is required for this term.' ) );
+	}
+
+	if ( $parsed_args['parent'] > 0 && ! term_exists( ( int ) $parsed_args['parent'] ) ) {
+		return new WP_Error( 'missing_parent', __( 'Parent term does not exist.' ) );
+	}
+
+	$empty_slug = FALSE;
+
+	if ( empty( $args['slug'] ) ) {
+		$empty_slug = TRUE;
+		$slug = sanitize_title( $name );
+	} else {
+		$slug = $args['slug'];
+	}
+
+	$parsed_args['slug'] = $slug;
+
+	$term_group = isset( $parsed_args['term_group'] )
+		? $parsed_args['term_group']
+		: 0;
+
+	if ( $args['alias_of'] ) {
+		$alias = get_term_by( 'slug', $args['alias_of'], $taxonomy );
+
+		if ( ! empty( $alias->term_group ) ) {
+			// The alias we want is already in a group, so let's use that one.
+			$term_group = $alias->term_group;
+		} elseif ( ! empty( $alias->term_id ) ) {
+			// The alias is not in a group, so we create a new one and add the alias to it.
+			$term_group = $wpdb->get_var( <<<EOQ
+SELECT MAX(term_group)
+FROM $wpdb->terms
+EOQ
+				+ 1 );
+
+			wp_update_term( $alias->term_id, $taxonomy, array( 'term_group' => $term_group ) );
+		}
+
+		$parsed_args['term_group'] = $term_group;
+	}
+
+	/**
+	 * Filters the term parent.
+	 *
+	 * Hook to this filter to see if it will cause a hierarchy loop.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param int    $parent      ID of the parent term.
+	 * @param int    $term_id     Term ID.
+	 * @param string $taxonomy    Taxonomy slug.
+	 * @param array  $parsed_args An array of potentially altered update arguments for the gievn term.
+	 * @param array  $args        An array of update arguments for the given term.
+	 */
+	$parent = apply_filters( 'wp_update_term_parent', $args['parent'], $term_id, $taxonomy, $parsed_args, $args );
+
+	// Check for duplicate slug
+	$duplicate = get_term_by( 'slug', $slug, $taxonomy );
+
+	if ( $duplicate && $duplicate->term_id != $term_id ) {
+		/**
+		 * If an empty slug was passed or the parent changed, reset the slug to something unique.
+		 * Otherwise, bail.
+		 */
+		if ( $empty_slug || $parent != $term['parent'] ) {
+			$slug = wp_unique_term_slug( $slug, ( object ) $args );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 009: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
+ */
+		}
+	}
+}
 
 //
 // Cache
