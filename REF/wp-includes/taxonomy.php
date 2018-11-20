@@ -1885,7 +1885,6 @@ function wp_update_term_count_now( $terms, $taxonomy )
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 009: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 		}
 	}
@@ -2431,17 +2430,71 @@ EOQ
 //
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * @NOW 010: wp-includes/taxonomy.php
+ * Will update term count based on object types of the current taxonomy.
+ *
+ * Private function for the default callback for post_tag and category taxonomies.
+ *
+ * @access private
+ * @since  2.3.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param array  $terms    List of Term taxonomy IDs.
+ * @param object $taxonomy Current taxonomy object of terms.
  */
+function _update_post_term_count( $terms, $taxonomy )
+{
+	global $wpdb;
+	$object_types = ( array ) $taxonomy->object_type;
+
+	foreach ( $object_types as &$object_type ) {
+		list( $object_type ) = explode( ':', $object_type );
+	}
+
+	$object_types = array_unique( $object_types );
+
+	if ( FALSE !== ( $check_attachments = array_search( 'attachment', $object_types ) ) ) {
+		unset( $object_types[ $check_attachments ] );
+		$check_attachments = TRUE;
+	}
+
+	if ( $object_types ) {
+		$object_types = esc_sql( array_filter( $object_types, 'post_type_exists' ) );
+	}
+
+	foreach ( ( array ) $terms as $term ) {
+		$count = 0;
+
+		// Attachments can be 'inherit' status, we need to base count off the parent's status if so.
+		if ( $check_attachments ) {
+			$count += ( int ) $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT COUNT(*)
+FROM $wpdb->term_relationships, $wpdb->posts AS p1
+WHERE p1.ID = $wpdb->term_relationships.object_id
+  AND ( post_status = 'publish'
+     OR ( post_status = 'inherit'
+      AND post_parent > 0
+      AND ( SELECT post_status
+            FROM $wpdb->posts
+            WHERE ID = p1.post_parent ) = 'publish' ) )
+  AND post_type = 'attachment'
+  AND term_taxonomy_id = %d
+EOQ
+					, $term ) );
+		}
+
+		if ( $object_types ) {
+			$count += ( int ) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->term_relationships, $wpdb->posts WHERE $wpdb->posts.ID = $wpdb->term_relationships.object_id AND post_status = 'publish' AND post_type IN ('" . implode( "', '", $object_types ) . "') AND term_taxonomy_id = %d", $term ) );
+		}
+
+		// This action is documented in wp-includes/taxonomy.php
+		do_action( 'edit_term_taxonomy', $term, $taxonomy->name );
+
+		$wpdb->update( $wpdb->term_taxonomy, compact( 'count' ), array( 'term_taxonomy_id' => $term ) );
+
+		// This action is documented in wp-includes/taxonomy.php
+		do_action( 'edited_term_taxonomy', $term, $taxonomy->name );
+	}
+}
 
 /**
  * Create a new term for a term_taxonomy item that currently shares its term with another term_taxonomy.
