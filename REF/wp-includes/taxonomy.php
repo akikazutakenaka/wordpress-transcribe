@@ -1587,26 +1587,36 @@ EOQ
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 011: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 		}
 	}
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * @NOW 012: wp-includes/taxonomy.php
+ * Clean the caches for a taxonomy.
+ *
+ * @since 4.9.0
+ *
+ * @param string $taxonomy Taxonomy slug.
  */
+function clean_taxonomy_cache( $taxonomy )
+{
+	wp_cache_delete( 'all_ids', $taxonomy );
+	wp_cache_delete( 'get', $taxonomy );
+
+	// Regenerate cached hierarchy.
+	delete_option( "{$taxonomy}_children" );
+	_get_term_hierarchy( $taxonomy );
+
+	/**
+	 * Fires after a taxonomy's caches have been cleaned.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'clean_taxonomy_cache', $taxonomy );
+}
 
 /**
  * Retrieves the taxonomy relationship to the term object id.
