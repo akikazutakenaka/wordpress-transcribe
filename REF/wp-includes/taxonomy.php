@@ -1515,6 +1515,67 @@ function clean_object_term_cache( $object_ids, $object_type )
 }
 
 /**
+ * Will remove all of the term ids from the cache.
+ *
+ * @since  2.3.0
+ * @global wpdb $wpdb                           WordPress database abstraction object.
+ * @global bool $_wp_suspend_cache_invalidation
+ *
+ * @param int|array $ids            Single or list of Term IDs.
+ * @param string    $taxonomy       Optional.
+ *                                  Can be empty and will assume `tt_ids`, else will use for context.
+ *                                  Default empty.
+ * @param bool      $clean_taxonomy Optional.
+ *                                  Whether to clean taxonomy wide caches (true), or just individual term object caches (false).
+ *                                  Default true.
+ */
+function clean_term_cache( $ids, $taxonomy = '', $clean_taxonomy = TRUE )
+{
+	global $wpdb, $_wp_suspend_cache_invalidation;
+
+	if ( ! empty( $_wp_suspend_cache_invalidation ) ) {
+		return;
+	}
+
+	if ( ! is_array( $ids ) ) {
+		$ids = array( $ids );
+	}
+
+	$taxonomies = array();
+
+	// If no taxonomy, assume tt_ids.
+	if ( empty( $taxonomy ) ) {
+		$tt_ids = array_map( 'intval', $ids );
+		$tt_ids = implode( ', ', $tt_ids );
+		$terms = $wpdb->get_results( <<<EOQ
+SELECT term_id, taxonomy
+FROM $wpdb->term_taxonomy
+WHERE term_taxonomy_id IN ($tt_ids)
+EOQ
+		);
+		$ids = array();
+
+		foreach ( ( array ) $terms as $term ) {
+			$taxonomies[] = $term->taxonomy;
+			$ids[] = $term->term_id;
+			wp_cache_delete( $term->term_id, 'terms' );
+		}
+
+		$taxonomies = array_unique( $taxonomies );
+	} else {
+		$taxonomies = array( $taxonomy );
+
+		foreach ( $taxonomies as $taxonomy ) {
+			foreach ( $ids as $id ) {
+				wp_cache_delete( $id, 'terms' );
+			}
+		}
+	}
+
+	foreach ( $taxonomies as $taxonomy ) {
+		if ( $clean_taxonomy ) {
+			clean_taxonomy_cache( $taxonomy );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -1526,6 +1587,25 @@ function clean_object_term_cache( $object_ids, $object_type )
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 011: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
+ */
+		}
+	}
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 012: wp-includes/taxonomy.php
  */
 
 /**
