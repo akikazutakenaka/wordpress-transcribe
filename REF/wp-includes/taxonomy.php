@@ -1411,17 +1411,51 @@ EOQ
 					, $taxonomy ) );
 			$delete_term_ids = array_map( 'intval', $delete_term_ids );
 			$remove = wp_remove_object_terms( $object_id, $delete_term_ids, $taxonomy );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/taxonomy.php
- */
+
+			if ( is_wp_error( $remove ) ) {
+				return $remove;
+			}
 		}
 	}
+
+	$t = get_taxonomy( $taxonomy );
+
+	if ( ! $append && isset( $t->sort ) && $t->sort ) {
+		$values = array();
+		$term_order = 0;
+		$final_tt_ids = wp_get_object_terms( $object_id, $taxonomy, array( 'fields' => 'tt_ids' ) );
+
+		foreach ( $tt_ids as $tt_id ) {
+			if ( in_array( $tt_id, $final_tt_ids ) ) {
+				$values[] = $wpdb->prepare( "(%d, %d, %d)", $object_id, $tt_id, ++$term_order );
+			}
+		}
+
+		if ( $values ) {
+			if ( FALSE === $wpdb->query( "INSERT INTO $wpdb->term_relationships (object_id, term_taxonomy_id, term_order) VALUES " . join( ',', $values ) . " ON DUPLICATE KEY UPDATE term_order = VALUES(term_order)" ) ) {
+				return new WP_Error( 'db_insert_error', __( 'Could not insert term relationship into the database.' ), $wpdb->last_error );
+			}
+		}
+	}
+
+	wp_cache_delete( $object_id, $taxonomy . '_relationships' );
+	wp_cache_delete( 'last_changed', 'terms' );
+
+	/**
+	 * Fires after an object's terms have been set.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param int    $object_id  Object ID.
+	 * @param array  $terms      An array of object terms.
+	 * @param array  $tt_ids     An array of term taxonomy IDs.
+	 * @param string $taxonomy   Taxonomy slug.
+	 * @param bool   $append     Whether to append new terms to the old terms.
+	 * @param array  $old_tt_ids Old array of term taxonomy IDs.
+	 */
+	do_action( 'set_object_terms', $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids );
+
+	return $tt_ids;
 }
 
 /**
