@@ -1875,6 +1875,9 @@ function wp_update_term_count_now( $terms, $taxonomy )
 		if ( $object_types == array_filter( $object_types, 'post_type_exists' ) ) {
 			// Only post types are attached to this taxonomy.
 			_update_post_term_count( $terms, $taxonomy );
+		} else {
+			// Default count updater.
+			_update_generic_term_count( $terms, $taxonomy );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2485,6 +2488,39 @@ EOQ
 		if ( $object_types ) {
 			$count += ( int ) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->term_relationships, $wpdb->posts WHERE $wpdb->posts.ID = $wpdb->term_relationships.object_id AND post_status = 'publish' AND post_type IN ('" . implode( "', '", $object_types ) . "') AND term_taxonomy_id = %d", $term ) );
 		}
+
+		// This action is documented in wp-includes/taxonomy.php
+		do_action( 'edit_term_taxonomy', $term, $taxonomy->name );
+
+		$wpdb->update( $wpdb->term_taxonomy, compact( 'count' ), array( 'term_taxonomy_id' => $term ) );
+
+		// This action is documented in wp-includes/taxonomy.php
+		do_action( 'edited_term_taxonomy', $term, $taxonomy->name );
+	}
+}
+
+/**
+ * Will update term count based on number of objects.
+ *
+ * Default callback for the 'link_category' taxonomy.
+ *
+ * @since  3.3.0
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param array  $terms    List of term taxonomy IDs.
+ * @param object $taxonomy Current taxonomy object of terms.
+ */
+function _update_generic_term_count( $terms, $taxonomy )
+{
+	global $wpdb;
+
+	foreach ( ( array ) $terms as $term ) {
+		$count = $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT COUNT(*)
+FROM $wpdb->term_relationships
+WHERE term_taxonomy_id = %d
+EOQ
+				, $term ) );
 
 		// This action is documented in wp-includes/taxonomy.php
 		do_action( 'edit_term_taxonomy', $term, $taxonomy->name );

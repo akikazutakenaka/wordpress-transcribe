@@ -1446,35 +1446,6 @@ function wp_update_term_count_now( $terms, $taxonomy ) {
 
 // refactored. function clean_object_term_cache($object_ids, $object_type) {}
 // :
-// refactored. function _update_post_term_count( $terms, $taxonomy ) {}
-
-/**
- * Will update term count based on number of objects.
- *
- * Default callback for the 'link_category' taxonomy.
- *
- * @since 3.3.0
- *
- * @global wpdb $wpdb WordPress database abstraction object.
- *
- * @param array  $terms    List of term taxonomy IDs.
- * @param object $taxonomy Current taxonomy object of terms.
- */
-function _update_generic_term_count( $terms, $taxonomy ) {
-	global $wpdb;
-
-	foreach ( (array) $terms as $term ) {
-		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->term_relationships WHERE term_taxonomy_id = %d", $term ) );
-
-		/** This action is documented in wp-includes/taxonomy.php */
-		do_action( 'edit_term_taxonomy', $term, $taxonomy->name );
-		$wpdb->update( $wpdb->term_taxonomy, compact( 'count' ), array( 'term_taxonomy_id' => $term ) );
-
-		/** This action is documented in wp-includes/taxonomy.php */
-		do_action( 'edited_term_taxonomy', $term, $taxonomy->name );
-	}
-}
-
 // refactored. function _split_shared_term( $term_id, $term_taxonomy_id, $record = true ) {}
 
 /**
