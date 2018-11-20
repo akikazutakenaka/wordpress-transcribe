@@ -1341,6 +1341,60 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
 			}
 
 			$term_info = wp_insert_term( $term, $taxonomy );
+		}
+
+		if ( is_wp_error( $term_info ) ) {
+			return $term_info;
+		}
+
+		$term_ids[] = $term_info['term_id'];
+		$tt_id = $term_info['term_taxonomy_id'];
+		$tt_ids[] = $tt_id;
+
+		if ( $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT term_taxonomy_id
+FROM $wpdb->term_relationships
+WHERE object_id = %d
+  AND term_taxonomy_id = %d
+EOQ
+					, $object_id, $tt_id ) ) ) {
+			continue;
+		}
+
+		/**
+		 * Fires immediately before an object-term relationship is added.
+		 *
+		 * @since 2.9.0
+		 * @since 4.7.0 Added the `$taxonomy` parameter.
+		 *
+		 * @param int    $object_id Object ID.
+		 * @param int    $tt_id     Term taxonomy ID.
+		 * @param string $taxonomy  Taxonomy slug.
+		 */
+		do_action( 'add_term_relationship', $object_id, $tt_id, $taxonomy );
+
+		$wpdb->insert( $wpdb->term_relationships, array(
+				'object_id'        => $object_id,
+				'term_taxonomy_id' => $tt_id
+			) );
+
+		/**
+		 * Fires immediately after an object-term relationship is added.
+		 *
+		 * @since 2.9.0
+		 * @since 4.7.0 Added the `$taxonomy` parameter.
+		 *
+		 * @param int    $object_id Object ID.
+		 * @param int    $tt_id     Term taxonomy ID.
+		 * @param string $taxonomy  Taxonomy slug.
+		 */
+		do_action( 'added_term_relationship', $object_id, $tt_id, $taxonomy );
+
+		$new_tt_ids[] = $tt_id;
+	}
+
+	if ( $new_tt_ids ) {
+		wp_update_term_count( $new_tt_ids, $taxonomy );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1349,8 +1403,8 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
  */
-		}
 	}
 }
 
@@ -1753,6 +1807,57 @@ EOQ
 		'term_taxonomy_id' => $tt_id
 	);
 }
+
+/**
+ * Updates the amount of terms in taxonomy.
+ *
+ * If there is a taxonomy callback applied, then it will be called for updating the count.
+ *
+ * The default action is to count what the amount of terms have the relationship of term ID.
+ * Once that is done, then update the database.
+ *
+ * @since     2.3.0
+ * @staticvar array $_deferred
+ *
+ * @param  int|array $terms       The term_taxonomy_id of the terms.
+ * @param  string    $taxonomy    The context of the term.
+ * @param  bool      $do_deferred Whether to flush the deferred term counts too.
+ *                                Default false.
+ * @return bool      If no terms will return false, and if successful will return true.
+ */
+function wp_update_term_count( $terms, $taxonomy, $do_deferred = FALSE )
+{
+	static $_deferred = array();
+
+	if ( $do_deferred ) {
+		foreach ( ( array ) array_keys( $_deferred ) as $tax ) {
+			wp_update_term_count_now( $_deferred[ $tax ], $tax );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 008: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
+ */
+		}
+	}
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 009: wp-includes/taxonomy.php
+ */
 
 //
 // Cache
