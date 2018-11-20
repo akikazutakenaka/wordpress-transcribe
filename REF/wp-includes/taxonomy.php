@@ -1089,18 +1089,197 @@ EOQ
 				) + 1;
 
 			wp_update_term( $alias->term_id, $taxonomy, array( 'term_group' => $term_group ) );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * @NOW 008: wp-includes/taxonomy.php
- */
 		}
 	}
+
+	// Prevent the creation of terms with duplicate names at the same level of a taxonomy hierarchy, unless a unique slug has been explicitly provided.
+	$name_matches = get_terms( $taxonomy, array(
+		'name'       => $name,
+		'hide_empty' => FALSE,
+		'parent'     => $args['parent']
+	) );
+
+	// The `name` match in `get_terms()` doesn't differentiate accented characters, so we do a stricter comparison here.
+	$name_match = NULL;
+
+	if ( $name_matches ) {
+		foreach ( $name_matches as $_match ) {
+			if ( strtolower( $name ) === strtolower( $_match->name ) ) {
+				$name_match = $_match;
+				break;
+			}
+		}
+	}
+
+	if ( $name_match ) {
+		$slug_match = get_term_by( 'slug', $slug, $taxonomy );
+
+		if ( ! $slug_provided || $name_match->slug === $slug || $slug_match ) {
+			if ( is_taxonomy_hierarchical( $taxonomy ) ) {
+				$siblings = get_terms( $taxonomy, array(
+					'get'    => 'all',
+					'parent' => $parent
+				) );
+				$existing_term = NULL;
+
+				if ( ( ! $slug_provided || $name_match->slug === $slug )
+				  && in_array( $name, wp_list_pluck( $siblings, 'name' ) ) ) {
+					$existing_term = $name_match;
+				} elseif ( $slug_match && in_array( $slug, wp_list_pluck( $siblings, 'slug' ) ) ) {
+					$existing_term = $slug_match;
+				}
+
+				if ( $existing_term ) {
+					return new WP_Error( 'term_exists', __( 'A term with the name provided already exists with this parent.' ), $existing_term->term_id );
+				}
+			} else {
+				return new WP_Error( 'term_exists', __( 'A term with the name provided already exists in this taxonomy.' ), $name_match->term_id );
+			}
+		}
+	}
+
+	$slug = wp_unique_term_slug( $slug, ( object ) $args );
+	$data = compact( 'data', 'slug', 'term_group' );
+
+	/**
+	 * Filters term data before it is inserted into the database.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param array  $data     Term data to be inserted.
+	 * @param string $taxonomy Taxonomy slug.
+	 * @param array  $args     Arguments passed to wp_insert_term().
+	 */
+	$data = apply_filters( 'wp_insert_term_data', $data, $taxonomy, $args );
+
+	if ( FALSE === $wpdb->insert( $wpdb->terms, $data ) ) {
+		return new WP_Error( 'db_insert_error', __( 'Could not insert term into the database.' ), $wpdb->last_error );
+	}
+
+	$term_id = ( int ) $wpdb->insert_id;
+
+	// Seems unreachable, however, is used in the case that a term name is provided, which sanitizes to an empty string.
+	if ( empty( $slug ) ) {
+		$slug = sanitize_title( $slug, $term_id );
+
+		// This action is documented in wp-includes/taxonomy.php
+		do_action( 'edit_terms', $term_id, $taxonomy );
+		$wpdb->update( $wpdb->terms, compact( 'slug' ), compact( 'term_id' ) );
+
+		// This action is documented in wp-includes/taxonomy.php
+		do_action( 'edited_terms', $term_id, $taxonomy );
+	}
+
+	$tt_id = $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT tt.term_taxonomy_id
+FROM $wpdb->term_taxonomy AS tt
+INNER JOIN $wpdb->terms AS t ON tt.term_id = t.term_id
+WHERE tt.taxonomy = %s
+  AND t.term_id = %d
+EOQ
+			, $taxonomy, $term_id ) );
+
+	if ( ! empty( $tt_id ) ) {
+		return array(
+			'term_id'          => $term_id,
+			'term_taxonomy_id' => $tt_id
+		);
+	}
+
+	$wpdb->insert( $wpdb->term_taxonomy, compact( 'term_id', 'taxonomy', 'description', 'parent' ) + array( 'count' => 0 ) );
+	$tt_id = ( int ) $wpdb->insert_id;
+
+	/**
+	 * Sanity check: if we just created a term with the same parent + taxonomy + slug but a higher term_id than an existing term, then we have unwittingly created a duplicate term.
+	 * Delete the dupe, and use the term_id and term_taxonomy_id of the older term instead.
+	 * Then return out of the function so that the "create" hooks are not fired.
+	 */
+	$duplicate_term = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT t.term_id, tt.term_taxonomy_id
+FROM $wpdb->terms AS t
+INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id
+WHERE t.slug = %s
+  AND tt.parent = %d
+  AND tt.taxonomy = %s
+  AND t.term_id < %d
+  AND tt.term_taxonomy_id != %d
+EOQ
+			, $slug, $parent, $taxonomy, $term_id, $tt_id ) );
+
+	if ( $duplicate_term ) {
+		$wpdb->delete( $wpdb->terms, array( 'term_id' => $term_id ) );
+		$wpdb->delete( $wpdb->term_taxonomy, array( 'term_taxonomy_id' => $tt_id ) );
+		$term_id = ( int ) $duplicate_term->term_id;
+		$tt_id   = ( int ) $duplicate_term->term_taxonomy_id;
+		clean_term_cache( $term_id, $taxonomy );
+		return array(
+			'term_id'          => $term_id,
+			'term_taxonomy_id' => $tt_id
+		);
+	}
+
+	/**
+	 * Fires immediately after a new term is created, before the term cache is cleaned.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'create_term', $term_id, $tt_id, $taxonomy );
+
+	/**
+	 * Fires after a new term is created for a specific taxonomy.
+	 *
+	 * The dynamic portion of the hook name, `$taxonomy`, refers to the slug of the taxonomy the term was created for.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int $term_id Term ID.
+	 * @param int $tt_id   Term taxonomy ID.
+	 */
+	do_action( "create_{$taxonomy}", $term_id, $tt_id );
+
+	/**
+	 * Filters the term ID after a new term is created.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int $term_id Term ID.
+	 * @param int $tt_id   Taxonomy term ID.
+	 */
+	$erm_id = apply_filters( 'term_id_filter', $term_id, $tt_id );
+
+	clean_term_cache( $term_id, $taxonomy );
+
+	/**
+	 * Fires after a new term is created, and after the term cache has been cleaned.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'created_term', $term_id, $tt_id, $taxonomy );
+
+	/**
+	 * Fires after a new term in a specific taxonomy is created, and after the term cache has been cleaned.
+	 *
+	 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int $term_id Term ID.
+	 * @param int $tt_id   Term taxonomy ID.
+	 */
+	do_action( "created_{$taxonomy}", $term_id, $tt_id );
+
+	return array(
+		'term_id'          => $term_id,
+		'term_taxonomy_id' => $tt_id
+	);
 }
 
 /**
@@ -1170,7 +1349,6 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 		}
 	}
