@@ -970,6 +970,141 @@ function wp_get_object_terms( $object_ids, $taxonomies, $args = array() )
 }
 
 /**
+ * Add a new term to the database.
+ *
+ * A non-existent term is inserted in the following sequence:
+ * 1. The term is added to the term table, then related to the taxonomy.
+ * 2. If everything is correct, several actions are fired.
+ * 3. The 'term_id_filter' is evaluated.
+ * 4. The term cache is cleaned.
+ * 5. Several more actions are fired.
+ * 6. An array is returned containing the term_id and term_taxonomy_id.
+ *
+ * If the 'slug' argument is not empty, then it is checked to see if the term is invalid.
+ * If it is not a valid, existing term, it is added and the term_id is given.
+ *
+ * If the taxonomy is hierarchical, and the 'parent' argument is not empty, the term is inserted and the term_id will be given.
+ *
+ * Error handling:
+ * If $taxonomy does not exist or $term is empty, a WP_Error object will be returned.
+ *
+ * If the term already exists on the same hierarchical level, or the term slug and name are not unique, a WP_Error object will be returned.
+ *
+ * @global wpdb $wpdb WordPress database abstraction object.
+ * @since  2.3.0
+ *
+ * @param  string         $term     The term to add or update.
+ * @param  string         $taxonomy The taxonomy to which to add the term.
+ * @param  array|string   $args {
+ *     Optional.
+ *     Array or string of arguments for inserting a term.
+ *
+ *     @type string $alias_of    Slug of the term to make this term an alias of.
+ *                               Default empty string.
+ *                               Accepts a term slug.
+ *     @type string $description The term description.
+ *                               Default empty string.
+ *     @type int    $parent      The id of the parent term.
+ *                               Default 0.
+ *     @type string $slug        The term slug to use.
+ *                               Default empty string.
+ * }
+ * @return array|WP_Error An array containing the `term_id` and `term_taxonomy_id`, WP_Error otherwise.
+ */
+function wp_insert_term( $term, $taxonomy, $args = array() )
+{
+	global $wpdb;
+
+	if ( ! taxonomy_exists( $taxonomy ) ) {
+		return new WP_Error( 'invalid_taxonomy', __( 'Invalid taxonomy.' ) );
+	}
+
+	/**
+	 * Filters a term before it is sanitized and inserted into the database.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $term     The term to add or update.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	$term = apply_filters( 'pre_insert_term', $term, $taxonomy );
+
+	if ( is_wp_error( $term ) ) {
+		return $term;
+	}
+
+	if ( is_int( $term ) && 0 == $term ) {
+		return new WP_Error( 'invalid_term_id', __( 'Invalid term ID.' ) );
+	}
+
+	if ( '' == trim( $term ) ) {
+		return new WP_Error( 'empty_term_name', __( 'A name is required for this term.' ) );
+	}
+
+	$defaults = array(
+		'alias_of'    => '',
+		'description' => '',
+		'parent'      => 0,
+		'slug'        => ''
+	);
+	$args = wp_parse_args( $args, $defaults );
+
+	if ( $args['parent'] > 0 && ! term_exists( ( int ) $args['parent'] ) ) {
+		return new WP_Error( 'missing_parent', __( 'Parent term does not exist.' ) );
+	}
+
+	$args['name'] = $term;
+	$args['taxonomy'] = $taxonomy;
+
+	// Coerce null description to strings, to avoid database errors.
+	$args['description'] = ( string ) $args['description'];
+
+	$args = sanitize_term( $args, $taxonomy, 'db' );
+
+	// Expected_slashed ($name)
+	$name = wp_unslash( $args['name'] );
+	$description = wp_unslash( $args['description'] );
+	$parent = ( int ) $args['parent'];
+
+	$slug_provided = ! empty( $args['slug'] );
+
+	$slug = ! $slug_provided
+		? sanitize_title( $name )
+		: $args['slug'];
+
+	$term_group = 0;
+
+	if ( $args['alias_of'] ) {
+		$alias = get_term_by( 'slug', $args['alias_of'], $taxonomy );
+
+		if ( ! empty( $alias->term_group ) ) {
+			// The alias we want is already in a group, so let's use that one.
+			$group_group = $alias->term_group;
+		} elseif ( ! empty( $alias->term_id ) ) {
+			// The alias is not in a group, so we create a new one and add the alias to it.
+			$term_group = $wpdb->get_var( <<<EOQ
+SELECT MAX(term_group)
+FROM $wpdb->terms
+EOQ
+				) + 1;
+
+			wp_update_term( $alias->term_id, $taxonomy, array( 'term_group' => $term_group ) );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 008: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
+ */
+		}
+	}
+}
+
+/**
  * Create Term and Taxonomy Relationships.
  *
  * Relates an object (post, link etc) to a term and taxonomy type.
@@ -1022,6 +1157,12 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
 		}
 
 		if ( ! $term_info = term_exists( $term, $taxonomy ) ) {
+			// Skip if a non-existent term ID is passed.
+			if ( is_int( $term ) ) {
+				continue;
+			}
+
+			$term_info = wp_insert_term( $term, $taxonomy );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1030,10 +1171,23 @@ function wp_set_object_terms( $object_id, $terms, $taxonomy, $append = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
  */
 		}
 	}
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 009: wp-includes/taxonomy.php
+ */
 
 //
 // Cache
