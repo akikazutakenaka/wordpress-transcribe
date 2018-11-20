@@ -1098,7 +1098,6 @@ EOQ
  * <- wp-includes/post.php
  * <- wp-includes/taxonomy.php
  * @NOW 008: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 		}
 	}
@@ -1452,17 +1451,129 @@ EOQ
 
 	// Check whether this is a shared term that needs splitting.
 	$_term_id = _split_shared_term( $term_id, $tt_id );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * @NOW 009: wp-includes/taxonomy.php
- */
+
+	if ( ! is_wp_error( $_term_id ) ) {
+		$term_id = $_term_id;
+	}
+
+	/**
+	 * Fires immediately before the given terms are edited.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'edit_terms', $term_id, $taxonomy );
+
+	$data = compact( 'name', 'slug', 'term_group' );
+
+	/**
+	 * Filters term data before it is updated in the database.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param array  $data     Term data to be updated.
+	 * @param int    $term_id  Term ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 * @param array  $args     Arguments passed to wp_update_term().
+	 */
+	$data = apply_filters( 'wp_update_term_data', $data, $term_id, $taxonomy, $args );
+
+	$wpdb->update( $wpdb->terms, $data, compact( 'term_id' ) );
+
+	if ( empty( $slug ) ) {
+		$slug = sanitize_title( $name, $term_id );
+		$wpdb->update( $wpdb->terms, compact( 'slug' ), compact( 'term_id' ) );
+	}
+
+	/**
+	 * Fires immediately after the given terms are edited.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'edited_terms', $term_id, $taxonomy );
+
+	/**
+	 * Fires immediate before a term-taxonomy relationship is updated.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'edit_term_taxonomy', $tt_id, $taxonomy );
+
+	$wpdb->update( $wpdb->term_taxonomy, compact( 'term_id', 'taxonomy', 'description', 'parent' ), array( 'term_taxonomy_id' => $tt_id ) );
+
+	/**
+	 * Fires immediately after a term-taxonomy relationship is updated.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'edited_term_taxonomy', $tt_id, $taxonomy );
+
+	/**
+	 * Fires after a term has been updated, but before the term cache has been cleaned.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'edit_term', $term_id, $tt_id, $taxonomy );
+
+	/**
+	 * Fires after a term in a specific taxonomy has been updated, but before the term cache has been cleaned.
+	 *
+	 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int $term_id Term ID.
+	 * @param int $tt_id   Term taxonomy ID.
+	 */
+	do_action( "edit_{$taxonomy}", $term_id, $tt_id );
+
+	// This filter is documented in wp-includes/taxonomy.php
+	$term_id = apply_filters( 'term_id_filter', $term_id, $tt_id );
+
+	clean_term_cache( $term_id, $taxonomy );
+
+	/**
+	 * Fires after a term has been updated, and the term cache has been cleaned.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	do_action( 'edited_term', $term_id, $tt_id, $taxonomy );
+
+	/**
+	 * Fires after a term for a specific taxonomy has been updated, and the term cache has been cleaned.
+	 *
+	 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int $term_id Term ID.
+	 * @param int $tt_id   Term taxonomy ID.
+	 */
+	do_action( "edited_{$taxonomy}", $term_id, $tt_id );
+
+	return array(
+		'term_id'          => $term_id,
+		'term_taxonomy_id' => $tt_id
+	);
 }
 
 //
