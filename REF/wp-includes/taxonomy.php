@@ -1809,6 +1809,32 @@ EOQ
 }
 
 /**
+ * Enable or disable term counting.
+ *
+ * @since     2.5.0
+ * @staticvar bool $_defer
+ *
+ * @param  bool $defer Optional.
+ *                     Enable if true, disable if false.
+ * @return bool Whether term counting is enabled or disabled.
+ */
+function wp_defer_term_counting( $defer = NULL )
+{
+	static $_defer = FALSE;
+
+	if ( is_bool( $defer ) ) {
+		$_defer = $defer;
+
+		// Flush any deferred counts.
+		if ( ! $defer ) {
+			wp_update_term_count( NULL, NULL, TRUE );
+		}
+	}
+
+	return $_defer;
+}
+
+/**
  * Updates the amount of terms in taxonomy.
  *
  * If there is a taxonomy callback applied, then it will be called for updating the count.
@@ -1832,6 +1858,19 @@ function wp_update_term_count( $terms, $taxonomy, $do_deferred = FALSE )
 	if ( $do_deferred ) {
 		foreach ( ( array ) array_keys( $_deferred ) as $tax ) {
 			wp_update_term_count_now( $_deferred[ $tax ], $tax );
+			unset( $_deferred[ $tax ] );
+		}
+	}
+
+	if ( empty( $terms ) ) {
+		return FALSE;
+	}
+
+	if ( ! is_array( $terms ) ) {
+		$terms = array( $terms );
+	}
+
+	if ( wp_defer_term_counting() ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1842,7 +1881,6 @@ function wp_update_term_count( $terms, $taxonomy, $do_deferred = FALSE )
  * <- wp-includes/taxonomy.php
  * @NOW 008: wp-includes/taxonomy.php
  */
-		}
 	}
 }
 

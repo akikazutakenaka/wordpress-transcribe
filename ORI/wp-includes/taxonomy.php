@@ -1335,30 +1335,8 @@ function wp_remove_object_terms( $object_id, $terms, $taxonomy ) {
 }
 
 // refactored. function wp_unique_term_slug( $slug, $term ) {}
-// refactored. function wp_update_term( $term_id, $taxonomy, $args = array() ) {}
-
-/**
- * Enable or disable term counting.
- *
- * @since 2.5.0
- *
- * @staticvar bool $_defer
- *
- * @param bool $defer Optional. Enable if true, disable if false.
- * @return bool Whether term counting is enabled or disabled.
- */
-function wp_defer_term_counting($defer=null) {
-	static $_defer = false;
-
-	if ( is_bool($defer) ) {
-		$_defer = $defer;
-		// flush any deferred counts
-		if ( !$defer )
-			wp_update_term_count( null, null, true );
-	}
-
-	return $_defer;
-}
+// :
+// refactored. function wp_defer_term_counting($defer=null) {}
 
 /**
  * Updates the amount of terms in taxonomy.
