@@ -1462,7 +1462,6 @@ EOQ
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 009: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 }
 
@@ -2110,20 +2109,73 @@ EOQ
 		foreach ( $children_tt_ids as $child_tt_id ) {
 			$wpdb->update( $wpdb->term_taxonomy, array( 'parent' => $new_term_id ), array( 'term_taxonomy_id' => $child_tt_id ) );
 			clean_term_cache( ( int ) $child_tt_id, '', FALSE );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * @NOW 010: wp-includes/taxonomy.php
- */
 		}
+	} else {
+		// If the term has no children, we must force its taxonomy cache to be rebuilt separately.
+		clean_term_cache( $new_term_id, $term_taxonomy->term_taxonomy, FALSE );
 	}
+
+	clean_term_cache( $term_id, $term_taxonomy->taxonomy, FALSE );
+
+	// Taxonomy cache clearing is delayed to avoid race conditions that may occur when regenerating the taxonomy's hierarchy tree.
+	$taxonomies_to_clean = array( $term_taxonomy->taxonomy );
+
+	// Clean the cache for term taxonomies formerly shared with the current term.
+	$shared_term_taxonomies = $wpdb->get_col( $wpdb->prepare( <<<EOQ
+SELECT taxonomy
+FROM $wpdb->term_taxonomy
+WHERE term_id = %d
+EOQ
+			, $term_id ) );
+	$taxonomies_to_clean = array_merge( $taxonomies_to_clean, $shared_term_taxonomies );
+
+	foreach ( $taxonomies_to_clean as $taxonomy_to_clean ) {
+		clean_taxonomy_cache( $taxonomy_to_clean );
+	}
+
+	/**
+	 * Keep a record of term_ids that have been split, keyed by old term_id.
+	 * See wp_get_split_term().
+	 */
+	if ( $record ) {
+		$split_term_data = get_option( '_split_terms', array() );
+
+		if ( ! isset( $split_term_data[ $term_id ] ) ) {
+			$split_term_data[ $term_id ] = array();
+		}
+
+		$split_term_data[ $term_id ][ $term_taxonomy->taxonomy ] = $new_term_id;
+		update_option( '_split_terms', $split_term_data );
+	}
+
+	// If we've just split the final shared term, set the "finished" flag.
+	$shared_terms_exist = $wpdb->get_results( <<<EOQ
+SELECT tt.term_id, t.*, COUNT(*) AS term_tt_count
+FROM {$wpdb->term_taxonomy} AS tt
+LEFT JOIN {$wpdb->terms} AS t ON t.term_id = tt.term_id
+GROUP BY t.term_id
+HAVING term_tt_cound > 1
+LIMIT 1
+EOQ
+	);
+
+	if ( ! $shared_terms_exist ) {
+		update_option( 'finished_splitting_shared_terms', TRUE );
+	}
+
+	/**
+	 * Fires after a previously shared taxonomy term is split into two separate terms.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param int    $term_id          ID of the formerly shared term.
+	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
+	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
+	 * @param string $taxonomy         Taxonomy for the split term.
+	 */
+	do_action( 'split_shared_term', $term_id, $new_term_id, $term_taxonomy_id, $term_taxonomy->taxonomy );
+
+	return $new_term_id;
 }
 
 /**
