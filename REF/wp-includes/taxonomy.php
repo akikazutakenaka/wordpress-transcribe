@@ -1848,6 +1848,34 @@ function wp_update_term_count( $terms, $taxonomy, $do_deferred = FALSE )
 }
 
 /**
+ * Perform term count update immediately.
+ *
+ * @since 2.5.0
+ *
+ * @param  array  $terms    The term_taxonomy_id of terms to update.
+ * @param  string $taxonomy The context of the term.
+ * @return true   Always true when complete.
+ */
+function wp_update_term_count_now( $terms, $taxonomy )
+{
+	$terms = array_map( 'intval', $terms );
+	$taxonomy = get_taxonomy( $taxonomy );
+
+	if ( ! empty( $taxonomy->update_count_callback ) ) {
+		call_user_func( $taxonomy->update_count_callback, $terms, $taxonomy );
+	} else {
+		$object_types = ( array ) $taxonomy->object_type;
+
+		foreach ( $object_types as &$object_type ) {
+			if ( 0 === strpos( $object_type, 'attachment:' ) ) {
+				list( $object_type ) = explode( ':', $object_type );
+			}
+		}
+
+		if ( $object_types == array_filter( $object_types, 'post_type_exists' ) ) {
+			// Only post types are attached to this taxonomy.
+			_update_post_term_count( $terms, $taxonomy );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -1857,7 +1885,11 @@ function wp_update_term_count( $terms, $taxonomy, $do_deferred = FALSE )
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 009: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
  */
+		}
+	}
+}
 
 //
 // Cache
@@ -2393,6 +2425,23 @@ EOQ
 		}
 	}
 }
+
+//
+// Default callbacks
+//
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 010: wp-includes/taxonomy.php
+ */
 
 /**
  * Create a new term for a term_taxonomy item that currently shares its term with another term_taxonomy.

@@ -1530,7 +1530,7 @@ function _update_generic_term_count( $terms, $taxonomy ) {
 	}
 }
 
-function _split_shared_term( $term_id, $term_taxonomy_id, $record = true ) {}
+// refactored. function _split_shared_term( $term_id, $term_taxonomy_id, $record = true ) {}
 
 /**
  * Splits a batch of shared taxonomy terms.
