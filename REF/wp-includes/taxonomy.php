@@ -1841,7 +1841,6 @@ function wp_update_term_count( $terms, $taxonomy, $do_deferred = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/taxonomy.php
  * @NOW 008: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 		}
 	}
@@ -1878,19 +1877,11 @@ function wp_update_term_count_now( $terms, $taxonomy )
 		} else {
 			// Default count updater.
 			_update_generic_term_count( $terms, $taxonomy );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * @NOW 009: wp-includes/taxonomy.php
- */
 		}
 	}
+
+	clean_term_cache( $terms, '', FALSE );
+	return TRUE;
 }
 
 //
