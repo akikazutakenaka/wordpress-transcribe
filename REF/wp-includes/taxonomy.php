@@ -1436,6 +1436,22 @@ EOQ
 		 */
 		if ( $empty_slug || $parent != $term['parent'] ) {
 			$slug = wp_unique_term_slug( $slug, ( object ) $args );
+		} else {
+			return new WP_Error( 'duplicate_term_slug', sprintf( __( 'The slug &#8220;%s&#8221; is already in use by another term.' ), $slug ) );
+		}
+	}
+
+	$tt_id = ( int ) $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT tt.term_taxonomy_id
+FROM $wpdb->term_taxonomy AS tt
+INNER JOIN $wpdb->terms AS t ON tt.term_id = t.term_id
+WHERE tt.taxonomy = %s
+  AND t.term_id = %d
+EOQ
+			, $taxonomy, $term_id ) );
+
+	// Check whether this is a shared term that needs splitting.
+	$_term_id = _split_shared_term( $term_id, $tt_id );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1446,9 +1462,8 @@ EOQ
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 009: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
  */
-		}
-	}
 }
 
 //
@@ -1498,6 +1513,20 @@ function clean_object_term_cache( $object_ids, $object_type )
 	 */
 	do_action( 'clean_object_term_cache', $object_ids, $object_type );
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 011: wp-includes/taxonomy.php
+ */
 
 /**
  * Retrieves the taxonomy relationship to the term object id.
@@ -1877,6 +1906,132 @@ EOQ
 
 		if ( $update_meta_cache ) {
 			update_termmeta_cache( $non_cached_ids );
+		}
+	}
+}
+
+/**
+ * Create a new term for a term_taxonomy item that currently shares its term with another term_taxonomy.
+ *
+ * @ignore
+ * @since  4.2.0
+ * @since  4.3.0 Introduced `$record` parameter.
+ *               Also, `$term_id` and `$term_taxonomy_id` can now accept objects.
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param  int|object   $term_id          ID of the shared term, or the shared term object.
+ * @param  int|object   $term_taxonomy_id ID of the term_taxonomy item to receive a new term, or the term_taxonomy object (corresponding to a row from the term_taxonomy table).
+ * @param  bool         $record           Whether to record data about the split term in the options table.
+ *                                        The recording process has the potential to be resource-intensive, so during batch operations it can be beneficial to skip inline recording and do it just once, after the batch is processed.
+ *                                        Only set this to `false` if you know what you are doing.
+ *                                        Default: true.
+ * @return int|WP_Error When the current term does not need to be split (or cannot be split on the current database schema), `$term_id` is returned.
+ *                      When the term is successfully split, the new term_id is returned.
+ *                      A WP_Error is returned for miscellaneous errors.
+ */
+function _split_shared_term( $term_id, $term_taxonomy_id, $record = TRUE )
+{
+	global $wpdb;
+
+	if ( is_object( $term_id ) ) {
+		$shared_term = $term_id;
+		$term_id = intval( $shared_term->term_id );
+	}
+
+	if ( is_object( $term_taxonomy_id ) ) {
+		$term_taxonomy = $term_taxonomy_id;
+		$term_taxonomy_id = intval( $term_taxonomy->term_taxonomy_id );
+	}
+
+	// If there are no shared term_taxonomy rows, there's nothing to do here.
+	$shared_tt_count = $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT COUNT(*)
+FROM $wpdb->term_taxonomy AS tt
+WHERE tt.term_id = %d
+  AND tt.term_taxonomy_id != %d
+EOQ
+			, $term_id, $term_taxonomy_id ) );
+
+	if ( ! $shared_tt_count ) {
+		return $term_id;
+	}
+
+	/**
+	 * Verify that the term_taxonomy_id passed to the function is actually associated with the term_id.
+	 * If there's a mismatch, it may mean that the term is already split.
+	 * Return the actual term_id from the db.
+	 */
+	$check_term_id = $wpdb->get_var( $wpdb->prepare( <<<EOQ
+SELECT term_id
+FROM $wpdb->term_taxonomy
+WHERE term_taxonomy_id = %d
+EOQ
+			, $term_taxonomy_id ) );
+
+	if ( $check_term_id != $term_id ) {
+		return $check_term_id;
+	}
+
+	// Pull up data about the currently shared slug, which we'll use to populate the new one.
+	if ( empty( $shared_term ) ) {
+		$shared_term = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT t.*
+FROM $wpdb->terms AS t
+WHERE t.term_id = %d
+EOQ
+				, $term_id ) );
+	}
+
+	$new_term_data = array(
+		'name'       => $shared_term->name,
+		'slug'       => $shared_term->slug,
+		'term_group' => $shared_term->term_group
+	);
+
+	if ( FALSE === $wpdb->insert( $wpdb->terms, $new_term_data ) ) {
+		return new WP_Error( 'db_insert_error', __( 'Could not split shared term.' ), $wpdb->last_error );
+	}
+
+	$new_term_id = ( int ) $wpdb->insert_id;
+
+	// Update the existing term_taxonomy to point to the newly created term.
+	$wpdb->update( $wpdb->term_taxonomy, array( 'term_id' => $new_term_id ), array( 'term_taxonomy_id' => $term_taxonomy_id ) );
+
+	// Reassign child terms to the new parent.
+	if ( empty( $term_taxonomy ) ) {
+		$term_taxonomy = $wpdb->get_row( $wpdb->prepare( <<<EOQ
+SELECT *
+FROM $wpdb->term_taxonomy
+WHERE term_taxonomy_id = %d
+EOQ
+				, $term_taxonomy_id ) );
+	}
+
+	$children_tt_ids = $wpdb->get_col( $wpdb->prepare( <<<EOQ
+SELECT term_taxonomy_id
+FROM $wpdb->term_taxonomy
+WHERE parent = %d
+  AND taxonomy = %s
+EOQ
+			, $term_id, $term_taxonomy->taxonomy ) );
+
+	if ( ! empty( $children_tt_ids ) ) {
+		foreach ( $children_tt_ids as $child_tt_id ) {
+			$wpdb->update( $wpdb->term_taxonomy, array( 'parent' => $new_term_id ), array( 'term_taxonomy_id' => $child_tt_id ) );
+			clean_term_cache( ( int ) $child_tt_id, '', FALSE );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * <- wp-includes/taxonomy.php
+ * @NOW 010: wp-includes/taxonomy.php
+ * -> wp-includes/taxonomy.php
+ */
 		}
 	}
 }
