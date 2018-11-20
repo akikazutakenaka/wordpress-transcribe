@@ -1575,21 +1575,22 @@ EOQ
 	foreach ( $taxonomies as $taxonomy ) {
 		if ( $clean_taxonomy ) {
 			clean_taxonomy_cache( $taxonomy );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * <- wp-includes/taxonomy.php
- * @NOW 011: wp-includes/taxonomy.php
- */
 		}
+
+		/**
+		 * Fires once after each taxonomy's term cache has been cleaned.
+		 *
+		 * @since 2.5.0
+		 * @since 4.5.0 Added the `$clean_taxonomy` parameter.
+		 *
+		 * @param array  $ids            An array of term IDs.
+		 * @param string $taxonomy       Taxonomy slug.
+		 * @param bool   $clean_taxonomy Whether or not to clean taxonomy-wide caches.
+		 */
+		do_action( 'clean_term_cache', $ids, $taxonomy, $clean_taxonomy );
 	}
+
+	wp_cache_set( 'last_changed', microtime(), 'terms' );
 }
 
 /**
@@ -2120,7 +2121,6 @@ EOQ
  * <- wp-includes/taxonomy.php
  * <- wp-includes/taxonomy.php
  * @NOW 010: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 		}
 	}
