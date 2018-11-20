@@ -1336,54 +1336,6 @@ function wp_remove_object_terms( $object_id, $terms, $taxonomy ) {
 
 // refactored. function wp_unique_term_slug( $slug, $term ) {}
 // :
-// refactored. function wp_defer_term_counting($defer=null) {}
-
-/**
- * Updates the amount of terms in taxonomy.
- *
- * If there is a taxonomy callback applied, then it will be called for updating
- * the count.
- *
- * The default action is to count what the amount of terms have the relationship
- * of term ID. Once that is done, then update the database.
- *
- * @since 2.3.0
- *
- * @staticvar array $_deferred
- *
- * @param int|array $terms       The term_taxonomy_id of the terms.
- * @param string    $taxonomy    The context of the term.
- * @param bool      $do_deferred Whether to flush the deferred term counts too. Default false.
- * @return bool If no terms will return false, and if successful will return true.
- */
-function wp_update_term_count( $terms, $taxonomy, $do_deferred = false ) {
-	static $_deferred = array();
-
-	if ( $do_deferred ) {
-		foreach ( (array) array_keys($_deferred) as $tax ) {
-			wp_update_term_count_now( $_deferred[$tax], $tax );
-			unset( $_deferred[$tax] );
-		}
-	}
-
-	if ( empty($terms) )
-		return false;
-
-	if ( !is_array($terms) )
-		$terms = array($terms);
-
-	if ( wp_defer_term_counting() ) {
-		if ( !isset($_deferred[$taxonomy]) )
-			$_deferred[$taxonomy] = array();
-		$_deferred[$taxonomy] = array_unique( array_merge($_deferred[$taxonomy], $terms) );
-		return true;
-	}
-
-	return wp_update_term_count_now( $terms, $taxonomy );
-}
-
-// refactored. function wp_update_term_count_now( $terms, $taxonomy ) {}
-// :
 // refactored. function _split_shared_term( $term_id, $term_taxonomy_id, $record = true ) {}
 
 /**

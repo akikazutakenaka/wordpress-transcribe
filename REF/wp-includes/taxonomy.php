@@ -1403,7 +1403,6 @@ EOQ
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/taxonomy.php
- * -> wp-includes/taxonomy.php
  */
 	}
 }
@@ -1871,17 +1870,15 @@ function wp_update_term_count( $terms, $taxonomy, $do_deferred = FALSE )
 	}
 
 	if ( wp_defer_term_counting() ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/taxonomy.php
- * @NOW 008: wp-includes/taxonomy.php
- */
+		if ( ! isset( $_deferred[ $taxonomy ] ) ) {
+			$_deferred[ $taxonomy ] = array();
+		}
+
+		$_deferred[ $taxonomy ] = array_unique( array_merge( $_deferred[ $taxonomy ], $terms ) );
+		return TRUE;
 	}
+
+	return wp_update_term_count_now( $terms, $taxonomy );
 }
 
 /**
