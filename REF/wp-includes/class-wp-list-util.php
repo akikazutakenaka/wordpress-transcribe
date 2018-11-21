@@ -176,4 +176,15 @@ class WP_List_Util
 		$this->output = $newlist;
 		return $this->output;
 	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * @NOW 008: wp-includes/class-wp-list-util.php
+ */
 }

@@ -99,6 +99,9 @@ function get_permalink( $post = 0, $leavename = FALSE )
 
 		if ( strpos( $permalink, '%category%' ) !== FALSE ) {
 			$cats = get_the_category( $post->ID );
+
+			if ( $cats ) {
+				$cats = wp_list_sort( $cats, array( 'term_id' => 'ASC' ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -107,7 +110,9 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/link-template.php
+ * -> wp-includes/class-wp-list-util.php
  */
+			}
 		}
 	}
 }
