@@ -1068,8 +1068,36 @@ function wp_check_filetype( $filename, $mimes = NULL )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * <- wp-includes/functions.php
- * @NOW 009: wp-includes/functions.php
+ * <- wp-includes/functions.php
+ * @NOW 010: wp-includes/functions.php
  */
+
+/**
+ * Retrieve list of allowed mime types and file extensions.
+ *
+ * @since 2.8.6
+ *
+ * @param  int|WP_User $user Optional.
+ *                           User to check.
+ *                           Defaults to the current user.
+ * @return array       Array of mime types keyed by the file extension regex corresponding to those types.
+ */
+function get_allowed_mime_types( $user = NULL )
+{
+	$t = wp_get_mime_types();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/functions.php
+ * @NOW 009: wp-includes/functions.php
+ * -> wp-includes/functions.php
+ */
+}
 
 /**
  * Kill WordPress execution and display HTML message with error message.
