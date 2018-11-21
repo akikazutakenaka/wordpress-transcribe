@@ -84,7 +84,6 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/link-template.php
- * -> wp-includes/link-template.php
  */
 	}
 }
@@ -136,17 +135,21 @@ function get_post_permalink( $id = 0, $leavename = FALSE, $sample = FALSE )
 					'post_type' => $post->post_type,
 					'p'         => $post->ID
 				), '' );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * @NOW 008: wp-includes/link-template.php
- */
+
+		$post_link = home_url( $post_link );
 	}
+
+	/**
+	 * Filters the permalink for a post of a custom post type.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string  $post_link The post's permalink.
+	 * @param WP_Post $post      The post in question.
+	 * @param bool    $leavename Whether to keep the post name.
+	 * @param bool    $sample    Is it a sample permalink.
+	 */
+	return apply_filters( 'post_type_link', $post_link, $post, $leavename, $sample );
 }
 
 /**

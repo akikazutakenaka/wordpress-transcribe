@@ -205,65 +205,7 @@ function get_permalink( $post = 0, $leavename = false ) {
 	return apply_filters( 'post_link', $permalink, $post, $leavename );
 }
 
-/**
- * Retrieves the permalink for a post of a custom post type.
- *
- * @since 3.0.0
- *
- * @global WP_Rewrite $wp_rewrite
- *
- * @param int|WP_Post $id        Optional. Post ID or post object. Default is the global `$post`.
- * @param bool        $leavename Optional, defaults to false. Whether to keep post name. Default false.
- * @param bool        $sample    Optional, defaults to false. Is it a sample permalink. Default false.
- * @return string|WP_Error The post permalink.
- */
-function get_post_permalink( $id = 0, $leavename = false, $sample = false ) {
-	global $wp_rewrite;
-
-	$post = get_post($id);
-
-	if ( is_wp_error( $post ) )
-		return $post;
-
-	$post_link = $wp_rewrite->get_extra_permastruct($post->post_type);
-
-	$slug = $post->post_name;
-
-	$draft_or_pending = get_post_status( $post ) && in_array( get_post_status( $post ), array( 'draft', 'pending', 'auto-draft', 'future' ) );
-
-	$post_type = get_post_type_object($post->post_type);
-
-	if ( $post_type->hierarchical ) {
-		$slug = get_page_uri( $post );
-	}
-
-	if ( !empty($post_link) && ( !$draft_or_pending || $sample ) ) {
-		if ( ! $leavename ) {
-			$post_link = str_replace("%$post->post_type%", $slug, $post_link);
-		}
-		$post_link = home_url( user_trailingslashit($post_link) );
-	} else {
-		if ( $post_type->query_var && ( isset($post->post_status) && !$draft_or_pending ) )
-			$post_link = add_query_arg($post_type->query_var, $slug, '');
-		else
-			$post_link = add_query_arg(array('post_type' => $post->post_type, 'p' => $post->ID), '');
-		$post_link = home_url($post_link);
-	}
-
-	/**
-	 * Filters the permalink for a post of a custom post type.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param string  $post_link The post's permalink.
-	 * @param WP_Post $post      The post in question.
-	 * @param bool    $leavename Whether to keep the post name.
-	 * @param bool    $sample    Is it a sample permalink.
-	 */
-	return apply_filters( 'post_type_link', $post_link, $post, $leavename, $sample );
-}
-
-// refactored. function get_page_link( $post = false, $leavename = false, $sample = false ) {}
+// refactored. function get_post_permalink( $id = 0, $leavename = false, $sample = false ) {}
 // :
 // refactored. function get_attachment_link( $post = null, $leavename = false ) {}
 
