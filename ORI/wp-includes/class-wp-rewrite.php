@@ -367,32 +367,8 @@ class WP_Rewrite {
 		return $this->search_structure;
 	}
 
-	/**
-	 * Retrieves the page permalink structure.
-	 *
-	 * The permalink structure is root property, and '%pagename%'. Will set the
-	 * page_structure property and then return it without attempting to set the
-	 * value again.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return string|false False if not found. Permalink structure string.
-	 */
-	public function get_page_permastruct() {
-		if ( isset($this->page_structure) )
-			return $this->page_structure;
-
-		if (empty($this->permalink_structure)) {
-			$this->page_structure = '';
-			return false;
-		}
-
-		$this->page_structure = $this->root . '%pagename%';
-
-		return $this->page_structure;
-	}
-
-	// refactored. public function get_feed_permastruct() {}
+	// refactored. public function get_page_permastruct() {}
+	// :
 	// refactored. public function get_comment_feed_permastruct() {}
 
 	/**

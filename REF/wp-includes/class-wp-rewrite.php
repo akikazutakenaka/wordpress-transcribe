@@ -332,18 +332,31 @@ class WP_Rewrite
 		return ! empty( $this->permalink_structure );
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * <- wp-includes/link-template.php
- * @NOW 009: wp-includes/link-template.php
- * @NOW 010: wp-includes/class-wp-rewrite.php
- */
+	/**
+	 * Retrieves the page permalink structure.
+	 *
+	 * The permalink structure is root property, and '%pagename%'.
+	 * Will set the page_structure property and then return it without attempting to set the value again.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return string|false False if not found.
+	 *                      Permalink structure string.
+	 */
+	public function get_page_permastruct()
+	{
+		if ( isset( $this->page_structure ) ) {
+			return $this->page_structure;
+		}
+
+		if ( empty( $this->permalink_structure ) ) {
+			$this->page_structure = '';
+			return FALSE;
+		}
+
+		$this->page_structure = $this->root . '%pagename%';
+		return $this->page_structure;
+	}
 
 	/**
 	 * Retrieves the feed permalink structure.

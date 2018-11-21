@@ -161,7 +161,6 @@ function _get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
  * <- wp-includes/link-template.php
  * <- wp-includes/link-template.php
  * @NOW 009: wp-includes/link-template.php
- * -> wp-includes/class-wp-rewrite.php
  */
 }
 
