@@ -119,19 +119,47 @@ function get_permalink( $post = 0, $leavename = FALSE )
 
 				if ( $parent = $category_object->parent ) {
 					$category = get_category_parents( $parent, FALSE, '/', TRUE ) . $category;
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/link-template.php
- */
+				}
+			}
+
+			// Show default category in permalinks, without having to assign it explicitly.
+			if ( empty( $category ) ) {
+				$default_category = get_term( get_option( 'default_category' ), 'category' );
+
+				if ( $default_category && ! is_wp_error( $default_category ) ) {
+					$category = $default_category->slug;
 				}
 			}
 		}
+
+		$author = '';
+
+		if ( strpos( $permalink, '%author%' ) !== FALSE ) {
+			$authordata = get_userdata( $post->post_author );
+			$author = $authordata->user_nicename;
+		}
+
+		$date = explode( " ", date( 'Y m d H i s', $unixtime ) );
+		$rewritereplace = array( $date[0], $date[1], $date[2], $date[3], $date[4], $date[5], $post->post_name, $post->ID, $category, $author, $post->post_name );
+		$permalink = home_url( str_replace( $rewritecode, $rewritereplace, $permalink ) );
+		$permalink = user_trailingslashit( $permalink, 'single' );
+	} else {
+		// If they're not using the fancy permalink option
+		$permalink = home_url( '?=' . $post->ID );
 	}
+
+	/**
+	 * Filters the permalink for a post.
+	 *
+	 * Only applies to posts with post_type of 'post'.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string  $permalink The post's permalink.
+	 * @param WP_Post $post      The post in question.
+	 * @param bool    $leavename Whether to keep the post name.
+	 */
+	return apply_filters( 'post_link', $permalink, $post, $leavename );
 }
 
 /**
