@@ -178,7 +178,6 @@ function get_term_parents_list( $term_id, $taxonomy, $args = array() )
  * <- wp-includes/post.php
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/category-template.php
- * -> wp-includes/functions.php
  */
 	}
 }

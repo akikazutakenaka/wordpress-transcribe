@@ -1983,16 +1983,23 @@ function reset_mbstring_encoding()
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * <- wp-includes/category-template.php
- * @NOW 009: wp-includes/functions.php
+ * Filter/validate a variable as a boolean.
+ *
+ * Alternative to `filter_var( $var, FILTER_VALIDATE_BOOLEAN )`.
+ *
+ * @since 4.0.0
+ *
+ * @param  mixed $var Boolean value to validate.
+ * @return bool  Whether the value is validated.
  */
+function wp_validate_boolean( $var )
+{
+	return is_bool( $var )
+		? $var
+		: ( is_string( $var ) && 'false' === strtolower( $var )
+			? FALSE
+			: ( bool ) $var );
+}
 
 /**
  * Get last changed date for the specified cache group.
