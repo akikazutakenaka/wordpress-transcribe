@@ -311,37 +311,8 @@ function create_initial_post_types() {
 }
 
 // refactored. function get_attached_file( $attachment_id, $unfiltered = false ) {}
-// refactored. function update_attached_file( $attachment_id, $file ) {}
-
-/**
- * Return relative path to an uploaded file.
- *
- * The path is relative to the current upload dir.
- *
- * @since 2.9.0
- *
- * @param string $path Full path to the file.
- * @return string Relative path on success, unchanged path on failure.
- */
-function _wp_relative_upload_path( $path ) {
-	$new_path = $path;
-
-	$uploads = wp_get_upload_dir();
-	if ( 0 === strpos( $new_path, $uploads['basedir'] ) ) {
-			$new_path = str_replace( $uploads['basedir'], '', $new_path );
-			$new_path = ltrim( $new_path, '/' );
-	}
-
-	/**
-	 * Filters the relative path to an uploaded file.
-	 *
-	 * @since 2.9.0
-	 *
-	 * @param string $new_path Relative path to the file.
-	 * @param string $path     Full path to the file.
-	 */
-	return apply_filters( '_wp_relative_upload_path', $new_path, $path );
-}
+// :
+// refactored. function _wp_relative_upload_path( $path ) {}
 
 /**
  * Retrieve all children of the post parent ID.

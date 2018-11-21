@@ -81,14 +81,35 @@ function update_attached_file( $attachment_id, $file )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/post.php
+ * Return relative path to an uploaded file.
+ *
+ * The path is relative to the current upload dir.
+ *
+ * @since 2.9.0
+ *
+ * @param  string $path Full path to the file.
+ * @return string Relative path on success, unchanged path on failure.
  */
+function _wp_relative_upload_path( $path )
+{
+	$new_path = $path;
+	$uploads = wp_get_upload_dir();
+
+	if ( 0 === strpos( $new_path, $uploads['basedir'] ) ) {
+		$new_path = str_replace( $uploads['basedir'], '', $new_path );
+		$new_path = ltrim( $new_path, '/' );
+	}
+
+	/**
+	 * Filters the relative path to an uploaded file.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $new_path Relative path to the file.
+	 * @param string $path     Full path to the file.
+	 */
+	return apply_filters( '_wp_relative_upload_path', $new_path, $path );
+}
 
 /**
  * Retrieves post data given a post ID or post object.
@@ -1372,7 +1393,6 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/post.php
  */
 		}
 	}
