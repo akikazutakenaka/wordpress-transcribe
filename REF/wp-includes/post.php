@@ -1310,6 +1310,14 @@ EOQ
 	if ( ! empty( $postarr['meta_input'] ) ) {
 		foreach ( $postarr['meta_input'] as $field => $value ) {
 			update_post_meta( $post_ID, $field, $value );
+		}
+	}
+
+	$current_guid = get_post_field( 'guid', $post_ID );
+
+	// Set GUID.
+	if ( ! $update && '' == $current_guid ) {
+		$wpdb->update( $wpdb->posts, array( 'guid' => get_permalink( $post_ID ) ), $where );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1317,8 +1325,8 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/link-template.php
  */
-		}
 	}
 }
 

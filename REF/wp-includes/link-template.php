@@ -43,6 +43,60 @@ function user_trailingslashit( $string, $type_of_url = '' )
 }
 
 /**
+ * Retrieves the full permalink for the current post or post ID.
+ *
+ * @since 1.0.0
+ *
+ * @param  int|WP_Post  $post      Optional.
+ *                                 Post ID or post object.
+ *                                 Default is the global `$post`.
+ * @param  bool         $leavename Optional.
+ *                                 Whether to keep post name or page name.
+ *                                 Default false.
+ * @return string|false The permalink URL or false if post does not exist.
+ */
+function get_permalink( $post = 0, $leavename = FALSE )
+{
+	$rewritecode = array( '%year%', '%monthnum%', '%day%', '%hour%', '%minute%', '%second%', $leavename ? '' : '%postname%', '%post_id%', '%category%', '%author%', $leavename ? '' : '%pagename%' );
+
+	if ( is_object( $post ) && isset( $post->filter ) && 'sample' == $post->filter ) {
+		$sample = TRUE;
+	} else {
+		$post = get_post( $post );
+		$sample = FALSE;
+	}
+
+	if ( empty( $post->ID ) ) {
+		return FALSE;
+	}
+
+	if ( $post->post_type == 'page' ) {
+		return get_page_link( $post, $leavename, $sample );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/link-template.php
+ * -> wp-includes/link-template.php
+ */
+	}
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * @NOW 008: wp-includes/link-template.php
+ */
+
+/**
  * Retrieves the permalink for the feed type.
  *
  * @since  1.5.0
