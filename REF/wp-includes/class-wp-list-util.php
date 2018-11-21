@@ -212,17 +212,12 @@ class WP_List_Util
 
 		if ( $preserve_keys ) {
 			uasort( $this->output, array( $this, 'sort_callback' ) );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * @NOW 008: wp-includes/class-wp-list-util.php
- */
+		} else {
+			usort( $this->output, array( $this, 'sort_callback' ) );
 		}
+
+		$this->orderby = array();
+		return $this->output;
 	}
 
 	/**
