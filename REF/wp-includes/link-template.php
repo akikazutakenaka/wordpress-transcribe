@@ -76,6 +76,29 @@ function get_permalink( $post = 0, $leavename = FALSE )
 		return get_attachment_link( $post, $leavename );
 	} elseif ( in_array( $post->post_type, get_post_types( array( '_builtin' => FALSE ) ) ) ) {
 		return get_post_permalink( $post, $leavename, $sample );
+	}
+
+	$permalink = get_option( 'permalink_structure' );
+
+	/**
+	 * Filters the permalink structure for a post before token replacement occurs.
+	 *
+	 * Only applies to posts with post_type of 'post'.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string  $permalink The site's permalink structure.
+	 * @param WP_Post $post      The post in question.
+	 * @param bool    $leavename Whether to keep the post name.
+	 */
+	$permalink = apply_filters( 'pre_post_link', $permalink, $post, $leavename );
+
+	if ( '' != $permalink && ! in_array( $post->post_status, array( 'draft', 'pending', 'auto-draft', 'future' ) ) ) {
+		$unixtime = strtotime( $post->post_date );
+		$category = '';
+
+		if ( strpos( $permalink, '%category%' ) !== FALSE ) {
+			$cats = get_the_category( $post->ID );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -84,7 +107,9 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/link-template.php
+ * -> wp-includes/category-template.php
  */
+		}
 	}
 }
 

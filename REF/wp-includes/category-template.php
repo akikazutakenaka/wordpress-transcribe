@@ -8,6 +8,46 @@
  */
 
 /**
+ * Retrieve post categories.
+ *
+ * This tag may be used outside The Loop by passing a post id as the parameter.
+ *
+ * Note: This function only returns results from the default "category" taxonomy.
+ * For custom taxonomies use get_the_terms().
+ *
+ * @since 0.71
+ *
+ * @param  int   $id Optional, default to current post ID.
+ *                   The post ID.
+ * @return array Array of WP_Term objects, one for each category assigned to the post.
+ */
+function get_the_category( $id = FALSE )
+{
+	$categories = get_the_terms( $id, 'category' );
+
+	if ( ! $categories || is_wp_error( $categories ) ) {
+		$categories = array();
+	}
+
+	$categories = array_values( $categories );
+
+	foreach ( array_keys( $categories ) as $key ) {
+		_make_cat_compat( $categories[ $key ] );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * @NOW 008: wp-includes/category-template.php
+ * -> wp-includes/category.php
+ */
+	}
+}
+
+/**
  * Retrieve the terms of the taxonomy that are attached to the post.
  *
  * @since 2.5.0
