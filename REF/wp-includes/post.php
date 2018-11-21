@@ -1397,6 +1397,9 @@ EOQ
 	if ( isset( $postarr['_thumbnail_id'] ) ) {
 		$thumbnail_support = current_theme_supports( 'post-thumbnails', $post_type ) && post_type_supports( $post_type, 'thumbnail' )
 		                  || 'revision' === $post_type;
+
+		if ( ! $thumbnail_support && 'attachment' === $post_type && $post_mime_type ) {
+			if ( wp_attachment_is( 'audio', $post_ID ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1404,7 +1407,10 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
+			}
+		}
 	}
 }
 
@@ -1963,6 +1969,45 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
 
 	$data['post_type'] = 'attachment';
 	return wp_insert_post( $data, $wp_error );
+}
+
+/**
+ * Verifies an attachment is of a given type.
+ *
+ * @since 4.2.0
+ *
+ * @param  string      $type Attachment type.
+ *                           Accepts 'image', 'audio', or 'video'.
+ * @param  int|WP_Post $post Optional.
+ *                           Attachment ID or object.
+ *                           Default is global $post.
+ * @return bool        True if one of the accepted types, false otherwise.
+ */
+function wp_attachment_is( $type, $post = NULL )
+{
+	if ( ! $post = get_post( $post ) ) {
+		return FALSE;
+	}
+
+	if ( ! $file = get_attached_file( $post->ID ) ) {
+		return FALSE;
+	}
+
+	if ( 0 === strpos( $post->post_mime_type, $type . '/' ) ) {
+		return TRUE;
+	}
+
+	$check = wp_check_filetype( $file );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ * -> wp-includes/functions.php
+ */
 }
 
 /**

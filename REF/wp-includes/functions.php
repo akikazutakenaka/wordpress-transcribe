@@ -1030,6 +1030,17 @@ function _wp_upload_dir( $time = NULL )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 008: wp-includes/functions.php
+ */
+
+/**
  * Kill WordPress execution and display HTML message with error message.
  *
  * This function complements the `die()` PHP function.
