@@ -114,6 +114,28 @@ function get_post_permalink( $id = 0, $leavename = FALSE, $sample = FALSE )
 	}
 
 	$post_link = $wp_rewrite->get_extra_permastruct( $post->post_type );
+	$slug = $post->post_name;
+	$draft_or_pending = get_post_status( $post ) && in_array( get_post_status( $post ), array( 'draft', 'pending', 'auto-draft', 'future' ) );
+	$post_type = get_post_type_object( $post->post_type );
+
+	if ( $post_type->hierarchical ) {
+		$slug = get_page_uri( $post );
+	}
+
+	if ( ! empty( $post_link )
+	  && ( ! $draft_or_pending || $sample ) ) {
+		if ( ! $leavename ) {
+			$post_link = str_replace( "%$post->post_type%", $slug, $post_link );
+		}
+
+		$post_link = home_url( user_trailingslashit( $post_link ) );
+	} else {
+		$post_link = $post_type->query_var && isset( $post->post_status ) && ! $draft_or_pending
+			? add_query_arg( $post_type->query_var, $slug, '' )
+			: add_query_arg( array(
+					'post_type' => $post->post_type,
+					'p'         => $post->ID
+				), '' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -123,7 +145,9 @@ function get_post_permalink( $id = 0, $leavename = FALSE, $sample = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/link-template.php
+ * -> wp-includes/functions.php
  */
+	}
 }
 
 /**

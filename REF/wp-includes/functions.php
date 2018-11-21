@@ -309,6 +309,96 @@ function maybe_serialize( $data )
 }
 
 /**
+ * Retrieves a modified URL query string.
+ *
+ * You can rebuild the URL and append query variables to the URL query by using this function.
+ * There are two ways to use this function; either a single key and value, or an associative array.
+ *
+ * Using a single key and value:
+ *
+ *     add_query_arg( 'key', 'value', 'http://example.com' );
+ *
+ * Using an associative array:
+ *
+ *     add_query_arg( array(
+ *             'key1' => 'value1',
+ *             'key2' => 'value2'
+ *         ), 'http://example.com' );
+ *
+ * Omitting the URL from either use results in the current URL being used (the value of `$_SERVER['REQUEST_URI']`).
+ *
+ * Values are expected to be encoded appropriately with urlencode() or rawurlencode().
+ *
+ * Setting any query variable's value to boolean false removes the key (see remove_query_arg()).
+ *
+ * Important: The return value of add_query_arg() is not escaped by default.
+ * Output should be late-escaped with esc_url() or similar to help prevent vulnerability to cross-site scripting (XSS) attacks.
+ *
+ * @since 1.5.0
+ *
+ * @param  string|array $key   Either a query variable key, or an associative array of query variables.
+ * @param  string       $value Optional.
+ *                             Either a query variable value, or a URL to act upon.
+ * @param  string       $url   Optional.
+ *                             A URL to act upon.
+ * @return string       New URL query string (unescaped).
+ */
+function add_query_arg()
+{
+	$args = func_get_args();
+
+	$uri = is_array( $args[0] )
+		? ( count( $args ) < 2 || FALSE === $args[1]
+			? $_SERVER['REQUEST_URI']
+			: $args[1] )
+		: ( count( $args ) < 3 || FALSE === $args[2]
+			? $_SERVER['REQUEST_URI']
+			: $args[2] );
+
+	if ( $frag = strstr( $uri, '#' ) ) {
+		$uri = substr( $uri, 0, - strlen( $frag ) );
+	} else {
+		$frag = '';
+	}
+
+	if ( 0 === stripos( $uri, 'http://' ) ) {
+		$protocol = 'http://';
+		$uri = substr( $uri, 7 );
+	} elseif ( 0 === stripos( $uri, 'https://' ) ) {
+		$protocol = 'https://';
+		$uri = substr( $uri, 8 );
+	} else {
+		$protocol = '';
+	}
+
+	if ( strpos( $uri, '?' ) !== FALSE ) {
+		list( $base, $query ) = explode( '?', $uri, 2 );
+		$base .= '?';
+	} elseif ( $protocol || strpos( $uri, '=' ) === FALSE ) {
+		$base = $uri . '?';
+		$query = '';
+	} else {
+		$base = '';
+		$query = $uri;
+	}
+
+	wp_parse_str( $query, $qs );
+	$qs = urlencode_deep( $qs ); // This re-URL-encodes things that were already in the query string.
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/link-template.php
+ * @NOW 009: wp-includes/functions.php
+ * -> wp-includes/formatting.php
+ */
+}
+
+/**
  * Retrieve the description for the HTTP status.
  *
  * @since  2.3.0

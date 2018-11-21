@@ -2037,6 +2037,19 @@ function stripslashes_from_strings_only( $value )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/functions.php
+ * @NOW 010: wp-includes/formatting.php
+ */
+
+/**
  * Verifies that an email is valid.
  *
  * Does not grok i18n domains.
