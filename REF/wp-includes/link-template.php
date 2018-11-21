@@ -151,6 +151,12 @@ function _get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
 	$post = get_post( $post );
 	$draft_or_pending = in_array( $post->post_status, array( 'draft', 'pending', 'auto-draft' ) );
 	$link = $wp_rewrite->get_page_permastruct();
+
+	if ( ! empty( $link )
+	  && ( isset( $post->post_status ) && ! $draft_or_pending
+	    || $sample ) ) {
+		if ( ! $leavename ) {
+			$link = str_replace( '%pagename%', get_page_uri( $post ), $link );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -162,6 +168,8 @@ function _get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
  * <- wp-includes/link-template.php
  * @NOW 009: wp-includes/link-template.php
  */
+		}
+	}
 }
 
 /**

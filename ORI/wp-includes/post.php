@@ -3454,44 +3454,7 @@ function _page_traverse_name( $page_id, &$children, &$result ){
 	}
 }
 
-/**
- * Build the URI path for a page.
- *
- * Sub pages will be in the "directory" under the parent page post name.
- *
- * @since 1.5.0
- * @since 4.6.0 Converted the `$page` parameter to optional.
- *
- * @param WP_Post|object|int $page Optional. Page ID or WP_Post object. Default is global $post.
- * @return string|false Page URI, false on error.
- */
-function get_page_uri( $page = 0 ) {
-	if ( ! $page instanceof WP_Post ) {
-		$page = get_post( $page );
-	}
-
-	if ( ! $page )
-		return false;
-
-	$uri = $page->post_name;
-
-	foreach ( $page->ancestors as $parent ) {
-		$parent = get_post( $parent );
-		if ( $parent && $parent->post_name ) {
-			$uri = $parent->post_name . '/' . $uri;
-		}
-	}
-
-	/**
-	 * Filters the URI for a page.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param string  $uri  Page URI.
-	 * @param WP_Post $page Page object.
-	 */
-	return apply_filters( 'get_page_uri', $uri, $page );
-}
+// refactored. function get_page_uri( $page = 0 ) {}
 
 /**
  * Retrieve a list of pages (or hierarchical post type items).
