@@ -263,39 +263,7 @@ function get_post_permalink( $id = 0, $leavename = false, $sample = false ) {
 	return apply_filters( 'post_type_link', $post_link, $post, $leavename, $sample );
 }
 
-/**
- * Retrieves the permalink for the current page or page ID.
- *
- * Respects page_on_front. Use this one.
- *
- * @since 1.5.0
- *
- * @param int|WP_Post $post      Optional. Post ID or object. Default uses the global `$post`.
- * @param bool        $leavename Optional. Whether to keep the page name. Default false.
- * @param bool        $sample    Optional. Whether it should be treated as a sample permalink.
- *                               Default false.
- * @return string The page permalink.
- */
-function get_page_link( $post = false, $leavename = false, $sample = false ) {
-	$post = get_post( $post );
-
-	if ( 'page' == get_option( 'show_on_front' ) && $post->ID == get_option( 'page_on_front' ) )
-		$link = home_url('/');
-	else
-		$link = _get_page_link( $post, $leavename, $sample );
-
-	/**
-	 * Filters the permalink for a page.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $link    The page's permalink.
-	 * @param int    $post_id The ID of the page.
-	 * @param bool   $sample  Is it a sample permalink.
-	 */
-	return apply_filters( 'page_link', $link, $post->ID, $sample );
-}
-
+// refactored. function get_page_link( $post = false, $leavename = false, $sample = false ) {}
 // refactored. function _get_page_link( $post = false, $leavename = false, $sample = false ) {}
 
 /**

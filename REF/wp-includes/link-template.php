@@ -80,7 +80,6 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/link-template.php
- * -> wp-includes/link-template.php
  */
 	}
 }
@@ -111,16 +110,17 @@ function get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
 	$link = 'page' == get_option( 'show_on_front' ) && $post->ID == get_option( 'page_on_front' )
 		? home_url( '/' )
 		: _get_page_link( $post, $leavename, $sample );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * @NOW 008: wp-includes/link-template.php
- */
+
+	/**
+	 * Filters the permalink for a page.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $link    The page's permalink.
+	 * @param int    $post_id The ID of the page.
+	 * @param bool   $sample  Is it a sample permalink.
+	 */
+	return apply_filters( 'page_link', $link, $post->ID, $sample );
 }
 
 /**
