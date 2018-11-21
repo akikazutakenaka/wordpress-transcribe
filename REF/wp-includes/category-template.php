@@ -187,15 +187,7 @@ function get_term_parents_list( $term_id, $taxonomy, $args = array() )
 		$list .= $args['link']
 			? '<a href="' . esc_url( get_term_link( $parent->term_id, $taxonomy ) ) . '">' . $name . '</a>' . $args['separator']
 			: $name . $args['separator'];
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * @NOW 008: wp-includes/category-template.php
- */
 	}
+
+	return $list;
 }

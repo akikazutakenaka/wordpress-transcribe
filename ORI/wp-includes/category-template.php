@@ -1155,70 +1155,7 @@ function get_the_term_list( $id, $taxonomy, $before = '', $sep = '', $after = ''
 	return $before . join( $sep, $term_links ) . $after;
 }
 
-/**
- * Retrieve term parents with separator.
- *
- * @since 4.8.0
- *
- * @param int     $term_id  Term ID.
- * @param string  $taxonomy Taxonomy name.
- * @param string|array $args {
- *     Array of optional arguments.
- *
- *     @type string $format    Use term names or slugs for display. Accepts 'name' or 'slug'.
- *                             Default 'name'.
- *     @type string $separator Separator for between the terms. Default '/'.
- *     @type bool   $link      Whether to format as a link. Default true.
- *     @type bool   $inclusive Include the term to get the parents for. Default true.
- * }
- * @return string|WP_Error A list of term parents on success, WP_Error or empty string on failure.
- */
-function get_term_parents_list( $term_id, $taxonomy, $args = array() ) {
-	$list = '';
-	$term = get_term( $term_id, $taxonomy );
-
-	if ( is_wp_error( $term ) ) {
-		return $term;
-	}
-
-	if ( ! $term ) {
-		return $list;
-	}
-
-	$term_id = $term->term_id;
-
-	$defaults = array(
-		'format'    => 'name',
-		'separator' => '/',
-		'link'      => true,
-		'inclusive' => true,
-	);
-
-	$args = wp_parse_args( $args, $defaults );
-
-	foreach ( array( 'link', 'inclusive' ) as $bool ) {
-		$args[ $bool ] = wp_validate_boolean( $args[ $bool ] );
-	}
-
-	$parents = get_ancestors( $term_id, $taxonomy, 'taxonomy' );
-
-	if ( $args['inclusive'] ) {
-		array_unshift( $parents, $term_id );
-	}
-
-	foreach ( array_reverse( $parents ) as $term_id ) {
-		$parent = get_term( $term_id, $taxonomy );
-		$name   = ( 'slug' === $args['format'] ) ? $parent->slug : $parent->name;
-
-		if ( $args['link'] ) {
-			$list .= '<a href="' . esc_url( get_term_link( $parent->term_id, $taxonomy ) ) . '">' . $name . '</a>' . $args['separator'];
-		} else {
-			$list .= $name . $args['separator'];
-		}
-	}
-
-	return $list;
-}
+// refactored. function get_term_parents_list( $term_id, $taxonomy, $args = array() ) {}
 
 /**
  * Display the terms in a list.
