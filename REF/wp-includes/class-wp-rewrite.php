@@ -332,17 +332,23 @@ class WP_Rewrite
 		return ! empty( $this->permalink_structure );
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * <- wp-includes/link-template.php
- * @NOW 009: wp-includes/class-wp-rewrite.php
- */
+	/**
+	 * Retrieves an extra permalink structure by name.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param  string       $name Permalink structure name.
+	 * @return string|false False if not found.
+	 *                      Permalink structure string.
+	 */
+	public function get_extra_permastruct( $name )
+	{
+		return empty( $this->permalink_structure )
+			? FALSE
+			: ( isset( $this->extra_permastructs[ $name ] )
+				? $this->extra_permastructs[ $name ]['struct']
+				: FALSE );
+	}
 
 	/**
 	 * Retrieves the page permalink structure.

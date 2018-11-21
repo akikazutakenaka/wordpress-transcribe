@@ -299,23 +299,7 @@ class WP_Rewrite {
 		return $this->get_extra_permastruct('post_tag');
 	}
 
-	/**
-	 * Retrieves an extra permalink structure by name.
-	 *
-	 * @since 2.5.0
-	 *
-	 * @param string $name Permalink structure name.
-	 * @return string|false False if not found. Permalink structure string.
-	 */
-	public function get_extra_permastruct($name) {
-		if ( empty($this->permalink_structure) )
-			return false;
-
-		if ( isset($this->extra_permastructs[$name]) )
-			return $this->extra_permastructs[$name]['struct'];
-
-		return false;
-	}
+	// refactored. public function get_extra_permastruct($name) {}
 
 	/**
 	 * Retrieves the author permalink structure.
