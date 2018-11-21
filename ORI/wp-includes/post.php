@@ -311,38 +311,7 @@ function create_initial_post_types() {
 }
 
 // refactored. function get_attached_file( $attachment_id, $unfiltered = false ) {}
-
-/**
- * Update attachment file path based on attachment ID.
- *
- * Used to update the file path of the attachment, which uses post meta name
- * '_wp_attached_file' to store the path of the attachment.
- *
- * @since 2.1.0
- *
- * @param int    $attachment_id Attachment ID.
- * @param string $file          File path for the attachment.
- * @return bool True on success, false on failure.
- */
-function update_attached_file( $attachment_id, $file ) {
-	if ( !get_post( $attachment_id ) )
-		return false;
-
-	/**
-	 * Filters the path to the attached file to update.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string $file          Path to the attached file to update.
-	 * @param int    $attachment_id Attachment ID.
-	 */
-	$file = apply_filters( 'update_attached_file', $file, $attachment_id );
-
-	if ( $file = _wp_relative_upload_path( $file ) )
-		return update_post_meta( $attachment_id, '_wp_attached_file', $file );
-	else
-		return delete_post_meta( $attachment_id, '_wp_attached_file' );
-}
+// refactored. function update_attached_file( $attachment_id, $file ) {}
 
 /**
  * Return relative path to an uploaded file.

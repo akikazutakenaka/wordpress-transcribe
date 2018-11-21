@@ -49,6 +49,48 @@ function get_attached_file( $attachment_id, $unfiltered = FALSE )
 }
 
 /**
+ * Update attachment file path based on attachment ID.
+ *
+ * Used to update the file path of the attachment, which uses post meta name '_wp_attached_file' to store the path of the attachment.
+ *
+ * @since 2.1.0
+ *
+ * @param  int    $attachment_id Attachment ID.
+ * @param  string $file          File path for the attachment.
+ * @return bool   True on success, false on failure.
+ */
+function update_attached_file( $attachment_id, $file )
+{
+	if ( ! get_post( $attachment_id ) ) {
+		return FALSE;
+	}
+
+	/**
+	 * Filters the path to the attached file to update.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $file          Path to the attached file to update.
+	 * @param int    $attachment_id Attachment ID.
+	 */
+	$file = apply_filters( 'update_attached_file', $file, $attachment_id );
+
+	return ( $file = _wp_relative_upload_path( $file ) )
+		? update_post_meta( $attachment_id, '_wp_attached_file', $file )
+		: delete_post_meta( $attachment_id, '_wp_attached_file' );
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ */
+
+/**
  * Retrieves post data given a post ID or post object.
  *
  * See sanitize_post() for optional $filter values.
@@ -1318,6 +1360,11 @@ EOQ
 	// Set GUID.
 	if ( ! $update && '' == $current_guid ) {
 		$wpdb->update( $wpdb->posts, array( 'guid' => get_permalink( $post_ID ) ), $where );
+	}
+
+	if ( 'attachment' === $postarr['post_type'] ) {
+		if ( ! empty( $postarr['file'] ) ) {
+			update_attached_file( $post_ID, $postarr['file'] );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1325,7 +1372,9 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
+		}
 	}
 }
 
