@@ -327,17 +327,67 @@ function build_query( $data )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * <- wp-includes/link-template.php
- * <- wp-includes/functions.php
- * @NOW 010: wp-includes/functions.php
+ * From php.net (modified by Mark Jaquith to behave like the native PHP5 function).
+ *
+ * @since  3.2.0
+ * @access private
+ * @see    https://secure.php.net/manual/en/function.http-build-query.php
+ *
+ * @param  array|object $data      An array or object of data.
+ *                                 Converted to array.
+ * @param  string       $prefix    Optional.
+ *                                 Numeric index.
+ *                                 If set, start parameter numbering with it.
+ *                                 Default null.
+ * @param  string       $sep       Optional.
+ *                                 Argument separator; defaults to 'arg_separator.output'.
+ *                                 Default null.
+ * @param  string       $key       Optional.
+ *                                 Used to prefix key name.
+ *                                 Default empty.
+ * @param  bool         $urlencode Optional.
+ *                                 Whether to use urlencode() in the result.
+ *                                 Default true.
+ * @return string       The query string.
  */
+function _http_build_query( $data, $prefix = NULL, $sep = NULL, $key = '', $urlencode = TRUE )
+{
+	$ret = array();
+
+	foreach ( ( array ) $data as $k => $v ) {
+		if ( $urlencode ) {
+			$k = urlencode( $k );
+		}
+
+		if ( is_int( $k ) && $prefix != NULL ) {
+			$k = $prefix . $k;
+		}
+
+		if ( ! empty( $key ) ) {
+			$k = $key . '%5B' . $k . '%5D';
+		}
+
+		if ( $v === NULL ) {
+			continue;
+		} elseif ( $v === FALSE ) {
+			$v = '0';
+		}
+
+		if ( is_array( $v ) || is_object( $v ) ) {
+			array_push( $ret, _http_build_query( $v, '', $sep, $k, $urlencode ) );
+		} elseif ( $urlencode ) {
+			array_push( $ret, $k . '=' . urlencode( $v ) );
+		} else {
+			array_push( $ret, $k . '=' . $v );
+		}
+	}
+
+	if ( NULL === $sep ) {
+		$sep = ini_get( 'arg_separator.output' );
+	}
+
+	return implode( $sep, $ret );
+}
 
 /**
  * Retrieves a modified URL query string.
@@ -441,7 +491,6 @@ function add_query_arg()
  * <- wp-includes/link-template.php
  * <- wp-includes/link-template.php
  * @NOW 009: wp-includes/functions.php
- * -> wp-includes/functions.php
  */
 }
 
