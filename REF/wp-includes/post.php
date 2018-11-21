@@ -1386,6 +1386,17 @@ EOQ
 	if ( 'attachment' === $postarr['post_type'] ) {
 		if ( ! empty( $postarr['file'] ) ) {
 			update_attached_file( $post_ID, $postarr['file'] );
+		}
+
+		if ( ! empty( $postarr['context'] ) ) {
+			add_post_meta( $post_ID, '_wp_attachment__context', $postarr['context'], TRUE );
+		}
+	}
+
+	// Set or remove featured image.
+	if ( isset( $postarr['_thumbnail_id'] ) ) {
+		$thumbnail_support = current_theme_supports( 'post-thumbnails', $post_type ) && post_type_supports( $post_type, 'thumbnail' )
+		                  || 'revision' === $post_type;
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1394,7 +1405,6 @@ EOQ
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
  */
-		}
 	}
 }
 

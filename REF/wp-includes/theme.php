@@ -399,6 +399,76 @@ function get_raw_theme_root( $stylesheet_or_template, $skip_cache = FALSE )
 }
 
 /**
+ * Checks a theme's support for a given feature.
+ *
+ * @since  2.9.0
+ * @global array $_wp_theme_features
+ *
+ * @param  string $feature The feature being checked.
+ * @return bool
+ */
+function current_theme_supports( $feature )
+{
+	global $_wp_theme_features;
+
+	if ( 'custom-header-uploads' == $feature ) {
+		return current_theme_supports( 'custom-header', 'uploads' );
+	}
+
+	if ( ! isset( $_wp_theme_features[ $feature ] ) ) {
+		return FALSE;
+	}
+
+	// If no args passed then no extra checks need be performed.
+	if ( func_num_args() <= 1 ) {
+		return TRUE;
+	}
+
+	$args = array_slice( func_get_args(), 1 );
+
+	switch ( $feature ) {
+		case 'post-thumbnails':
+			/**
+			 * post-thumbnails can be registered for only certain content/post types by passing an array of types to add_theme_support().
+			 * If no array was passed, then any type is accepted.
+			 */
+			if ( TRUE === $_wp_theme_features[ $features ] ) { // Registered for all types
+				return TRUE;
+			}
+
+			$content_type = $args[0];
+			return in_array( $content_type, $_wp_theme_features[ $feature ][0] );
+
+		case 'html5':
+		case 'post-formats':
+			// Specific post formats can be registered by passing an array of types to add_theme_support().
+			$type = $args[0];
+			return in_array( $type, $_wp_theme_features[ $feature ][0] );
+
+		case 'custom-logo':
+		case 'custom-header':
+		case 'custom-background':
+			// Specific capabilities can be registered by passing an array to add_theme_support().
+			return isset( $_wp_theme_features[ $feature ][0][ $args[0] ] ) && $_wp_theme_features[ $feature ][0][ $args[0] ];
+	}
+
+	/**
+	 * Filters whether the current theme supports a specific feature.
+	 *
+	 * The dynamic portion of the hook name, `$feature`, refers to the specific theme feature.
+	 * Possible values include 'post-formats', 'post-thumbnails', 'custom-background', 'custom-header', 'menus', 'automatic-feed-links', 'html5', 'starter-content', and 'customize-selective-refresh-widgets'.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param bool   true     Whether the current theme supports the given feature.
+	 *                        Default true.
+	 * @param array  $args    Array of arguments for the feature.
+	 * @param string $feature The theme feature.
+	 */
+	return apply_filters( "current_theme_supports-{$feature}", TRUE, $args, $_wp_theme_features[ $feature ] );
+}
+
+/**
  * Filters changeset post data upon insert to ensure post_name is intact.
  *
  * This is needed to prevent the post_name from being dropped when the post is transitioned into pending status by a contributor.
