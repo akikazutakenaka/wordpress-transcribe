@@ -71,43 +71,5 @@ class WP_List_Util {
 		return $this->output;
 	}
 
-	/**
-	 * Callback to sort the list by specific fields.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @see WP_List_Util::sort()
-	 *
-	 * @param object|array $a One object to compare.
-	 * @param object|array $b The other object to compare.
-	 * @return int 0 if both objects equal. -1 if second object should come first, 1 otherwise.
-	 */
-	private function sort_callback( $a, $b ) {
-		if ( empty( $this->orderby ) ) {
-			return 0;
-		}
-
-		$a = (array) $a;
-		$b = (array) $b;
-
-		foreach ( $this->orderby as $field => $direction ) {
-			if ( ! isset( $a[ $field ] ) || ! isset( $b[ $field ] ) ) {
-				continue;
-			}
-
-			if ( $a[ $field ] == $b[ $field ] ) {
-				continue;
-			}
-
-			$results = 'DESC' === $direction ? array( 1, -1 ) : array( -1, 1 );
-
-			if ( is_numeric( $a[ $field ] ) && is_numeric( $b[ $field ] ) ) {
-				return ( $a[ $field ] < $b[ $field ] ) ? $results[0] : $results[1];
-			}
-
-			return 0 > strcmp( $a[ $field ], $b[ $field ] ) ? $results[0] : $results[1];
-		}
-
-		return 0;
-	}
+	// refactored. private function sort_callback( $a, $b ) {}
 }
