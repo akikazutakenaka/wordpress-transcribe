@@ -86,6 +86,32 @@ function get_permalink( $post = 0, $leavename = FALSE )
 }
 
 /**
+ * Retrieves the permalink for the current page or page ID.
+ *
+ * Respects page_on_front.
+ * Use this one.
+ *
+ * @since 1.5.0
+ *
+ * @param  int|WP_Post $post      Optional.
+ *                                Post ID or object.
+ *                                Default uses the global `$post`.
+ * @param  bool        $leavename Optional.
+ *                                Whether to keep the page name.
+ *                                Default false.
+ * @param  bool        $sample    Optional.
+ *                                Whether it should be treated as a sample permalink.
+ *                                Default false.
+ * @return string      The page permalink.
+ */
+function get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
+{
+	$post = get_post( $post );
+
+	$link = 'page' == get_option( 'show_on_front' ) && $post->ID == get_option( 'page_on_front' )
+		? home_url( '/' )
+		: _get_page_link( $post, $leavename, $sample );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -94,6 +120,20 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/link-template.php
+ * -> wp-includes/link-template.php
+ */
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/link-template.php
+ * @NOW 009: wp-includes/link-template.php
  */
 
 /**
