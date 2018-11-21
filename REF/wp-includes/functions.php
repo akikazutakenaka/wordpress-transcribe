@@ -394,7 +394,6 @@ function add_query_arg()
  * <- wp-includes/link-template.php
  * <- wp-includes/link-template.php
  * @NOW 009: wp-includes/functions.php
- * -> wp-includes/formatting.php
  */
 }
 

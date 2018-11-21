@@ -2037,17 +2037,17 @@ function stripslashes_from_strings_only( $value )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * <- wp-includes/link-template.php
- * <- wp-includes/functions.php
- * @NOW 010: wp-includes/formatting.php
+ * Navigates through an array, object, or scalar, and encodes the values to be used in a URL.
+ *
+ * @since 2.2.0
+ *
+ * @param  mixed $value The array or string to be encoded.
+ * @return mixed $value The encoded value.
  */
+function urlencode_deep( $value )
+{
+	return map_deep( $value, 'urlencode' );
+}
 
 /**
  * Verifies that an email is valid.

@@ -304,19 +304,7 @@ function sanitize_html_class( $class, $fallback = '' ) {
 
 // refactored. function convert_chars( $content, $deprecated = '' ) {}
 // :
-// refactored. function stripslashes_from_strings_only( $value ) {}
-
-/**
- * Navigates through an array, object, or scalar, and encodes the values to be used in a URL.
- *
- * @since 2.2.0
- *
- * @param mixed $value The array or string to be encoded.
- * @return mixed $value The encoded value.
- */
-function urlencode_deep( $value ) {
-	return map_deep( $value, 'urlencode' );
-}
+// refactored. function urlencode_deep( $value ) {}
 
 /**
  * Navigates through an array, object, or scalar, and raw-encodes the values to be used in a URL.
