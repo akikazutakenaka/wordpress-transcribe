@@ -1983,6 +1983,18 @@ function reset_mbstring_encoding()
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/category-template.php
+ * @NOW 009: wp-includes/functions.php
+ */
+
+/**
  * Get last changed date for the specified cache group.
  *
  * @since 4.7.0
