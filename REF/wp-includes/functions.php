@@ -1030,6 +1030,22 @@ function _wp_upload_dir( $time = NULL )
 }
 
 /**
+ * Retrieve the file type from the file name.
+ *
+ * You can optionally define the mime array, if needed.
+ *
+ * @since 2.0.4
+ *
+ * @param  string $filename File name or path.
+ * @param  array  $mimes    Optional.
+ *                          Key is the file extension with value as the mime type.
+ * @return array  Values with extension first and mime type.
+ */
+function wp_check_filetype( $filename, $mimes = NULL )
+{
+	if ( empty( $mimes ) ) {
+		$mimes = get_allowed_mime_types();
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -1038,6 +1054,21 @@ function _wp_upload_dir( $time = NULL )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/functions.php
+ * -> wp-includes/functions.php
+ */
+	}
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/functions.php
+ * @NOW 009: wp-includes/functions.php
  */
 
 /**
