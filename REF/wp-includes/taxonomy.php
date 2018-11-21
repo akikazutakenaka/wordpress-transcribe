@@ -2876,6 +2876,117 @@ EOQ
 }
 
 /**
+ * Generate a permalink for a taxonomy term archive.
+ *
+ * @since  2.5.0
+ * @global WP_Rewrite $wp_rewrite
+ *
+ * @param  object|int|string $term     The term object, ID, or slug whose link will be retrieved.
+ * @param  string            $taxonomy Optional.
+ *                                     Taxonomy.
+ *                                     Default empty.
+ * @return string|WP_Error   HTML link to taxonomy term archive on success, WP_Error if term does not exist.
+ */
+function get_term_link( $term, $taxonomy = '' )
+{
+	global $wp_rewrite;
+
+	if ( ! is_object( $term ) ) {
+		$term = is_int( $term )
+			? get_term( $term, $taxonomy )
+			: get_term_by( 'slug', $term, $taxonomy );
+	}
+
+	if ( ! is_object( $term ) ) {
+		$term = new WP_Error( 'invalid_term', __( 'Empty Term.' ) );
+	}
+
+	if ( is_wp_error( $term ) ) {
+		return $term;
+	}
+
+	$taxonomy = $term->taxonomy;
+	$termlink = $wp_rewrite->get_extra_permastruct( $taxonomy );
+
+	/**
+	 * Filters the permalink structure for a terms before token replacement occurs.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string  $termlink The permalink structure for the term's taxonomy.
+	 * @param WP_Term $term     The term object.
+	 */
+	$termlink = apply_filters( 'pre_term_link', $termlink, $term );
+
+	$slug = $term->slug;
+	$t = get_taxonomy( $taxonomy );
+
+	if ( empty( $termlink ) ) {
+		$termlink = 'category' == $taxonomy
+			? '?cat=' . $term->term_id
+			: ( $t->query_var
+				? "?$t->query_var=$slug"
+				: "?taxonomy=$taxonomy&term=$slug" );
+
+		$termlink = home_url( $termlink );
+	} else {
+		if ( $t->rewrite['hierarchical'] ) {
+			$hierarchical_slugs = array();
+			$ancestors = get_ancestors( $term->term_id, $taxonomy, 'taxonomy' );
+
+			foreach ( ( array ) $ancestors as $ancestor ) {
+				$ancestor_term = get_term( $ancestor, $taxonomy );
+				$hierarchical_slugs[] = $ancestor_term->slug;
+			}
+
+			$hierarchical_slugs = array_reverse( $hierarchical_slugs );
+			$hierarchical_slugs[] = $slug;
+			$termlink = str_replace( "%$taxonomy%", implode( '/', $hierarchical_slugs ), $termlink );
+		} else {
+			$termlink = str_replace( "%$taxonomy%", $slug, $termlink );
+		}
+
+		$termlink = home_url( user_trailingslashit( $termlink, 'category' ) );
+	}
+
+	// Back Compat filters.
+	if ( 'post_tag' == $taxonomy ) {
+		/**
+		 * Filters the tag link.
+		 *
+		 * @since      2.3.0
+		 * @deprecated 3.5.0 Use 'term_link' instead.
+		 *
+		 * @param string $termlink Tag link URL.
+		 * @param int    $term_id  Term ID.
+		 */
+		$termlink = apply_filters( 'tag_link', $termlink, $term->term_id );
+	} elseif ( 'category' == $taxonomy ) {
+		/**
+		 * Filters the category link.
+		 *
+		 * @since      1.5.0
+		 * @deprecated 2.5.0 Use 'term_link' instead.
+		 *
+		 * @param string $termlink Category link URL.
+		 * @param int    $term_id  Term ID.
+		 */
+		$termlink = apply_filters( 'category_link', $termlink, $term->term_id );
+	}
+
+	/**
+	 * Filters the term link.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param string $termlink Term link URL.
+	 * @param object $term     Term object.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	return apply_filters( 'term_link', $termlink, $term, $taxonomy );
+}
+
+/**
 * Determine if the given object type is associated with the given taxonomy.
 *
 * @since 3.0.0

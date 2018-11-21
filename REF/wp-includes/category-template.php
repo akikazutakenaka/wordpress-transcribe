@@ -172,6 +172,21 @@ function get_term_parents_list( $term_id, $taxonomy, $args = array() )
 	}
 
 	$parents = get_ancestors( $term_id, $taxonomy, 'taxonomy' );
+
+	if ( $args['inclusive'] ) {
+		array_unshift( $parents, $term_id );
+	}
+
+	foreach ( array_reverse( $parents ) as $term_id ) {
+		$parent = get_term( $term_id, $taxonomy );
+
+		$name = 'slug' === $args['format']
+			? $parent->slug
+			: $parent->name;
+
+		$list .= $args['link']
+			? '<a href="' . esc_url( get_term_link( $parent->term_id, $taxonomy ) ) . '">' . $name . '</a>' . $args['separator']
+			: $name . $args['separator'];
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -182,4 +197,5 @@ function get_term_parents_list( $term_id, $taxonomy, $args = array() )
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/category-template.php
  */
+	}
 }
