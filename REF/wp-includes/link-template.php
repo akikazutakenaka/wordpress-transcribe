@@ -72,6 +72,8 @@ function get_permalink( $post = 0, $leavename = FALSE )
 
 	if ( $post->post_type == 'page' ) {
 		return get_page_link( $post, $leavename, $sample );
+	} elseif ( $post->post_type == 'attachment' ) {
+		return get_attachment_link( $post, $leavename );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -173,6 +175,71 @@ function _get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
 	 * @param int    $post_id The ID of the page.
 	 */
 	return apply_filters( '_get_page_link', $link, $post->ID );
+}
+
+/**
+ * Retrieves the permalink for an attachment.
+ *
+ * This can be used in the WordPress Loop or outside of it.
+ *
+ * @since  2.0.0
+ * @global WP_Rewrite $wp_rewrite
+ *
+ * @param  int|object $post      Optional.
+ *                               Post ID or object.
+ *                               Default uses the global `$post`.
+ * @param  bool       $leavename Optional.
+ *                               Whether to keep the page name.
+ *                               Default false.
+ * @return string     The attachment permalink.
+ */
+function get_attachment_link( $post = NULL, $leavename = FALSE )
+{
+	global $wp_rewrite;
+	$link = FALSE;
+	$post = get_post( $post );
+
+	$parent = $post->post_parent > 0 && $post->post_parent != $post->ID
+		? get_post( $post->post_parent )
+		: 0;
+
+	if ( $parent && ! in_array( $parent->post_type, get_post_types() ) ) {
+		$parent = FALSE;
+	}
+
+	if ( $wp_rewrite->using_permalinks() && $parent ) {
+		$parentlink = 'page' == $parent->post_type
+			? _get_page_link( $post->post_parent ) // Ignores page_on_front
+			: get_permalink( $post->parent );
+
+		$name = is_numeric( $post->post_name ) || FALSE !== strpos( get_option( 'permalink_structure' ), '%category%' )
+			? 'attachment/' . $post->post_name // <permalink>/<int>/ is paged so we use the explicit attachment marker.
+			: $post->post_name;
+
+		if ( strpos( $parentlink, '?' ) === FALSE ) {
+			$link = user_trailingslashit( trailingslashit( $parentlink ) . '%postname%' );
+		}
+
+		if ( ! $leavename ) {
+			$link = str_replace( '%postname%', $name, $link );
+		}
+	} elseif ( $wp_rewrite->using_permalinks() && ! $leavename ) {
+		$link = home_url( user_trailingslashit( $post->post_name ) );
+	}
+
+	if ( ! $link ) {
+		$link = home_url( '/?attachment_id=' . $post->ID );
+	}
+
+	/**
+	 * Filters the permalink for an attachment.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $link    The attachment's permalink.
+	 * @param int    $post_id Attachment ID.
+	 */
+	return apply_filters( 'attachment_link', $link, $post->ID );
 }
 
 /**

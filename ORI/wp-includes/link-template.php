@@ -264,65 +264,8 @@ function get_post_permalink( $id = 0, $leavename = false, $sample = false ) {
 }
 
 // refactored. function get_page_link( $post = false, $leavename = false, $sample = false ) {}
-// refactored. function _get_page_link( $post = false, $leavename = false, $sample = false ) {}
-
-/**
- * Retrieves the permalink for an attachment.
- *
- * This can be used in the WordPress Loop or outside of it.
- *
- * @since 2.0.0
- *
- * @global WP_Rewrite $wp_rewrite
- *
- * @param int|object $post      Optional. Post ID or object. Default uses the global `$post`.
- * @param bool       $leavename Optional. Whether to keep the page name. Default false.
- * @return string The attachment permalink.
- */
-function get_attachment_link( $post = null, $leavename = false ) {
-	global $wp_rewrite;
-
-	$link = false;
-
-	$post = get_post( $post );
-	$parent = ( $post->post_parent > 0 && $post->post_parent != $post->ID ) ? get_post( $post->post_parent ) : false;
-	if ( $parent && ! in_array( $parent->post_type, get_post_types() ) ) {
-		$parent = false;
-	}
-
-	if ( $wp_rewrite->using_permalinks() && $parent ) {
-		if ( 'page' == $parent->post_type )
-			$parentlink = _get_page_link( $post->post_parent ); // Ignores page_on_front
-		else
-			$parentlink = get_permalink( $post->post_parent );
-
-		if ( is_numeric($post->post_name) || false !== strpos(get_option('permalink_structure'), '%category%') )
-			$name = 'attachment/' . $post->post_name; // <permalink>/<int>/ is paged so we use the explicit attachment marker
-		else
-			$name = $post->post_name;
-
-		if ( strpos($parentlink, '?') === false )
-			$link = user_trailingslashit( trailingslashit($parentlink) . '%postname%' );
-
-		if ( ! $leavename )
-			$link = str_replace( '%postname%', $name, $link );
-	} elseif ( $wp_rewrite->using_permalinks() && ! $leavename ) {
-		$link = home_url( user_trailingslashit( $post->post_name ) );
-	}
-
-	if ( ! $link )
-		$link = home_url( '/?attachment_id=' . $post->ID );
-
-	/**
-	 * Filters the permalink for an attachment.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $link    The attachment's permalink.
-	 * @param int    $post_id Attachment ID.
-	 */
-	return apply_filters( 'attachment_link', $link, $post->ID );
-}
+// :
+// refactored. function get_attachment_link( $post = null, $leavename = false ) {}
 
 /**
  * Retrieves the permalink for the year archives.
