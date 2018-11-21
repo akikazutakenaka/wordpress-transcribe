@@ -576,15 +576,12 @@ function update_post_meta( $post_id, $meta_key, $meta_value, $prev_value = '' )
 	}
 
 	$updated = update_metadata( 'post', $post_id, $meta_key, $meta_value, $prev_value );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/post.php
- */
+
+	if ( $updated ) {
+		wp_cache_set( 'last_changed', microtime(), 'posts' );
+	}
+
+	return $updated;
 }
 
 /**
@@ -1320,7 +1317,6 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/post.php
  */
 		}
 	}

@@ -1362,44 +1362,8 @@ function is_post_type_viewable( $post_type ) {
 }
 
 // refactored. function get_posts( $args = null ) {}
-
-//
-// Post meta functions
-//
-
-// refactored. function add_post_meta( $post_id, $meta_key, $meta_value, $unique = false ) {}
 // :
-// refactored. function get_post_meta( $post_id, $key = '', $single = false ) {}
-
-/**
- * Update post meta field based on post ID.
- *
- * Use the $prev_value parameter to differentiate between meta fields with the
- * same key and post ID.
- *
- * If the meta field for the post does not exist, it will be added.
- *
- * @since 1.5.0
- *
- * @param int    $post_id    Post ID.
- * @param string $meta_key   Metadata key.
- * @param mixed  $meta_value Metadata value. Must be serializable if non-scalar.
- * @param mixed  $prev_value Optional. Previous value to check before removing.
- *                           Default empty.
- * @return int|bool Meta ID if the key didn't exist, true on successful update,
- *                  false on failure.
- */
-function update_post_meta( $post_id, $meta_key, $meta_value, $prev_value = '' ) {
-	// Make sure meta is added to the post, not a revision.
-	if ( $the_post = wp_is_post_revision($post_id) )
-		$post_id = $the_post;
-
-	$updated = update_metadata( 'post', $post_id, $meta_key, $meta_value, $prev_value );
-	if ( $updated ) {
-		wp_cache_set( 'last_changed', microtime(), 'posts' );
-	}
-	return $updated;
-}
+// refactored. function update_post_meta( $post_id, $meta_key, $meta_value, $prev_value = '' ) {}
 
 /**
  * Delete everything from post meta matching meta key.
