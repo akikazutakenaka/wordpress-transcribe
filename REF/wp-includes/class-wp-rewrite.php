@@ -332,6 +332,18 @@ class WP_Rewrite
 		return ! empty( $this->permalink_structure );
 	}
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/link-template.php
+ * @NOW 009: wp-includes/class-wp-rewrite.php
+ */
+
 	/**
 	 * Retrieves the page permalink structure.
 	 *

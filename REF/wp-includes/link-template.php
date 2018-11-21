@@ -74,6 +74,8 @@ function get_permalink( $post = 0, $leavename = FALSE )
 		return get_page_link( $post, $leavename, $sample );
 	} elseif ( $post->post_type == 'attachment' ) {
 		return get_attachment_link( $post, $leavename );
+	} elseif ( in_array( $post->post_type, get_post_types( array( '_builtin' => FALSE ) ) ) ) {
+		return get_post_permalink( $post, $leavename, $sample );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -82,8 +84,47 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/link-template.php
+ * -> wp-includes/link-template.php
  */
 	}
+}
+
+/**
+ * Retrieves the permalink for a post of a custom post type.
+ *
+ * @since  3.0.0
+ * @global WP_Rewrite $wp_rewrite
+ *
+ * @param  int|WP_Post     $id        Optional.
+ *                                    Post ID or post object.
+ *                                    Default is the global `$post`.
+ * @param  bool            $leavename Optional, defaults to false.
+ *                                    Whether to keep post name.
+ * @param  bool            $sample    Optional, defaults to false.
+ *                                    Is it a sample permalink.
+ * @return string|WP_Error The post permalink.
+ */
+function get_post_permalink( $id = 0, $leavename = FALSE, $sample = FALSE )
+{
+	global $wp_rewrite;
+	$post = get_post( $id );
+
+	if ( is_wp_error( $post ) ) {
+		return $post;
+	}
+
+	$post_link = $wp_rewrite->get_extra_permastruct( $post->post_type );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * @NOW 008: wp-includes/link-template.php
+ * -> wp-includes/class-wp-rewrite.php
+ */
 }
 
 /**
