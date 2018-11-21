@@ -8,6 +8,40 @@
  */
 
 /**
+ * Retrieve category parents with separator.
+ *
+ * @since 1.2.0
+ * @since 4.8.0 The `$visited` parameter was deprecated and renamed to `$deprecated`.
+ *
+ * @param  int             $id         Category ID.
+ * @param  bool            $link       Optional, default is false.
+ *                                     Whether to format with link.
+ * @param  string          $separator  Optional, default is '/'.
+ *                                     How to separate categories.
+ * @param  bool            $nicename   Optional, default is false.
+ *                                     Whether to use nice name for display.
+ * @param  array           $deprecated Not used.
+ * @return string|WP_Error A list of category parents on success, WP_Error on failure.
+ */
+function get_category_parents( $id, $link = FALSE, $separator = '/', $nicename = FALSE, $deprecated = array() )
+{
+	if ( ! empty( $deprecated ) ) {
+		_deprecated_argument( __FUNCTION__, '4.8.0' );
+	}
+
+	$format = $nicename
+		? 'slug'
+		: 'name';
+
+	$args = array(
+		'separator' => $separator,
+		'link'      => $link,
+		'format'    => $format
+	);
+	return get_term_parents_list( $id, 'category', $args );
+}
+
+/**
  * Retrieve post categories.
  *
  * This tag may be used outside The Loop by passing a post id as the parameter.
@@ -88,3 +122,14 @@ function get_the_terms( $post, $taxonomy )
 		? FALSE
 		: $terms;
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * @NOW 008: wp-includes/category-template.php
+ */

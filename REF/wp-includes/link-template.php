@@ -102,6 +102,23 @@ function get_permalink( $post = 0, $leavename = FALSE )
 
 			if ( $cats ) {
 				$cats = wp_list_sort( $cats, array( 'term_id' => 'ASC' ) );
+
+				/**
+				 * Filters the category that gets used in the %category% permalink token.
+				 *
+				 * @since 3.5.0
+				 *
+				 * @param WP_Term $cat  The category to use in the permalink.
+				 * @param array   $cats Array of all categories (WP_Term objects) associated with the post.
+				 * @param WP_Post $post The post in question.
+				 */
+				$category_object = apply_filters( 'post_link_category', $cats[0], $cats, $post );
+
+				$category_object = get_term( $category_object, 'category' );
+				$category = $category_object->slug;
+
+				if ( $parent = $category_object->parent ) {
+					$category = get_category_parents( $parent, FALSE, '/', TRUE ) . $category;
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -110,7 +127,9 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/link-template.php
+ * -> wp-includes/category-template.php
  */
+				}
 			}
 		}
 	}
