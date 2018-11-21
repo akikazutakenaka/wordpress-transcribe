@@ -120,7 +120,6 @@ function get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/link-template.php
- * -> wp-includes/link-template.php
  */
 }
 
@@ -157,19 +156,23 @@ function _get_page_link( $post = FALSE, $leavename = FALSE, $sample = FALSE )
 	    || $sample ) ) {
 		if ( ! $leavename ) {
 			$link = str_replace( '%pagename%', get_page_uri( $post ), $link );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * <- wp-includes/link-template.php
- * @NOW 009: wp-includes/link-template.php
- */
 		}
+
+		$link = home_url( $link );
+		$link = user_trailingslashit( $link, 'page' );
+	} else {
+		$link = home_url( '?page_id=' . $post->ID );
 	}
+
+	/**
+	 * Filters the permalink for a non-page_on_front page.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $link    The page's permalink.
+	 * @param int    $post_id The ID of the page.
+	 */
+	return apply_filters( '_get_page_link', $link, $post->ID );
 }
 
 /**

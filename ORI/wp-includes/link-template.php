@@ -296,52 +296,7 @@ function get_page_link( $post = false, $leavename = false, $sample = false ) {
 	return apply_filters( 'page_link', $link, $post->ID, $sample );
 }
 
-/**
- * Retrieves the page permalink.
- *
- * Ignores page_on_front. Internal use only.
- *
- * @since 2.1.0
- * @access private
- *
- * @global WP_Rewrite $wp_rewrite
- *
- * @param int|WP_Post $post      Optional. Post ID or object. Default uses the global `$post`.
- * @param bool        $leavename Optional. Whether to keep the page name. Default false.
- * @param bool        $sample    Optional. Whether it should be treated as a sample permalink.
- *                               Default false.
- * @return string The page permalink.
- */
-function _get_page_link( $post = false, $leavename = false, $sample = false ) {
-	global $wp_rewrite;
-
-	$post = get_post( $post );
-
-	$draft_or_pending = in_array( $post->post_status, array( 'draft', 'pending', 'auto-draft' ) );
-
-	$link = $wp_rewrite->get_page_permastruct();
-
-	if ( !empty($link) && ( ( isset($post->post_status) && !$draft_or_pending ) || $sample ) ) {
-		if ( ! $leavename ) {
-			$link = str_replace('%pagename%', get_page_uri( $post ), $link);
-		}
-
-		$link = home_url($link);
-		$link = user_trailingslashit($link, 'page');
-	} else {
-		$link = home_url( '?page_id=' . $post->ID );
-	}
-
-	/**
-	 * Filters the permalink for a non-page_on_front page.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string $link    The page's permalink.
-	 * @param int    $post_id The ID of the page.
-	 */
-	return apply_filters( '_get_page_link', $link, $post->ID );
-}
+// refactored. function _get_page_link( $post = false, $leavename = false, $sample = false ) {}
 
 /**
  * Retrieves the permalink for an attachment.
