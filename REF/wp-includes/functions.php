@@ -481,17 +481,11 @@ function add_query_arg()
 	}
 
 	$ret = build_query( $qs );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * <- wp-includes/link-template.php
- * @NOW 009: wp-includes/functions.php
- */
+	$ret = trim( $ret, '?' );
+	$ret = preg_replace( '#=(&|$)#', '$1', $ret );
+	$ret = $protocol . $base . $ret . $frag;
+	$ret = rtrim( $ret, '?' );
+	return $ret;
 }
 
 /**

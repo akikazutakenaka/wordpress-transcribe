@@ -145,7 +145,6 @@ function get_post_permalink( $id = 0, $leavename = FALSE, $sample = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/link-template.php
- * -> wp-includes/functions.php
  */
 	}
 }
