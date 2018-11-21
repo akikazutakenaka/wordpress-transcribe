@@ -551,6 +551,44 @@ function get_post_meta( $post_id, $key = '', $single = FALSE )
 }
 
 /**
+ * Update post meta field based on post ID.
+ *
+ * Use the $prev_value parameter to differentiate between meta fields with the same key and post ID.
+ *
+ * If the meta field for the post does not exist, it will be added.
+ *
+ * @since 1.5.0
+ *
+ * @param  int      $post_id    Post ID.
+ * @param  string   $meta_key   Metadata key.
+ * @param  mixed    $meta_value Metadata value.
+ *                              Must be serializable if non-scalar.
+ * @param  mixed    $prev_value Optional.
+ *                              Previous value to check before removing.
+ *                              Default empty.
+ * @return int|bool Meta ID if the key didn't exist, true on successful update, false on failure.
+ */
+function update_post_meta( $post_id, $meta_key, $meta_value, $prev_value = '' )
+{
+	// Make sure meta is added to the post, not a revision.
+	if ( $the_post = wp_is_post_revision( $post_id ) ) {
+		$post_id = $the_post;
+	}
+
+	$updated = update_metadata( 'post', $post_id, $meta_key, $meta_value, $prev_value );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/post.php
+ * -> wp-includes/meta.php
+ */
+}
+
+/**
  * Sanitize every post field.
  *
  * If the context is 'raw', then the post object or array will get minimal sanitization of the integer fields.
@@ -1250,6 +1288,32 @@ EOQ
 
 	if ( isset( $postarr['tags_input'] ) && is_object_in_taxonomy( $post_type, 'post_tag' ) ) {
 		wp_set_post_tags( $post_ID, $postarr['tags_input'] );
+	}
+
+	// New-style support for all custom taxonomies.
+	if ( ! empty( $postarr['tax_input'] ) ) {
+		foreach ( $postarr['tax_input'] as $taxonomy => $tags ) {
+			$taxonomy_obj = get_taxonomy( $taxonomy );
+
+			if ( ! $taxonomy_obj ) {
+				_doing_it_wrong( __FUNCTION__, sprintf( __( 'Invalid taxonomy: %s.' ), $taxonomy ), '4.4.0' );
+				continue;
+			}
+
+			// Array = hierarchical, string = non-hierarchical.
+			if ( is_array( $tags ) ) {
+				$tags = array_filter( $tags );
+			}
+
+			if ( current_user_can( $taxonomy_obj->cap->assign_terms ) ) {
+				wp_set_post_terms( $post_ID, $tags, $taxonomy );
+			}
+		}
+	}
+
+	if ( ! empty( $postarr['meta_input'] ) ) {
+		foreach ( $postarr['meta_input'] as $field => $value ) {
+			update_post_meta( $post_ID, $field, $value );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1257,7 +1321,9 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/post.php
  */
+		}
 	}
 }
 
