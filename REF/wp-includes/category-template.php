@@ -169,6 +169,9 @@ function get_term_parents_list( $term_id, $taxonomy, $args = array() )
 
 	foreach ( array( 'link', 'inclusive' ) as $bool ) {
 		$args[ $bool ] = wp_validate_boolean( $args[ $bool ] );
+	}
+
+	$parents = get_ancestors( $term_id, $taxonomy, 'taxonomy' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -179,5 +182,4 @@ function get_term_parents_list( $term_id, $taxonomy, $args = array() )
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/category-template.php
  */
-	}
 }
