@@ -42,7 +42,6 @@ function get_the_category( $id = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/category-template.php
- * -> wp-includes/category.php
  */
 	}
 }
