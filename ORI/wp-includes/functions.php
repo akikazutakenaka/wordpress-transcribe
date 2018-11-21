@@ -1282,34 +1282,7 @@ function wp_ext2type( $ext ) {
 			return $type;
 }
 
-/**
- * Retrieve the file type from the file name.
- *
- * You can optionally define the mime array, if needed.
- *
- * @since 2.0.4
- *
- * @param string $filename File name or path.
- * @param array  $mimes    Optional. Key is the file extension with value as the mime type.
- * @return array Values with extension first and mime type.
- */
-function wp_check_filetype( $filename, $mimes = null ) {
-	if ( empty($mimes) )
-		$mimes = get_allowed_mime_types();
-	$type = false;
-	$ext = false;
-
-	foreach ( $mimes as $ext_preg => $mime_match ) {
-		$ext_preg = '!\.(' . $ext_preg . ')$!i';
-		if ( preg_match( $ext_preg, $filename, $ext_matches ) ) {
-			$type = $mime_match;
-			$ext = $ext_matches[1];
-			break;
-		}
-	}
-
-	return compact( 'ext', 'type' );
-}
+// refactored. function wp_check_filetype( $filename, $mimes = null ) {}
 
 /**
  * Attempt to determine the real file type of a file.

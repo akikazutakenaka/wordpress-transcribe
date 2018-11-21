@@ -2006,7 +2006,6 @@ function wp_attachment_is( $type, $post = NULL )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
- * -> wp-includes/functions.php
  */
 }
 
