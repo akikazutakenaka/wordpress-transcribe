@@ -309,6 +309,37 @@ function maybe_serialize( $data )
 }
 
 /**
+ * Build URL query based on an associative and, or indexed array.
+ *
+ * This is a convenient function for easily building url queries.
+ * It sets the separator to '&' and uses _http_build_query() function.
+ *
+ * @since 2.3.0
+ * @see   _http_build_query() Used to build the query.
+ * @link  https://secure.php.net/manual/en/function.http-build-query.php for more on what http_build_query() does.
+ *
+ * @param  array  $data URL-encode key/value pairs.
+ * @return string URL-encoded string.
+ */
+function build_query( $data )
+{
+	return _http_build_query( $data, NULL, '&', '', FALSE );
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/functions.php
+ * @NOW 010: wp-includes/functions.php
+ */
+
+/**
  * Retrieves a modified URL query string.
  *
  * You can rebuild the URL and append query variables to the URL query by using this function.
@@ -384,6 +415,22 @@ function add_query_arg()
 
 	wp_parse_str( $query, $qs );
 	$qs = urlencode_deep( $qs ); // This re-URL-encodes things that were already in the query string.
+
+	if ( is_array( $args[0] ) ) {
+		foreach ( $args[0] as $k => $v ) {
+			$qs[ $k ] = $v;
+		}
+	} else {
+		$qs[ $args[0] ] = $args[1];
+	}
+
+	foreach ( $qs as $k => $v ) {
+		if ( $v === FALSE ) {
+			unset( $qs[ $k ] );
+		}
+	}
+
+	$ret = build_query( $qs );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -394,6 +441,7 @@ function add_query_arg()
  * <- wp-includes/link-template.php
  * <- wp-includes/link-template.php
  * @NOW 009: wp-includes/functions.php
+ * -> wp-includes/functions.php
  */
 }
 
