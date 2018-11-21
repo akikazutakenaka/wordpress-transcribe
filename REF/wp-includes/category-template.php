@@ -33,17 +33,18 @@ function get_the_category( $id = FALSE )
 
 	foreach ( array_keys( $categories ) as $key ) {
 		_make_cat_compat( $categories[ $key ] );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/link-template.php
- * @NOW 008: wp-includes/category-template.php
- */
 	}
+
+	/**
+	 * Filters the array of categories to return for a post.
+	 *
+	 * @since 3.1.0
+	 * @since 4.4.0 Added `$id` parameter.
+	 *
+	 * @param array $categories An array of categories to return for the post.
+	 * @param int   $id         ID of the post.
+	 */
+	return apply_filters( 'get_the_categories', $categories, $id );
 }
 
 /**

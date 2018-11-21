@@ -58,41 +58,7 @@ function get_category_parents( $id, $link = false, $separator = '/', $nicename =
 	return get_term_parents_list( $id, 'category', $args );
 }
 
-/**
- * Retrieve post categories.
- *
- * This tag may be used outside The Loop by passing a post id as the parameter.
- *
- * Note: This function only returns results from the default "category" taxonomy.
- * For custom taxonomies use get_the_terms().
- *
- * @since 0.71
- *
- * @param int $id Optional, default to current post ID. The post ID.
- * @return array Array of WP_Term objects, one for each category assigned to the post.
- */
-function get_the_category( $id = false ) {
-	$categories = get_the_terms( $id, 'category' );
-	if ( ! $categories || is_wp_error( $categories ) )
-		$categories = array();
-
-	$categories = array_values( $categories );
-
-	foreach ( array_keys( $categories ) as $key ) {
-		_make_cat_compat( $categories[$key] );
-	}
-
-	/**
-	 * Filters the array of categories to return for a post.
-	 *
-	 * @since 3.1.0
-	 * @since 4.4.0 Added `$id` parameter.
-	 *
-	 * @param array $categories An array of categories to return for the post.
-	 * @param int   $id         ID of the post.
-	 */
-	return apply_filters( 'get_the_categories', $categories, $id );
-}
+// refactored. function get_the_category( $id = false ) {}
 
 /**
  * Retrieve category name based on category ID.

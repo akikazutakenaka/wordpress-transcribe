@@ -107,7 +107,6 @@ function get_permalink( $post = 0, $leavename = FALSE )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/link-template.php
- * -> wp-includes/category-template.php
  */
 		}
 	}
