@@ -1054,7 +1054,6 @@ function wp_check_filetype( $filename, $mimes = NULL )
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 008: wp-includes/functions.php
- * -> wp-includes/functions.php
  */
 	}
 }
@@ -1204,17 +1203,28 @@ function wp_get_mime_types()
 function get_allowed_mime_types( $user = NULL )
 {
 	$t = wp_get_mime_types();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/functions.php
- * @NOW 009: wp-includes/functions.php
- */
+	unset( $t['swf'], $t['exe'] );
+
+	if ( function_exists( 'current_user_can' ) ) {
+		$unfiltered = $user
+			? user_can( $user, 'unfiltered_html' )
+			: current_user_can( 'unfiltered_html' );
+	}
+
+	if ( empty( $unfiltered ) ) {
+		unset( $t['htm|html'], $t['js'] );
+	}
+
+	/**
+	 * Filters list of allowed mime types and file extensions.
+	 *
+	 * @since 2.0.0
+	 * @param array            $t    Mime types keyed by the file extension regex corresponding to those types.
+	 *                               'swf' and 'exe' removed from full list.
+	 *                               'htm|html' also removed depending on '$user' capabilities.
+	 * @param int|WP_User|null $user User ID, User object or null if not provided (indicates current user).
+	 */
+	return apply_filters( 'upload_mimes', $t, $user );
 }
 
 /**
