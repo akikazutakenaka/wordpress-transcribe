@@ -177,6 +177,41 @@ class WP_List_Util
 		return $this->output;
 	}
 
+	/**
+	 * Sorts the list, based on one or more orderby arguments.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param  string|array $orderby       Optional.
+	 *                                     Either the field name to order by or an array of mutiple orderby fields as $orderby => $order.
+	 * @param  string       $order         Optional.
+	 *                                     Either 'ASC' or 'DESC'.
+	 *                                     Only used if $orderby is a string.
+	 * @param  bool         $preserve_keys Optional.
+	 *                                     Whether to preserve keys.
+	 *                                     Default false.
+	 * @return array        The sorted array.
+	 */
+	public function sort( $orderby = array(), $order = 'ASC', $preserve_keys = FALSE )
+	{
+		if ( empty( $orderby ) ) {
+			return $this->output;
+		}
+
+		if ( is_string( $orderby ) ) {
+			$orderby = array( $orderby => $order );
+		}
+
+		foreach ( $orderby as $field => $direction ) {
+			$orderby[ $field ] = 'DESC' === strtoupper( $direction )
+				? 'DESC'
+				: 'ASC';
+		}
+
+		$this->orderby = $orderby;
+
+		if ( $preserve_keys ) {
+			uasort( $this->output, array( $this, 'sort_callback' ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -186,5 +221,20 @@ class WP_List_Util
  * <- wp-includes/post.php
  * <- wp-includes/link-template.php
  * @NOW 008: wp-includes/class-wp-list-util.php
+ * -> wp-includes/class-wp-list-util.php
+ */
+		}
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/link-template.php
+ * <- wp-includes/class-wp-list-util.php
+ * @NOW 009: wp-includes/class-wp-list-util.php
  */
 }
