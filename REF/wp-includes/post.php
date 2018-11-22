@@ -2019,6 +2019,12 @@ function wp_get_attachment_url( $attachment_id = 0 )
 				: ( FALSE !== strpos( $file, 'wp-content/uploads' )
 					? trailingslashit( $uploads['baseurl'] . '/' . _wp_get_attachment_relative_path( $file ) ) . basename( $file ) // Get the directory name relative to the basedir (back compat for pre-2.7 uploads)
 					: $uploads['baseurl'] . "/$file" ); // It's a newly-uploaded file, therefore $file is relative to the basedir.
+		}
+	}
+
+	// If any of the above options failed, fallback on the GUID as used pre-2.7, not recommended to rely upon this.
+	if ( empty( $url ) ) {
+		$url = get_the_guid( $post->ID );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2030,8 +2036,8 @@ function wp_get_attachment_url( $attachment_id = 0 )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 010: wp-includes/post.php
+ * -> wp-includes/post-template.php
  */
-		}
 	}
 }
 
