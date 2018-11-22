@@ -2039,6 +2039,19 @@ function wp_attachment_is( $type, $post = NULL )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 010: wp-includes/post.php
+ */
+
+/**
  * Updates posts in cache.
  *
  * @since 1.5.1
