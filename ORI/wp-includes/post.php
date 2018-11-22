@@ -4107,54 +4107,7 @@ function wp_get_attachment_thumb_url( $post_id = 0 ) {
 	return apply_filters( 'wp_get_attachment_thumb_url', $url, $post->ID );
 }
 
-/**
- * Verifies an attachment is of a given type.
- *
- * @since 4.2.0
- *
- * @param string      $type Attachment type. Accepts 'image', 'audio', or 'video'.
- * @param int|WP_Post $post Optional. Attachment ID or object. Default is global $post.
- * @return bool True if one of the accepted types, false otherwise.
- */
-function wp_attachment_is( $type, $post = null ) {
-	if ( ! $post = get_post( $post ) ) {
-		return false;
-	}
-
-	if ( ! $file = get_attached_file( $post->ID ) ) {
-		return false;
-	}
-
-	if ( 0 === strpos( $post->post_mime_type, $type . '/' ) ) {
-		return true;
-	}
-
-	$check = wp_check_filetype( $file );
-	if ( empty( $check['ext'] ) ) {
-		return false;
-	}
-
-	$ext = $check['ext'];
-
-	if ( 'import' !== $post->post_mime_type ) {
-		return $type === $ext;
-	}
-
-	switch ( $type ) {
-	case 'image':
-		$image_exts = array( 'jpg', 'jpeg', 'jpe', 'gif', 'png' );
-		return in_array( $ext, $image_exts );
-
-	case 'audio':
-		return in_array( $ext, wp_get_audio_extensions() );
-
-	case 'video':
-		return in_array( $ext, wp_get_video_extensions() );
-
-	default:
-		return $type === $ext;
-	}
-}
+// refactored. function wp_attachment_is( $type, $post = null ) {}
 
 /**
  * Checks if the attachment is an image.

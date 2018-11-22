@@ -1407,7 +1407,6 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/post.php
  */
 			}
 		}
@@ -2019,15 +2018,9 @@ function wp_attachment_is( $type, $post = NULL )
 
 		case 'video':
 			return in_array( $ext, wp_get_video_extensions() );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/post.php
- */
+
+		default:
+			return $type === $ext;
 	}
 }
 
