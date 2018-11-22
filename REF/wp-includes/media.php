@@ -205,19 +205,27 @@ function image_downsize( $id, $size = 'medium' )
 	} elseif ( $size == 'thumbnail' ) {
 		// Fall back to the old thumbnail.
 		if ( ( $thumb_file = wp_get_attachment_thumb_file( $id ) ) && $info = getimagesize( $thumb_file ) ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 009: wp-includes/media.php
- */
+			$img_url = str_replace( $img_url_basename, wp_basename( $thumb_file ), $img_url );
+			$width  = $info[0];
+			$height = $info[1];
+			$is_intermediate = TRUE;
 		}
 	}
+
+	if ( ! $width && ! $height && isset( $meta['width'], $meta['height'] ) ) {
+		// Any other type: use the real image
+		$width  = $meta['width'];
+		$height = $meta['height'];
+	}
+
+	if ( $img_url ) {
+		// We have the actual image size, but might need to further constrain it if content_width is narrower.
+		list( $width, $height ) = image_constrain_size_for_editor( $width, $height, $size );
+
+		return array( $img_url, $width, $height, $is_intermediate );
+	}
+
+	return FALSE;
 }
 
 /**
@@ -482,7 +490,6 @@ function wp_get_attachment_image_src( $attachment_id, $size = 'thumbnail', $icon
  * <- wp-includes/post.php
  * <- wp-includes/media.php
  * @NOW 008: wp-includes/media.php
- * -> wp-includes/media.php
  */
 }
 
