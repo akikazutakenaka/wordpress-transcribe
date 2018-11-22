@@ -198,6 +198,13 @@ function image_downsize( $id, $size = 'medium' )
 
 	// Try for a new style intermediate size.
 	if ( $intermediate = image_get_intermediate_size( $id, $size ) ) {
+		$img_url = str_replace( $img_url_basename, $intermediate['file'], $img_url );
+		$width  = $intermediate['width'];
+		$height = $intermediate['height'];
+		$is_intermediate = TRUE;
+	} elseif ( $size == 'thumbnail' ) {
+		// Fall back to the old thumbnail.
+		if ( ( $thumb_file = wp_get_attachment_thumb_file( $id ) ) && $info = getimagesize( $thumb_file ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -208,7 +215,9 @@ function image_downsize( $id, $size = 'medium' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/media.php
+ * -> wp-includes/post.php
  */
+		}
 	}
 }
 

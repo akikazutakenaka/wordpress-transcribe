@@ -1985,6 +1985,20 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/post.php
+ * @NOW 011: wp-includes/post.php
+ */
+
+/**
  * Update metadata for an attachment.
  *
  * @since 2.1.0
@@ -2077,6 +2091,42 @@ function wp_get_attachment_url( $attachment_id = 0 )
 	}
 
 	return $url;
+}
+
+/**
+ * Retrieve thumbnail for an attachment.
+ *
+ * @since 2.1.0
+ *
+ * @param  int          $post_id Optional.
+ *                               Attachment ID.
+ *                               Default 0.
+ * @return string|false False on failure.
+ *                      Thumbnail file path on success.
+ */
+function wp_get_attachment_thumb_file( $post_id = 0 )
+{
+	$post_id = ( int ) $post_id;
+
+	if ( ! $post = get_post( $post_id ) ) {
+		return FALSE;
+	}
+
+	if ( ! is_array( $imagedata = wp_get_attachment_metadata( $post->ID ) ) ) {
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 010: wp-includes/post.php
+ * -> wp-includes/post.php
+ */
+	}
 }
 
 /**
