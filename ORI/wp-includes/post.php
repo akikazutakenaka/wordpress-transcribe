@@ -3943,72 +3943,7 @@ function wp_update_attachment_metadata( $attachment_id, $data ) {
 		return delete_post_meta( $post->ID, '_wp_attachment_metadata' );
 }
 
-/**
- * Retrieve the URL for an attachment.
- *
- * @since 2.1.0
- *
- * @global string $pagenow
- *
- * @param int $attachment_id Optional. Attachment post ID. Defaults to global $post.
- * @return string|false Attachment URL, otherwise false.
- */
-function wp_get_attachment_url( $attachment_id = 0 ) {
-	$attachment_id = (int) $attachment_id;
-	if ( ! $post = get_post( $attachment_id ) ) {
-		return false;
-	}
-
-	if ( 'attachment' != $post->post_type )
-		return false;
-
-	$url = '';
-	// Get attached file.
-	if ( $file = get_post_meta( $post->ID, '_wp_attached_file', true ) ) {
-		// Get upload directory.
-		if ( ( $uploads = wp_get_upload_dir() ) && false === $uploads['error'] ) {
-			// Check that the upload base exists in the file location.
-			if ( 0 === strpos( $file, $uploads['basedir'] ) ) {
-				// Replace file location with url location.
-				$url = str_replace($uploads['basedir'], $uploads['baseurl'], $file);
-			} elseif ( false !== strpos($file, 'wp-content/uploads') ) {
-				// Get the directory name relative to the basedir (back compat for pre-2.7 uploads)
-				$url = trailingslashit( $uploads['baseurl'] . '/' . _wp_get_attachment_relative_path( $file ) ) . basename( $file );
-			} else {
-				// It's a newly-uploaded file, therefore $file is relative to the basedir.
-				$url = $uploads['baseurl'] . "/$file";
-			}
-		}
-	}
-
-	/*
-	 * If any of the above options failed, Fallback on the GUID as used pre-2.7,
-	 * not recommended to rely upon this.
-	 */
-	if ( empty($url) ) {
-		$url = get_the_guid( $post->ID );
-	}
-
-	// On SSL front end, URLs should be HTTPS.
-	if ( is_ssl() && ! is_admin() && 'wp-login.php' !== $GLOBALS['pagenow'] ) {
-		$url = set_url_scheme( $url );
-	}
-
-	/**
-	 * Filters the attachment URL.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string $url           URL for the given attachment.
-	 * @param int    $attachment_id Attachment post ID.
-	 */
-	$url = apply_filters( 'wp_get_attachment_url', $url, $post->ID );
-
-	if ( empty( $url ) )
-		return false;
-
-	return $url;
-}
+// refactored. function wp_get_attachment_url( $attachment_id = 0 ) {}
 
 /**
  * Retrieves the caption for an attachment.

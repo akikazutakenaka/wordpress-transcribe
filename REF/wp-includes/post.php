@@ -2025,19 +2025,28 @@ function wp_get_attachment_url( $attachment_id = 0 )
 	// If any of the above options failed, fallback on the GUID as used pre-2.7, not recommended to rely upon this.
 	if ( empty( $url ) ) {
 		$url = get_the_guid( $post->ID );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 010: wp-includes/post.php
- */
 	}
+
+	// On SSL front end, URLs should be HTTPS.
+	if ( is_ssl() && ! is_admin() && 'wp-login.php' !== $GLOBALS['pagenow'] ) {
+		$url = set_url_scheme( $url );
+	}
+
+	/**
+	 * Filters the attachment URL.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $url           URL for the given attachment.
+	 * @param int    $attachment_id Attachment post ID.
+	 */
+	$url = apply_filters( 'wp_get_attachment_url', $url, $post->ID );
+
+	if ( empty( $url ) ) {
+		return FALSE;
+	}
+
+	return $url;
 }
 
 /**
