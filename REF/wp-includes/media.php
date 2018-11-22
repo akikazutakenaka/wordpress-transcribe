@@ -53,6 +53,27 @@ function image_downsize( $id, $size = 'medium' )
 
 	$img_url = wp_get_attachment_url( $id );
 	$meta = wp_get_attachment_metadata( $id );
+	$width = $height = 0;
+	$is_intermediate = FALSE;
+	$img_url_basename = wp_basename( $img_url );
+
+	/**
+	 * If the file isn't an image, attempt to replace its URL with a rendered image from its meta.
+	 * Otherwise, a non-image type could be returned.
+	 */
+	if ( ! $is_image ) {
+		if ( ! empty( $meta['sizes'] ) ) {
+			$img_url = str_replace( $img_url_basename, $meta['sizes']['full']['file'], $img_url );
+			$img_url_basename = $meta['sizes']['full']['file'];
+			$width = $meta['sizes']['full']['width'];
+			$height = $meta['sizes']['full']['height'];
+		} else {
+			return FALSE;
+		}
+	}
+
+	// Try for a new style intermediate size.
+	if ( $intermediate = image_get_intermediate_size( $id, $size ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -63,7 +84,105 @@ function image_downsize( $id, $size = 'medium' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/media.php
+ * -> wp-includes/media.php
  */
+	}
+}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 011: wp-includes/media.php
+ */
+
+/**
+ * Retrieves the image's intermediate size (resized) path, width, and height.
+ *
+ * The $size parameter can be an array with the width and height respectively.
+ * If the size matches the 'sizes' metadata array for width and height, then it will be used.
+ * If there is no direct match, then the nearest image size larger than the specified size will be used.
+ * If nothing is found, then the function will break out and return false.
+ *
+ * The metadata 'sizes' is used for compatible sizes that can be used for the parameter $size value.
+ *
+ * The url path will be given, when the $size parameter is a string.
+ *
+ * If you are passing an array for the $size, you should consider using add_image_size() so that a cropped version is generated.
+ * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
+ *
+ * @since 2.5.0
+ *
+ * @param  int          $post_id Attachment ID.
+ * @param  array|string $size    Optional.
+ *                               Image size.
+ *                               Accepts any valid image size, or an array of width and height values in pixels (in that order).
+ *                               Default 'thumbnail'.
+ * @return false|array  $data {
+ *     Array of file relative path, width, and height on success.
+ *     Additionally includes absolute path and URL if registered size is passed to $size parameter.
+ *     False on failure.
+ *
+ *     @type string $file   Image's path relative to uploads directory.
+ *     @type int    $width  Width of image.
+ *     @type int    $height Height of image.
+ *     @type string $path   Image's absolute filesystem path.
+ *     @type string $url    Image's URL.
+ * }
+ */
+function image_get_intermediate_size( $post_id, $size = 'thumbnail' )
+{
+	if ( ! $size || ! is_array( $imagedata = wp_get_attachment_metadata( $post_id ) ) || empty( $imagedata['sizes'] ) ) {
+		return FALSE;
+	}
+
+	$data = array();
+
+	// Find the best match when '$size' is an array.
+	if ( is_array( $size ) ) {
+		$candidates = array();
+
+		if ( ! isset( $imagedata['file'] ) && isset( $imagedata['sizes']['full'] ) ) {
+			$imagedata['height'] = $imagedata['sizes']['full']['height'];
+			$imagedata['width']  = $imagedata['sizes']['full']['width'];
+
+			foreach ( $imagedata['sizes'] as $_size => $data ) {
+				// If there's an exact match to an existing image size, short circuit.
+				if ( $data['width'] == $size[0] && $data['height'] == $size[1] ) {
+					$candidates[ $data['width'] * $data['height'] ] = $data;
+					break;
+				}
+
+				// If it's not an exact match, consider larger sizes with the same aspect ratio.
+				if ( $data['width'] >= $size[0] && $data['height'] >= $size[1] ) {
+					// If '0' is passed to either size, we test ratios against the original file.
+					$same_ratio = 0 === $size[0] || 0 === $size[1]
+						? wp_image_matches_ratio( $data['width'], $data['height'], $imagedata['width'], $imagedata['height'] )
+						: wp_image_matches_ratio( $data['width'], $data['height'], $size[0], $size[1] );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 010: wp-includes/media.php
+ * -> wp-includes/media.php
+ */
+				}
+			}
+		}
+	}
 }
 
 /**
