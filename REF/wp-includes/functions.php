@@ -1030,6 +1030,18 @@ function _wp_upload_dir( $time = NULL )
 }
 
 /**
+ * Retrieve the file type based on the extension name.
+ *
+ * @since 2.5.0
+ *
+ * @param  string      $ext The extension to search.
+ * @return string|void The file type, example: audio, video, document, spreadsheet, etc.
+ */
+function wp_ext2type( $ext )
+{
+	$ext = strtolower( $ext );
+	$ext2type = wp_get_ext_types();
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -1040,7 +1052,9 @@ function _wp_upload_dir( $time = NULL )
  * <- wp-includes/media.php
  * <- wp-includes/post.php
  * @NOW 010: wp-includes/functions.php
+ * -> wp-includes/functions.php
  */
+}
 
 /**
  * Retrieve the file type from the file name.
@@ -1207,6 +1221,20 @@ function wp_get_mime_types()
 			'pages'                        => 'application/vnd.apple.pages'
 		) );
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/post.php
+ * <- wp-includes/functions.php
+ * @NOW 011: wp-includes/functions.php
+ */
 
 /**
  * Retrieve list of allowed mime types and file extensions.
