@@ -2228,6 +2228,56 @@ function wp_attachment_is_image( $post = NULL )
 }
 
 /**
+ * Retrieve the icon for a MIME type.
+ *
+ * @since 2.1.0
+ *
+ * @param  string|int   $mime MIME type or attachment ID.
+ * @return string|false Icon, false otherwise.
+ */
+function wp_mime_type_icon( $mime = 0 )
+{
+	if ( ! is_numeric( $mime ) ) {
+		$icon = wp_cache_get( "mime_type_icon_$mime" );
+	}
+
+	$post_id = 0;
+
+	if ( empty( $icon ) ) {
+		$post_mimes = array();
+
+		if ( is_numeric( $mime ) ) {
+			$mime = ( int ) $mime;
+
+			if ( $post = get_post( $mime ) ) {
+				$post_id = ( int ) $post->ID;
+				$file = get_attached_file( $post_id );
+				$ext = preg_replace( '/^.+?\.([^.]+)$/', '$1', $file );
+
+				if ( ! empty( $ext ) ) {
+					$post_mimes[] = $ext;
+
+					if ( $ext_type = wp_ext2type( $ext ) ) {
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 009: wp-includes/post.php
+ * -> wp-includes/functions.php
+ */
+					}
+				}
+			}
+		}
+	}
+}
+
+/**
  * Updates posts in cache.
  *
  * @since 1.5.1

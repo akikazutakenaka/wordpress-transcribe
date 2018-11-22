@@ -481,6 +481,11 @@ function wp_get_attachment_image_src( $attachment_id, $size = 'thumbnail', $icon
 {
 	// Get a thumbnail or intermediate image if there is one.
 	$image = image_downsize( $attachment_id, $size );
+
+	if ( ! $image ) {
+		$src = FALSE;
+
+		if ( $icon && $src = wp_mime_type_icon( $attachment_id ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -490,7 +495,10 @@ function wp_get_attachment_image_src( $attachment_id, $size = 'thumbnail', $icon
  * <- wp-includes/post.php
  * <- wp-includes/media.php
  * @NOW 008: wp-includes/media.php
+ * -> wp-includes/post.php
  */
+		}
+	}
 }
 
 /**

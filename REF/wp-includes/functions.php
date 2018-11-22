@@ -1030,6 +1030,19 @@ function _wp_upload_dir( $time = NULL )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/post.php
+ * @NOW 010: wp-includes/functions.php
+ */
+
+/**
  * Retrieve the file type from the file name.
  *
  * You can optionally define the mime array, if needed.
