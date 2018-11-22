@@ -100,7 +100,42 @@ function image_downsize( $id, $size = 'medium' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 012: wp-includes/media.php
+ */
+
+/**
+ * Helper function to test if aspect ratios for two images match.
+ *
+ * @since 4.6.0
+ *
+ * @param  int  $source_width  Width of the first image in pixels.
+ * @param  int  $source_height Height of the first image in pixels.
+ * @param  int  $target_width  Width of the second image in pixels.
+ * @param  int  $target_height Height of the second image in pixels.
+ * @return bool True if aspect ratios match within 1px.
+ *              False if not.
+ */
+function wp_image_matches_ratio( $source_width, $source_height, $target_width, $target_height )
+{
+	// To test for varying crops, we constrain the dimensions of the larger image to the dimensions of the smaller image and see if they match.
+	if ( $source_width > $target_width ) {
+		$constrained_size = wp_constrain_dimensions( $source_width, $source_height, $target_width );
+	}
+}
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
  * @NOW 011: wp-includes/media.php
+ * -> wp-includes/media.php
  */
 
 /**
