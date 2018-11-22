@@ -592,6 +592,19 @@ function get_site_url( $blog_id = NULL, $path = '', $scheme = NULL )
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/post.php
+ * @NOW 010: wp-includes/link-template.php
+ */
+
+/**
  * Retrieves the URL to the content directory.
  *
  * @since 2.6.0

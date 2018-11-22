@@ -86,3 +86,9 @@ function site_url()
  */
 function home_url()
 {}
+
+/**
+ * @ignore
+ */
+function includes_url()
+{}

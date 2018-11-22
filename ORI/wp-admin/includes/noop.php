@@ -26,11 +26,7 @@ function is_lighttpd_before_150() {}
 function admin_url() {}
 
 // refactored. function home_url() {}
-
-/**
- * @ignore
- */
-function includes_url() {}
+// refactored. function includes_url() {}
 
 /**
  * @ignore

@@ -2258,6 +2258,38 @@ function wp_mime_type_icon( $mime = 0 )
 					$post_mimes[] = $ext;
 
 					if ( $ext_type = wp_ext2type( $ext ) ) {
+						$post_mimes[] = $ext_type;
+					}
+				}
+
+				$mime = $post->post_mime_type;
+			} else {
+				$mime = 0;
+			}
+		} else {
+			$post_mimes[] = $mime;
+		}
+
+		$icon_files = wp_cache_get( 'icon_files' );
+
+		if ( ! is_array( $icon_files ) ) {
+			/**
+			 * Filters the icon directory path.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string $path Icon directory absolute path.
+			 */
+			$icon_dir = apply_filters( 'icon_dir', ABSPATH . WPINC . '/images/media' );
+
+			/**
+			 * Filters the icon directory URI.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string $uri Icon directory URI.
+			 */
+			$icon_dir_uri = apply_filters( 'icon_dir_uri', includes_url( 'images/media' ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2268,10 +2300,8 @@ function wp_mime_type_icon( $mime = 0 )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/post.php
+ * -> wp-includes/link-template.php
  */
-					}
-				}
-			}
 		}
 	}
 }
