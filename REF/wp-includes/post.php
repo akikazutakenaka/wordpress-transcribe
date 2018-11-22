@@ -1985,6 +1985,36 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
 }
 
 /**
+ * Update metadata for an attachment.
+ *
+ * @since 2.1.0
+ *
+ * @param  int      $attachment_id Attachment post ID.
+ * @param  array    $data          Attachment meta data.
+ * @return int|bool False if $post is invalid.
+ */
+function wp_update_attachment_metadata( $attachment_id, $data )
+{
+	$attachment_id = ( int ) $attachment_id;
+
+	if ( ! $post = get_post( $attachment_id ) ) {
+		return FALSE;
+	}
+
+	/**
+	 * Filters the updated attachment meta data.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array $data          Array of updated attachment meta data.
+	 * @param int   $attachment_id Attachment post ID.
+	 */
+	return ( $data = apply_filters( 'wp_update_attachment_metadata', $data, $post->ID ) )
+		? update_post_meta( $post->ID, '_wp_attachment_metadata', $data )
+		: delete_post_meta( $post->ID, '_wp_attachment_metadata' );
+}
+
+/**
  * Retrieve the URL for an attachment.
  *
  * @since  2.1.0

@@ -3914,35 +3914,7 @@ function wp_get_attachment_metadata( $attachment_id = 0, $unfiltered = false ) {
 	return apply_filters( 'wp_get_attachment_metadata', $data, $post->ID );
 }
 
-/**
- * Update metadata for an attachment.
- *
- * @since 2.1.0
- *
- * @param int   $attachment_id Attachment post ID.
- * @param array $data          Attachment meta data.
- * @return int|bool False if $post is invalid.
- */
-function wp_update_attachment_metadata( $attachment_id, $data ) {
-	$attachment_id = (int) $attachment_id;
-	if ( ! $post = get_post( $attachment_id ) ) {
-		return false;
-	}
-
-	/**
-	 * Filters the updated attachment meta data.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param array $data          Array of updated attachment meta data.
-	 * @param int   $attachment_id Attachment post ID.
-	 */
-	if ( $data = apply_filters( 'wp_update_attachment_metadata', $data, $post->ID ) )
-		return update_post_meta( $post->ID, '_wp_attachment_metadata', $data );
-	else
-		return delete_post_meta( $post->ID, '_wp_attachment_metadata' );
-}
-
+// refactored. function wp_update_attachment_metadata( $attachment_id, $data ) {}
 // refactored. function wp_get_attachment_url( $attachment_id = 0 ) {}
 
 /**

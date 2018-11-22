@@ -52,6 +52,7 @@ function image_downsize( $id, $size = 'medium' )
 	}
 
 	$img_url = wp_get_attachment_url( $id );
+	$meta = wp_get_attachment_metadata( $id );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
