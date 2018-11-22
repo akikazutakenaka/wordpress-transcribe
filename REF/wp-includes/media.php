@@ -90,19 +90,88 @@ function image_downsize( $id, $size = 'medium' )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 012: wp-includes/media.php
+ * Calculates the new dimensions for a down-sampled image.
+ *
+ * If either width or height are empty, no constraint is applied on that dimension.
+ *
+ * @since 2.5.0
+ *
+ * @param  int   $current_width  Current width of the image.
+ * @param  int   $current_height Current height of the image.
+ * @param  int   $max_width      Optional.
+ *                               Max width in pixels to constrain to.
+ *                               Default 0.
+ * @param  int   $max_height     Optional.
+ *                               Max height in pixels to constrain to.
+ *                               Default 0.
+ * @return array First item is the width, the second item is the height.
  */
+function wp_constrain_dimensions( $current_width, $current_height, $max_width = 0, $max_height = 0 )
+{
+	if ( ! $max_width && ! $max_height ) {
+		return array( $current_width, $current_height );
+	}
+
+	$width_ratio = $height_ratio = 1.0;
+	$did_width = $did_height = FALSE;
+
+	if ( $max_width > 0 && $current_width > 0 && $current_width > $max_width ) {
+		$width_ratio = $max_width / $current_width;
+		$did_width = TRUE;
+	}
+
+	if ( $max_height > 0 && $current_height > 0 && $current_height > $max_height ) {
+		$height_ratio = $max_height / $current_height;
+		$did_height = TRUE;
+	}
+
+	// Calculate the larger/smaller ratios.
+	$smaller_ratio = min( $width_ratio, $height_ratio );
+	$larger_ratio  = max( $width_ratio, $height_ratio );
+
+	$ratio = ( int ) round( $current_width * $larger_ratio ) > $max_width || ( int ) round( $current_height * $larger_ratio ) > $max_height
+		? /**
+		   * The larger ratio is too big.
+		   * It would result in an overflow.
+		   */
+			$smaller_ratio
+		: //The larger ratio fits, and is likely to be a more "snug" fit.
+			$larger_ratio;
+
+	// Very small dimensions may result in 0, 1 should be the minimum.
+	$w = max( 1, ( int ) round( $current_width  * $ratio ) );
+	$h = max( 1, ( int ) round( $current_height * $ratio ) );
+
+	/**
+	 * Sometimes, due to rounding, we'll end up with a result like this: 465x700 in a 177x177 box is 117.176... a pixel short.
+	 * We also have issues with recursive calls resulting in an ever-changing result.
+	 * Constraining to the result of a constraint should yield the original result.
+	 * Thus we look for dimensions that are one pixel shy of the max value and bump them up.
+	 */
+
+	// Note: $did_width means it is possible $smaller_ratio == $width_ratio.
+	if ( $did_width && $w == $max_width - 1 ) {
+		$w = $max_width; // Round it up.
+	}
+
+	// Note: $did_height means it is possible $smaller_ratio == $height_ratio.
+	if ( $did_height && $h == $max_height - 1 ) {
+		$h = $max_height; // Round it up.
+	}
+
+	/**
+	 * Filters dimensions to constrain down-sampled images to.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param array $dimensions     The image width and height.
+	 * @param int   $current_width  The current width of the image.
+	 * @param int   $current_height The current height of the image.
+	 * @param int   $max_width      The maximum width permitted.
+	 * @param int   $max_height     The maximum height permitted.
+	 */
+	return apply_filters( 'wp_constrain_dimensions', array( $w, $h ), $current_width, $current_height, $max_width, $max_height );
+}
 
 /**
  * Helper function to test if aspect ratios for two images match.
@@ -135,7 +204,6 @@ function wp_image_matches_ratio( $source_width, $source_height, $target_width, $
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 011: wp-includes/media.php
- * -> wp-includes/media.php
  */
 
 /**
