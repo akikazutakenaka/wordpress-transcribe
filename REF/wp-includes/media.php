@@ -32,6 +32,26 @@
 function image_downsize( $id, $size = 'medium' )
 {
 	$is_image = wp_attachment_is_image( $id );
+
+	/**
+	 * Filters whether to preempt the output of image_downsize().
+	 *
+	 * Passing a truthy value to the filter will effectively short-circuit down-sizing the image, returning that value as output instead.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param bool         $downsize Whether to short-circuit the image downsize.
+	 *                               Default false.
+	 * @param int          $id       Attachment ID for image.
+	 * @param array|string $size     Size of image.
+	 *                               Image size or array of width and height values (in that order).
+	 *                               Default 'medium'.
+	 */
+	if ( $out = apply_filters( 'image_downsize', FALSE, $id, $size ) ) {
+		return $out;
+	}
+
+	$img_url = wp_get_attachment_url( $id );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -42,6 +62,7 @@ function image_downsize( $id, $size = 'medium' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/media.php
+ * -> wp-includes/post.php
  */
 }
 
@@ -117,6 +138,20 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = F
  * -> wp-includes/media.php
  */
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/post.php
+ * @NOW 011: wp-includes/media.php
+ */
 
 /**
  * Returns a filtered list of WP-supported audio formats.

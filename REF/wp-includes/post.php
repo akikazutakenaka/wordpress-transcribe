@@ -1985,6 +1985,58 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
 }
 
 /**
+ * Retrieve the URL for an attachment.
+ *
+ * @since  2.1.0
+ * @global string $pagenow
+ *
+ * @param  int          $attachment_id Optional.
+ *                                     Attachment post ID.
+ *                                     Defaults to global $post.
+ * @return string|false Attachment URL, otherwise false.
+ */
+function wp_get_attachment_url( $attachment_id = 0 )
+{
+	$attachment_id = ( int ) $attachment_id;
+
+	if ( ! $post = get_post( $attachment_id ) ) {
+		return FALSE;
+	}
+
+	if ( 'attachment' != $post->post_type ) {
+		return FALSE;
+	}
+
+	$url = '';
+
+	// Get attached file.
+	if ( $file = get_post_meta( $post->ID, '_wp_attached_file', TRUE ) ) {
+		// Get upload directory.
+		if ( ( $uploads = wp_get_upload_dir() ) && FALSE === $uploads['error'] ) {
+			// Check that the upload base exists in the file location.
+			$url = 0 === strpos( $file, $uploads['basedir'] )
+				? str_replace( $uploads['basedir'], $uploads['baseurl'], $file ) // Replace file location with url location.
+				: ( FALSE !== strpos( $file, 'wp-content/uploads' )
+					? trailingslashit( $uploads['baseurl'] . '/' . _wp_get_attachment_relative_path( $file ) ) . basename( $file ) // Get the directory name relative to the basedir (back compat for pre-2.7 uploads)
+					: $uploads['baseurl'] . "/$file" ); // It's a newly-uploaded file, therefore $file is relative to the basedir.
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 010: wp-includes/post.php
+ * -> wp-includes/media.php
+ */
+		}
+	}
+}
+
+/**
  * Verifies an attachment is of a given type.
  *
  * @since 4.2.0
