@@ -7,19 +7,23 @@
  */
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 012: wp-includes/media.php
+ * Retrieve additional image sizes.
+ *
+ * @since  4.7.0
+ * @global array $_wp_additional_image_sizes
+ *
+ * @return array Additional images size data.
  */
+function wp_get_additional_image_sizes()
+{
+	global $_wp_additional_image_sizes;
+
+	if ( ! $_wp_additional_image_sizes ) {
+		$_wp_additional_image_sizes = array();
+	}
+
+	return $_wp_additional_image_sizes;
+}
 
 /**
  * Scale down the default size of an image.
@@ -65,7 +69,6 @@ function image_constrain_size_for_editor( $width, $height, $size = 'medium', $co
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 011: wp-includes/media.php
- * -> wp-includes/media.php
  */
 }
 
