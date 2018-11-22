@@ -208,7 +208,6 @@ function image_downsize( $id, $size = 'medium' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/media.php
- * -> wp-includes/media.php
  */
 	}
 }
@@ -375,57 +374,72 @@ function image_get_intermediate_size( $post_id, $size = 'thumbnail' )
 		if ( ! isset( $imagedata['file'] ) && isset( $imagedata['sizes']['full'] ) ) {
 			$imagedata['height'] = $imagedata['sizes']['full']['height'];
 			$imagedata['width']  = $imagedata['sizes']['full']['width'];
-
-			foreach ( $imagedata['sizes'] as $_size => $data ) {
-				// If there's an exact match to an existing image size, short circuit.
-				if ( $data['width'] == $size[0] && $data['height'] == $size[1] ) {
-					$candidates[ $data['width'] * $data['height'] ] = $data;
-					break;
-				}
-
-				// If it's not an exact match, consider larger sizes with the same aspect ratio.
-				if ( $data['width'] >= $size[0] && $data['height'] >= $size[1] ) {
-					// If '0' is passed to either size, we test ratios against the original file.
-					$same_ratio = 0 === $size[0] || 0 === $size[1]
-						? wp_image_matches_ratio( $data['width'], $data['height'], $imagedata['width'], $imagedata['height'] )
-						: wp_image_matches_ratio( $data['width'], $data['height'], $size[0], $size[1] );
-
-					if ( $same_ratio ) {
-						$candidates[ $data['width'] * $data['height'] ] = $data;
-					}
-				}
-			}
-
-			if ( ! empty( $candidates ) ) {
-				// Sort the array by size if we have more than one candidate.
-				if ( 1 < count( $candidates ) ) {
-					ksort( $candidates );
-				}
-
-				$data = array_shift( $candidates );
-			} elseif ( ! empty( $imagedata['sizes']['thumbnail'] ) && $imagedata['sizes']['thumbnail']['width'] >= $size[0] && $imagedata['sizes']['thumbnail']['width'] >= $size[1] ) {
-				// When the size requested is smaller than the thumbnail dimensions, we fall back to the thumbnail size to maintain backwards compatibility with pre 4.6 versions of WordPress.
-				$data = $imagedata['sizes']['thumbnail'];
-			} else {
-				return FALSE;
-			}
-
-			// Constrain the width and height attributes to the requested values.
-			list( $data['width'], $data['height'] ) = image_constrain_size_for_editor( $data['width'], $data['height'], $size );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 010: wp-includes/media.php
- */
 		}
+
+		foreach ( $imagedata['sizes'] as $_size => $data ) {
+			// If there's an exact match to an existing image size, short circuit.
+			if ( $data['width'] == $size[0] && $data['height'] == $size[1] ) {
+				$candidates[ $data['width'] * $data['height'] ] = $data;
+				break;
+			}
+
+			// If it's not an exact match, consider larger sizes with the same aspect ratio.
+			if ( $data['width'] >= $size[0] && $data['height'] >= $size[1] ) {
+				// If '0' is passed to either size, we test ratios against the original file.
+				$same_ratio = 0 === $size[0] || 0 === $size[1]
+					? wp_image_matches_ratio( $data['width'], $data['height'], $imagedata['width'], $imagedata['height'] )
+					: wp_image_matches_ratio( $data['width'], $data['height'], $size[0], $size[1] );
+
+				if ( $same_ratio ) {
+					$candidates[ $data['width'] * $data['height'] ] = $data;
+				}
+			}
+		}
+
+		if ( ! empty( $candidates ) ) {
+			// Sort the array by size if we have more than one candidate.
+			if ( 1 < count( $candidates ) ) {
+				ksort( $candidates );
+			}
+
+			$data = array_shift( $candidates );
+		} elseif ( ! empty( $imagedata['sizes']['thumbnail'] ) && $imagedata['sizes']['thumbnail']['width'] >= $size[0] && $imagedata['sizes']['thumbnail']['width'] >= $size[1] ) {
+			// When the size requested is smaller than the thumbnail dimensions, we fall back to the thumbnail size to maintain backwards compatibility with pre 4.6 versions of WordPress.
+			$data = $imagedata['sizes']['thumbnail'];
+		} else {
+			return FALSE;
+		}
+
+		// Constrain the width and height attributes to the requested values.
+		list( $data['width'], $data['height'] ) = image_constrain_size_for_editor( $data['width'], $data['height'], $size );
+	} elseif ( ! empty( $imagedata['sizes'][ $size ] ) ) {
+		$data = $imagedata['sizes'][ $size ];
 	}
+
+	// If we still don't have a match at this point, return false.
+	if ( empty( $data ) ) {
+		return FALSE;
+	}
+
+	// Include the full filesystem path of the intermediate file.
+	if ( empty( $data['path'] ) && ! empty( $data['file'] ) && ! empty( $imagedata['file'] ) ) {
+		$file_url = wp_get_attachment_url( $post_id );
+		$data['path'] = path_join( dirname( $imagedata['file'] ), $data['file'] );
+		$data['url']  = path_join( dirname( $file_url ), $data['file'] );
+	}
+
+	/**
+	 * Filters the output of image_get_intermediate_size()
+	 *
+	 * @since 4.4.0
+	 * @see   image_get_intermediate_size()
+	 *
+	 * @param array        $data    Array of file relative path, width, and height on success.
+	 *                              May also include file absolute path and URL.
+	 * @param int          $post_id The post_id of the image attachment.
+	 * @param string|array $size    Registered image size or flat array of initially-requested height and width dimensions (in that order).
+	 */
+	return apply_filters( 'image_get_intermediate_size', $data, $post_id, $size );
 }
 
 /**
