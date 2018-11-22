@@ -2036,7 +2036,6 @@ function wp_get_attachment_url( $attachment_id = 0 )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 010: wp-includes/post.php
- * -> wp-includes/post-template.php
  */
 	}
 }
