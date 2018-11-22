@@ -2137,19 +2137,24 @@ function wp_get_attachment_thumb_file( $post_id = 0 )
 	}
 
 	if ( ! is_array( $imagedata = wp_get_attachment_metadata( $post->ID ) ) ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 010: wp-includes/post.php
- */
+		return FALSE;
 	}
+
+	$file = get_attached_file( $post->ID );
+
+	if ( ! empty( $imagedata['thumb'] ) && ( $thumbfile = str_replace( basename( $file ), $imagedata['thumb'], $file ) ) && file_exists( $thumbfile ) ) {
+		/**
+		 * Filters the attachment thumbnail file path.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $thumbfile File path to the attachment thumbnail.
+		 * @param int    $post_id   Attachment ID.
+		 */
+		return apply_filters( 'wp_get_attachment_thumb_file', $thumbfile, $post->ID );
+	}
+
+	return FALSE;
 }
 
 /**

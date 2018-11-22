@@ -3917,36 +3917,7 @@ function wp_get_attachment_caption( $post_id = 0 ) {
 	return apply_filters( 'wp_get_attachment_caption', $caption, $post->ID );
 }
 
-/**
- * Retrieve thumbnail for an attachment.
- *
- * @since 2.1.0
- *
- * @param int $post_id Optional. Attachment ID. Default 0.
- * @return string|false False on failure. Thumbnail file path on success.
- */
-function wp_get_attachment_thumb_file( $post_id = 0 ) {
-	$post_id = (int) $post_id;
-	if ( !$post = get_post( $post_id ) )
-		return false;
-	if ( !is_array( $imagedata = wp_get_attachment_metadata( $post->ID ) ) )
-		return false;
-
-	$file = get_attached_file( $post->ID );
-
-	if ( !empty($imagedata['thumb']) && ($thumbfile = str_replace(basename($file), $imagedata['thumb'], $file)) && file_exists($thumbfile) ) {
-		/**
-		 * Filters the attachment thumbnail file path.
-		 *
-		 * @since 2.1.0
-		 *
-		 * @param string $thumbfile File path to the attachment thumbnail.
-		 * @param int    $post_id   Attachment ID.
-		 */
-		return apply_filters( 'wp_get_attachment_thumb_file', $thumbfile, $post->ID );
-	}
-	return false;
-}
+// refactored. function wp_get_attachment_thumb_file( $post_id = 0 ) {}
 
 /**
  * Retrieve URL for an attachment thumbnail.

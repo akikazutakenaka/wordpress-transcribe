@@ -215,7 +215,6 @@ function image_downsize( $id, $size = 'medium' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/media.php
- * -> wp-includes/post.php
  */
 		}
 	}
