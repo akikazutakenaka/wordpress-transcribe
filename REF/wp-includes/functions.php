@@ -1041,18 +1041,12 @@ function wp_ext2type( $ext )
 {
 	$ext = strtolower( $ext );
 	$ext2type = wp_get_ext_types();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/post.php
- * @NOW 010: wp-includes/functions.php
- */
+
+	foreach ( $ext2type as $type => $exts ) {
+		if ( in_array( $ext, $exts ) ) {
+			return $type;
+		}
+	}
 }
 
 /**

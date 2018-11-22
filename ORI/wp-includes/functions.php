@@ -1265,23 +1265,7 @@ function wp_upload_bits( $name, $deprecated, $bits, $time = null ) {
 	return apply_filters( 'wp_handle_upload', array( 'file' => $new_file, 'url' => $url, 'type' => $wp_filetype['type'], 'error' => false ), 'sideload' );
 }
 
-/**
- * Retrieve the file type based on the extension name.
- *
- * @since 2.5.0
- *
- * @param string $ext The extension to search.
- * @return string|void The file type, example: audio, video, document, spreadsheet, etc.
- */
-function wp_ext2type( $ext ) {
-	$ext = strtolower( $ext );
-
-	$ext2type = wp_get_ext_types();
-	foreach ( $ext2type as $type => $exts )
-		if ( in_array( $ext, $exts ) )
-			return $type;
-}
-
+// refactored. function wp_ext2type( $ext ) {}
 // refactored. function wp_check_filetype( $filename, $mimes = null ) {}
 
 /**

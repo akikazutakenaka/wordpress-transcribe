@@ -2268,7 +2268,6 @@ function wp_mime_type_icon( $mime = 0 )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/post.php
- * -> wp-includes/functions.php
  */
 					}
 				}
