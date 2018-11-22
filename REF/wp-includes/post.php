@@ -1985,18 +1985,42 @@ function wp_insert_attachment( $args, $file = FALSE, $parent = 0, $wp_error = FA
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/post.php
- * @NOW 011: wp-includes/post.php
+ * Retrieve attachment meta field for attachment ID.
+ *
+ * @since 2.1.0
+ *
+ * @param  int   $attachment_id Attachment post ID.
+ *                              Defaults to global $post.
+ * @param  bool  $unfiltered    Optional.
+ *                              If true, filters are not run.
+ *                              Default false.
+ * @return mixed Attachment meta field.
+ *               False on failure.
  */
+function wp_get_attachment_metadata( $attachment_id = 0, $unfiltered = FALSE )
+{
+	$attachment_id = ( int ) $attachment_id;
+
+	if ( ! $post = get_post( $attachment_id ) ) {
+		return FALSE;
+	}
+
+	$data = get_post_meta( $post->ID, '_wp_attachment_metadata', TRUE );
+
+	if ( $unfiltered ) {
+		return $data;
+	}
+
+	/**
+	 * Filters the attachment meta data.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array|bool $data          Array of meta data for the given attachment, or false if the object does not exist.
+	 * @param int        $attachment_id Attachment post ID.
+	 */
+	return apply_filters( 'wp_get_attachment_metadata', $data, $post->ID );
+}
 
 /**
  * Update metadata for an attachment.
@@ -2124,7 +2148,6 @@ function wp_get_attachment_thumb_file( $post_id = 0 )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 010: wp-includes/post.php
- * -> wp-includes/post.php
  */
 	}
 }
