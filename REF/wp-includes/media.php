@@ -140,18 +140,30 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = F
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/post.php
- * @NOW 011: wp-includes/media.php
+ * Get the attachment path relative to the upload directory.
+ *
+ * @since  4.4.1
+ * @access private
+ *
+ * @param  string $file Attachment file name.
+ * @return string Attachment path relative to the upload directory.
  */
+function _wp_get_attachment_relative_path( $file )
+{
+	$dirname = dirname( $file );
+
+	if ( '.' === $dirname ) {
+		return '';
+	}
+
+	if ( FALSE !== strpos( $dirname, 'wp-content/uploads' ) ) {
+		// Get the directory name relative to the upload directory (back compat for pre-2.7 uploads).
+		$dirname = substr( $dirname, strpos( $dirname, 'wp-contenet/uploads' ) + 18 );
+		$dirname = ltrim( $dirname, '/' );
+	}
+
+	return $dirname;
+}
 
 /**
  * Returns a filtered list of WP-supported audio formats.
