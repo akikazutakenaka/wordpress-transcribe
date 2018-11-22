@@ -849,6 +849,63 @@ function sanitize_post_field( $field, $value, $post_id, $context = 'display' )
 }
 
 /**
+ * Check a MIME-Type against a list.
+ *
+ * If the wildcard_mime_types parameter is a string, it must be comma separated list.
+ * If the real_mime_types is a string, it is also comma separated to create the list.
+ *
+ * @since 2.5.0
+ *
+ * @param  string|array $wildcard_mime_types Mime types, e.g. audio/mpeg or image (same as image/*) or flash (same as *flash*).
+ * @param  string|array $real_mime_types     Real post mime type values.
+ * @return array        Array (wildcard => array( real types ) ).
+ */
+function wp_match_mime_types( $wildcard_mime_types, $real_mime_types )
+{
+	$matches = array();
+
+	if ( is_string( $wildcard_mime_types ) ) {
+		$wildcard_mime_types = array_map( 'trim', explode( ',', $wildcard_mime_types ) );
+	}
+
+	if ( is_string( $real_mime_types ) ) {
+		$real_mime_types = array_map( 'trim', explode( ',', $real_mime_types ) );
+	}
+
+	$patternses = array();
+	$wild = '[-._a-z0-9]*';
+
+	foreach ( ( array ) $wildcard_mime_types as $type ) {
+		$mimes = array_map( 'trim', explode( ',', $type ) );
+
+		foreach ( $mimes as $mime ) {
+			$regex = str_replace( '__wildcard__', $wild, preg_quote( str_replace( '*', '__wildcard__', $mime ) ) );
+			$patternses[][ $type ] = "^$regex$";
+
+			if ( FALSE === strpos( $mime, '/' ) ) {
+				$patternses[][ $type ] = "^$regex/";
+				$patternses[][ $type ] = $regex;
+			}
+		}
+	}
+
+	asort( $patternses );
+
+	foreach ( $patternses as $patterns ) {
+		foreach ( $patterns as $type => $pattern ) {
+			foreach ( ( array ) $real_mime_type as $real ) {
+				if ( preg_match( "#$pattern#", $real )
+				  && ( empty( $matches[ $type ] ) || FALSE === array_search( $real, $matches[ $type ] ) ) ) {
+					$matches[ $type ][] = $real;
+				}
+			}
+		}
+	}
+
+	return $matches;
+}
+
+/**
  * Convert MIME types into SQL.
  *
  * @since 2.5.0
@@ -2290,6 +2347,63 @@ function wp_mime_type_icon( $mime = 0 )
 			 * @param string $uri Icon directory URI.
 			 */
 			$icon_dir_uri = apply_filters( 'icon_dir_uri', includes_url( 'images/media' ) );
+
+			/**
+			 * Filters the list of icon directory URIs.
+			 *
+			 * @since 2.5.0
+			 *
+			 * @param array $uris List of icon directory URIs.
+			 */
+			$dirs = apply_filters( 'icon_dirs', array( $icon_dir => $icon_dir_uri ) );
+
+			$icon_files = array();
+
+			while ( $dirs ) {
+				$keys = array_keys( $dirs );
+				$dir = array_shift( $keys );
+				$uri = array_shift( $dirs );
+
+				if ( $dh = opendir( $dir ) ) {
+					while ( FALSE !== $file = readdir( $dh ) ) {
+						$file = basename( $file );
+
+						if ( substr( $file, 0, 1 ) == '.' ) {
+							continue;
+						}
+
+						if ( ! in_array( strtolower( substr( $file, -4 ) ), array( '.png', '.gif', '.jpg' ) ) ) {
+							if ( is_dir( "$dir/$file" ) ) {
+								$dirs[ "$dir/$file" ] = "$uri/$file";
+							}
+
+							continue;
+						}
+
+						$icon_files[ "$dir/$file" ] = "$uri/$file";
+					}
+
+					closedir( $dh );
+				}
+			}
+
+			wp_cache_add( 'icon_files', $icon_files, 'default', 600 );
+		}
+
+		$types = array();
+
+		// Icon basename - extension = MIME wildcard.
+		foreach ( $icon_files as $file => $uri ) {
+			$types[ preg_replace( '/^([^.]*).*$/', '$1', basename( $file ) ) ] = &$icon_files[ $file ];
+		}
+
+		if ( ! empty( $mime ) ) {
+			$post_mimes[] = substr( $mime, 0, strpos( $mime, '/' ) );
+			$post_mimes[] = substr( $mime, strpos( $mime, '/' ) + 1 );
+			$post_mimes[] = str_replace( '/', '_', $mime );
+		}
+
+		$matches = wp_match_mime_types( array_keys( $types ), $post_mimes );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2301,7 +2415,6 @@ function wp_mime_type_icon( $mime = 0 )
  * <- wp-includes/media.php
  * @NOW 009: wp-includes/post.php
  */
-		}
 	}
 }
 

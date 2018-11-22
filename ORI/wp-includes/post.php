@@ -1668,57 +1668,7 @@ function get_post_mime_types() {
 	return apply_filters( 'post_mime_types', $post_mime_types );
 }
 
-/**
- * Check a MIME-Type against a list.
- *
- * If the wildcard_mime_types parameter is a string, it must be comma separated
- * list. If the real_mime_types is a string, it is also comma separated to
- * create the list.
- *
- * @since 2.5.0
- *
- * @param string|array $wildcard_mime_types Mime types, e.g. audio/mpeg or image (same as image/*)
- *                                          or flash (same as *flash*).
- * @param string|array $real_mime_types     Real post mime type values.
- * @return array array(wildcard=>array(real types)).
- */
-function wp_match_mime_types( $wildcard_mime_types, $real_mime_types ) {
-	$matches = array();
-	if ( is_string( $wildcard_mime_types ) ) {
-		$wildcard_mime_types = array_map( 'trim', explode( ',', $wildcard_mime_types ) );
-	}
-	if ( is_string( $real_mime_types ) ) {
-		$real_mime_types = array_map( 'trim', explode( ',', $real_mime_types ) );
-	}
-
-	$patternses = array();
-	$wild = '[-._a-z0-9]*';
-
-	foreach ( (array) $wildcard_mime_types as $type ) {
-		$mimes = array_map( 'trim', explode( ',', $type ) );
-		foreach ( $mimes as $mime ) {
-			$regex = str_replace( '__wildcard__', $wild, preg_quote( str_replace( '*', '__wildcard__', $mime ) ) );
-			$patternses[][$type] = "^$regex$";
-			if ( false === strpos( $mime, '/' ) ) {
-				$patternses[][$type] = "^$regex/";
-				$patternses[][$type] = $regex;
-			}
-		}
-	}
-	asort( $patternses );
-
-	foreach ( $patternses as $patterns ) {
-		foreach ( $patterns as $type => $pattern ) {
-			foreach ( (array) $real_mime_types as $real ) {
-				if ( preg_match( "#$pattern#", $real ) && ( empty( $matches[$type] ) || false === array_search( $real, $matches[$type] ) ) ) {
-					$matches[$type][] = $real;
-				}
-			}
-		}
-	}
-	return $matches;
-}
-
+// refactored. function wp_match_mime_types( $wildcard_mime_types, $real_mime_types ) {}
 // refactored. function wp_post_mime_type_where( $post_mime_types, $table_alias = '' ) {}
 
 /**
