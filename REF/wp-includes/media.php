@@ -190,21 +190,17 @@ function wp_image_matches_ratio( $source_width, $source_height, $target_width, $
 	// To test for varying crops, we constrain the dimensions of the larger image to the dimensions of the smaller image and see if they match.
 	if ( $source_width > $target_width ) {
 		$constrained_size = wp_constrain_dimensions( $source_width, $source_height, $target_width );
+		$expected_size = array( $target_width, $target_height );
+	} else {
+		$constrained_size = wp_constrain_dimensions( $target_width, $target_height, $source_width );
+		$expected_size = array( $source_width, $source_height );
 	}
+
+	// If the image dimensions are within 1px of the expected size, we consider it a match.
+	$matched = abs( $constrained_size[0] - $expected_size[0] ) <= 1 && abs( $constrained_size[1] - $expected_size[1] ) <= 1;
+
+	return $matched;
 }
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 011: wp-includes/media.php
- */
 
 /**
  * Retrieves the image's intermediate size (resized) path, width, and height.
@@ -280,7 +276,6 @@ function image_get_intermediate_size( $post_id, $size = 'thumbnail' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 010: wp-includes/media.php
- * -> wp-includes/media.php
  */
 				}
 			}
