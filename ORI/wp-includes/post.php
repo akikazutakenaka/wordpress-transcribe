@@ -4811,20 +4811,7 @@ function set_post_thumbnail( $post, $thumbnail_id ) {
 	return false;
 }
 
-/**
- * Remove a post thumbnail.
- *
- * @since 3.3.0
- *
- * @param int|WP_Post $post Post ID or post object where thumbnail should be removed from.
- * @return bool True on success, false on failure.
- */
-function delete_post_thumbnail( $post ) {
-	$post = get_post( $post );
-	if ( $post )
-		return delete_post_meta( $post->ID, '_thumbnail_id' );
-	return false;
-}
+// refactored. function delete_post_thumbnail( $post ) {}
 
 /**
  * Delete auto-drafts for new posts that are > 7 days old.

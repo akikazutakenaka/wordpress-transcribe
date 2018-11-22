@@ -1400,6 +1400,17 @@ EOQ
 
 		if ( ! $thumbnail_support && 'attachment' === $post_type && $post_mime_type ) {
 			if ( wp_attachment_is( 'audio', $post_ID ) ) {
+				$thumbnail_support = post_type_supports( 'attachment:audio', 'thumbnail' ) || current_theme_supports( 'post-thumbnails', 'attachment:audio' );
+			} elseif ( wp_attachment_is( 'video', $post_ID ) ) {
+				$thumbnail_support = post_type_supports( 'attachment:video', 'thumbnail' ) || current_theme_supports( 'post-thumbnails', 'attachment:video' );
+			}
+		}
+
+		if ( $thumbnail_support ) {
+			$thumbnail_id = intval( $postarr['_thumbnail_id'] );
+
+			if ( -1 === $thumbnail_id ) {
+				delete_post_thumbnail( $post_ID );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2235,6 +2246,23 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
  * -> wp-includes/post.php
  */
 	}
+}
+
+/**
+ * Remove a post thumbnail.
+ *
+ * @since 3.3.0
+ *
+ * @param  int|WP_Post $post Post ID or post object where thumbnail should be removed from.
+ * @return bool        True on success, false on failure.
+ */
+function delete_post_thumbnail( $post )
+{
+	$post = get_post( $post );
+
+	return $post
+		? delete_post_meta( $post->ID, '_thumbnail_id' )
+		: FALSE;
 }
 
 /**
