@@ -486,18 +486,32 @@ function wp_get_attachment_image_src( $attachment_id, $size = 'thumbnail', $icon
 		$src = FALSE;
 
 		if ( $icon && $src = wp_mime_type_icon( $attachment_id ) ) {
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * @NOW 008: wp-includes/media.php
- */
+			// This filter is documented in wp-includes/post.php
+			$icon_dir = apply_filters( 'icon_dir', ABSPATH . WPINC . '/images/media' );
+
+			$src_file = $icon_dir . '/' . wp_basename( $src );
+			@ list( $width, $height ) = getimagesize( $src_file );
+		}
+
+		if ( $src && $width && $height ) {
+			$image = array( $src, $width, $height );
 		}
 	}
+
+	/**
+	 * Filters the image src result.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param array|false  $image         Either array with src, width & height, icon src, or false.
+	 * @param int          $attachment_id Image attachment ID.
+	 * @param string|array $size          Size of image.
+	 *                                    Image size or array of width and height values (in that order).
+	 *                                    Default 'thumbnail'.
+	 * @param bool         $icon          Whether the image should be treated as an icon.
+	 *                                    Default false.
+	 */
+	return apply_filters( 'wp_get_attachment_image_src', $image, $attachment_id, $size, $icon );
 }
 
 /**
@@ -533,7 +547,6 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = F
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/media.php
- * -> wp-includes/media.php
  */
 }
 

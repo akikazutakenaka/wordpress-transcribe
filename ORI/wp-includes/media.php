@@ -358,55 +358,7 @@ function get_intermediate_image_sizes() {
 	return apply_filters( 'intermediate_image_sizes', $image_sizes );
 }
 
-/**
- * Retrieve an image to represent an attachment.
- *
- * A mime icon for files, thumbnail or intermediate size for images.
- *
- * The returned array contains four values: the URL of the attachment image src,
- * the width of the image file, the height of the image file, and a boolean
- * representing whether the returned array describes an intermediate (generated)
- * image size or the original, full-sized upload.
- *
- * @since 2.5.0
- *
- * @param int          $attachment_id Image attachment ID.
- * @param string|array $size          Optional. Image size. Accepts any valid image size, or an array of width
- *                                    and height values in pixels (in that order). Default 'thumbnail'.
- * @param bool         $icon          Optional. Whether the image should be treated as an icon. Default false.
- * @return false|array Returns an array (url, width, height, is_intermediate), or false, if no image is available.
- */
-function wp_get_attachment_image_src( $attachment_id, $size = 'thumbnail', $icon = false ) {
-	// get a thumbnail or intermediate image if there is one
-	$image = image_downsize( $attachment_id, $size );
-	if ( ! $image ) {
-		$src = false;
-
-		if ( $icon && $src = wp_mime_type_icon( $attachment_id ) ) {
-			/** This filter is documented in wp-includes/post.php */
-			$icon_dir = apply_filters( 'icon_dir', ABSPATH . WPINC . '/images/media' );
-
-			$src_file = $icon_dir . '/' . wp_basename( $src );
-			@list( $width, $height ) = getimagesize( $src_file );
-		}
-
-		if ( $src && $width && $height ) {
-			$image = array( $src, $width, $height );
-		}
-	}
-	/**
-	 * Filters the image src result.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param array|false  $image         Either array with src, width & height, icon src, or false.
-	 * @param int          $attachment_id Image attachment ID.
-	 * @param string|array $size          Size of image. Image size or array of width and height values
-	 *                                    (in that order). Default 'thumbnail'.
-	 * @param bool         $icon          Whether the image should be treated as an icon. Default false.
-	 */
-	return apply_filters( 'wp_get_attachment_image_src', $image, $attachment_id, $size, $icon );
-}
+// refactored. function wp_get_attachment_image_src( $attachment_id, $size = 'thumbnail', $icon = false ) {}
 
 /**
  * Get an HTML img element representing an image attachment
