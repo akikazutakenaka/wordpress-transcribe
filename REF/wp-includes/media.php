@@ -7,6 +7,26 @@
  */
 
 /**
+ * Returns a filtered list of WP-supported audio formats.
+ *
+ * @since 3.6.0
+ *
+ * @return array Supported audio formats.
+ */
+function wp_get_audio_extensions()
+{
+	/**
+	 * Filters the list of supported audio formats.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $extensions An array of support audio formats.
+	 *                          Defaults are 'mp3', 'ogg', 'flac', 'm4a', 'wav'.
+	 */
+	return apply_filters( 'wp_audio_extensions', array( 'mp3', 'ogg', 'flac', 'm4a', 'wav' ) );
+}
+
+/**
  * Retrieve taxonomies attached to given the attachment.
  *
  * @since 2.5.0

@@ -1998,6 +1998,24 @@ function wp_attachment_is( $type, $post = NULL )
 	}
 
 	$check = wp_check_filetype( $file );
+
+	if ( empty( $check['ext'] ) ) {
+		return FALSE;
+	}
+
+	$ext = $check['ext'];
+
+	if ( 'import' !== $post->post_mime_type ) {
+		return $type === $ext;
+	}
+
+	switch ( $type ) {
+		case 'image':
+			$image_exts = array( 'jpg', 'jpeg', 'jpe', 'gif', 'png' );
+			return in_array( $ext, $image_exts );
+
+		case 'audio':
+			return in_array( $ext, wp_get_audio_extensions() );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -2007,6 +2025,7 @@ function wp_attachment_is( $type, $post = NULL )
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/post.php
  */
+	}
 }
 
 /**
