@@ -27,6 +27,26 @@ function wp_get_audio_extensions()
 }
 
 /**
+ * Returns a filtered list of WP-supported video formats.
+ *
+ * @since 3.6.0
+ *
+ * @return array List of supported video formats.
+ */
+function wp_get_video_extensions()
+{
+	/**
+	 * Filters the list of supported video formats.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $extensions An array of support video formats.
+	 *                          Defaults are 'mp4', 'm4v', 'webm', 'ogv', 'flv'.
+	 */
+	return apply_filters( 'wp_video_extensions', array( 'mp4', 'm4v', 'webm', 'ogv', 'flv' ) );
+}
+
+/**
  * Retrieve taxonomies attached to given the attachment.
  *
  * @since 2.5.0

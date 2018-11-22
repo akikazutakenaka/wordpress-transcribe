@@ -2016,6 +2016,9 @@ function wp_attachment_is( $type, $post = NULL )
 
 		case 'audio':
 			return in_array( $ext, wp_get_audio_extensions() );
+
+		case 'video':
+			return in_array( $ext, wp_get_video_extensions() );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
