@@ -7,6 +7,16 @@
  */
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/media.php
+ */
+
+/**
  * Returns a filtered list of WP-supported audio formats.
  *
  * @since 3.6.0

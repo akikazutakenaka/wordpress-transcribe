@@ -4790,27 +4790,7 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID ) {
 	return $post_parent;
 }
 
-/**
- * Set a post thumbnail.
- *
- * @since 3.1.0
- *
- * @param int|WP_Post $post         Post ID or post object where thumbnail should be attached.
- * @param int         $thumbnail_id Thumbnail to attach.
- * @return int|bool True on success, false on failure.
- */
-function set_post_thumbnail( $post, $thumbnail_id ) {
-	$post = get_post( $post );
-	$thumbnail_id = absint( $thumbnail_id );
-	if ( $post && $thumbnail_id && get_post( $thumbnail_id ) ) {
-		if ( wp_get_attachment_image( $thumbnail_id, 'thumbnail' ) )
-			return update_post_meta( $post->ID, '_thumbnail_id', $thumbnail_id );
-		else
-			return delete_post_meta( $post->ID, '_thumbnail_id' );
-	}
-	return false;
-}
-
+// refactored. function set_post_thumbnail( $post, $thumbnail_id ) {}
 // refactored. function delete_post_thumbnail( $post ) {}
 
 /**

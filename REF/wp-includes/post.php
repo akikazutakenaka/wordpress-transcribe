@@ -1411,6 +1411,8 @@ EOQ
 
 			if ( -1 === $thumbnail_id ) {
 				delete_post_thumbnail( $post_ID );
+			} else {
+				set_post_thumbnail( $post_ID, $thumbnail_id );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1418,6 +1420,7 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/media.php
  */
 			}
 		}
@@ -2246,6 +2249,27 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
  * -> wp-includes/post.php
  */
 	}
+}
+
+/**
+ * Set a post thumbnail.
+ *
+ * @since 3.1.0
+ *
+ * @param  int|WP_Post $post         Post ID or post object where thumbnail should be attached.
+ * @param  int         $thumbnail_id Thumbnail to attach.
+ * @return int|bool    True on success, false on failure.
+ */
+function set_post_thumbnail( $post, $thumbnail_id )
+{
+	$post = get_post( $post );
+	$thumbnail_id = absint( $thumbnail_id );
+
+	return $post && $thumbnail_id && get_post( $thumbnail_id )
+		? ( wp_get_attachment_image( $thumbnail_id, 'thumbnail' )
+			? update_post_meta( $post->ID, '_thumbnail_id', $thumbnail_id )
+			: delete_post_meta( $post->ID, '_thumbnail_id' ) )
+		: FALSE;
 }
 
 /**
