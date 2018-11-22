@@ -495,7 +495,6 @@ function wp_get_attachment_image_src( $attachment_id, $size = 'thumbnail', $icon
  * <- wp-includes/post.php
  * <- wp-includes/media.php
  * @NOW 008: wp-includes/media.php
- * -> wp-includes/post.php
  */
 		}
 	}

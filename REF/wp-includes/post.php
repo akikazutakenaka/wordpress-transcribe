@@ -2404,18 +2404,36 @@ function wp_mime_type_icon( $mime = 0 )
 		}
 
 		$matches = wp_match_mime_types( array_keys( $types ), $post_mimes );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 009: wp-includes/post.php
- */
+		$matches['default'] = array( 'default' );
+
+		foreach ( $matches as $match => $wilds ) {
+			foreach ( $wilds as $wild ) {
+				if ( ! isset( $types[ $wild ] ) ) {
+					continue;
+				}
+
+				$icon = $types[ $wild ];
+
+				if ( ! is_numeric( $mime ) ) {
+					wp_cache_add( "mime_type_icon_$mime", $icon );
+				}
+
+				break 2;
+			}
+		}
 	}
+
+	/**
+	 * Filters the mime type icon.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $icon    Path to the mime type icon.
+	 * @param string $mime    Mime type.
+	 * @param int    $post_id Attachment ID.
+	 *                        Will equal 0 if the function passed the mime type.
+	 */
+	return apply_filters( 'wp_mime_type_icon', $icon, $mime, $post_id );
 }
 
 /**
