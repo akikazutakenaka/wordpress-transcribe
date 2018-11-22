@@ -57,19 +57,77 @@ function image_constrain_size_for_editor( $width, $height, $size = 'medium', $co
 {
 	global $content_width;
 	$_wp_additional_image_sizes = wp_get_additional_image_sizes();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 011: wp-includes/media.php
- */
+
+	if ( ! $context ) {
+		$context = is_admin()
+			? 'edit'
+			: 'display';
+	}
+
+	if ( is_array( $size ) ) {
+		$max_width  = $size[0];
+		$max_height = $size[1];
+	} elseif ( $size == 'thumb' || $size == 'thumbnail' ) {
+		$max_width  = intval( get_option( 'thumbnail_size_w' ) );
+		$max_height = intval( get_option( 'thumbnail_size_h' ) );
+
+		// Last chance thumbnail size defaults.
+		if ( ! $max_width && ! $max_height ) {
+			$max_width  = 128;
+			$max_height = 96;
+		}
+	} elseif ( $size == 'medium' ) {
+		$max_width  = intval( get_option( 'medium_size_w' ) );
+		$max_height = intval( get_option( 'medium_size_h' ) );
+	} elseif ( $size == 'medium_large' ) {
+		$max_width  = intval( get_option( 'medium_large_size_w' ) );
+		$max_height = intval( get_option( 'medium_large_size_h' ) );
+
+		if ( intval( $content_width ) > 0 ) {
+			$max_width = min( intval( $content_width ), $max_width );
+		}
+	} elseif ( $size == 'large' ) {
+		/**
+		 * We're inserting a large size image into the editor.
+		 * If it's a really big image we'll scale it down to fit reasonably within the editor itself, and within the theme's content width if it's known.
+		 * The user can resize it in the editor if they wish.
+		 */
+		$max_width  = intval( get_option( 'large_size_w' ) );
+		$max_height = intval( get_option( 'large_size_h' ) );
+
+		if ( intval( $content_width ) > 0 ) {
+			$max_width = min( intval( $content_width ), $max_width );
+		}
+	} elseif ( ! empty( $_wp_additional_image_sizes ) && in_array( $size, array_keys( $_wp_additional_image_sizes ) ) ) {
+		$max_width  = intval( $_wp_additional_image_sizes[ $size ]['width'] );
+		$max_height = intval( $_wp_additional_image_sizes[ $size ]['height'] );
+
+		/**
+		 * Only in admin.
+		 * Assume that theme authors know what they're doing.
+		 */
+		if ( intval( $content_width ) > 0 && 'edit' === $context ) {
+			$max_width = min( intval( $content_width ), $max_width );
+		}
+	} else {
+		// $size == 'full' has no constraint.
+		$max_width  = $width;
+		$max_height = $height;
+	}
+
+	/**
+	 * Filters the maximum image size dimensions for the editor.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param array        $max_image_size An array with the width as the first element, and the height as the second element.
+	 * @param string|array $size           Size of what the result image should be.
+	 * @param string       $context        The context the image is being resized for.
+	 *                                     Possible values are 'display' (like in a theme) or 'edit' (like inserting into an editor).
+	 */
+	list( $max_width, $max_height ) = apply_filters( 'editor_max_image_size', array( $max_width, $max_height ), $size, $context );
+
+	return wp_constrain_dimensions( $width, $height, $max_width, $max_height );
 }
 
 /**
@@ -365,7 +423,6 @@ function image_get_intermediate_size( $post_id, $size = 'thumbnail' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 010: wp-includes/media.php
- * -> wp-includes/media.php
  */
 		}
 	}
