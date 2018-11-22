@@ -7,6 +7,69 @@
  */
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 012: wp-includes/media.php
+ */
+
+/**
+ * Scale down the default size of an image.
+ *
+ * This is so that the image is a better fit for the editor and theme.
+ *
+ * The `$size` parameter accepts either an array or a string.
+ * The supported string values are 'thumb' or 'thumbnail' for the given thumbnail size or defaults at 128 width and 96 height in pixels.
+ * Also supported for the string value is 'medium', 'medium_large' and 'full'.
+ * The 'full' isn't actually supported, but any value other than the supported will result in the content_width or 500 if that is not set.
+ *
+ * Finally, there is a filter named {@see 'editor_max_image_size'}, that will be called on the calculated array for width and height, respectively.
+ * The second parameter will be the value that was in the $size parameter.
+ * The returned type for the hook is an array with the width as the first element and the height as the second element.
+ *
+ * @since  2.5.0
+ * @global int $content_width
+ *
+ * @param  int          $width   Width of the image in pixels.
+ * @param  int          $height  Height of the image in pixels.
+ * @param  string|array $size    Optional.
+ *                               Image size.
+ *                               Accepts any valid image size, or an array of width and height values in pixels (in that order).
+ *                               Default 'medium'.
+ * @param  string       $context Optional.
+ *                               Could be 'display' (like in a theme) or 'edit' (like inserting into an editor).
+ *                               Default null.
+ * @return array        Width and height of what the result image should resize to.
+ */
+function image_constrain_size_for_editor( $width, $height, $size = 'medium', $context = NULL )
+{
+	global $content_width;
+	$_wp_additional_image_sizes = wp_get_additional_image_sizes();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * <- wp-includes/media.php
+ * @NOW 011: wp-includes/media.php
+ * -> wp-includes/media.php
+ */
+}
+
+/**
  * Scale an image to fit a particular size (such as 'thumb' or 'medium').
  *
  * Array with image url, width, height, and whether is intermediate size, in that order is returned on success is returned.
@@ -265,6 +328,29 @@ function image_get_intermediate_size( $post_id, $size = 'thumbnail' )
 					$same_ratio = 0 === $size[0] || 0 === $size[1]
 						? wp_image_matches_ratio( $data['width'], $data['height'], $imagedata['width'], $imagedata['height'] )
 						: wp_image_matches_ratio( $data['width'], $data['height'], $size[0], $size[1] );
+
+					if ( $same_ratio ) {
+						$candidates[ $data['width'] * $data['height'] ] = $data;
+					}
+				}
+			}
+
+			if ( ! empty( $candidates ) ) {
+				// Sort the array by size if we have more than one candidate.
+				if ( 1 < count( $candidates ) ) {
+					ksort( $candidates );
+				}
+
+				$data = array_shift( $candidates );
+			} elseif ( ! empty( $imagedata['sizes']['thumbnail'] ) && $imagedata['sizes']['thumbnail']['width'] >= $size[0] && $imagedata['sizes']['thumbnail']['width'] >= $size[1] ) {
+				// When the size requested is smaller than the thumbnail dimensions, we fall back to the thumbnail size to maintain backwards compatibility with pre 4.6 versions of WordPress.
+				$data = $imagedata['sizes']['thumbnail'];
+			} else {
+				return FALSE;
+			}
+
+			// Constrain the width and height attributes to the requested values.
+			list( $data['width'], $data['height'] ) = image_constrain_size_for_editor( $data['width'], $data['height'], $size );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -276,9 +362,8 @@ function image_get_intermediate_size( $post_id, $size = 'thumbnail' )
  * <- wp-includes/media.php
  * <- wp-includes/media.php
  * @NOW 010: wp-includes/media.php
+ * -> wp-includes/media.php
  */
-				}
-			}
 		}
 	}
 }
