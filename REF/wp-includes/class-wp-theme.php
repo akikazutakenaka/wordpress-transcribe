@@ -502,20 +502,14 @@ final class WP_Theme implements ArrayAccess
 		if ( self::$persistently_cache ) {
 			foreach ( array_keys( $this->headers ) as $_header ) {
 				$this->headers_sanitized[ $_header ] = $this->sanitize_header( $_header, $this->headers[ $_header ] );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 010: wp-includes/class-wp-theme.php
- */
 			}
+
+			$this->cache_add( 'headers', $this->headers_sanitized );
+		} else {
+			$this->headers_sanitized[ $header ] = $this->sanitize_header( $header, $this->headers[ $header ] );
 		}
+
+		return $this->headers_sanitized[ $header ];
 	}
 
 	/**
@@ -843,7 +837,6 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/class-wp-theme.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 009: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
  */
 	}
 }
