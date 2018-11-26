@@ -358,19 +358,9 @@ function load_theme_textdomain( $domain, $path = FALSE )
 
 	if ( ! $path ) {
 		$path = get_template_directory();
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 010: wp-includes/l10n.php
- */
 	}
+
+	return load_textdomain( $domain, $path . '/' . $locale . '.mo' );
 }
 
 /**

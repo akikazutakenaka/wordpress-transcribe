@@ -488,46 +488,7 @@ function load_muplugin_textdomain( $domain, $mu_plugin_rel_path = '' ) {
 	return load_textdomain( $domain, $path . '/' . $mofile );
 }
 
-/**
- * Load the theme's translated strings.
- *
- * If the current locale exists as a .mo file in the theme's root directory, it
- * will be included in the translated strings by the $domain.
- *
- * The .mo files must be named based on the locale exactly.
- *
- * @since 1.5.0
- * @since 4.6.0 The function now tries to load the .mo file from the languages directory first.
- *
- * @param string $domain Text domain. Unique identifier for retrieving translated strings.
- * @param string $path   Optional. Path to the directory containing the .mo file.
- *                       Default false.
- * @return bool True when textdomain is successfully loaded, false otherwise.
- */
-function load_theme_textdomain( $domain, $path = false ) {
-	/**
-	 * Filters a theme's locale.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param string $locale The theme's current locale.
-	 * @param string $domain Text domain. Unique identifier for retrieving translated strings.
-	 */
-	$locale = apply_filters( 'theme_locale', is_admin() ? get_user_locale() : get_locale(), $domain );
-
-	$mofile = $domain . '-' . $locale . '.mo';
-
-	// Try to load from the languages directory first.
-	if ( load_textdomain( $domain, WP_LANG_DIR . '/themes/' . $mofile ) ) {
-		return true;
-	}
-
-	if ( ! $path ) {
-		$path = get_template_directory();
-	}
-
-	return load_textdomain( $domain, $path . '/' . $locale . '.mo' );
-}
+// refactored. function load_theme_textdomain( $domain, $path = false ) {}
 
 /**
  * Load the child themes translated strings.
