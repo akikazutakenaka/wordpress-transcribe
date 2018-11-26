@@ -10,6 +10,21 @@
  */
 
 /**
+ * Returns the initialized WP_Http Object.
+ *
+ * @since     2.7.0
+ * @access    private
+ * @staticvar WP_Http $http
+ *
+ * @return WP_Http HTTP Transport object.
+ */
+function _wp_http_get_object()
+{
+	static $http = NULL;
+
+	if ( is_null( $http ) ) {
+		$http = new WP_Http();
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -23,7 +38,10 @@
  * <- wp-admin/includes/theme.php
  * <- wp-includes/http.php
  * @NOW 013: wp-includes/http.php
+ * -> wp-includes/class-http.php
  */
+	}
+}
 
 /**
  * Determines if there is an HTTP Transport that can process this request.
