@@ -441,6 +441,40 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * <- wp-includes/post.php
- * @NOW 007: wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 008: wp-includes/class-wp-theme.php
  */
+
+	/**
+	 * Returns the theme's post templates for a given post type.
+	 *
+	 * @since 3.4.0
+	 * @since 4.7.0 Added the `$post_type` parameter.
+	 *
+	 * @param  WP_Post|null $post      Optional.
+	 *                                 The post being edited, provided for context.
+	 * @param  string       $post_type Optional.
+	 *                                 Post type to get the templates for.
+	 *                                 Default 'page'.
+	 *                                 If a post is provided, its post type is used.
+	 * @return array        Array of page templates, keyed by filename, with the value of the translated header name.
+	 */
+	public function get_page_templates( $post = NULL, $post_type = 'page' )
+	{
+		if ( $post ) {
+			$post_type = get_post_type( $post );
+		}
+
+		$post_templates = $this->get_post_templates();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/class-wp-theme.php
+ * -> wp-includes/class-wp-theme.php
+ */
+	}
 }
