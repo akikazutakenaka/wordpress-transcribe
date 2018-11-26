@@ -387,19 +387,7 @@ final class WP_Theme implements ArrayAccess {
 		return wp_cache_add( $key . '-' . $this->cache_hash, $data, 'themes', self::$cache_expiration );
 	}
 
-	/**
-	 * Gets theme data from cache.
-	 *
-	 * Cache entries are keyed by the theme and the type of data.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @param string $key Type of data to retrieve (theme, screenshot, headers, post_templates)
-	 * @return mixed Retrieved data
-	 */
-	private function cache_get( $key ) {
-		return wp_cache_get( $key . '-' . $this->cache_hash, 'themes' );
-	}
+	// refactored. private function cache_get( $key ) {}
 
 	/**
 	 * Clears the cache for the theme.
