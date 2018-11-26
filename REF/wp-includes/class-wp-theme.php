@@ -221,6 +221,35 @@ final class WP_Theme implements ArrayAccess
 		$this->cache_hash = md5( $this->theme_root . '/' . $this->stylesheet );
 		$theme_file = $this->stylesheet . '/style.css';
 		$cache = $this->cache_get( 'theme' );
+
+		if ( is_array( $cache ) ) {
+			foreach ( array( 'errors', 'headers', 'template' ) as $key ) {
+				if ( isset( $cache[ $key ] ) ) {
+					$this->$key = $cache[ $key ];
+				}
+			}
+
+			if ( $this->errors ) {
+				return;
+			}
+
+			if ( isset( $cache['theme_root_template'] ) ) {
+				$theme_root_template = $cache['theme_root_template'];
+			}
+		} elseif ( ! file_exists( $this->theme_root . '/' . $theme_file ) ) {
+			$this->headers['Name'] = $this->stylesheet;
+
+			$this->errors = ! file_exists( $this->theme_root . '/' . $this->stylesheet )
+				? new WP_Error( 'theme_not_found', sprintf( __( 'The theme directory "%s" does not exist.' ), esc_html( $this->stylesheet ) ) )
+				: new WP_Error( 'theme_no_stylesheet', __( 'Stylesheet is missing.' ) );
+
+			$this->template = $this->stylesheet;
+			$this->cache_add( 'theme', array(
+					'headers'    => $this->headers,
+					'errors'     => $this->errors,
+					'stylesheet' => $this->stylesheet,
+					'template'   => $this->template
+				) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -230,6 +259,23 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-theme.php
  */
+		}
+	}
+
+	/**
+	 * Adds theme data to cache.
+	 *
+	 * Cache entries keyed by the theme and the type of data.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param  string $key  Type of data to store (theme, screenshot, headers, post_templates).
+	 * @param  string $data Data to store.
+	 * @return bool   Return value from wp_cache_add().
+	 */
+	private function cache_add( $key, $data )
+	{
+		return wp_cache_add( $key . '-' . $this->cache_hash, $data, 'themes', self::$cache_expiration );
 	}
 
 	/**
