@@ -17,46 +17,9 @@
  * @since 2.7.0
  */
 class WP_Http_Curl {
-
-	/**
-	 * Temporary header storage for during requests.
-	 *
-	 * @since 3.2.0
-	 * @var string
-	 */
-	private $headers = '';
-
-	/**
-	 * Temporary body storage for during requests.
-	 *
-	 * @since 3.6.0
-	 * @var string
-	 */
-	private $body = '';
-
-	/**
-	 * The maximum amount of data to receive from the remote server.
-	 *
-	 * @since 3.6.0
-	 * @var int
-	 */
-	private $max_body_length = false;
-
-	/**
-	 * The file resource used for streaming to file.
-	 *
-	 * @since 3.6.0
-	 * @var resource
-	 */
-	private $stream_handle = false;
-
-	/**
-	 * The total bytes written in the current request.
-	 *
-	 * @since 4.1.0
-	 * @var int
-	 */
-	private $bytes_written_total = 0;
+	// refactored. private $headers = '';
+	// :
+	// refactored. private $bytes_written_total = 0;
 
 	/**
 	 * Send a HTTP request to a URI using cURL extension.
