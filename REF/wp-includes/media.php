@@ -602,7 +602,6 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = F
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/media.php
- * -> wp-includes/media.php
  */
 			}
 		}
@@ -881,18 +880,33 @@ function wp_calculate_image_sizes( $size, $image_src = NULL, $image_meta = NULL,
 
 		if ( is_array( $image_meta ) ) {
 			$size_array = _wp_get_image_size_from_meta( $size, $image_meta );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * @NOW 008: wp-includes/media.php
- */
+
+			if ( $size_array ) {
+				$width = absint( $size_array[0] );
+			}
 		}
 	}
+
+	if ( ! $width ) {
+		return FALSE;
+	}
+
+	// Setup the default 'sizes' attribute.
+	$sizes = sprintf( '(max-width: %1$dpx) 100vw, %1$dpx', $width );
+
+	/**
+	 * Filters the output of 'wp_calculate_image_sizes()'.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param string       $sizes         A source size value for use in a 'sizes' attribute.
+	 * @param array|string $size          Requested size.
+	 *                                    Image size or array of width and height values in pixels (in that order).
+	 * @param string|null  $image_src     The URL to the image file or null.
+	 * @param array|null   $image_meta    The image meta data as returned by wp_get_attachment_metadata() or null.
+	 * @param int          $attachment_id Image attachment ID of the original image or 0.
+	 */
+	return apply_filters( 'wp_calculate_image_sizes', $sizes, $size, $image_src, $image_meta, $attachment_id );
 }
 
 /**

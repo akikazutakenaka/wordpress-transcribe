@@ -495,59 +495,7 @@ function wp_get_attachment_image_sizes( $attachment_id, $size = 'medium', $image
 	return wp_calculate_image_sizes( $size_array, $image_src, $image_meta, $attachment_id );
 }
 
-/**
- * Creates a 'sizes' attribute value for an image.
- *
- * @since 4.4.0
- *
- * @param array|string $size          Image size to retrieve. Accepts any valid image size, or an array
- *                                    of width and height values in pixels (in that order). Default 'medium'.
- * @param string       $image_src     Optional. The URL to the image file. Default null.
- * @param array        $image_meta    Optional. The image meta data as returned by 'wp_get_attachment_metadata()'.
- *                                    Default null.
- * @param int          $attachment_id Optional. Image attachment ID. Either `$image_meta` or `$attachment_id`
- *                                    is needed when using the image size name as argument for `$size`. Default 0.
- * @return string|bool A valid source size value for use in a 'sizes' attribute or false.
- */
-function wp_calculate_image_sizes( $size, $image_src = null, $image_meta = null, $attachment_id = 0 ) {
-	$width = 0;
-
-	if ( is_array( $size ) ) {
-		$width = absint( $size[0] );
-	} elseif ( is_string( $size ) ) {
-		if ( ! $image_meta && $attachment_id ) {
-			$image_meta = wp_get_attachment_metadata( $attachment_id );
-		}
-
-		if ( is_array( $image_meta ) ) {
-			$size_array = _wp_get_image_size_from_meta( $size, $image_meta );
-			if ( $size_array ) {
-				$width = absint( $size_array[0] );
-			}
-		}
-	}
-
-	if ( ! $width ) {
-		return false;
-	}
-
-	// Setup the default 'sizes' attribute.
-	$sizes = sprintf( '(max-width: %1$dpx) 100vw, %1$dpx', $width );
-
-	/**
-	 * Filters the output of 'wp_calculate_image_sizes()'.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param string       $sizes         A source size value for use in a 'sizes' attribute.
-	 * @param array|string $size          Requested size. Image size or array of width and height values
-	 *                                    in pixels (in that order).
-	 * @param string|null  $image_src     The URL to the image file or null.
-	 * @param array|null   $image_meta    The image meta data as returned by wp_get_attachment_metadata() or null.
-	 * @param int          $attachment_id Image attachment ID of the original image or 0.
-	 */
-	return apply_filters( 'wp_calculate_image_sizes', $sizes, $size, $image_src, $image_meta, $attachment_id );
-}
+// refactored. function wp_calculate_image_sizes( $size, $image_src = null, $image_meta = null, $attachment_id = 0 ) {}
 
 /**
  * Filters 'img' elements in post content to add 'srcset' and 'sizes' attributes.
