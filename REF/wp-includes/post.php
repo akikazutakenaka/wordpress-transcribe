@@ -1477,7 +1477,6 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
- * -> wp-includes/media.php
  */
 			}
 		}

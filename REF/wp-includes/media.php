@@ -594,18 +594,42 @@ function wp_get_attachment_image( $attachment_id, $size = 'thumbnail', $icon = F
 				$size_array = array( absint( $width ), absint( $height ) );
 				$srcset = wp_calculate_image_srcset( $size_array, $src, $image_meta, $attachment_id );
 				$sizes = wp_calculate_image_sizes( $size_array, $src, $image_meta, $attachment_id );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/media.php
- */
+
+				if ( $srcset
+				  && ( $sizes || ! empty( $attr['sizes'] ) ) ) {
+					$attr['srcset'] = $srcset;
+
+					if ( empty( $attr['sizes'] ) ) {
+						$attr['sizes'] = $sizes;
+					}
+				}
 			}
 		}
+
+		/**
+		 * Filters the list of attachment image attributes.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array        $attr       Attributes for the image markup.
+		 * @param WP_Post      $attachment Image attachment post.
+		 * @param string|array $size       Requested size.
+		 *                                 Image size or array of width and height values (in that order).
+		 *                                 Default 'thumbnail'.
+		 */
+		$attr = apply_filters( 'wp_get_attachment_image_attributes', $attr, $attachment, $size );
+
+		$attr = array_map( 'esc_attr', $attr );
+		$html = rtrim( "<img $hwstring" );
+
+		foreach ( $attr as $name => $value ) {
+			$html .= " $name=" . '"' . $value . '"';
+		}
+
+		$html .= ' />';
 	}
+
+	return $html;
 }
 
 /**
