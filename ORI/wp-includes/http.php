@@ -9,24 +9,7 @@
  * @subpackage HTTP
  */
 
-/**
- * Returns the initialized WP_Http Object
- *
- * @since 2.7.0
- * @access private
- *
- * @staticvar WP_Http $http
- *
- * @return WP_Http HTTP Transport object.
- */
-function _wp_http_get_object() {
-	static $http = null;
-
-	if ( is_null( $http ) ) {
-		$http = new WP_Http();
-	}
-	return $http;
-}
+// refactored. function _wp_http_get_object() {}
 
 /**
  * Retrieve the raw response from a safe HTTP request.
