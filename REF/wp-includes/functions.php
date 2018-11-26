@@ -1912,6 +1912,85 @@ function get_main_network_id()
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/functions.php
+ * @NOW 009: wp-includes/functions.php
+ */
+
+/**
+ * Retrieve metadata from a file.
+ *
+ * Searches for metadata in the first 8kiB of a file, such as a plugin or theme.
+ * Each piece of metadata must be on its own line.
+ * Fields can not span multiple lines, the value will get cut at the end of the first line.
+ *
+ * If the file data is not within that first 8kiB, then the author should correct their plugin file and move the data headers to the top.
+ *
+ * @link  https://codex.wordpress.org/File_Header
+ * @since 2.9.0
+ *
+ * @param  string $file            Path to the file.
+ * @param  array  $default_headers List of headers, in the format array( 'HeaderKey' => 'Header Name' ).
+ * @param  string $context         Optional.
+ *                                 If specified adds filter hook {@see 'extra_$context_headers'}.
+ *                                 Default empty.
+ * @return array  Array of file headers in `HeaderKey => Header Value` format.
+ */
+function get_file_data( $file, $default_headers, $context = '' )
+{
+	// We don't need to write to the file, so just open for reading.
+	$fp = fopen( $file, 'r' );
+
+	// Pull only the first 8kiB of the file in.
+	$file_data = fread( $fp, 8192 );
+
+	// PHP will close file handle, but we are good citizens.
+	fclose( $fp );
+
+	// Make sure we catch CR-only line endings.
+	$file_data = str_replace( "\r", "\n", $file_data );
+
+	/**
+	 * Filters extra file headers by context.
+	 *
+	 * The dynamic portion of the hook name, `$context`, refers to the context where extra headers might be loaded.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $extra_context_headers Empty array by default.
+	 */
+	if ( $context && $extra_headers = apply_filters( "extra_{$context}_headers", array() ) ) {
+		$extra_headers = array_combine( $extra_headers, $extra_headers ); // Keys equal values
+		$all_headers = array_merge( $extra_headers, ( array ) $default_headers );
+	} else {
+		$all_headers = $default_headers;
+	}
+
+	foreach ( $all_headers as $field => $regex ) {
+		$all_headers[ $field ] = preg_match( '/^[ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $file_data, $match ) && $match[1]
+			? _cleanup_header_comment( $match[1] )
+			: '';
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 008: wp-includes/functions.php
+ * -> wp-includes/functions.php
+ */
+	}
+}
+
+/**
  * Return a MySQL expression for selecting the week number based on the start_of_week option.
  *
  * @ignore

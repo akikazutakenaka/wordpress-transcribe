@@ -253,6 +253,22 @@ final class WP_Theme implements ArrayAccess
 
 			if ( ! file_exists( $this->theme_root ) ) { // Don't cache this one.
 				$this->errors->add( 'theme_root_missing', __( 'ERROR: The themes directory is either empty or doesn&#8217;t exist. Please check your installation.' ) );
+			}
+
+			return;
+		} elseif ( ! is_readable( $this->theme_root . '/' . $theme_file ) ) {
+			$this->headers['Name'] = $this->stylesheet;
+			$this->errors = new WP_Error( 'theme_stylesheet_not_readable', __( 'Stylesheet is not readable.' ) );
+			$this->template = $this->stylesheet;
+			$this->cache_add( 'theme', array(
+					'headers'    => $this->headers,
+					'errors'     => $this->errors,
+					'stylesheet' => $this->stylesheet,
+					'template'   => $this->template
+				) );
+			return;
+		} else {
+			$this->headers = get_file_data( $this->theme_root . '/' . $theme_file, self::$file_headers, 'theme' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -261,8 +277,8 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-theme.php
+ * -> wp-includes/functions.php
  */
-			}
 		}
 	}
 
