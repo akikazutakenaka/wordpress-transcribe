@@ -7,6 +7,42 @@
  */
 
 /**
+ * Gets a WP_Theme object for a theme.
+ *
+ * @since  3.4.0
+ * @global array $wp_theme_directories
+ *
+ * @param  string   $stylesheet Optional.
+ *                              Directory name for the theme.
+ *                              Defaults to current theme.
+ * @param  string   $theme_root Optional.
+ *                              Absolute path of the theme root to look in.
+ *                              If not specified, get_raw_theme_root() is used to calculate the theme root for the $stylesheet provided (or current theme).
+ * @return WP_Theme Theme object.
+ *                  Be sure to check the object's exists() method if you need to confirm the theme's existence.
+ */
+function wp_get_theme( $stylesheet = NULL, $theme_root = NULL )
+{
+	global $wp_theme_directories;
+
+	if ( empty( $stylesheet ) ) {
+		$stylesheet = get_stylesheet();
+	}
+
+	if ( empty( $theme_root ) ) {
+		$theme_root = get_raw_theme_root( $stylesheet );
+
+		if ( FALSE === $theme_root ) {
+			$theme_root = WP_CONTENT_DIR . '/themes';
+		} elseif ( ! in_array( $theme_root, ( array ) $wp_theme_directories ) ) {
+			$theme_root = WP_CONTENT_DIR . $theme_root;
+		}
+	}
+
+	return new WP_Theme( $stylesheet, $theme_root );
+}
+
+/**
  * Retrieve name of the current stylesheet.
  *
  * The theme name that the administrator has currently set the front end theme as.

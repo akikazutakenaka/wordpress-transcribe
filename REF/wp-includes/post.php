@@ -1470,6 +1470,16 @@ EOQ
 				delete_post_thumbnail( $post_ID );
 			} else {
 				set_post_thumbnail( $post_ID, $thumbnail_id );
+			}
+		}
+	}
+
+	clean_post_cache( $post_ID );
+	$post = get_post( $post_ID );
+
+	if ( ! empty( $postarr['page_template'] ) ) {
+		$post->page_template = $postarr['page_template'];
+		$page_templates = wp_get_theme()->get_page_templates( $post );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -1477,9 +1487,8 @@ EOQ
  * <- wp-includes/default-filters.php
  * <- wp-includes/post.php
  * @NOW 006: wp-includes/post.php
+ * -> wp-includes/class-wp-theme.php
  */
-			}
-		}
 	}
 }
 
