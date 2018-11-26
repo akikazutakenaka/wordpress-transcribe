@@ -146,19 +146,18 @@ function get_template_directory()
 {
 	$template = get_template();
 	$theme_root = get_theme_root( $template );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/l10n.php
- * @NOW 011: wp-includes/theme.php
- */
+	$template_dir = "$theme_root/$template";
+
+	/**
+	 * Filters the current theme directory path.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $template_dir The URI of the current theme directory.
+	 * @param string $template     Directory name of the current theme.
+	 * @param string $theme_root   Absolute path to the themes directory.
+	 */
+	return apply_filters( 'template_directory', $template_dir, $template, $theme_root );
 }
 
 /**

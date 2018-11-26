@@ -369,7 +369,6 @@ function load_theme_textdomain( $domain, $path = FALSE )
  * <- wp-includes/class-wp-theme.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 010: wp-includes/l10n.php
- * -> wp-includes/theme.php
  */
 	}
 }

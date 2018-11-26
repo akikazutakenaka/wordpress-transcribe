@@ -182,32 +182,7 @@ function get_locale_stylesheet_uri() {
 }
 
 // refactored. function get_template() {}
-
-/**
- * Retrieve current theme directory.
- *
- * @since 1.5.0
- *
- * @return string Template directory path.
- */
-function get_template_directory() {
-	$template = get_template();
-	$theme_root = get_theme_root( $template );
-	$template_dir = "$theme_root/$template";
-
-	/**
-	 * Filters the current theme directory path.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param string $template_dir The URI of the current theme directory.
-	 * @param string $template     Directory name of the current theme.
-	 * @param string $theme_root   Absolute path to the themes directory.
-	 */
-	return apply_filters( 'template_directory', $template_dir, $template, $theme_root );
-}
-
-// refactored. function get_template_directory_uri() {}
+// :
 // refactored. function get_theme_roots() {}
 
 /**
