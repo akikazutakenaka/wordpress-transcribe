@@ -448,18 +448,21 @@ final class WP_Theme implements ArrayAccess
 		return wp_cache_get( $key . '-' . $this->cache_hash, 'themes' );
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 010: wp-includes/class-wp-theme.php
- */
+	/**
+	 * Returns the absolute path to the directory of a theme's "stylesheet" files.
+	 *
+	 * In the case of a child theme, this is the absolute path to the directory of the child theme's files.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return string Absolute path of the stylesheet directory.
+	 */
+	public function get_stylesheet_directory()
+	{
+		return $this->errors() && in_array( 'theme_root_missing', $this->errors()->get_error_codes() )
+			? ''
+			: $this->theme_root . '/' . $this->stylesheet;
+	}
 
 	/**
 	 * Return files in the theme's directory.
@@ -491,7 +494,6 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/class-wp-theme.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 009: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
  */
 	}
 
