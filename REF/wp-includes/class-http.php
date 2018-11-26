@@ -25,6 +25,5 @@ if ( ! class_exists( 'Requests' ) ) {
  * <-......: wp-includes/http.php: wp_http_supports( [array $capabilities = array() [, string $url = NULL]] )
  * <-......: wp-includes/http.php: _wp_http_get_object()
  * @NOW 014: wp-includes/class-http.php
- * ......->: wp-includes/spl-autoload-compat.php: spl_autoload_register( callable $autoload_function [, bool $throw = TRUE [, bool $prepend = FALSE]] )
  */
 }

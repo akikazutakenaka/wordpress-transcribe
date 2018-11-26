@@ -9,20 +9,39 @@
  * @access  private
  */
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/http.php: wp_http_supports( [array $capabilities = array() [, string $url = NULL]] )
- * <-......: wp-includes/http.php: _wp_http_get_object()
- * <-......: wp-includes/class-http.php
- * @NOW 015: wp-includes/spl-autoload-compat.php: spl_autoload_register( callable $autoload_function [, bool $throw = TRUE [, bool $prepend = FALSE]] )
- */
+if ( ! function_exists( 'spl_autoload_register' ) ) {
+	$_wp_spl_autoloaders = array();
+
+	/**
+	 * Registers a function to be autoloaded.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param callable $autoload_function The function to register.
+	 * @param bool     $throw             Optional.
+	 *                                    Whether the function should throw an exception if the function isn't callable.
+	 *                                    Default true.
+	 * @param bool     $prepend           Whether the function should be prepended to the stack.
+	 *                                    Default false.
+	 */
+	function spl_autoload_register( $autoload_function, $throw = TRUE, $prepend = FALSE )
+	{
+		if ( $throw && ! is_callable( $autoload_function ) ) {
+			// String not translated to match PHP core.
+			throw new Exception( 'Function not callable' );
+		}
+
+		global $_wp_spl_autoloaders;
+
+		// Don't allow multiple registration.
+		if ( in_array( $autoload_function, $_wp_spl_autoloaders ) ) {
+			return;
+		}
+
+		if ( $prepend ) {
+			array_unshift( $_wp_spl_autoloaders, $autoload_function );
+		} else {
+			$_wp_spl_autoloaders[] = $autoload_function;
+		}
+	}
+}
