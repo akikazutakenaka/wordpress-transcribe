@@ -10,6 +10,21 @@
  */
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-admin/includes/theme.php
+ * <- wp-admin/includes/theme.php
+ * @NOW 012: wp-includes/http.php
+ */
+
+/**
  * A wrapper for PHP's parse_url() function that handles consistency in the return values across PHP versions.
  *
  * PHP 5.4.7 expanded parse_url()'s ability to handle non-absolute url's, including schemeless and relative url's with :// in the path.
