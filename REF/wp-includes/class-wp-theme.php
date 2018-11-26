@@ -479,6 +479,24 @@ final class WP_Theme implements ArrayAccess
 	}
 
 	/**
+	 * Returns the absolute path to the directory of a theme's "template" files.
+	 *
+	 * In the case of a child theme, this is the absolute path to the directory of the parent theme's files.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return string Absolute path of the template directory.
+	 */
+	public function get_template_directory()
+	{
+		$theme_root = $this->parent()
+			? $this->parent()->theme_root
+			: $this->theme_root;
+
+		return $theme_root . '/' . $this->template;
+	}
+
+	/**
 	 * Return files in the theme's directory.
 	 *
 	 * @since 3.4.0
@@ -500,6 +518,7 @@ final class WP_Theme implements ArrayAccess
 		$files = ( array ) self::scandir( $this->get_stylesheet_directory(), $type, $depth );
 
 		if ( $search_parent && $this->parent() ) {
+			$files += ( array ) self::scandir( $this->get_template_directory(), $type, $depth );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php

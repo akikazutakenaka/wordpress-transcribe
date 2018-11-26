@@ -481,25 +481,7 @@ final class WP_Theme implements ArrayAccess {
 	}
 
 	// refactored. public function get_stylesheet_directory() {}
-
-	/**
-	 * Returns the absolute path to the directory of a theme's "template" files.
-	 *
-	 * In the case of a child theme, this is the absolute path to the directory
-	 * of the parent theme's files.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @return string Absolute path of the template directory.
-	 */
-	public function get_template_directory() {
-		if ( $this->parent() )
-			$theme_root = $this->parent()->theme_root;
-		else
-			$theme_root = $this->theme_root;
-
-		return $theme_root . '/' . $this->template;
-	}
+	// refactored. public function get_template_directory() {}
 
 	/**
 	 * Returns the URL to the directory of a theme's "stylesheet" files.
