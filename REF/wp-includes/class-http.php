@@ -9,6 +9,7 @@
 
 if ( ! class_exists( 'Requests' ) ) {
 	require( ABSPATH . WPINC . '/class-requests.php' );
+	Requests::register_autoloader();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -24,5 +25,6 @@ if ( ! class_exists( 'Requests' ) ) {
  * <-......: wp-includes/http.php: wp_http_supports( [array $capabilities = array() [, string $url = NULL]] )
  * <-......: wp-includes/http.php: _wp_http_get_object()
  * @NOW 014: wp-includes/class-http.php
+ * ......->: wp-includes/class-requests.php: Requests::__construct()
  */
 }
