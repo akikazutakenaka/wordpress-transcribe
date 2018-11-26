@@ -158,7 +158,6 @@ function get_template_directory()
  * <- wp-includes/class-wp-theme.php
  * <- wp-includes/l10n.php
  * @NOW 011: wp-includes/theme.php
- * -> wp-includes/theme.php
  */
 }
 
@@ -373,19 +372,41 @@ function search_theme_directories( $force = FALSE )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/l10n.php
- * <- wp-includes/theme.php
- * @NOW 012: wp-includes/theme.php
+ * Retrieve path to themes directory.
+ *
+ * Does not have trailing slash.
+ *
+ * @since  1.5.0
+ * @global array $wp_theme_directories
+ *
+ * @param  string $stylesheet_or_template The stylesheet or template name of the theme.
+ * @return string Theme path.
  */
+function get_theme_root( $stylesheet_or_template = FALSE )
+{
+	global $wp_theme_directories;
+
+	if ( $stylesheet_or_template && $theme_root = get_raw_theme_root( $stylesheet_or_template ) ) {
+		/**
+		 * Always prepend WP_CONTENT_DIR unless the root currently registered as a theme directory.
+		 * This gives relative theme roots the benefit of the doubt when things go haywire.
+		 */
+		if ( ! in_array( $theme_root, ( array ) $wp_theme_directories ) ) {
+			$theme_root = WP_CONTENT_DIR . $theme_root;
+		}
+	} else {
+		$theme_root = WP_CONTENT_DIR . '/themes';
+	}
+
+	/**
+	 * Filters the absolute path to the themes directory.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $theme_root Absolute path to themes directory.
+	 */
+	return apply_filters( 'theme_root', $theme_root );
+}
 
 /**
  * Retrieve URI for themes directory.
