@@ -1912,16 +1912,19 @@ function get_main_network_id()
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/functions.php
- * @NOW 009: wp-includes/functions.php
+ * Strip close comment and close php tags from file headers used by WP.
+ *
+ * @since  2.8.0
+ * @access private
+ * @see    https://core.trac.wordpress.org/ticket/8497
+ *
+ * @param  string $str Header comment to clean up.
+ * @return string
  */
+function _cleanup_header_comment( $str )
+{
+	return trim( preg_replace( "/\s*(?:\*\/|\?>).*/", '', $str ) );
+}
 
 /**
  * Retrieve metadata from a file.
@@ -1985,7 +1988,6 @@ function get_file_data( $file, $default_headers, $context = '' )
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 008: wp-includes/functions.php
- * -> wp-includes/functions.php
  */
 	}
 }
