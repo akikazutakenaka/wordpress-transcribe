@@ -136,6 +136,20 @@ function get_template()
 }
 
 /**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/l10n.php
+ * @NOW 011: wp-includes/theme.php
+ */
+
+/**
  * Retrieve theme directory URI.
  *
  * @since 1.5.0
