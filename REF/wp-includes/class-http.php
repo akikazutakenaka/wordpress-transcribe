@@ -89,6 +89,21 @@ class WP_Http
 	const NOT_EXTENDED                    = 510;
 	const NETWORK_AUTHENTICATION_REQUIRED = 511;
 
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ */
+
 	/**
 	 * Tests which transports are capable of supporting the request.
 	 *
@@ -134,18 +149,23 @@ class WP_Http
 		return FALSE;
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * @NOW 012: wp-includes/class-http.php: WP_Http::post( string $url [, string|array $args = array()] )
- */
+	/**
+	 * Uses the POST HTTP method.
+	 *
+	 * Used for sending data that is expected to be in the body.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param  string         $url  The request URL.
+	 * @param  string|array   $args Optional.
+	 *                              Override the defaults.
+	 * @return array|WP_Error Array containing 'headers', 'body', 'response', 'cookies', 'filename'.
+	 *                        A WP_Error instance upon error.
+	 */
+	public function post( $url, $args = array() )
+	{
+		$defaults = array( 'method' => 'POST' );
+		$r = wp_parse_args( $args, $defaults );
+		return $this->request( $url, $r );
+	}
 }
