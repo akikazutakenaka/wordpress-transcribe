@@ -135,4 +135,14 @@ class Requests
 	{
 		spl_autoload_register( array( 'Requests', 'autoloader' ) );
 	}
+
+	/**
+	 * Set default certificate path.
+	 *
+	 * @param string $path Certificate path, pointing to a PEM file.
+	 */
+	public static function set_certificate_path( $path )
+	{
+		Requests::$certificate_path = $path;
+	}
 }

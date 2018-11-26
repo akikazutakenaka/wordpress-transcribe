@@ -433,14 +433,7 @@ class Requests {
 		return dirname(__FILE__) . '/Requests/Transport/cacert.pem';
 	}
 
-	/**
-	 * Set default certificate path.
-	 *
-	 * @param string $path Certificate path, pointing to a PEM file.
-	 */
-	public static function set_certificate_path( $path ) {
-		Requests::$certificate_path = $path;
-	}
+	// refactored. public static function set_certificate_path( $path ) {}
 
 	/**
 	 * Set the default values
