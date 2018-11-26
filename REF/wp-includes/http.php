@@ -42,20 +42,23 @@ function _wp_http_get_object()
 function wp_http_supports( $capabilities = array(), $url = NULL )
 {
 	$http = _wp_http_get_object();
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * @NOW 012: wp-includes/http.php: wp_http_supports( [array $capabilities = array() [, string $url = NULL]] )
- */
+	$capabilities = wp_parse_args( $capabilities );
+	$count = count( $capabilities );
+
+	// If we have a numeric $capabilities array, spoof a wp_remote_request() associative $args array.
+	if ( $count && count( array_filter( array_keys( $capabilities ), 'is_numeric' ) ) == $count ) {
+		$capabilities = array_combine( array_values( $capabilities ), array_fill( 0, $count, TRUE ) );
+	}
+
+	if ( $url && ! isset( $capabilities['ssl'] ) ) {
+		$scheme = parse_url( $url, PHP_URL_SCHEME );
+
+		if ( 'https' == $scheme || 'ssl' == $scheme ) {
+			$capabilities['ssl'] = TRUE;
+		}
+	}
+
+	return ( bool ) $http->_get_first_available_transport( $capabilities );
 }
 
 /**
