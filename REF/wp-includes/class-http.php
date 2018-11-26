@@ -138,7 +138,7 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-wp-http.php: _get_first_available_transport( array $args [, string $url = NULL] )
- * ......->: wp-includes/class-wp-http-curl.php: WP_Http_Curl::test( [array $args = array()] )
+ * ......->: wp-includes/class-wp-http-streams.php: WP_Http_Streams
  */
 			}
 		}

@@ -311,36 +311,5 @@ class WP_Http_Curl {
 		return $bytes_written;
 	}
 
-	/**
-	 * Determines whether this class can be used for retrieving a URL.
-	 *
-	 * @static
-	 * @since 2.7.0
-	 *
-	 * @param array $args Optional. Array of request arguments. Default empty array.
-	 * @return bool False means this class can not be used, true means it can.
-	 */
-	public static function test( $args = array() ) {
-		if ( ! function_exists( 'curl_init' ) || ! function_exists( 'curl_exec' ) )
-			return false;
-
-		$is_ssl = isset( $args['ssl'] ) && $args['ssl'];
-
-		if ( $is_ssl ) {
-			$curl_version = curl_version();
-			// Check whether this cURL version support SSL requests.
-			if ( ! (CURL_VERSION_SSL & $curl_version['features']) )
-				return false;
-		}
-
-		/**
-		 * Filters whether cURL can be used as a transport for retrieving a URL.
-		 *
-		 * @since 2.7.0
-		 *
-		 * @param bool  $use_class Whether the class can be used. Default true.
-		 * @param array $args      An array of request arguments.
-		 */
-		return apply_filters( 'use_curl_transport', true, $args );
-	}
+	// refactored. public static function test( $args = array() ) {}
 }
