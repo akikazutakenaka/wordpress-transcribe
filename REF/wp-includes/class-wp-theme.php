@@ -462,6 +462,19 @@ final class WP_Theme implements ArrayAccess
 		return wp_cache_get( $key . '-' . $this->cache_hash, 'themes' );
 	}
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 010: wp-includes/class-wp-theme.php
+ */
+
 	/**
 	 * Returns the absolute path to the directory of a theme's "stylesheet" files.
 	 *
@@ -546,6 +559,33 @@ final class WP_Theme implements ArrayAccess
 		if ( ! is_array( $post_templates ) ) {
 			$post_templates = array();
 			$files = ( array ) $this->get_files( 'php', 1, TRUE );
+
+			foreach ( $files as $file => $full_path ) {
+				if ( ! preg_match( '|Template Name:(.*)$|mi', file_get_contents( $full_path ), $header ) ) {
+					continue;
+				}
+
+				$types = array( 'page' );
+
+				if ( preg_match( '|Template Post Type:(.*)$|mi', file_get_contents( $full_path ), $type ) ) {
+					$types = explode( ',', _cleanup_header_comment( $type[1] ) );
+				}
+
+				foreach ( $types as $type ) {
+					$type = sanitize_key( $type );
+
+					if ( ! isset( $post_templates[ $type ] ) ) {
+						$post_templates[ $type ] = array();
+					}
+
+					$post_templates[ $type ][ $file ] = _cleanup_header_comment( $header[1] );
+				}
+			}
+
+			$this->cache_add( 'post_templates', $post_templates );
+		}
+
+		if ( $this->load_textdomain() ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -555,6 +595,7 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 008: wp-includes/class-wp-theme.php
+ * -> wp-includes/class-wp-theme.php
  */
 		}
 	}
@@ -660,5 +701,37 @@ final class WP_Theme implements ArrayAccess
 		}
 
 		return $files;
+	}
+
+	/**
+	 * Loads the theme's textdomain.
+	 *
+	 * Translation files are not inherited from the parent theme.
+	 * Todo: if this fails for the child theme, it should probably try to load the parent theme's translations.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return bool True if the textdomain was successfully loaded or has already been loaded.
+	 *              False if no texetdomain was specified in the file headers, or if the domain could not be loaded.
+	 */
+	public function load_textdomain()
+	{
+		if ( isset( $this->textdomain_loaded ) ) {
+			return $this->textdomain_loaded;
+		}
+
+		$textdomain = $this->get( 'TextDomain' );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 009: wp-includes/class-wp-theme.php
+ * -> wp-includes/class-wp-theme.php
+ */
 	}
 }
