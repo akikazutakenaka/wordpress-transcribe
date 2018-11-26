@@ -38,20 +38,7 @@ class WP_Error {
 			return $this->error_data[$code];
 	}
 
-	/**
-	 * Add an error or append additional message to an existing error.
-	 *
-	 * @since 2.1.0
-	 *
-	 * @param string|int $code Error code.
-	 * @param string $message Error message.
-	 * @param mixed $data Optional. Error data.
-	 */
-	public function add($code, $message, $data = '') {
-		$this->errors[$code][] = $message;
-		if ( ! empty($data) )
-			$this->error_data[$code] = $data;
-	}
+	// refactored. public function add($code, $message, $data = '') {}
 
 	/**
 	 * Add data for error code.

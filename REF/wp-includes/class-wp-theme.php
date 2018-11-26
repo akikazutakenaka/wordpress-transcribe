@@ -250,6 +250,9 @@ final class WP_Theme implements ArrayAccess
 					'stylesheet' => $this->stylesheet,
 					'template'   => $this->template
 				) );
+
+			if ( ! file_exists( $this->theme_root ) ) { // Don't cache this one.
+				$this->errors->add( 'theme_root_missing', __( 'ERROR: The themes directory is either empty or doesn&#8217;t exist. Please check your installation.' ) );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -259,6 +262,7 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-theme.php
  */
+			}
 		}
 	}
 
