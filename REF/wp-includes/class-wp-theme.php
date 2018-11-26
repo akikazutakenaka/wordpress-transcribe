@@ -179,6 +179,48 @@ final class WP_Theme implements ArrayAccess
 	 */
 	private static $cache_expiration = 1800;
 
+	/**
+	 * Constructor for WP_Theme.
+	 *
+	 * @since  3.4.0
+	 * @global array $wp_theme_directories
+	 *
+	 * @param string        $theme_dir  Directory of the theme within the theme_root.
+	 * @param string        $theme_root Theme root.
+	 * @param WP_Error|void $_child     If this theme is a parent theme, the child may be passed for validation purposes.
+	 */
+	public function __construct( $theme_dir, $theme_root, $_child = NULL )
+	{
+		global $wp_theme_directories;
+
+		// Initialize caching on first run.
+		if ( ! isset( self::$persistently_cache ) ) {
+			// This action is documented in wp-includes/theme.php
+			self::$persistently_cache = apply_filters( 'wp_cache_themes_persistently', FALSE, 'WP_Theme' );
+
+			if ( self::$persistently_cache ) {
+				wp_cache_add_global_groups( 'themes' );
+
+				if ( is_int( self::$persistently_cache ) ) {
+					self::$cache_expiration = self::$persistently_cache;
+				}
+			} else {
+				wp_cache_add_non_persistent_groups( 'themes' );
+			}
+		}
+
+		$this->theme_root = $theme_root;
+		$this->stylesheet = $theme_dir;
+
+		// Correct a situation where the theme is 'some-directory/some-theme' but 'some-directory' was passed in as part of the theme root instead.
+		if ( ! in_array( $theme_root, ( array ) $wp_theme_directories ) && in_array( dirname( $theme_root ), ( array ) $wp_theme_directories ) ) {
+			$this->stylesheet = basename( $this->theme_root ) . '/' . $this->stylesheet;
+			$this->theme_root = dirname( $theme_root );
+		}
+
+		$this->cache_hash = md5( $this->theme_root . '/' . $this->stylesheet );
+		$theme_file = $this->stylesheet . '/style.css';
+		$cache = $this->cache_get( 'theme' );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -187,5 +229,18 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-theme.php
+ * -> wp-includes/class-wp-theme.php
+ */
+	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 008: wp-includes/class-wp-theme.php
  */
 }
