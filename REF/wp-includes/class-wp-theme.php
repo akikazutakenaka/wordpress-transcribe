@@ -418,6 +418,20 @@ final class WP_Theme implements ArrayAccess
 	}
 
 	/**
+	 * Returns reference to the parent theme.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return WP_Theme|false Parent theme, or false if the current theme is not a child theme.
+	 */
+	public function parent()
+	{
+		return isset( $this->parent )
+			? $this->parent
+			: FALSE;
+	}
+
+	/**
 	 * Adds theme data to cache.
 	 *
 	 * Cache entries keyed by the theme and the type of data.
@@ -484,6 +498,8 @@ final class WP_Theme implements ArrayAccess
 	public function get_files( $type = NULL, $depth = 0, $search_parent = FALSE )
 	{
 		$files = ( array ) self::scandir( $this->get_stylesheet_directory(), $type, $depth );
+
+		if ( $search_parent && $this->parent() ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -495,6 +511,7 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/class-wp-theme.php
  * @NOW 009: wp-includes/class-wp-theme.php
  */
+		}
 	}
 
 	/**

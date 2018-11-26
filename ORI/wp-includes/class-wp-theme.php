@@ -202,18 +202,8 @@ final class WP_Theme implements ArrayAccess {
 		return ! ( $this->errors() && in_array( 'theme_not_found', $this->errors()->get_error_codes() ) );
 	}
 
-	/**
-	 * Returns reference to the parent theme.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @return WP_Theme|false Parent theme, or false if the current theme is not a child theme.
-	 */
-	public function parent() {
-		return isset( $this->parent ) ? $this->parent : false;
-	}
-
-	// refactored. private function cache_add( $key, $data ) {}
+	// refactored. public function parent() {}
+	// :
 	// refactored. private function cache_get( $key ) {}
 
 	/**
