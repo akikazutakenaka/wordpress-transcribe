@@ -136,6 +136,17 @@ function get_template()
 }
 
 /**
+ * Retrieve current theme directory.
+ *
+ * @since 1.5.0
+ *
+ * @return string Template directory path.
+ */
+function get_template_directory()
+{
+	$template = get_template();
+	$theme_root = get_theme_root( $template );
+/**
  * <- wp-blog-header.php
  * <- wp-load.php
  * <- wp-settings.php
@@ -147,7 +158,9 @@ function get_template()
  * <- wp-includes/class-wp-theme.php
  * <- wp-includes/l10n.php
  * @NOW 011: wp-includes/theme.php
+ * -> wp-includes/theme.php
  */
+}
 
 /**
  * Retrieve theme directory URI.
@@ -358,6 +371,21 @@ function search_theme_directories( $force = FALSE )
 
 	return $found_themes;
 }
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/l10n.php
+ * <- wp-includes/theme.php
+ * @NOW 012: wp-includes/theme.php
+ */
 
 /**
  * Retrieve URI for themes directory.
