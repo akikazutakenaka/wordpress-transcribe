@@ -1979,17 +1979,9 @@ function get_file_data( $file, $default_headers, $context = '' )
 		$all_headers[ $field ] = preg_match( '/^[ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $file_data, $match ) && $match[1]
 			? _cleanup_header_comment( $match[1] )
 			: '';
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 008: wp-includes/functions.php
- */
 	}
+
+	return $all_headers;
 }
 
 /**

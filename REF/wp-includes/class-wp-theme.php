@@ -277,7 +277,6 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/post.php
  * @NOW 007: wp-includes/class-wp-theme.php
- * -> wp-includes/functions.php
  */
 		}
 	}
