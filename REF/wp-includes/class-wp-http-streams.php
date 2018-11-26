@@ -8,6 +8,14 @@
  */
 
 /**
+ * Core class used to integrate PHP Streams as an HTTP transport.
+ *
+ * @since 2.7.0
+ * @since 3.7.0 Combined with the fsockopen transport and switched to `stream_socket_client()`.
+ */
+class WP_Http_Streams
+{
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -20,5 +28,6 @@
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-wp-http.php: _get_first_available_transport( array $args [, string $url = NULL] )
- * @NOW 013: wp-includes/class-wp-http-streams.php: WP_Http_Streams
+ * @NOW 013: wp-includes/class-wp-http-streams.php: WP_Http_Streams::test( [array $args = array()] )
  */
+}
