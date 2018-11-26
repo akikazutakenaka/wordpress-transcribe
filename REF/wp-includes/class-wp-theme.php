@@ -403,17 +403,19 @@ final class WP_Theme implements ArrayAccess
 		}
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 009: wp-includes/class-wp-theme.php
- */
+	/**
+	 * Returns errors property.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return WP_Error|false WP_Error if there are errors, or false.
+	 */
+	public function errors()
+	{
+		return is_wp_error( $this->errors )
+			? $this->errors
+			: FALSE;
+	}
 
 	/**
 	 * Adds theme data to cache.
@@ -459,8 +461,7 @@ final class WP_Theme implements ArrayAccess
 		 * If you screw up your current theme and we invalidate your parent, most things still work.
 		 * Let it slide.
 		 */
-		if ( $this->errors() && $this->erros()->get_error_codes() !== array( 'theme_parent_invalid' ) ) {}
-	}
+		if ( $this->errors() && $this->erros()->get_error_codes() !== array( 'theme_parent_invalid' ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -470,8 +471,9 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 008: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
  */
+		}
+	}
 
 	/**
 	 * Returns the theme's post templates for a given post type.
