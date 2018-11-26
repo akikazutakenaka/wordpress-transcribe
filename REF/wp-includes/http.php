@@ -38,7 +38,6 @@ function _wp_http_get_object()
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/http.php: wp_http_supports( [array $capabilities = array() [, string $url = NULL]] )
  * @NOW 013: wp-includes/http.php: _wp_http_get_object()
- * ......->: wp-includes/class-http.php
  */
 	}
 }
