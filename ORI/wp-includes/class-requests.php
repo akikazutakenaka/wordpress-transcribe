@@ -21,14 +21,7 @@
 class Requests {
 	// refactored. const POST = 'POST';
 	// :
-	// refactored. protected static $certificate_path;
-
-	/**
-	 * This is a static class, do not instantiate it
-	 *
-	 * @codeCoverageIgnore
-	 */
-	private function __construct() {}
+	// refactored. private function __construct() {}
 
 	/**
 	 * Autoloader for Requests

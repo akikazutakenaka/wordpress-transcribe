@@ -118,6 +118,14 @@ class Requests
 	 */
 	protected static $certificate_path;
 
+	/**
+	 * This is a static class, do not instantiate it.
+	 *
+	 * @codeCoverageIgnore
+	 */
+	private function __construct()
+	{}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -133,6 +141,6 @@ class Requests
  * <-......: wp-includes/http.php: wp_http_supports( [array $capabilities = array() [, string $url = NULL]] )
  * <-......: wp-includes/http.php: _wp_http_get_object()
  * <-......: wp-includes/class-http.php
- * @NOW 015: wp-includes/class-requests.php: Requests::__construct()
+ * @NOW 015: wp-includes/class-requests.php: Requests::register_autoloader()
  */
 }
