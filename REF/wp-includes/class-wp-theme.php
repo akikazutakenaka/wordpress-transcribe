@@ -449,6 +449,40 @@ final class WP_Theme implements ArrayAccess
 	}
 
 	/**
+	 * Return files in the theme's directory.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param  mixed $type          Optional.
+	 *                              Array of extensions to return.
+	 *                              Defaults to all files (null).
+	 * @param  int   $depth         Optional.
+	 *                              How deep to search for files.
+	 *                              Defaults to a flat scan (0 depth).
+	 *                              -1 depth is infinite.
+	 * @param  bool  $search_parent Optional.
+	 *                              Whether to return parent files.
+	 *                              Defaults to false.
+	 * @return array Array of files, keyed by the path to the file relative to the theme's directory, with the values being absolute paths.
+	 */
+	public function get_files( $type = NULL, $depth = 0, $search_parent = FALSE )
+	{
+		$files = ( array ) self::scandir( $this->get_stylesheet_directory(), $type, $depth );
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 009: wp-includes/class-wp-theme.php
+ * -> wp-includes/class-wp-theme.php
+ */
+	}
+
+	/**
 	 * Returns the theme's post templates.
 	 *
 	 * @since 4.7.0
@@ -462,6 +496,14 @@ final class WP_Theme implements ArrayAccess
 		 * Let it slide.
 		 */
 		if ( $this->errors() && $this->erros()->get_error_codes() !== array( 'theme_parent_invalid' ) ) {
+			return array();
+		}
+
+		$post_templates = $this->cache_get( 'post_templates' );
+
+		if ( ! is_array( $post_templates ) ) {
+			$post_templates = array();
+			$files = ( array ) $this->get_files( 'php', 1, TRUE );
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -471,6 +513,7 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 008: wp-includes/class-wp-theme.php
+ * -> wp-includes/class-wp-theme.php
  */
 		}
 	}
@@ -507,4 +550,17 @@ final class WP_Theme implements ArrayAccess
  * -> wp-includes/class-wp-theme.php
  */
 	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 010: wp-includes/class-wp-theme.php
+ */
 }
