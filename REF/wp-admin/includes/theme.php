@@ -248,7 +248,6 @@ function themes_api( $action, $args = array() )
  * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * @NOW 011: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * ......->: wp-includes/class-wp-http.php: _get_first_available_transport( array $args [, string $url = NULL] )
  */
 		}
 	}

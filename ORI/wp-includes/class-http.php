@@ -421,47 +421,7 @@ class WP_Http {
 		}
 	}
 
-	/**
-	 * Tests which transports are capable of supporting the request.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @param array $args Request arguments
-	 * @param string $url URL to Request
-	 *
-	 * @return string|false Class name for the first transport that claims to support the request. False if no transport claims to support the request.
-	 */
-	public function _get_first_available_transport( $args, $url = null ) {
-		$transports = array( 'curl', 'streams' );
-
-		/**
-		 * Filters which HTTP transports are available and in what order.
-		 *
-		 * @since 3.7.0
-		 *
-		 * @param array  $transports Array of HTTP transports to check. Default array contains
-		 *                           'curl', and 'streams', in that order.
-		 * @param array  $args       HTTP request arguments.
-		 * @param string $url        The URL to request.
-		 */
-		$request_order = apply_filters( 'http_api_transports', $transports, $args, $url );
-
-		// Loop over each transport on each HTTP request looking for one which will serve this request's needs.
-		foreach ( $request_order as $transport ) {
-			if ( in_array( $transport, $transports ) ) {
-				$transport = ucfirst( $transport );
-			}
-			$class = 'WP_Http_' . $transport;
-
-			// Check to see if this transport is a possibility, calls the transport statically.
-			if ( !call_user_func( array( $class, 'test' ), $args, $url ) )
-				continue;
-
-			return $class;
-		}
-
-		return false;
-	}
+	// refactored. public function _get_first_available_transport( $args, $url = null ) {}
 
 	/**
 	 * Dispatches a HTTP request to a supporting transport.
