@@ -552,22 +552,7 @@ function load_child_theme_textdomain( $domain, $path = false ) {
 
 // refactored. function _load_textdomain_just_in_time( $domain ) {}
 // :
-// refactored. function get_translations_for_domain( $domain ) {}
-
-/**
- * Whether there are translations for the text domain.
- *
- * @since 3.0.0
- *
- * @global array $l10n
- *
- * @param string $domain Text domain. Unique identifier for retrieving translated strings.
- * @return bool Whether there are translations.
- */
-function is_textdomain_loaded( $domain ) {
-	global $l10n;
-	return isset( $l10n[ $domain ] );
-}
+// refactored. function is_textdomain_loaded( $domain ) {}
 
 /**
  * Translates role name.

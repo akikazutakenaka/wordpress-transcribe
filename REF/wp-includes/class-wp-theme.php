@@ -827,6 +827,13 @@ final class WP_Theme implements ArrayAccess
 		}
 
 		$textdomain = $this->get( 'TextDomain' );
+
+		if ( ! $textdomain ) {
+			$this->textdomain_loaded = FALSE;
+			return FALSE;
+		}
+
+		if ( is_textdomain_loaded( $textdomain ) ) {
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -838,5 +845,6 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/class-wp-theme.php
  * @NOW 009: wp-includes/class-wp-theme.php
  */
+		}
 	}
 }
