@@ -153,22 +153,7 @@ function wp_remote_get($url, $args = array()) {
 	return $http->get( $url, $args );
 }
 
-/**
- * Retrieve the raw response from the HTTP request using the POST method.
- *
- * @since 2.7.0
- *
- * @see wp_remote_request() For more information on the response array format.
- * @see WP_Http::request() For default arguments information.
- *
- * @param string $url  Site URL to retrieve.
- * @param array  $args Optional. Request arguments. Default empty array.
- * @return WP_Error|array The response or WP_Error on failure.
- */
-function wp_remote_post($url, $args = array()) {
-	$http = _wp_http_get_object();
-	return $http->post( $url, $args );
-}
+// refactored. function wp_remote_post($url, $args = array()) {}
 
 /**
  * Retrieve the raw response from the HTTP request using the HEAD method.

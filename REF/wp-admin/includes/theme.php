@@ -236,6 +236,17 @@ function themes_api( $action, $args = array() )
 		$url = $http_url = 'http://api.wordpress.org/themes/info/1.0/';
 
 		if ( $ssl = wp_http_supports( array( 'ssl' ) ) ) {
+			$url = set_url_scheme( $url, 'https' );
+		}
+
+		$http_args = array(
+			'user-agent' => 'WordPress/' . $wp_version . '; ' . home_url( '/' ),
+			'body'       => array(
+				'action'  => $action,
+				'request' => serialize( $args )
+			)
+		);
+		$request = wp_remote_post( $url, $http_args );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -248,7 +259,7 @@ function themes_api( $action, $args = array() )
  * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * @NOW 011: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * ......->: wp-includes/class-http.php: WP_Http::post( string $url [, string|array $args = array()] )
  */
-		}
 	}
 }

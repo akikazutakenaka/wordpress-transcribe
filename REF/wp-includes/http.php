@@ -30,6 +30,25 @@ function _wp_http_get_object()
 }
 
 /**
+ * Retrieve the raw response from the HTTP request using the POST method.
+ *
+ * @since 2.7.0
+ * @see   wp_remote_request() for more information on the response array format.
+ * @see   WP_Http::request() for default arguments information.
+ *
+ * @param  string         $url  Site URL to retrieve.
+ * @param  array          $args Optional.
+ *                              Request arguments.
+ *                              Default empty array.
+ * @return WP_Error|array The response or WP_Error on failure.
+ */
+function wp_remote_post( $url, $args = array() )
+{
+	$http = _wp_http_get_object();
+	return $http->post( $url, $args );
+}
+
+/**
  * Determines if there is an HTTP Transport that can process this request.
  *
  * @since 3.2.0
