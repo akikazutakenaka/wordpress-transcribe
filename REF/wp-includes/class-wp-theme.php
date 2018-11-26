@@ -403,6 +403,18 @@ final class WP_Theme implements ArrayAccess
 		}
 	}
 
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * @NOW 009: wp-includes/class-wp-theme.php
+ */
+
 	/**
 	 * Adds theme data to cache.
 	 *
@@ -434,6 +446,21 @@ final class WP_Theme implements ArrayAccess
 		return wp_cache_get( $key . '-' . $this->cache_hash, 'themes' );
 	}
 
+	/**
+	 * Returns the theme's post templates.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @return array Array of page templates, keyed by filename and post type, with the value of the translated header name.
+	 */
+	public function get_post_templates()
+	{
+		/**
+		 * If you screw up your current theme and we invalidate your parent, most things still work.
+		 * Let it slide.
+		 */
+		if ( $this->errors() && $this->erros()->get_error_codes() !== array( 'theme_parent_invalid' ) ) {}
+	}
 /**
  * <- wp-blog-header.php
  * <- wp-load.php
@@ -443,6 +470,7 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 008: wp-includes/class-wp-theme.php
+ * -> wp-includes/class-wp-theme.php
  */
 
 	/**
