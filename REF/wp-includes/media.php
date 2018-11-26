@@ -636,16 +636,32 @@ function _wp_get_attachment_relative_path( $file )
 }
 
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/media.php
- * <- wp-includes/media.php
- * @NOW 009: wp-includes/media.php
+ * Get the image size as array from its meta data.
+ *
+ * Used for responsive images.
+ *
+ * @since  4.4.0
+ * @access private
+ *
+ * @param  string     $size_name  Image size.
+ *                                Accepts any valid image size name ('thumbnail', 'medium', etc.)
+ * @param  array      $image_meta The image meta data.
+ * @return array|bool Array of width and height values in pixels (in that order) or false if the size doesn't exist.
  */
+function _wp_get_image_size_from_meta( $size_name, $image_meta )
+{
+	return $size_name === 'full'
+		? array(
+				absint( $image_meta['width'] ),
+				absint( $image_meta['height'] )
+			)
+		: ( ! empty( $image_meta['sizes'][ $size_name ] )
+			? array(
+					absint( $image_meta['sizes'][ $size_name ]['width'] ),
+					absint( $image_meta['sizes'][ $size_name ]['height'] )
+				)
+			: FALSE );
+}
 
 /**
  * A helper function to calculate the image sources to include in a 'srcset' attribute.
@@ -874,7 +890,6 @@ function wp_calculate_image_sizes( $size, $image_src = NULL, $image_meta = NULL,
  * <- wp-includes/post.php
  * <- wp-includes/media.php
  * @NOW 008: wp-includes/media.php
- * -> wp-includes/media.php
  */
 		}
 	}
