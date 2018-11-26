@@ -7,6 +7,8 @@
  * @since      2.7.0
  */
 
+if ( ! class_exists( 'Requests' ) ) {
+	require( ABSPATH . WPINC . '/class-requests.php' );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -23,3 +25,4 @@
  * <-......: wp-includes/http.php: _wp_http_get_object()
  * @NOW 014: wp-includes/class-http.php
  */
+}
