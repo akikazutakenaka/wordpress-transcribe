@@ -89,6 +89,42 @@ class WP_Http
 	const NOT_EXTENDED                    = 510;
 	const NETWORK_AUTHENTICATION_REQUIRED = 511;
 
+	/**
+	 * Tests which transports are capable of supporting the request.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param  array        $args Request arguments.
+	 * @param  string       $url  URL to Request.
+	 * @return string|false Class name for the first transport that claims to support the request.
+	 *                      False if no transport claims to support the request.
+	 */
+	public function _get_first_available_transport( $args, $url = NULL )
+	{
+		$transports = array( 'curl', 'streams' );
+
+		/**
+		 * Filters which HTTP transports are available and in what order.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param array  $transports Array of HTTP transports to check.
+		 *                           Default array contains 'curl', and 'streams', in that order.
+		 * @param array  $args       HTTP request arguments.
+		 * @param string $url        The URL to request.
+		 */
+		$request_order = apply_filters( 'http_api_transports', $transports, $args, $url );
+
+		// Loop over each transport on each HTTP request looking for one which will serve this request's needs.
+		foreach ( $request_order as $transport ) {
+			if ( in_array( $transport, $transports ) ) {
+				$transport = ucfirst( $transport );
+			}
+
+			$class = 'WP_Http_' . $transport;
+
+			// Check to see if this transport is a possibility, calls the transport statically.
+			if ( ! call_user_func( array( $class, 'test' ), $args, $url ) ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -102,5 +138,9 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-wp-http.php: _get_first_available_transport( array $args [, string $url = NULL] )
+ * ......->: wp-includes/class-wp-http-curl.php: WP_Http_Curl
  */
+			}
+		}
+	}
 }
