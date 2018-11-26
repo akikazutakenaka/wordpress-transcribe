@@ -269,15 +269,137 @@ final class WP_Theme implements ArrayAccess
 			return;
 		} else {
 			$this->headers = get_file_data( $this->theme_root . '/' . $theme_file, self::$file_headers, 'theme' );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/class-wp-theme.php
- */
+
+			/**
+			 * Default themes always trump their pretenders.
+			 * Properly identify default themes that are inside a directory within wp-content/themes.
+			 */
+			if ( $default_theme_slug = array_search( $this->headers['Name'], self::$default_themes ) ) {
+				if ( basename( $this->stylesheet ) != $default_theme_slug ) {
+					$this->headers['Name'] .= '/' . $this->stylesheet;
+				}
+			}
+		}
+
+		if ( ! $this->template && $this->stylesheet === $this->headers['Template'] ) {
+			$this->errors = new WP_Error( 'theme_child_invalid', sprintf( __( 'The theme defines itself as its parent theme. Please check the %s header.' ), '<code>Template</code>' ) );
+			$this->cache_add( 'theme', array(
+					'headers'    => $this->headers,
+					'errors'     => $this->errors,
+					'stylesheet' => $this->stylesheet
+				) );
+			return;
+		}
+
+		// If template is set from cache [and there are no errors], we know it's good.
+		if ( ! $this->template && ! ( $this->template = $this->headers['Template'] ) ) {
+			$this->template = $this->stylesheet;
+
+			if ( ! file_exists( $this->theme_root . '/' . $this->stylesheet . '/index.php' ) ) {
+				$error_message = sprintf( __( 'Template is missing. Standalone themes need to have a %1$s template file. <a href="%2$s">Child themes</a> need to have a Template header in the %3$s stylesheet.' ), '<code>index.php</code>', __( 'https://codex.wordpress.org/Child_Themes' ), '<code>style.css</code>' );
+				$this->errors = new WP_Error( 'theme_no_index', $error_message );
+				$this->cache_add( 'theme', array(
+						'headers'    => $this->headers,
+						'errors'     => $this->errors,
+						'stylesheet' => $this->stylesheet,
+						'template'   => $this->template
+					) );
+				return;
+			}
+		}
+
+		// If we got our data from cache, we can assume that 'template' is pointing to the right place.
+		if ( ! is_array( $cache ) && $this->template != $this->stylesheet && ! file_exists( $this->theme_root . '/' . $this->template . '/index.php' ) ) {
+			/**
+			 * If we're in a directory of themes inside /themes, look for the parent nearby.
+			 * wp-content/themes/directory-of-themes/*
+			 */
+			$parent_dir = dirname( $this->stylesheet );
+
+			if ( '.' != $parent_dir && file_exists( $this->theme_root . '/' . $parent_dir . '/' . $this->template . '/index.php' ) ) {
+				$this->template = $parent_dir . '/' . $this->template;
+			} elseif ( ( $directories = search_theme_directories() ) && isset( $directories[ $this->template ] ) ) {
+				/**
+				 * Look for the template in the search_theme_directories() results, in case it is in another theme root.
+				 * We don't look into directories of themes, just the theme root.
+				 */
+				$theme_root_template = $directories[ $this->template ]['theme_root'];
+			} else {
+				// Parent theme is missing.
+				$this->errors = new WP_Error( 'theme_no_parent', sprintf( __( 'The parent theme is missing. Please install the "%s" parent theme.' ), esc_html( $this->template ) ) );
+				$this->cache_add( 'theme', array(
+						'headers'    => $this->headers,
+						'errors'     => $this->errors,
+						'stylesheet' => $this->stylesheet,
+						'template'   => $this->template
+					) );
+				$this->parent = new WP_Theme( $this->template, $this->theme_root, $this );
+				return;
+			}
+		}
+
+		// Set the parent, if we're a child theme.
+		if ( $this->template != $this->stylesheet ) {
+			/**
+			 * If we are a parent, then there is a problem.
+			 * Only two generations allowed!
+			 * Cancel things out.
+			 */
+			if ( $_child instanceof WP_Theme && $_child->template == $this->stylesheet ) {
+				$_child->parent = NULL;
+				$_child->errors = new WP_Error( 'theme_parent_invalid', sprintf( __( 'The "%s" theme is not a valid parent theme.' ), esc_html( $_child->template ) ) );
+				$_child->cache_add( 'theme', array(
+						'headers'    => $_child->headers,
+						'errors'     => $_child->errors,
+						'stylesheet' => $_child->stylesheet,
+						'template'   => $_child->template
+					) );
+
+				// The two themes actually reference each other with the Template header.
+				if ( $_child->stylesheet == $this->template ) {
+					$this->errors = new WP_Error( 'theme_parent_invalid', sprintf( __( 'The "%s" theme is not a valid parent theme.' ), esc_html( $this->template ) ) );
+					$this->cache_add( 'theme', array(
+							'headers'    => $this->headers,
+							'errors'     => $this->errors,
+							'stylesheet' => $this->stylesheet,
+							'template'   => $this->template
+						) );
+				}
+
+				return;
+			}
+
+			/**
+			 * Set the parent.
+			 * Pass the current instance so we can do the crazy checks above and assess errors.
+			 */
+			$this->parent = new WP_Theme( $this->template, isset( $theme_root_templates )
+					? $theme_root_template
+					: $this->theme_root,
+				$this );
+		}
+
+		/**
+		 * We're good.
+		 * If we didn't retrieve from cache, set it.
+		 */
+		if ( ! is_array( $cache ) ) {
+			$cache = array(
+				'headers'    => $this->headers,
+				'errors'     => $this->errors,
+				'stylesheet' => $this->stylesheet,
+				'template'   => $this->template
+			);
+
+			/**
+			 * If the parent theme is in another root, we'll want to cache this.
+			 * Avoids an entire branch of filesystem calls above.
+			 */
+			if ( isset( $theme_root_template ) ) {
+				$cache['theme_root_template'] = $theme_root_template;
+			}
+
+			$this->cache_add( 'theme', $cache );
 		}
 	}
 
@@ -311,4 +433,14 @@ final class WP_Theme implements ArrayAccess
 	{
 		return wp_cache_get( $key . '-' . $this->cache_hash, 'themes' );
 	}
+
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * @NOW 007: wp-includes/class-wp-theme.php
+ */
 }
