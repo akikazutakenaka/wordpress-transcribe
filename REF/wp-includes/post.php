@@ -1481,13 +1481,13 @@ EOQ
 		$post->page_template = $postarr['page_template'];
 		$page_templates = wp_get_theme()->get_page_templates( $post );
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * @NOW 006: wp-includes/post.php
- * -> wp-includes/class-wp-theme.php
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * @NOW 006: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * ......->: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
  */
 	}
 }
@@ -2647,12 +2647,12 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
 				'post_parent' => 0
 			) );
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * @NOW 005: wp-includes/post.php
- * -> wp-includes/post.php
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * @NOW 005: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * ......->: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
  */
 	}
 }

@@ -638,16 +638,16 @@ final class WP_Theme implements ArrayAccess
 					);
 					$feature_list = get_theme_feature_list( FALSE ); // No API
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 009: wp-includes/class-wp-theme.php
- * -> wp-admin/includes/theme.php
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * @NOW 009: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * ......->: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  */
 				}
 		}
@@ -767,19 +767,19 @@ final class WP_Theme implements ArrayAccess
 			foreach ( $post_templates as &$post_type ) {
 				foreach ( $post_type as &$post_template ) {
 					$post_template = $this->translate_header( 'Template Name', $post_template );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * @NOW 008: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * ......->: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ */
 				}
 			}
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 008: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
- */
 		}
 	}
 
@@ -805,14 +805,14 @@ final class WP_Theme implements ArrayAccess
 
 		$post_templates = $this->get_post_templates();
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * @NOW 007: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * @NOW 007: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * ......->: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
  */
 	}
 

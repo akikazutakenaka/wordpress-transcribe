@@ -136,9 +136,9 @@ add_filter( 'term_name_rss', 'convert_chars' );
 // Pre save hierarchy
 add_filter( 'wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2 );
 /**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
- * -> wp-includes/post.php
+ * ......->: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
  */
