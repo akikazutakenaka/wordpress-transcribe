@@ -597,42 +597,7 @@ final class WP_Theme implements ArrayAccess {
 	}
 
 	// refactored. private static function scandir( $path, $extensions = null, $depth = 0, $relative_path = '' ) {}
-
-	/**
-	 * Loads the theme's textdomain.
-	 *
-	 * Translation files are not inherited from the parent theme. Todo: if this fails for the
-	 * child theme, it should probably try to load the parent theme's translations.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @return bool True if the textdomain was successfully loaded or has already been loaded.
-	 * 	False if no textdomain was specified in the file headers, or if the domain could not be loaded.
-	 */
-	public function load_textdomain() {
-		if ( isset( $this->textdomain_loaded ) )
-			return $this->textdomain_loaded;
-
-		$textdomain = $this->get('TextDomain');
-		if ( ! $textdomain ) {
-			$this->textdomain_loaded = false;
-			return false;
-		}
-
-		if ( is_textdomain_loaded( $textdomain ) ) {
-			$this->textdomain_loaded = true;
-			return true;
-		}
-
-		$path = $this->get_stylesheet_directory();
-		if ( $domainpath = $this->get('DomainPath') )
-			$path .= $domainpath;
-		else
-			$path .= '/languages';
-
-		$this->textdomain_loaded = load_theme_textdomain( $textdomain, $path );
-		return $this->textdomain_loaded;
-	}
+	// refactored. public function load_textdomain() {}
 
 	/**
 	 * Whether the theme is allowed (multisite only).

@@ -701,7 +701,6 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 008: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
  */
 		}
 	}
@@ -845,16 +844,6 @@ final class WP_Theme implements ArrayAccess
 			: '/languages';
 
 		$this->textdomain_loaded = load_theme_textdomain( $textdomain, $path );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 009: wp-includes/class-wp-theme.php
- */
+		return $this->textdomain_loaded;
 	}
 }
