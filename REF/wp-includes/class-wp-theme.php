@@ -513,25 +513,79 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/class-wp-theme.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 010: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
  */
 			}
 		}
 	}
 
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 011: wp-includes/class-wp-theme.php
- */
+	/**
+	 * Sanitize a theme header.
+	 *
+	 * @since     3.4.0
+	 * @staticvar array $header_tags
+	 * @staticvar array $header_tags_with_a
+	 *
+	 * @param  string $header Theme header.
+	 *                        Name, Description, Author, Version, ThemeURI, AuthorURI, Status, Tags.
+	 * @param  string $value  Value to sanitize.
+	 * @return mixed
+	 */
+	private function sanitize_header( $header, $value )
+	{
+		switch ( $header ) {
+			case 'Status':
+				if ( ! $value ) {
+					$value = 'publish';
+					break;
+				}
+
+				// Fall through otherwise.
+
+			case 'Name':
+				static $header_tags = array(
+					'abbr'    => array( 'title' => TRUE ),
+					'acronym' => array( 'title' => TRUE ),
+					'code'    => TRUE,
+					'em'      => TRUE,
+					'strong'  => TRUE
+				);
+				$value = wp_kses( $value, $header_tags );
+				break;
+
+			case 'Author':
+				// There shouldn't be anchor tags in Author, but some themes like to be challenging.
+
+			case 'Description':
+				static $header_tags_with_a = array(
+					'a'       => array(
+							'href'  => TRUE,
+							'title' => TRUE
+						),
+					'abbr'    => array( 'title' => TRUE ),
+					'acronym' => array( 'title' => TRUE ),
+					'code'    => TRUE,
+					'em'      => TRUE,
+					'strong'  => TRUE
+				);
+				$value = wp_kses( $value, $header_tags_with_a );
+				break;
+
+			case 'ThemeURI':
+			case 'AuthorURI':
+				$value = esc_url_raw( $value );
+				break;
+
+			case 'Tags':
+				$value = array_filter( array_map( 'trim', explode( ',', strip_tags( $value ) ) ) );
+				break;
+
+			case 'Version':
+				$value = strip_tags( $value );
+				break;
+		}
+
+		return $value;
+	}
 
 	/**
 	 * Returns the absolute path to the directory of a theme's "stylesheet" files.
