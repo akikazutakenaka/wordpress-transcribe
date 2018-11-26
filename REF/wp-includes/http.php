@@ -21,8 +21,39 @@
  * <- wp-includes/class-wp-theme.php
  * <- wp-admin/includes/theme.php
  * <- wp-admin/includes/theme.php
- * @NOW 012: wp-includes/http.php
+ * <- wp-includes/http.php
+ * @NOW 013: wp-includes/http.php
  */
+
+/**
+ * Determines if there is an HTTP Transport that can process this request.
+ *
+ * @since 3.2.0
+ *
+ * @param  array  $capabilities Array of capabilities to test or a wp_remote_request() $args array.
+ * @param  string $url          Optional.
+ *                              If given, will check if the URL requires SSL and adds that requirement to the capabilities array.
+ * @return bool
+ */
+function wp_http_supports( $capabilities = array(), $url = NULL )
+{
+	$http = _wp_http_get_object();
+/**
+ * <- wp-blog-header.php
+ * <- wp-load.php
+ * <- wp-settings.php
+ * <- wp-includes/default-filters.php
+ * <- wp-includes/post.php
+ * <- wp-includes/post.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-includes/class-wp-theme.php
+ * <- wp-admin/includes/theme.php
+ * <- wp-admin/includes/theme.php
+ * @NOW 012: wp-includes/http.php
+ * -> wp-includes/http.php
+ */
+}
 
 /**
  * A wrapper for PHP's parse_url() function that handles consistency in the return values across PHP versions.
