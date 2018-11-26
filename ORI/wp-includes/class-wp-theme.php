@@ -582,26 +582,7 @@ final class WP_Theme implements ArrayAccess {
 		return false;
 	}
 
-	/**
-	 * Return files in the theme's directory.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @param mixed $type Optional. Array of extensions to return. Defaults to all files (null).
-	 * @param int $depth Optional. How deep to search for files. Defaults to a flat scan (0 depth). -1 depth is infinite.
-	 * @param bool $search_parent Optional. Whether to return parent files. Defaults to false.
-	 * @return array Array of files, keyed by the path to the file relative to the theme's directory, with the values
-	 *               being absolute paths.
-	 */
-	public function get_files( $type = null, $depth = 0, $search_parent = false ) {
-		$files = (array) self::scandir( $this->get_stylesheet_directory(), $type, $depth );
-
-		if ( $search_parent && $this->parent() ) {
-			$files += (array) self::scandir( $this->get_template_directory(), $type, $depth );
-		}
-
-		return $files;
-	}
+	// refactored. public function get_files( $type = null, $depth = 0, $search_parent = false ) {}
 
 	/**
 	 * Returns the theme's post templates.

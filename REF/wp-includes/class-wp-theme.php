@@ -519,18 +519,9 @@ final class WP_Theme implements ArrayAccess
 
 		if ( $search_parent && $this->parent() ) {
 			$files += ( array ) self::scandir( $this->get_template_directory(), $type, $depth );
-/**
- * <- wp-blog-header.php
- * <- wp-load.php
- * <- wp-settings.php
- * <- wp-includes/default-filters.php
- * <- wp-includes/post.php
- * <- wp-includes/post.php
- * <- wp-includes/class-wp-theme.php
- * <- wp-includes/class-wp-theme.php
- * @NOW 009: wp-includes/class-wp-theme.php
- */
 		}
+
+		return $files;
 	}
 
 	/**
@@ -564,7 +555,6 @@ final class WP_Theme implements ArrayAccess
  * <- wp-includes/post.php
  * <- wp-includes/class-wp-theme.php
  * @NOW 008: wp-includes/class-wp-theme.php
- * -> wp-includes/class-wp-theme.php
  */
 		}
 	}
