@@ -47,14 +47,7 @@ class Requests {
 		}
 	}
 
-	/**
-	 * Register the built-in autoloader
-	 *
-	 * @codeCoverageIgnore
-	 */
-	public static function register_autoloader() {
-		spl_autoload_register(array('Requests', 'autoloader'));
-	}
+	// refactored. public static function register_autoloader() {}
 
 	/**
 	 * Register a transport
