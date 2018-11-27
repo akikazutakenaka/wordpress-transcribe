@@ -361,30 +361,7 @@ class WP_Http {
 		return apply_filters( 'http_response', $response, $r, $url );
 	}
 
-	/**
-	 * Normalizes cookies for using in Requests.
-	 *
-	 * @since 4.6.0
-	 * @static
-	 *
-	 * @param array $cookies List of cookies to send with the request.
-	 * @return Requests_Cookie_Jar Cookie holder object.
-	 */
-	public static function normalize_cookies( $cookies ) {
-		$cookie_jar = new Requests_Cookie_Jar();
-
-		foreach ( $cookies as $name => $value ) {
-			if ( $value instanceof WP_Http_Cookie ) {
-				$cookie_jar[ $value->name ] = new Requests_Cookie( $value->name, $value->value, $value->get_attributes() );
-			} elseif ( is_scalar( $value ) ) {
-				$cookie_jar[ $name ] = new Requests_Cookie( $name, $value );
-			}
-		}
-
-		return $cookie_jar;
-	}
-
-	// refactored. public static function browser_redirect_compatibility( $location, $headers, $data, &$options, $original ) {}
+	// refactored. public static function normalize_cookies( $cookies ) {}
 	// :
 	// refactored. public function _get_first_available_transport( $args, $url = null ) {}
 
