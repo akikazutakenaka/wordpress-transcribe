@@ -319,6 +319,9 @@ class WP_Http
 			'blocking'  => $r['blocking'],
 			'hooks'     => new WP_HTTP_Requests_Hooks( $url, $r )
 		);
+
+		// Ensure redirects follow browser behaviour.
+		$options['hooks']->register( 'requests.before_redirect', array( get_class(), 'browser_redirect_compatibility' ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -332,6 +335,7 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/Requests/Hooks.php: Requests_Hooks::register( string $hook, callback $callback [, int $priority = 0] )
  */
 	}
 
