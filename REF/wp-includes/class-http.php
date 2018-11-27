@@ -346,6 +346,33 @@ class WP_Http
 		// If we've got cookies, use and convert them to Requests_Cookie.
 		if ( ! empty( $r['cookies'] ) ) {
 			$options['cookies'] = WP_Http::normalize_cookies( $r['cookies'] );
+		}
+
+		// SSL certificate handling.
+		if ( ! $r['sslverify'] ) {
+			$options['verify'] = FALSE;
+			$options['verifyname'] = FALSE;
+		} else {
+			$options['verify'] = $r['sslcertificates'];
+		}
+
+		// All non-GET/HEAD requests should put the arguments in the form body.
+		if ( 'HEAD' !== $type && 'GET' !== $type ) {
+			$options['data_format'] = 'body';
+		}
+
+		/**
+		 * Filters whether SSL should be verified for non-local requests.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param bool $ssl_verify Whether to verify the SSL connection.
+		 *                         Default true.
+		 */
+		$options['verify'] = apply_filters( 'https_ssl_verify', $options['verify'] );
+
+		// Check for proxies.
+		$proxy = new WP_HTTP_Proxy();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -359,8 +386,8 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/class-wp-http-proxy.php: WP_HTTP_Proxy
  */
-		}
 	}
 
 	/**
