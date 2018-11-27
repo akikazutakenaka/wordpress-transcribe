@@ -874,7 +874,6 @@ function get_temp_dir()
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/functions.php: get_temp_dir()
- * ......->: wp-includes/functions.php: win_is_writable( string $path )
  */
 		}
 	}
@@ -899,21 +898,43 @@ function wp_is_writable( $path )
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/functions.php: get_temp_dir()
- * @NOW 014: wp-includes/functions.php: win_is_writable( string $path )
+ * Workaround for Windows bug in is_writable() function.
+ *
+ * PHP has issues with Windows ACL's for determine if a directory is writable or not, this works around them by checking the ability to open files rather than relying upon PHP to interprate the OS ACL.
+ *
+ * @since 2.8.0
+ * @see   https://bugs.php.net/bug.php?id=27609
+ * @see   https://bugs.php.net/bug.php?id=30931
+ *
+ * @param  string $path Windows path to check for write-ability.
+ * @return bool   Whether the path is writable.
  */
+function win_is_writable( $path )
+{
+	if ( $path[ strlen( $path ) - 1 ] == '/' ) {
+		// If it looks like a directory, check a random file within the directory.
+		return win_is_writable( $path . uniqid( mt_rand() ) . '.tmp' );
+	} elseif ( is_dir( $path ) ) {
+		// If it's a directory (and not a file) check a random file within the directory.
+		return win_is_writable( $path . '/' . uniqid( mt_rand() ) . '.tmp' );
+	}
+
+	// Check tmpfile for read/write capabilities.
+	$should_delete_tmp_file = ! file_exists( $path );
+	$f = @fopen( $path, 'a' );
+
+	if ( $f === FALSE ) {
+		return FALSE;
+	}
+
+	fclose( $f );
+
+	if ( $should_delete_tmp_file ) {
+		unlink( $path );
+	}
+
+	return TRUE;
+}
 
 /**
  * Retrieves uploads directory information.
