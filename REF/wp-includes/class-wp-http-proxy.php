@@ -111,6 +111,20 @@ class WP_HTTP_Proxy
 	}
 
 	/**
+	 * Retrieve the password for proxy authentication.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return string
+	 */
+	public function password()
+	{
+		return defined( 'WP_PROXY_PASSWORD' )
+			? WP_PROXY_PASSWORD
+			: '';
+	}
+
+	/**
 	 * Whether URL should be sent through the proxy server.
 	 *
 	 * We want to keep localhost and the site URL from being sent through the proxy server, because some proxies can not handle this.

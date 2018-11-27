@@ -380,6 +380,7 @@ class WP_Http
 			if ( $proxy->use_authentication() ) {
 				$options['proxy']->use_authentication = TRUE;
 				$options['proxy']->user = $proxy->username();
+				$options['proxy']->pass = $proxy->password();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php

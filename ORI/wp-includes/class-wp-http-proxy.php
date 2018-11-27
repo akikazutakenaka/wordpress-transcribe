@@ -42,21 +42,7 @@
 class WP_HTTP_Proxy {
 	// refactored. public function is_enabled() {}
 	// :
-	// refactored. public function username() {}
-
-	/**
-	 * Retrieve the password for proxy authentication.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @return string
-	 */
-	public function password() {
-		if ( defined('WP_PROXY_PASSWORD') )
-			return WP_PROXY_PASSWORD;
-
-		return '';
-	}
+	// refactored. public function password() {}
 
 	/**
 	 * Retrieve authentication string for proxy authentication.
