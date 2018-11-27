@@ -1,25 +1,10 @@
 <?php
 /**
- * Handles adding and dispatching events.
+ * Event dispatcher.
  *
  * @package    Requests
  * @subpackage Utilities
  */
-
-/**
- * Handles adding and dispatching events.
- *
- * @package    Requests
- * @subpackage Utilities
- */
-class Requests_Hooks implements Requests_Hooker
-{
-	/**
-	 * Registered callbacks for each hook.
-	 *
-	 * @var array
-	 */
-	protected $hooks = array();
 
 /**
  * <-......: wp-blog-header.php
@@ -35,7 +20,6 @@ class Requests_Hooks implements Requests_Hooker
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests_Hooks
- * @NOW 014: wp-includes/Requests/Hooks.php: Requests_Hooks
- * ......->: wp-includes/Requests/Hooker.php: Requests_Hooker
+ * <-......: wp-includes/Requests/Hooks.php: Requests_Hooks
+ * @NOW 015: wp-includes/Requests/Hooker.php: Requests_Hooker
  */
-}
