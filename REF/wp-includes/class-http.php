@@ -282,6 +282,13 @@ class WP_Http
 		}
 
 		if ( $this->block_request( $url ) ) {
+			return new WP_Error( 'http_request_failed', __( 'User has blocked requests through HTTP.' ) );
+		}
+
+		// If we are streaming to a file but no filename was given drop it in the WP temp dir and pick its name using the basename of the $url.
+		if ( $r['stream'] ) {
+			if ( empty( $r['filename'] ) ) {
+				$r['filename'] = get_temp_dir() . basename( $url );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -295,7 +302,9 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/functions.php: get_temp_dir()
  */
+			}
 		}
 	}
 

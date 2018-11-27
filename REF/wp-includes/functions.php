@@ -833,6 +833,71 @@ function wp_normalize_path( $path )
 }
 
 /**
+ * Determine a writable directory for temporary files.
+ *
+ * Function's preference is the return value of sys_get_temp_dir(), followed by your PHP temporary upload directory, followed by WP_CONTENT_DIR, before finally defaulting to /tmp/.
+ *
+ * In the event that this function does not find a writable location, it may be overridden by the WP_TEMP_DIR constant in your wp-config.php file.
+ *
+ * @since     2.5.0
+ * @staticvar string $temp
+ *
+ * @return string Writable temporary directory.
+ */
+function get_temp_dir()
+{
+	static $temp = '';
+
+	if ( defined( 'WP_TEMP_DIR' ) ) {
+		return trailingslashit( WP_TEMP_DIR );
+	}
+
+	if ( $temp ) {
+		return trailingslashit( $temp );
+	}
+
+	if ( function_exists( 'sys_get_temp_dir' ) ) {
+		$temp = sys_get_temp_dir();
+
+		if ( @ is_dir( $temp ) && wp_is_writable( $temp ) ) {
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * @NOW 013: wp-includes/functions.php: get_temp_dir()
+ * ......->: wp-includes/functions.php: wp_is_writable( string $path )
+ */
+		}
+	}
+}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/functions.php: get_temp_dir()
+ * @NOW 014: wp-includes/functions.php: wp_is_writable( string $path )
+ */
+
+/**
  * Retrieves uploads directory information.
  *
  * Same as wp_upload_dir() but "light weight" as it doesn't attempt to create the uploads directory.
