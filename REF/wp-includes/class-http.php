@@ -376,6 +376,10 @@ class WP_Http
 	public static function normalize_cookies( $cookies )
 	{
 		$cookie_jar = new Requests_Cookie_Jar();
+
+		foreach ( $cookies as $name => $value ) {
+			if ( $value instanceof WP_Http_Cookie ) {
+				$cookie_jar[ $value->name ] = new Requests_Cookie( $value->name, $value->value, $value->get_attributes() );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -390,7 +394,10 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
+ * ......->: wp-includes/Requests/Cookie.php: Requests_Cookie
  */
+			}
+		}
 	}
 
 	/**
