@@ -40,20 +40,7 @@
  * @since 2.8.0
  */
 class WP_HTTP_Proxy {
-
-	/**
-	 * Whether proxy connection should be used.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @use WP_PROXY_HOST
-	 * @use WP_PROXY_PORT
-	 *
-	 * @return bool
-	 */
-	public function is_enabled() {
-		return defined('WP_PROXY_HOST') && defined('WP_PROXY_PORT');
-	}
+	// refactored. public function is_enabled() {}
 
 	/**
 	 * Whether authentication should be used.
