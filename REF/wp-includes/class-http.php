@@ -378,6 +378,8 @@ class WP_Http
 			$options['proxy'] = new Requests_Proxy_HTTP( $proxy->host() . ':' . $proxy->port() );
 
 			if ( $proxy->use_authentication() ) {
+				$options['proxy']->use_authentication = TRUE;
+				$options['proxy']->user = $proxy->username();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php

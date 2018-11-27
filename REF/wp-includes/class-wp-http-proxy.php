@@ -97,6 +97,20 @@ class WP_HTTP_Proxy
 	}
 
 	/**
+	 * Retrieve the username for proxy authentication.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return string
+	 */
+	public function username()
+	{
+		return defined( 'WP_PROXY_USERNAME' )
+			? WP_PROXY_USERNAME
+			: '';
+	}
+
+	/**
 	 * Whether URL should be sent through the proxy server.
 	 *
 	 * We want to keep localhost and the site URL from being sent through the proxy server, because some proxies can not handle this.
