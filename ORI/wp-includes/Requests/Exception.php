@@ -11,19 +11,8 @@
  * @package Requests
  */
 class Requests_Exception extends Exception {
-	/**
-	 * Type of exception
-	 *
-	 * @var string
-	 */
-	protected $type;
-
-	/**
-	 * Data associated with the exception
-	 *
-	 * @var mixed
-	 */
-	protected $data;
+	// refactored. protected $type;
+	// refactored. protected $data;
 
 	/**
 	 * Create a new exception

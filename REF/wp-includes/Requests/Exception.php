@@ -6,6 +6,27 @@
  */
 
 /**
+ * Exception for HTTP requests.
+ *
+ * @package Requests
+ */
+class Requests_Exception extends Exception
+{
+	/**
+	 * Type of exception.
+	 *
+	 * @var string
+	 */
+	protected $type;
+
+	/**
+	 * Data associated with the exception.
+	 *
+	 * @var mixed
+	 */
+	protected $data;
+
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -18,5 +39,6 @@
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/Requests/Exception.php: Requests_Exception
+ * @NOW 013: wp-includes/Requests/Exception.php: Requests_Exception::__construct( string $message, string $type [, mixed $data = NULL [, int $code = 0]] )
  */
+}

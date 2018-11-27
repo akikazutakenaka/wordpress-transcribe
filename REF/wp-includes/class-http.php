@@ -335,7 +335,7 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * ......->: wp-includes/Requests/Exception.php: Requests_Exception
+ * ......->: wp-includes/Requests/Exception.php: Requests_Exception::__construct( string $message, string $type [, mixed $data = NULL [, int $code = 0]] )
  */
 	}
 
