@@ -874,10 +874,28 @@ function get_temp_dir()
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/functions.php: get_temp_dir()
- * ......->: wp-includes/functions.php: wp_is_writable( string $path )
+ * ......->: wp-includes/functions.php: win_is_writable( string $path )
  */
 		}
 	}
+}
+
+/**
+ * Determine if a directory is writable.
+ *
+ * This function is used to work around certain ACL issues in PHP primarily affecting Windows Servers.
+ *
+ * @since 3.6.0
+ * @see   win_is_writable()
+ *
+ * @param  string $path Path to check for write-ability.
+ * @return bool   Whether the path is writable.
+ */
+function wp_is_writable( $path )
+{
+	return 'WIN' === strtoupper( substr( PHP_OS, 0, 3 ) )
+		? win_is_writable( $path )
+		: @ is_writable( $path );
 }
 
 /**
@@ -894,7 +912,7 @@ function get_temp_dir()
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/functions.php: get_temp_dir()
- * @NOW 014: wp-includes/functions.php: wp_is_writable( string $path )
+ * @NOW 014: wp-includes/functions.php: win_is_writable( string $path )
  */
 
 /**
