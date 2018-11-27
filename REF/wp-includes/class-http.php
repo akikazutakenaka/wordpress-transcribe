@@ -481,7 +481,6 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-http.php: WP_Http::processHeaders( string|array $headers [, string $url = ''] )
- * ......->: wp-includes/class-wp-http-cookie.php: WP_Http_Cookie::__construct( string|array $data [, string $requested_url = ''] )
  */
 			}
 		}
