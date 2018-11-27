@@ -306,6 +306,19 @@ class WP_Http
 		// WP allows passing in headers as a string, weirdly.
 		if ( ! is_array( $r['headers'] ) ) {
 			$processedHeaders = WP_Http::processHeaders( $r['headers'] );
+			$r['headers'] = $processedHeaders['headers'];
+		}
+
+		// Setup arguments.
+		$headers = $r['headers'];
+		$data = $r['body'];
+		$type = $r['method'];
+		$options = array(
+			'timeout'   => $r['timeout'],
+			'useragent' => $r['user-agent'],
+			'blocking'  => $r['blocking'],
+			'hooks'     => new WP_HTTP_Requests_Hooks( $url, $r )
+		);
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -319,8 +332,8 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests_Hooks
  */
-		}
 	}
 
 	/**
