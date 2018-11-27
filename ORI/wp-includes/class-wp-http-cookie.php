@@ -19,46 +19,9 @@
  * @since 2.8.0
  */
 class WP_Http_Cookie {
-
-	/**
-	 * Cookie name.
-	 *
-	 * @since 2.8.0
-	 * @var string
-	 */
-	public $name;
-
-	/**
-	 * Cookie value.
-	 *
-	 * @since 2.8.0
-	 * @var string
-	 */
-	public $value;
-
-	/**
-	 * When the cookie expires.
-	 *
-	 * @since 2.8.0
-	 * @var string
-	 */
-	public $expires;
-
-	/**
-	 * Cookie URL path.
-	 *
-	 * @since 2.8.0
-	 * @var string
-	 */
-	public $path;
-
-	/**
-	 * Cookie Domain.
-	 *
-	 * @since 2.8.0
-	 * @var string
-	 */
-	public $domain;
+	// refactored. public $name;
+	// :
+	// refactored. public $domain;
 
 	/**
 	 * Sets up this cookie object.

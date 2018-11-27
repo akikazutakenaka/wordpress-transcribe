@@ -8,6 +8,62 @@
  */
 
 /**
+ * Core class used to encapsulate a single cookie object for internal use.
+ *
+ * Returned cookies are represented using this class, and when cookies are set, if they are not already a WP_Http_Cookie() object, then they are turned into one.
+ *
+ * @todo  The WordPress convention is to use underscores instead of camelCase for function and method names.
+ *        Need to switch to use underscores instead for the methods.
+ * @since 2.8.0
+ */
+class WP_Http_Cookie
+{
+	/**
+	 * Cookie name.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var string
+	 */
+	public $name;
+
+	/**
+	 * Cookie value.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var string
+	 */
+	public $value;
+
+	/**
+	 * When the cookie expires.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var string
+	 */
+	public $expires;
+
+	/**
+	 * Cookie URL path.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var string
+	 */
+	public $path;
+
+	/**
+	 * Cookie Domain.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @var string
+	 */
+	public $domain;
+
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -21,5 +77,6 @@
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::processHeaders( string|array $headers [, string $url = ''] )
- * @NOW 014: wp-includes/class-wp-http-cookie.php: WP_Http_Cookie
+ * @NOW 014: wp-includes/class-wp-http-cookie.php: WP_Http_Cookie::__construct( string|array $data [, string $requested_url = ''] )
  */
+}
