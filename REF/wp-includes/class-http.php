@@ -268,6 +268,20 @@ class WP_Http
 		if ( function_exists( 'wp_kses_bad_protocol' ) ) {
 			if ( $r['reject_unsafe_urls'] ) {
 				$url = wp_http_validate_url( $url );
+			}
+
+			if ( $url ) {
+				$url = wp_kses_bad_protocol( $url, array( 'http', 'https', 'ssl' ) );
+			}
+		}
+
+		$arrURL = @ parse_url( $url );
+
+		if ( empty( $url ) || empty( $arrURL['scheme'] ) ) {
+			return new WP_Error( 'http_request_failed', __( 'A valid URL was not provided.' ) );
+		}
+
+		if ( $this->block_request( $url ) ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -282,7 +296,6 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  */
-			}
 		}
 	}
 
@@ -349,5 +362,79 @@ class WP_Http
 		$defaults = array( 'method' => 'POST' );
 		$r = wp_parse_args( $args, $defaults );
 		return $this->request( $url, $r );
+	}
+
+	/**
+	 * Block requests through the proxy.
+	 *
+	 * Those who are behind a proxy and want to prevent access to certain hosts may do so.
+	 * This will prevent plugins from working and core functionality, if you don't include api.wordpress.org.
+	 *
+	 * You block external URL requests by defining WP_HTTP_BLOCK_EXTERNAL as true in your wp-config.php file and this will only allow localhost and your site to make requests.
+	 * The constant WP_ACCESSIBLE_HOSTS will allow additional hosts to go through for requests.
+	 * The format of the WP_ACCESSIBLE_HOSTS constant is a comma separated list of hostnames to allow, wildcard domains are supported, eg *.wordpress.org will allow for all subdomains of wordpress.org to be contacted.
+	 *
+	 * @since     2.8.0
+	 * @link      https://core.trac.wordpress.org/ticket/8927 Allow preventing external requests.
+	 * @link      https://core.trac.wordpress.org/ticket/14636 Allow wildcard domains in WP_ACCESSIBLE_HOSTS
+	 * @staticvar array|null $accessible_hosts
+	 * @staticvar array      $wildcard_regex
+	 *
+	 * @param  string $uri URI of url.
+	 * @return bool   True to block, false to allow.
+	 */
+	public function block_request( $uri )
+	{
+		// We don't need to block requests, because nothing is blocked.
+		if ( ! defined( 'WP_HTTP_BLOCK_EXTERNAL' ) || ! WP_HTTP_BLOCK_EXTERNAL ) {
+			return FALSE;
+		}
+
+		$check = parse_url( $uri );
+
+		if ( ! $check ) {
+			return TRUE;
+		}
+
+		$home = parse_url( get_option( 'site_url' ) );
+
+		// Don't block requests back to ourselves by default.
+		if ( 'localhost' == $check['host']
+		  || isset( $home['host'] ) && $home['host'] == $check['host'] ) {
+			/**
+			 * Filters whether to block local requests through the proxy.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param bool $block Whether to block local requests through proxy.
+			 *                    Default false.
+			 */
+			return apply_filters( 'block_local_requests', FALSE );
+		}
+
+		if ( ! defined( 'WP_ACCESSIBLE_HOSTS' ) ) {
+			return TRUE;
+		}
+
+		static $accessible_hosts = NULL;
+		static $wildcard_regex = array();
+
+		if ( NULL === $accessible_hosts ) {
+			$accessible_hosts = preg_split( '|,\s*|', WP_ACCESSIBLE_HOSTS );
+
+			if ( FALSE !== strpos( WP_ACCESSIBLE_HOSTS, '*' ) ) {
+				$wildcard_regex = array();
+
+				foreach ( $accessible_hosts as $host ) {
+					$wildcard_regex[] = str_replace( '\*', '.+', preg_quote( $host, '/' ) );
+				}
+
+				$wildcard_regex = '/^(' . implode( '|', $wildcard_regex ) . ')$/i';
+			}
+		}
+
+		return ! empty( $wildcard_regex )
+			? ! preg_match( $wildcard_regex, $check['host'] )
+			: ! in_array( $check['host'], $accessible_hosts ); // Inverse logic, if it's in the array, then we can't access it.
 	}
 }
