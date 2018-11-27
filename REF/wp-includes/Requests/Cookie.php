@@ -110,26 +110,65 @@ class Requests_Cookie
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
  * @NOW 014: wp-includes/Requests/Cookie.php: Requests_Cookie::normalize()
- * ......->: wp-includes/Requests/Cookie.php: Requests_Cookie::normalize_attribute( string $name, string|bool $avlue )
  */
 		}
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
- * <-......: wp-includes/Requests/Cookie.php: Requests_Cookie::normalize()
- * @NOW 015: wp-includes/Requests/Cookie.php: Requests_Cookie::normalize_attribute( string $name, string|bool $avlue )
- */
+	/**
+	 * Parse an individual cookie attribute.
+	 *
+	 * Handles parsing individual attributes from the cookie values.
+	 *
+	 * @param  string      $name  Attribute name.
+	 * @param  string|bool $value Attribute value (string value, or true if empty/flag).
+	 * @return mixed       Value if available, or null if the attribute value is invalid (and should be skipped).
+	 */
+	protected function normalize_attribute( $name, $value )
+	{
+		switch ( strtolower( $name ) ) {
+			case 'expires':
+				// Expiration parsing, as per RFC 6265 section 5.2.1
+				if ( is_int( $value ) ) {
+					return $value;
+				}
+
+				$expiry_time = strtotime( $value );
+
+				if ( $expiry_time === FALSE ) {
+					return NULL;
+				}
+
+				return $expiry_time;
+
+			case 'max-age':
+				// Expiration parsing, as per RFC 6265 section 5.2.2
+				if ( is_int( $value ) ) {
+					return $value;
+				}
+
+				// Check that we have a valid age.
+				if ( ! preg_match( '/^-?\d+$/', $value ) ) {
+					return NULL;
+				}
+
+				$delta_seconds = ( int ) $value;
+
+				$expiry_time = $delta_seconds <= 0
+					? 0
+					: $this->reference_time + $delta_seconds;
+
+				return $expiry_time;
+
+			case 'domain':
+				// Domain normalization, as per RFC 6265 section 5.2.3
+				if ( $value[0] === '.' ) {
+					$value = substr( $value, 1 );
+				}
+
+				return $value;
+
+			default:
+				return $value;
+		}
+	}
 }
