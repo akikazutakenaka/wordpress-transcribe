@@ -26,19 +26,18 @@ class Requests_Exception extends Exception
 	 */
 	protected $data;
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/Requests/Exception.php: Requests_Exception::__construct( string $message, string $type [, mixed $data = NULL [, int $code = 0]] )
- */
+	/**
+	 * Create a new exception.
+	 *
+	 * @param string $message Exception message.
+	 * @param string $type    Exception type.
+	 * @param mixed  $data    Associated data.
+	 * @param int    $code    Exception numerical code, if applicable.
+	 */
+	public function __construct( $message, $type, $data = NULL, $code = 0 )
+	{
+		parent::__construct( $message, $code );
+		$this->type = $type;
+		$this->data = $data;
+	}
 }

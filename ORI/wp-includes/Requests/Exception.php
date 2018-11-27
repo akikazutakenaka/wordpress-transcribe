@@ -12,22 +12,8 @@
  */
 class Requests_Exception extends Exception {
 	// refactored. protected $type;
-	// refactored. protected $data;
-
-	/**
-	 * Create a new exception
-	 *
-	 * @param string $message Exception message
-	 * @param string $type Exception type
-	 * @param mixed $data Associated data
-	 * @param integer $code Exception numerical code, if applicable
-	 */
-	public function __construct($message, $type, $data = null, $code = 0) {
-		parent::__construct($message, $code);
-
-		$this->type = $type;
-		$this->data = $data;
-	}
+	// :
+	// refactored. public function __construct($message, $type, $data = null, $code = 0) {}
 
 	/**
 	 * Like {@see getCode()}, but a string code.
