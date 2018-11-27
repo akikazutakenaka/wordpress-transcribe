@@ -15,19 +15,8 @@
  * @see Requests_Hooks
  */
 class WP_HTTP_Requests_Hooks extends Requests_Hooks {
-	/**
-	 * Requested URL.
-	 *
-	 * @var string Requested URL.
-	 */
-	protected $url;
-
-	/**
-	 * WordPress WP_HTTP request data.
-	 *
-	 * @var array Request data in WP_Http format.
-	 */
-	protected $request = array();
+	// refactored. protected $url;
+	// refactored. protected $request = array();
 
 	/**
 	 * Constructor.
