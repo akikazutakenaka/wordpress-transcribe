@@ -13,12 +13,7 @@
  * @subpackage Cookies
  */
 class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
-	/**
-	 * Actual item data
-	 *
-	 * @var array
-	 */
-	protected $cookies = array();
+	// refactored. protected $cookies = array();
 
 	/**
 	 * Create a new jar

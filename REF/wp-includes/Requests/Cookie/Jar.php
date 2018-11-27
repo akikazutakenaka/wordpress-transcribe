@@ -7,6 +7,21 @@
  */
 
 /**
+ * Cookie holder object.
+ *
+ * @package    Requests
+ * @subpackage Cookies
+ */
+class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
+{
+	/**
+	 * Actual item data.
+	 *
+	 * @var array
+	 */
+	protected $cookies = array();
+
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -20,5 +35,6 @@
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
- * @NOW 014: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar
+ * @NOW 014: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::__construct( [array $cookies = array()] )
  */
+}
