@@ -51,7 +51,6 @@ class Requests_Hooks implements Requests_Hooker
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/Requests/Hooks.php: Requests_Hooks::register( string $hook, callback $callback [, int $priority = 0] )
- * ......->: wp-includes/Requests/Hooker.php: Requests_Hooker::register( string $hook, callback $callback [, int $priority = 0] )
  */
 	}
 }
