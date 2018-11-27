@@ -56,19 +56,7 @@ class WP_HTTP_Proxy {
 		return defined('WP_PROXY_USERNAME') && defined('WP_PROXY_PASSWORD');
 	}
 
-	/**
-	 * Retrieve the host for the proxy server.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @return string
-	 */
-	public function host() {
-		if ( defined('WP_PROXY_HOST') )
-			return WP_PROXY_HOST;
-
-		return '';
-	}
+	// refactored. public function host() {}
 
 	/**
 	 * Retrieve the port for the proxy server.

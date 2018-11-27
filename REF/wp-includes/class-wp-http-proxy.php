@@ -54,6 +54,20 @@ class WP_HTTP_Proxy
 		return defined( 'WP_PROXY_HOST' ) && defined( 'WP_PROXY_PORT' );
 	}
 
+	/**
+	 * Retrieve the host for the proxy server.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return string
+	 */
+	public function host()
+	{
+		return defined( 'WP_PROXY_HOST' )
+			? WP_PROXY_HOST
+			: '';
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -67,7 +81,7 @@ class WP_HTTP_Proxy
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-wp-http-proxy.php: WP_HTTP_Proxy::host()
+ * @NOW 013: wp-includes/class-wp-http-proxy.php: WP_HTTP_Proxy::port()
  */
 
 	/**
