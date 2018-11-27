@@ -153,28 +153,7 @@ class Requests_Cookie {
 		return false;
 	}
 
-	/**
-	 * Normalize cookie and attributes
-	 *
-	 * @return boolean Whether the cookie was successfully normalized
-	 */
-	public function normalize() {
-		foreach ($this->attributes as $key => $value) {
-			$orig_value = $value;
-			$value = $this->normalize_attribute($key, $value);
-			if ($value === null) {
-				unset($this->attributes[$key]);
-				continue;
-			}
-
-			if ($value !== $orig_value) {
-				$this->attributes[$key] = $value;
-			}
-		}
-
-		return true;
-	}
-
+	// refactored. public function normalize() {}
 	// refactored. protected function normalize_attribute($name, $value) {}
 
 	/**
