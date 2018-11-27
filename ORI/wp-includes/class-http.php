@@ -384,30 +384,8 @@ class WP_Http {
 		return $cookie_jar;
 	}
 
-	/**
-	 * Match redirect behaviour to browser handling.
-	 *
-	 * Changes 302 redirects from POST to GET to match browser handling. Per
-	 * RFC 7231, user agents can deviate from the strict reading of the
-	 * specification for compatibility purposes.
-	 *
-	 * @since 4.6.0
-	 * @static
-	 *
-	 * @param string            $location URL to redirect to.
-	 * @param array             $headers  Headers for the redirect.
-	 * @param string|array      $data     Body to send with the request.
-	 * @param array             $options  Redirect request options.
-	 * @param Requests_Response $original Response object.
-	 */
-	public static function browser_redirect_compatibility( $location, $headers, $data, &$options, $original ) {
-		// Browser compat
-		if ( $original->status_code === 302 ) {
-			$options['type'] = Requests::GET;
-		}
-	}
-
-	// refactored. public static function validate_redirects( $location ) {}
+	// refactored. public static function browser_redirect_compatibility( $location, $headers, $data, &$options, $original ) {}
+	// :
 	// refactored. public function _get_first_available_transport( $args, $url = null ) {}
 
 	/**
