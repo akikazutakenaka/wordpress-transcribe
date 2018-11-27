@@ -289,6 +289,23 @@ class WP_Http
 		if ( $r['stream'] ) {
 			if ( empty( $r['filename'] ) ) {
 				$r['filename'] = get_temp_dir() . basename( $url );
+			}
+
+			// Force some settings if we are streaming to a file and check for existence and perms of destination directory.
+			$r['blocking'] = TRUE;
+
+			if ( ! wp_is_writable( dirname( $r['filename'] ) ) ) {
+				return new WP_Error( 'http_request_failed', __( 'Destination directory for file streaming does not exist or is not writable.' ) );
+			}
+		}
+
+		if ( is_null( $r['headers'] ) ) {
+			$r['headers'] = array();
+		}
+
+		// WP allows passing in headers as a string, weirdly.
+		if ( ! is_array( $r['headers'] ) ) {
+			$processedHeaders = WP_Http::processHeaders( $r['headers'] );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -302,8 +319,8 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/class-http.php: WP_Http::processHeaders( string|array $headers [, string $url = ''] )
  */
-			}
 		}
 	}
 
@@ -370,6 +387,104 @@ class WP_Http
 		$defaults = array( 'method' => 'POST' );
 		$r = wp_parse_args( $args, $defaults );
 		return $this->request( $url, $r );
+	}
+
+	/**
+	 * Transform header string into an array.
+	 *
+	 * If an array is given then it is assumed to be raw header data with numeric keys with the headers as the values.
+	 * No headers must be passed that were already processed.
+	 *
+	 * @static
+	 * @since  2.7.0
+	 *
+	 * @param  string|array $headers
+	 * @param  string       $url     The URL that was requested.
+	 * @return array        Processed string headers.
+	 *                      If duplicate headers are encountered, then a numbered array is returned as the value of that header-key.
+	 */
+	public static function processHeaders( $headers, $url = '' )
+	{
+		// Split headers, one per array element.
+		if ( is_string( $headers ) ) {
+			// Tolerate line terminator: CRLF = LF (RFC 2616 19.3).
+			$headers = str_replace( "\r\n", "\n", $headers );
+
+			/**
+			 * Unfold folded header fields.
+			 * LWS = [CRLF] 1*( SP | HT ) <US-ASCII SP, space (32)>, <US-ASCII HT, horizontal-tab (9)> (RFC 2616 2.2).
+			 */
+			$headers = preg_replace( '/\n[ \t]/', ' ', $headers );
+
+			// Create the headers array.
+			$headers = explode( "\n", $headers );
+		}
+
+		$response = array(
+			'code'    => 0,
+			'message' => ''
+		);
+
+		/**
+		 * If a redirection has taken place, the headers for each page request may have been passed.
+		 * In this case, determine the final HTTP header and parse from there.
+		 */
+		for ( $i = count( $headers ) - 1; $i >= 0; $i-- ) {
+			if ( ! empty( $headers[ $i ] ) && FALSE === strpos( $headers[ $i ], ':' ) ) {
+				$headers = array_splice( $headers, $i );
+				break;
+			}
+		}
+
+		$cookies = array();
+		$newheaders = array();
+
+		foreach ( ( array ) $headers as $tempheader ) {
+			if ( empty( $tempheader ) ) {
+				continue;
+			}
+
+			if ( FALSE === strpos( $tempheader, ':' ) ) {
+				$stack = explode( ' ', $tempheader, 3 );
+				$stack[] = '';
+				list( , $response['code'], $response['message'] ) = $stack;
+				continue;
+			}
+
+			list( $key, $value ) = explode( ':', $tempheader, 2 );
+			$key = strtolower( $key );
+			$value = trim( $value );
+
+			if ( isset( $newheaders[ $key ] ) ) {
+				if ( ! is_array( $newheaders[ $key ] ) ) {
+					$newheaders[ $key ] = array( $newheaders[ $key ] );
+				}
+
+				$newheaders[ $key ][] = $value;
+			} else {
+				$newheaders[ $key ] = $value;
+			}
+
+			if ( 'set-cookie' == $key ) {
+				$cookies[] = new WP_Http_Cookie( $value, $url );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * @NOW 013: wp-includes/class-http.php: WP_Http::processHeaders( string|array $headers [, string $url = ''] )
+ * ......->: wp-includes/class-wp-http-cookie.php: WP_Http_Cookie
+ */
+			}
+		}
 	}
 
 	/**
