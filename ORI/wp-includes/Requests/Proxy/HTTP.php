@@ -17,35 +17,9 @@
  * @since 1.6
  */
 class Requests_Proxy_HTTP implements Requests_Proxy {
-	/**
-	 * Proxy host and port
-	 *
-	 * Notation: "host:port" (eg 127.0.0.1:8080 or someproxy.com:3128)
-	 *
-	 * @var string
-	 */
-	public $proxy;
-
-	/**
-	 * Username
-	 *
-	 * @var string
-	 */
-	public $user;
-
-	/**
-	 * Password
-	 *
-	 * @var string
-	 */
-	public $pass;
-
-	/**
-	 * Do we need to authenticate? (ie username & password have been provided)
-	 *
-	 * @var boolean
-	 */
-	public $use_authentication;
+	// refactored. public $proxy;
+	// :
+	// refactored. public $use_authentication;
 
 	/**
 	 * Constructor

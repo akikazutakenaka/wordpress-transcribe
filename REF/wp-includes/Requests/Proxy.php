@@ -1,53 +1,11 @@
 <?php
 /**
- * HTTP Proxy connection interface
+ * Proxy connection interface
  *
  * @package    Requests
  * @subpackage Proxy
  * @since      1.6
  */
-
-/**
- * HTTP Proxy connection interface.
- *
- * Provides a handler for connection via an HTTP proxy.
- *
- * @package    Requests
- * @subpackage Proxy
- * @since      1.6
- */
-class Requests_Proxy_HTTP implements Requests_Proxy
-{
-	/**
-	 * Proxy host and port.
-	 *
-	 * Notation: "host:port" (e.g. 127.0.0.1:8080 or someproxy.com:3128)
-	 *
-	 * @var string
-	 */
-	public $proxy;
-
-	/**
-	 * Username.
-	 *
-	 * @var string
-	 */
-	public $user;
-
-	/**
-	 * Password.
-	 *
-	 * @var string
-	 */
-	public $pass;
-
-	/**
-	 * Do we need to authenticate?
-	 * (i.e. username & password have been provided)
-	 *
-	 * @var bool
-	 */
-	public $use_authentication;
 
 /**
  * <-......: wp-blog-header.php
@@ -62,7 +20,6 @@ class Requests_Proxy_HTTP implements Requests_Proxy
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP
- * ......->: wp-includes/Requests/Proxy.php: Requests_Proxy
+ * <-......: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP
+ * @NOW 014: wp-includes/Requests/Proxy.php: Requests_Proxy
  */
-}
