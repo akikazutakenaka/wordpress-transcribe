@@ -81,20 +81,95 @@ function wp_http_supports( $capabilities = array(), $url = NULL )
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/http.php: wp_http_validate_url( string $url )
+ * Validate a URL for safe use in the HTTP API.
+ *
+ * @since 3.5.2
+ *
+ * @param  string       $url
+ * @return false|string URL or false on failure.
  */
+function wp_http_validate_url( $url )
+{
+	$original_url = $url;
+	$url = wp_kses_bad_protocol( $url, array( 'http', 'https' ) );
+
+	if ( ! $url || strtolower( $url ) !== strtolower( $original_url ) ) {
+		return FALSE;
+	}
+
+	$parsed_url = @ parse_url( $url );
+
+	if ( ! $parsed_url || empty( $parsed_url['host'] ) ) {
+		return FALSE;
+	}
+
+	if ( isset( $parsed_url['user'] ) || isset( $parsed_url['pass'] ) ) {
+		return FALSE;
+	}
+
+	if ( FALSE !== strpbrk( $parsed_url['host'], ':#?[]' ) ) {
+		return FALSE;
+	}
+
+	$parsed_home = @ parse_url( get_option( 'home' ) );
+
+	$same_host = isset( $parsed_home['host'] )
+		? strtolower( $parsed_home['host'] ) === strtolower( $parsed_url['host'] )
+		: FALSE;
+
+	if ( ! $same_host ) {
+		$host = trim( $parsed_url['host'], '.' );
+
+		$ip = preg_match( '#^(([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)\.){3}([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)$#', $host )
+			? $host
+			: ( $host === gethostbyname( $host )
+				? gethostbyname( $host )
+				: FALSE );
+
+		if ( $ip ) {
+			$parts = array_map( 'intval', explode( '.', $ip ) );
+
+			if ( 127 === $parts[0]
+			  || 10 === $parts[0]
+			  || 0 === $parts[0]
+			  || 172 === $parts[0] && 16 <= $parts[1] && 31 >= $parts[1]
+			  || 192 === $parts[0] && 168 === $parts[1] ) {
+				// If host appears local, reject unless specifically allowed.
+
+				/**
+				 * Check if HTTP request is external or not.
+				 *
+				 * Allows to change and allow external requests for the HTTP request.
+				 *
+				 * @since 3.6.0
+				 *
+				 * @param bool   false Whether HTTP request is external or not.
+				 * @param string $host IP of the requested host.
+				 * @param string $url  URL of the requested host.
+				 */
+				if ( ! apply_filters( 'http_requested_host_is_external', FALSE, $host, $url ) ) {
+					return FALSE;
+				}
+			}
+		}
+	}
+
+	if ( empty( $parsed_url['host'] ) ) {
+		return $url;
+	}
+
+	$port = $parsed_url['port'];
+
+	if ( 80 === $port || 443 === $port || 8080 === $port ) {
+		return $url;
+	}
+
+	if ( $parsed_home && $same_host && isset( $parsed_home['port'] ) && $parsed_home['port'] === $port ) {
+		return $url;
+	}
+
+	return FALSE;
+}
 
 /**
  * A wrapper for PHP's parse_url() function that handles consistency in the return values across PHP versions.
