@@ -16,18 +16,8 @@
  */
 class WP_HTTP_Requests_Hooks extends Requests_Hooks {
 	// refactored. protected $url;
-	// refactored. protected $request = array();
-
-	/**
-	 * Constructor.
-	 *
-	 * @param string $url URL to request.
-	 * @param array $request Request data in WP_Http format.
-	 */
-	public function __construct( $url, $request ) {
-		$this->url = $url;
-		$this->request = $request;
-	}
+	// :
+	// refactored. public function __construct( $url, $request ) {}
 
 	/**
 	 * Dispatch a Requests hook to a native WordPress action.
