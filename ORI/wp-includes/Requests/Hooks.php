@@ -13,19 +13,8 @@
  * @subpackage Utilities
  */
 class Requests_Hooks implements Requests_Hooker {
-	/**
-	 * Registered callbacks for each hook
-	 *
-	 * @var array
-	 */
-	protected $hooks = array();
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		// pass
-	}
+	// refactored. protected $hooks = array();
+	// refactored. public function __construct() {}
 
 	/**
 	 * Register a callback for a hook

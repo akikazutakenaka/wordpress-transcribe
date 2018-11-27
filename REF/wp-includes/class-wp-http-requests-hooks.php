@@ -42,7 +42,6 @@ class WP_HTTP_Requests_Hooks extends Requests_Hooks
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests_Hooks
- * ......->: wp-includes/Requests/Hooks.php: Requests_Hooks::__construct()
+ * @NOW 013: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests_Hooks::__construct()
  */
 }
