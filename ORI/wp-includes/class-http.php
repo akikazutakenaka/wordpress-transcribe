@@ -407,20 +407,7 @@ class WP_Http {
 		}
 	}
 
-	/**
-	 * Validate redirected URLs.
-	 *
-	 * @since 4.7.5
-	 *
-	 * @throws Requests_Exception On unsuccessful URL validation
-	 * @param string $location URL to redirect to.
-	 */
-	public static function validate_redirects( $location ) {
-		if ( ! wp_http_validate_url( $location ) ) {
-			throw new Requests_Exception( __('A valid URL was not provided.'), 'wp_http.redirect_failed_validation' );
-		}
-	}
-
+	// refactored. public static function validate_redirects( $location ) {}
 	// refactored. public function _get_first_available_transport( $args, $url = null ) {}
 
 	/**
