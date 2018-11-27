@@ -14,15 +14,7 @@
  */
 class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	// refactored. protected $cookies = array();
-
-	/**
-	 * Create a new jar
-	 *
-	 * @param array $cookies Existing cookie values
-	 */
-	public function __construct($cookies = array()) {
-		$this->cookies = $cookies;
-	}
+	// refactored. public function __construct($cookies = array()) {}
 
 	/**
 	 * Normalise cookie data into a Requests_Cookie
