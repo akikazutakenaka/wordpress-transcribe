@@ -62,7 +62,6 @@ class Requests_Proxy_HTTP implements Requests_Proxy
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP
- * ......->: wp-includes/Requests/Proxy.php: Requests_Proxy
+ * @NOW 013: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP::__construct( [array|null $args = NULL] )
  */
 }
