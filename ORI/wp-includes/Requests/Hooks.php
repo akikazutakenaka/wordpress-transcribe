@@ -14,25 +14,8 @@
  */
 class Requests_Hooks implements Requests_Hooker {
 	// refactored. protected $hooks = array();
-	// refactored. public function __construct() {}
-
-	/**
-	 * Register a callback for a hook
-	 *
-	 * @param string $hook Hook name
-	 * @param callback $callback Function/method to call on event
-	 * @param int $priority Priority number. <0 is executed earlier, >0 is executed later
-	 */
-	public function register($hook, $callback, $priority = 0) {
-		if (!isset($this->hooks[$hook])) {
-			$this->hooks[$hook] = array();
-		}
-		if (!isset($this->hooks[$hook][$priority])) {
-			$this->hooks[$hook][$priority] = array();
-		}
-
-		$this->hooks[$hook][$priority][] = $callback;
-	}
+	// :
+	// refactored. public function register($hook, $callback, $priority = 0) {}
 
 	/**
 	 * Dispatch a message
