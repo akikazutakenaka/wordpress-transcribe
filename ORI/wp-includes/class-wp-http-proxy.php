@@ -41,22 +41,7 @@
  */
 class WP_HTTP_Proxy {
 	// refactored. public function is_enabled() {}
-
-	/**
-	 * Whether authentication should be used.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @use WP_PROXY_USERNAME
-	 * @use WP_PROXY_PASSWORD
-	 *
-	 * @return bool
-	 */
-	public function use_authentication() {
-		return defined('WP_PROXY_USERNAME') && defined('WP_PROXY_PASSWORD');
-	}
-
-	// refactored. public function host() {}
+	// :
 	// refactored. public function port() {}
 
 	/**

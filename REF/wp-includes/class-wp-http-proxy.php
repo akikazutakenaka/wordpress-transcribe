@@ -55,6 +55,20 @@ class WP_HTTP_Proxy
 	}
 
 	/**
+	 * Whether authentication should be used.
+	 *
+	 * @since 2.8.0
+	 * @uses  WP_PROXY_USERNAME
+	 * @uses  WP_PROXY_PASSWORD
+	 *
+	 * @return bool
+	 */
+	public function use_authentication()
+	{
+		return defined( 'WP_PROXY_USERNAME' ) && defined( 'WP_PROXY_PASSWORD' );
+	}
+
+	/**
 	 * Retrieve the host for the proxy server.
 	 *
 	 * @since 2.8.0
