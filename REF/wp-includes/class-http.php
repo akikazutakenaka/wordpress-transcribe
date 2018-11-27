@@ -375,6 +375,7 @@ class WP_Http
 		$proxy = new WP_HTTP_Proxy();
 
 		if ( $proxy->is_enabled() && $proxy->send_through_proxy( $url ) ) {
+			$options['proxy'] = new Requests_Proxy_HTTP( $proxy->host() . ':' . $proxy->port() );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -388,6 +389,7 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP
  */
 		}
 	}
