@@ -13,49 +13,9 @@
  * @subpackage Cookies
  */
 class Requests_Cookie {
-	/**
-	 * Cookie name.
-	 *
-	 * @var string
-	 */
-	public $name;
-
-	/**
-	 * Cookie value.
-	 *
-	 * @var string
-	 */
-	public $value;
-
-	/**
-	 * Cookie attributes
-	 *
-	 * Valid keys are (currently) path, domain, expires, max-age, secure and
-	 * httponly.
-	 *
-	 * @var Requests_Utility_CaseInsensitiveDictionary|array Array-like object
-	 */
-	public $attributes = array();
-
-	/**
-	 * Cookie flags
-	 *
-	 * Valid keys are (currently) creation, last-access, persistent and
-	 * host-only.
-	 *
-	 * @var array
-	 */
-	public $flags = array();
-
-	/**
-	 * Reference time for relative calculations
-	 *
-	 * This is used in place of `time()` when calculating Max-Age expiration and
-	 * checking time validity.
-	 *
-	 * @var int
-	 */
-	public $reference_time = 0;
+	// refactored. public $name;
+	// :
+	// refactored. public $reference_time = 0;
 
 	/**
 	 * Create a new cookie object
