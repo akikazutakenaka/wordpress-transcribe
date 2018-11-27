@@ -322,6 +322,30 @@ class WP_Http
 
 		// Ensure redirects follow browser behaviour.
 		$options['hooks']->register( 'requests.before_redirect', array( get_class(), 'browser_redirect_compatibility' ) );
+
+		// Validate redirected URLs.
+		if ( function_exists( 'wp_kses_bad_protocol' ) && $r['reject_unsafe_urls'] ) {
+			$options['hooks']->register( 'requests.before_redirect', array( get_class(), 'validate_redirects' ) );
+		}
+
+		if ( $r['stream'] ) {
+			$options['filename'] = $r['filename'];
+		}
+
+		if ( empty( $r['redirection'] ) ) {
+			$options['follow_redirects'] = FALSE;
+		} else {
+			$options['redirects'] = $r['redirection'];
+		}
+
+		// Use byte limit, if we can.
+		if ( isset( $r['limit_response_size'] ) ) {
+			$options['max_bytes'] = $r['limit_response_size'];
+		}
+
+		// If we've got cookies, use and convert them to Requests_Cookie.
+		if ( ! empty( $r['cookies'] ) ) {
+			$options['cookies'] = WP_Http::normalize_cookies( $r['cookies'] );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -335,6 +359,38 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
+ */
+		}
+	}
+
+	/**
+	 * Normalizes cookies for using in Requests.
+	 *
+	 * @since  4.6.0
+	 * @static
+	 *
+	 * @param  array               $cookies List of cookies to send with the request.
+	 * @return Requests_Cookie_Jar Cookie holder object.
+	 */
+	public static function normalize_cookies( $cookies )
+	{
+		$cookie_jar = new Requests_Cookie_Jar();
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * @NOW 013: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
+ * ......->: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar
  */
 	}
 
