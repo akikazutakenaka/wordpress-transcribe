@@ -54,19 +54,82 @@ class WP_HTTP_Proxy
 		return defined( 'WP_PROXY_HOST' ) && defined( 'WP_PROXY_PORT' );
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-wp-http-proxy.php: WP_HTTP_Proxy::send_through_proxy( string $uri )
- */
+	/**
+	 * Whether URL should be sent through the proxy server.
+	 *
+	 * We want to keep localhost and the site URL from being sent through the proxy server, because some proxies can not handle this.
+	 * We also have the constant available for defining other hosts that won't be sent through the proxy.
+	 *
+	 * @since     2.8.0
+	 * @staticvar array|null $bypass_hosts
+	 * @staticvar array      $wildcard_regex
+	 *
+	 * @param  string $uri URI to check.
+	 * @return bool   True, to send through the proxy and false if, the proxy should not be used.
+	 */
+	public function send_through_proxy( $uri )
+	{
+		/**
+		 * parse_url() only handles http, https type URLs, and will emit E_WARNING on failure.
+		 * This will be displayed on sites, which is not reasonable.
+		 */
+		$check = @ parse_url( $uri );
+
+		// Malformed URL, can not process, but this could mean ssl, so let through anyway.
+		if ( $check === FALSE ) {
+			return TRUE;
+		}
+
+		$home = parse_url( get_option( 'siteurl' ) );
+
+		/**
+		 * Filters whether to preempt sending the request through the proxy server.
+		 *
+		 * Returning false will bypass the proxy; returning true will send the request through the proxy.
+		 * Returning null bypasses the filter.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param null   $override Whether to override the request result.
+		 *                         Default null.
+		 * @param string $uri      URL to check.
+		 * @param array  $check    Associative array result of parsing the URI.
+		 * @param array  $home     Associative array result of parsing the site URL.
+		 */
+		$result = apply_filters( 'pre_http_send_through_proxy', NULL, $uri, $check, $home );
+
+		if ( ! is_null( $result ) ) {
+			return $result;
+		}
+
+		if ( 'localhost' == $check['host']
+		  || isset( $home['host'] ) && $home['host'] == $check['host'] ) {
+			return FALSE;
+		}
+
+		if ( ! defined( 'WP_PROXY_BYPASS_HOSTS' ) ) {
+			return TRUE;
+		}
+
+		static $bypass_hosts = NULL;
+		static $wildcard_regex = array();
+
+		if ( NULL === $bypass_hosts ) {
+			$bypass_hosts = preg_split( '|,\s*|', WP_PROXY_BYPASS_HOSTS );
+
+			if ( FALSE !== strpos( WP_PROXY_BYPASS_HOSTS, '*' ) ) {
+				$wildcard_regex = array();
+
+				foreach ( $bypass_hosts as $host ) {
+					$wildcard_regex[] = str_replace( '\*', '.+', preg_quote( $host, '/' ) );
+				}
+
+				$wildcard_regex = '/^(' . implode( '|', $wildcard_regex ) . ')$/i';
+			}
+		}
+
+		return ! empty( $wildcard_regex )
+			? ! preg_match( $wildcard_regex, $check['host'] )
+			: ! in_array( $check['host'], $bypass_hosts );
+	}
 }
