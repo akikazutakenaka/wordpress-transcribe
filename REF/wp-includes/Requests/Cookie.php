@@ -55,6 +55,36 @@ class Requests_Cookie
 	 */
 	public $reference_time = 0;
 
+	/**
+	 * Create a new cookie object.
+	 *
+	 * @param string                                           $name
+	 * @param string                                           $value
+	 * @param array|Requests_Utility_CaseInsensitiveDictionary $attributes     Associative array of attribute data.
+	 * @param array                                            $flags
+	 * @param int                                              $reference_time
+	 */
+	public function __construct( $name, $value, $attributes = array(), $flags = array(), $reference_time = NULL )
+	{
+		$this->name = $name;
+		$this->value = $value;
+		$this->attributes = $attributes;
+		$default_flags = array(
+			'creation'    => time(),
+			'last-access' => time(),
+			'persistent'  => FALSE,
+			'host-only'   => TRUE
+		);
+		$this->flags = array_merge( $default_flags, $flags );
+		$this->reference_time = time();
+
+		if ( $reference_time !== NULL ) {
+			$this->reference_time = $reference_time;
+		}
+
+		$this->normalize();
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -69,6 +99,6 @@ class Requests_Cookie
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
- * @NOW 014: wp-includes/Requests/Cookie.php: Requests_Cookie::__construct( string $name, string $value [, array|Requests_Utility_CaseInsensitiveDictionary $attributes = array() [, array $flags = array() [, int $reference_time = NULL]]] )
+ * @NOW 014: wp-includes/Requests/Cookie.php: Requests_Cookie::normalize()
  */
 }

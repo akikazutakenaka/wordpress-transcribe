@@ -394,7 +394,7 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-http.php: WP_Http::normalize_cookies( array $cookies )
- * ......->: wp-includes/Requests/Cookie.php: Requests_Cookie::__construct( string $name, string $value [, array|Requests_Utility_CaseInsensitiveDictionary $attributes = array() [, array $flags = array() [, int $reference_time = NULL]]] )
+ * ......->: wp-includes/Requests/Cookie.php: Requests_Cookie::normalize()
  */
 			}
 		}

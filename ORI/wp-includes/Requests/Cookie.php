@@ -15,34 +15,7 @@
 class Requests_Cookie {
 	// refactored. public $name;
 	// :
-	// refactored. public $reference_time = 0;
-
-	/**
-	 * Create a new cookie object
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array|Requests_Utility_CaseInsensitiveDictionary $attributes Associative array of attribute data
-	 */
-	public function __construct($name, $value, $attributes = array(), $flags = array(), $reference_time = null) {
-		$this->name = $name;
-		$this->value = $value;
-		$this->attributes = $attributes;
-		$default_flags = array(
-			'creation' => time(),
-			'last-access' => time(),
-			'persistent' => false,
-			'host-only' => true,
-		);
-		$this->flags = array_merge($default_flags, $flags);
-
-		$this->reference_time = time();
-		if ($reference_time !== null) {
-			$this->reference_time = $reference_time;
-		}
-
-		$this->normalize();
-	}
+	// refactored. public function __construct($name, $value, $attributes = array(), $flags = array(), $reference_time = null) {}
 
 	/**
 	 * Check if a cookie is expired.
