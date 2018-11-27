@@ -49,19 +49,28 @@ class Requests_Proxy_HTTP implements Requests_Proxy
 	 */
 	public $use_authentication;
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP::__construct( [array|null $args = NULL] )
- */
+	/**
+	 * Constructor.
+	 *
+	 * @since  1.6
+	 * @throws Requests_Exception On incorrect number of arguments (`authbasicbadargs`)
+	 *
+	 * @param array|null $args Array of user and password.
+	 *                         Must have exactly two elements.
+	 */
+	public function __construct( $args = NULL )
+	{
+		if ( is_string( $args ) ) {
+			$this->proxy = $args;
+		} elseif ( is_array( $args ) ) {
+			if ( count( $args ) == 1 ) {
+				list( $this->proxy ) = $args;
+			} elseif ( count( $args ) == 3 ) {
+				list( $this->proxy, $this->user, $this->pass ) = $args;
+				$this->use_authentication = TRUE;
+			} else {
+				throw new Requests_Exception( 'Invalid number of arguments', 'proxyhttpbadargs' );
+			}
+		}
+	}
 }

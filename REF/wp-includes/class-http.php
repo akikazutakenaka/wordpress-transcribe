@@ -389,7 +389,7 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * ......->: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP::__construct( [array|null $args = NULL] )
+ * ......->: wp-includes/class-wp-http-proxy.php: WP_HTTP_Proxy::host()
  */
 		}
 	}
