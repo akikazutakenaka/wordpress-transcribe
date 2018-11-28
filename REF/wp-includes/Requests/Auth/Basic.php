@@ -45,7 +45,6 @@ class Requests_Auth_Basic implements Requests_Auth
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * @NOW 015: wp-includes/Requests/Auth/Basic: Requests_Auth_Basic
- * ......->: wp-includes/Requests/Auth.php: Requests_Auth
+ * @NOW 015: wp-includes/Requests/Auth/Basic: Requests_Auth_Basic::__construct( [array|null $args = NULL] )
  */
 }
