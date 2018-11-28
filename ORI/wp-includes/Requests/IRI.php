@@ -297,31 +297,8 @@ class Requests_IRI {
 	}
 
 	// refactored. protected function replace_invalid_with_pct_encoding($string, $extra_chars, $iprivate = false) {}
-	// refactored. protected function remove_iunreserved_percent_encoded($match) {}
-
-	protected function scheme_normalization() {
-		if (isset($this->normalization[$this->scheme]['iuserinfo']) && $this->iuserinfo === $this->normalization[$this->scheme]['iuserinfo']) {
-			$this->iuserinfo = null;
-		}
-		if (isset($this->normalization[$this->scheme]['ihost']) && $this->ihost === $this->normalization[$this->scheme]['ihost']) {
-			$this->ihost = null;
-		}
-		if (isset($this->normalization[$this->scheme]['port']) && $this->port === $this->normalization[$this->scheme]['port']) {
-			$this->port = null;
-		}
-		if (isset($this->normalization[$this->scheme]['ipath']) && $this->ipath === $this->normalization[$this->scheme]['ipath']) {
-			$this->ipath = '';
-		}
-		if (isset($this->ihost) && empty($this->ipath)) {
-			$this->ipath = '/';
-		}
-		if (isset($this->normalization[$this->scheme]['iquery']) && $this->iquery === $this->normalization[$this->scheme]['iquery']) {
-			$this->iquery = null;
-		}
-		if (isset($this->normalization[$this->scheme]['ifragment']) && $this->ifragment === $this->normalization[$this->scheme]['ifragment']) {
-			$this->ifragment = null;
-		}
-	}
+	// :
+	// refactored. protected function scheme_normalization() {}
 
 	/**
 	 * Check if the object represents a valid IRI. This needs to be done on each

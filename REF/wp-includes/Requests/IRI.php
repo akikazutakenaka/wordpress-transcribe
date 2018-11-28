@@ -353,6 +353,37 @@ class Requests_IRI
 		return $string;
 	}
 
+	protected function scheme_normalization()
+	{
+		if ( isset( $this->normalization[ $this->scheme ]['iuserinfo'] ) && $this->iuserinfo === $this->normalization[ $this->scheme ]['iuserinfo'] ) {
+			$this->iuserinfo = NULL;
+		}
+
+		if ( isset( $this->normalization[ $this->scheme ]['ihost'] ) && $this->ihost === $this->normalization[ $this->scheme ]['ihost'] ) {
+			$this->ihost = NULL;
+		}
+
+		if ( isset( $this->normalization[ $this->scheme ]['port'] ) && $this->port === $this->normalization[ $this->scheme ]['port'] ) {
+			$this->port = NULL;
+		}
+
+		if ( isset( $this->normalization[ $this->scheme ]['ipath'] ) && $this->ipath === $this->normalization[ $this->scheme ]['ipath'] ) {
+			$this->ipath = '';
+		}
+
+		if ( isset( $this->ihost ) && empty( $this->ipath ) ) {
+			$this->ipath = '/';
+		}
+
+		if ( isset( $this->normalization[ $this->scheme ]['iquery'] ) && $this->iquery === $this->normalization[ $this->scheme ]['iquery'] ) {
+			$this->iquery = NULL;
+		}
+
+		if ( isset( $this->normalization[ $this->scheme ]['ifragment'] ) && $this->ifragment === $this->normalization[ $this->scheme ]['ifragment'] ) {
+			$this->ifragment = NULL;
+		}
+	}
+
 	/**
 	 * Set the entire IRI.
 	 * Returns true on success, false on failure (if there are any invalid characters).
@@ -506,6 +537,7 @@ class Requests_IRI
 			$this->iuserinfo = NULL;
 		} else {
 			$this->iuserinfo = $this->replace_invalid_with_pct_encoding( $iuserinfo, '!$&\'()*+,;=:' );
+			$this->scheme_normalization();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
