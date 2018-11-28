@@ -521,7 +521,7 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * @NOW 018: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_host( string $host )
  */
 	}
 
@@ -538,6 +538,11 @@ class Requests_IRI
 		} else {
 			$this->iuserinfo = $this->replace_invalid_with_pct_encoding( $iuserinfo, '!$&\'()*+,;=:' );
 			$this->scheme_normalization();
+		}
+
+		return TRUE;
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -557,8 +562,6 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
- * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
+ * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::set_host( string $host )
  */
-		}
-	}
 }

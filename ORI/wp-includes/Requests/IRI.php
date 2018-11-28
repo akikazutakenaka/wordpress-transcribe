@@ -433,23 +433,7 @@ class Requests_IRI {
 		return $return;
 	}
 
-	/**
-	 * Set the iuserinfo.
-	 *
-	 * @param string $iuserinfo
-	 * @return bool
-	 */
-	protected function set_userinfo($iuserinfo) {
-		if ($iuserinfo === null) {
-			$this->iuserinfo = null;
-		}
-		else {
-			$this->iuserinfo = $this->replace_invalid_with_pct_encoding($iuserinfo, '!$&\'()*+,;=:');
-			$this->scheme_normalization();
-		}
-
-		return true;
-	}
+	// refactored. protected function set_userinfo($iuserinfo) {}
 
 	/**
 	 * Set the ihost. Returns true on success, false on failure (if there are
