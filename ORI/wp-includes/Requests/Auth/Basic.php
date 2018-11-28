@@ -43,12 +43,5 @@ class Requests_Auth_Basic implements Requests_Auth {
 		$out .= sprintf("Authorization: Basic %s\r\n", base64_encode($this->getAuthString()));
 	}
 
-	/**
-	 * Get the authentication string (user:pass)
-	 *
-	 * @return string
-	 */
-	public function getAuthString() {
-		return $this->user . ':' . $this->pass;
-	}
+	// refactored. public function getAuthString() {}
 }
