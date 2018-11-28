@@ -215,6 +215,37 @@ class Requests
  */
 	}
 
+	/**
+	 * Get the default options.
+	 *
+	 * @see Requests::request() for values returned by this method.
+	 *
+	 * @param  bool  $multirequest Is this a multirequest?
+	 * @return array Default option values.
+	 */
+	protected static function get_default_options( $multirequest = FALSE )
+	{
+		$defaults = array(
+			'timeout'            => 10,
+			'connection_timeout' => 10,
+			'useragent'          => 'php-requests/' . self::VERSION,
+			'protocol_version'   => 1.1,
+			'redirected'         => 0,
+			'redirects'          => 10,
+			'follow_redirects'   => TRUE,
+			'blocking'           => TRUE,
+			'type'               => self::GET,
+			'filename'           => FALSE,
+			'auth'               => FALSE,
+			'proxy'              => FALSE,
+			'cookies'            => FALSE,
+			'max_bytes'          => FALSE,
+			'idn'                => TRUE,
+			'hooks'              => NULL,
+			'transport'          => NULL,
+			'verify'             => Requests::get_certificate_path(),
+			'verifyname'         => TRUE
+		);
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -231,6 +262,19 @@ class Requests
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/class-requests.php: Requests::get_default_options( [bool $multirequest = FALSE] )
  */
+	}
+
+	/**
+	 * Get default certificate path.
+	 *
+	 * @return string Default certificate path.
+	 */
+	public static function get_certificate_path()
+	{
+		return ! empty( Requests::$certificate_path )
+			? Requests::$certificate_path
+			: dirname( __FILE__ ) . '/Requests/Transport/cacert.pem';
+	}
 
 	/**
 	 * Set default certificate path.

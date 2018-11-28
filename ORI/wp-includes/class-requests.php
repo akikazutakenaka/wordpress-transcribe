@@ -420,19 +420,7 @@ class Requests {
 		return $defaults;
 	}
 
-	/**
-	 * Get default certificate path.
-	 *
-	 * @return string Default certificate path.
-	 */
-	public static function get_certificate_path() {
-		if ( ! empty( Requests::$certificate_path ) ) {
-			return Requests::$certificate_path;
-		}
-
-		return dirname(__FILE__) . '/Requests/Transport/cacert.pem';
-	}
-
+	// refactored. public static function get_certificate_path() {}
 	// refactored. public static function set_certificate_path( $path ) {}
 
 	/**
