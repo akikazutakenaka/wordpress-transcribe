@@ -48,94 +48,18 @@
  *
  * @property string $iri IRI we're working with
  * @property-read string $uri IRI in URI form, {@see to_uri}
- * @property string $scheme Scheme part of the IRI
  * @property string $authority Authority part, formatted for a URI (userinfo + host + port)
  * @property string $iauthority Authority part of the IRI (userinfo + host + port)
  * @property string $userinfo Userinfo part, formatted for a URI (after '://' and before '@')
- * @property string $iuserinfo Userinfo part of the IRI (after '://' and before '@')
  * @property string $host Host part, formatted for a URI
- * @property string $ihost Host part of the IRI
- * @property string $port Port part of the IRI (after ':')
  * @property string $path Path part, formatted for a URI (after first '/')
- * @property string $ipath Path part of the IRI (after first '/')
  * @property string $query Query part, formatted for a URI (after '?')
- * @property string $iquery Query part of the IRI (after '?')
  * @property string $fragment Fragment, formatted for a URI (after '#')
- * @property string $ifragment Fragment part of the IRI (after '#')
  */
 class Requests_IRI {
-	/**
-	 * Scheme
-	 *
-	 * @var string
-	 */
-	protected $scheme = null;
-
-	/**
-	 * User Information
-	 *
-	 * @var string
-	 */
-	protected $iuserinfo = null;
-
-	/**
-	 * ihost
-	 *
-	 * @var string
-	 */
-	protected $ihost = null;
-
-	/**
-	 * Port
-	 *
-	 * @var string
-	 */
-	protected $port = null;
-
-	/**
-	 * ipath
-	 *
-	 * @var string
-	 */
-	protected $ipath = '';
-
-	/**
-	 * iquery
-	 *
-	 * @var string
-	 */
-	protected $iquery = null;
-
-	/**
-	 * ifragment
-	 *
-	 * @var string
-	 */
-	protected $ifragment = null;
-
-	/**
-	 * Normalization database
-	 *
-	 * Each key is the scheme, each value is an array with each key as the IRI
-	 * part and value as the default value for that part.
-	 */
-	protected $normalization = array(
-		'acap' => array(
-			'port' => 674
-		),
-		'dict' => array(
-			'port' => 2628
-		),
-		'file' => array(
-			'ihost' => 'localhost'
-		),
-		'http' => array(
-			'port' => 80,
-		),
-		'https' => array(
-			'port' => 443,
-		),
-	);
+	// refactored. protected $scheme = null;
+	// :
+	// refactored. protected $normalization = array();
 
 	/**
 	 * Return the entire IRI when you try and read the object as a string
