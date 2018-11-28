@@ -638,26 +638,7 @@ class Requests_IRI {
 		return $return;
 	}
 
-	/**
-	 * Set the scheme. Returns true on success, false on failure (if there are
-	 * any invalid characters).
-	 *
-	 * @param string $scheme
-	 * @return bool
-	 */
-	protected function set_scheme($scheme) {
-		if ($scheme === null) {
-			$this->scheme = null;
-		}
-		elseif (!preg_match('/^[A-Za-z][0-9A-Za-z+\-.]*$/', $scheme)) {
-			$this->scheme = null;
-			return false;
-		}
-		else {
-			$this->scheme = strtolower($scheme);
-		}
-		return true;
-	}
+	// refactored. protected function set_scheme($scheme) {}
 
 	/**
 	 * Set the authority. Returns true on success, false on failure (if there are
