@@ -159,14 +159,7 @@ class Requests_IRI {
 		}
 	}
 
-	/**
-	 * Create a new IRI object, from a specified string
-	 *
-	 * @param string|null $iri
-	 */
-	public function __construct($iri = null) {
-		$this->set_iri($iri);
-	}
+	// refactored. public function __construct($iri = null) {}
 
 	/**
 	 * Create a new IRI object by resolving a relative IRI

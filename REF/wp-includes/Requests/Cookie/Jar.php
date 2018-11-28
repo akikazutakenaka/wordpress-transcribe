@@ -91,7 +91,7 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * @NOW 016: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::__construct( [string|null $iri = NULL] )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  */
 		}
 	}

@@ -95,6 +95,16 @@ class Requests_IRI
 		'https' => array( 'port' => 443 )
 	);
 
+	/**
+	 * Create a new IRI object, from a specified string.
+	 *
+	 * @param string|null $iri
+	 */
+	public function __construct( $iri = NULL )
+	{
+		$this->set_iri( $iri );
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -112,6 +122,6 @@ class Requests_IRI
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
- * @NOW 017: wp-includes/Requests/IRI.php: Requests_IRI::__construct( [string|null $iri = NULL] )
+ * @NOW 017: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  */
 }
