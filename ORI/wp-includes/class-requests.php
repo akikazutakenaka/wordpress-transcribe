@@ -385,42 +385,8 @@ class Requests {
 		return $responses;
 	}
 
-	/**
-	 * Get the default options
-	 *
-	 * @see Requests::request() for values returned by this method
-	 * @param boolean $multirequest Is this a multirequest?
-	 * @return array Default option values
-	 */
-	protected static function get_default_options($multirequest = false) {
-		$defaults = array(
-			'timeout' => 10,
-			'connect_timeout' => 10,
-			'useragent' => 'php-requests/' . self::VERSION,
-			'protocol_version' => 1.1,
-			'redirected' => 0,
-			'redirects' => 10,
-			'follow_redirects' => true,
-			'blocking' => true,
-			'type' => self::GET,
-			'filename' => false,
-			'auth' => false,
-			'proxy' => false,
-			'cookies' => false,
-			'max_bytes' => false,
-			'idn' => true,
-			'hooks' => null,
-			'transport' => null,
-			'verify' => Requests::get_certificate_path(),
-			'verifyname' => true,
-		);
-		if ($multirequest !== false) {
-			$defaults['complete'] = null;
-		}
-		return $defaults;
-	}
-
-	// refactored. public static function get_certificate_path() {}
+	// refactored. protected static function get_default_options($multirequest = false) {}
+	// :
 	// refactored. public static function set_certificate_path( $path ) {}
 
 	/**
