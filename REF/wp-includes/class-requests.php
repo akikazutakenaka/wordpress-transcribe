@@ -299,6 +299,10 @@ class Requests
 
 		if ( is_array( $options['auth'] ) ) {
 			$options['auth'] = new Requests_Auth_Basic( $options['auth'] );
+		}
+
+		if ( $options['auth'] !== FALSE ) {
+			$options['auth']->register( $options['hooks'] );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -314,6 +318,7 @@ class Requests
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * ......->: wp-includes/Requests/Auth/Basic.php: Requests_Auth_Basic::register( &Requests_Hooks $hooks )
  */
 		}
 	}
