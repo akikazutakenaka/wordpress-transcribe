@@ -381,6 +381,14 @@ class WP_Http
 				$options['proxy']->use_authentication = TRUE;
 				$options['proxy']->user = $proxy->username();
 				$options['proxy']->pass = $proxy->password();
+			}
+		}
+
+		// Avoid issues where mbstring.func_overload is enabled.
+		mbstring_binary_safe_encoding();
+
+		try {
+			$requests_response = Requests::request( $url, $headers, $data, $type, $options );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -394,8 +402,8 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * ......->: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  */
-			}
 		}
 	}
 
