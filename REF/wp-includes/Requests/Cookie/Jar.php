@@ -59,6 +59,21 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
  */
 	}
 
+	/**
+	 * Add Cookie header to a request if we have any.
+	 *
+	 * As per RFC 6265, cookies are separated by '; '.
+	 *
+	 * @param string $url
+	 * @param array  $headers
+	 * @param array  $data
+	 * @param string $type
+	 * @param array  $options
+	 */
+	public function before_request( $url, &$headers, &$data, &$type, &$options )
+	{
+		if ( ! $url instanceof Requests_IRI ) {
+			$url = new Requests_IRI( $url );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -76,5 +91,8 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * @NOW 016: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI
  */
+		}
+	}
 }
