@@ -88,6 +88,7 @@ class Requests_Proxy_HTTP implements Requests_Proxy
 	public function register( Requests_Hooks &$hooks )
 	{
 		$hooks->register( 'curl.before_send', array( &$this, 'curl_before_send' ) );
+		$hooks->register( 'fsockopen.remote_socket', array( &$this, 'fsockopen_remote_socket' ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -123,6 +124,18 @@ class Requests_Proxy_HTTP implements Requests_Proxy
 			curl_setopt( $handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY );
 			curl_setopt( $handle, CURLOPT_PROXYUSERPWD, $this->get_auth_string() );
 		}
+	}
+
+	/**
+	 * Alter remote socket information before opening socket connection.
+	 *
+	 * @since 1.6
+	 *
+	 * @param string $remote_socket Socket connection string.
+	 */
+	public function fsockopen_remote_socket( &$remote_socket )
+	{
+		$remote_socket = $this->proxy;
 	}
 
 	/**

@@ -42,16 +42,7 @@ class Requests_Proxy_HTTP implements Requests_Proxy {
 	}
 
 	// refactored. public function curl_before_send(&$handle) {}
-
-	/**
-	 * Alter remote socket information before opening socket connection
-	 *
-	 * @since 1.6
-	 * @param string $remote_socket Socket connection string
-	 */
-	public function fsockopen_remote_socket(&$remote_socket) {
-		$remote_socket = $this->proxy;
-	}
+	// refactored. public function fsockopen_remote_socket(&$remote_socket) {}
 
 	/**
 	 * Alter remote path before getting stream data
