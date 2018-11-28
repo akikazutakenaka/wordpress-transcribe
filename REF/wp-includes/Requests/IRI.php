@@ -176,33 +176,114 @@ class Requests_IRI
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
  * @NOW 020: wp-includes/Requests/IRI.php: Requests_IRI::replace_invalid_with_pct_encoding( string $string, string $extra_chars [, bool $iprivate = FALSE] )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::remove_iunreserved_percent_encoded( array $match )
  */
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
- * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::replace_invalid_with_pct_encoding( string $string, string $extra_chars [, bool $iprivate = FALSE] )
- * @NOW 021: wp-includes/Requests/IRI.php: Requests_IRI::remove_iunreserved_percent_encoded( array $match )
- */
+	/**
+	 * Callback function for preg_replace_callback.
+	 *
+	 * Removes sequences of percent encoded bytes that represent UTF-8 encoded characters in iunreserved.
+	 *
+	 * @param  array  $match PCRE match.
+	 * @return string Replacement.
+	 */
+	protected function remove_iunreserved_percent_encoded( $match )
+	{
+		// As we just have valid percent encoded sequences we can just explode and ignore the first member of the returned array (an empty string).
+		$bytes = explode( '%', $match[0] );
+
+		// Initialize the new string (this is what will be returned) and that there are no bytes remaining in the current sequence (unsurprising at the first byte!).
+		$string = '';
+		$remaining = 0;
+
+		// Loop over each and every byte, and set $value to its value.
+		for ( $i = 1, $len = count( $bytes ); $i < $len; $i++ ) {
+			$value = hexdec( $bytes[ $i ] );
+
+			if ( ! $remaining ) {
+				// If we're the first byte of sequence:
+
+				// Start position.
+				$start = $i;
+
+				// By default we are valid.
+				$valid = TRUE;
+
+				if ( $value <= 0x7F ) {
+					// One byte sequence:
+					$character = $value;
+					$length = 1;
+				} elseif ( ( $value & 0xE0 ) === 0xC0 ) {
+					// Two byte sequence:
+					$character = ( $value & 0x1F ) << 6;
+					$length = 2;
+					$remaining = 1;
+				} elseif ( ( $value & 0xF0 ) === 0xE0 ) {
+					// Three byte sequence:
+					$character = ( $value & 0x0F ) << 12;
+					$length = 3;
+					$remaining = 2;
+				} elseif ( ( $value & 0xF8 ) === 0xF0 ) {
+					// Four byte sequence:
+					$character = ( $value & 0x07 ) << 18;
+					$length = 4;
+					$remaining = 3;
+				} else {
+					// Invalid byte:
+					$valid = FALSE;
+					$remaining = 0;
+				}
+			} else {
+				// Continuation byte:
+				if ( ( $value & 0xC0 ) === 0x80 ) {
+					// Check that the byte is valid, then add it to the character:
+					$remaining--;
+					$character |= ( $value & 0x3F ) << ( $remaining * 6 );
+				} else {
+					// If it is invalid, count the sequence as invalid and reprocess the current byte as the start of a sequence:
+					$valid = FALSE;
+					$remaining = 0;
+					$i--;
+				}
+			}
+
+			// If we've reached the end of the current byte sequence, append it to Unicode::$data.
+			if ( ! $remaining ) {
+				// Percent encode anything invalid or not in iunreserved.
+				if ( ! $valid
+				  || $length > 1 && $character <= 0x7F
+				  || $length > 2 && $character <= 0x7FF
+				  || $length > 3 && $character <= 0xFFFF
+				  || $character < 0x2D
+				  || $character > 0xEFFFD
+				  || ( $character & 0xFFFE ) === 0xFFFE
+				  || $character >= 0xFDD0 && $character <= 0xFDEF
+				  || $character === 0x2F
+				  || $character > 0x39 && $character < 0x41
+				  || $character > 0x5A && $character < 0x61
+				  || $character > 0x7A && $character < 0x7E
+				  || $character > 0x7E && $character < 0xA0
+				  || $character > 0xD7FF && $character < 0xF900 ) {
+					for ( $j = $start; $j <= $i; $j++ ) {
+						$string .= '%' . strtoupper( $bytes[$j] );
+					}
+				} else {
+					for ( $j = $start; $j <= $i; $j++ ) {
+						$string .= chr( hexdec( $bytes[ $j ] ) );
+					}
+				}
+			}
+		}
+
+		// If we have any bytes left over they are invalid (i.e., we are mid-way through a multi-byte sequence):
+		if ( $remaining ) {
+			for ( $j = $start; $j < $len; $j++ ) {
+				$string .= '%' . strtoupper( $bytes[ $j ] );
+			}
+		}
+
+		return $string;
+	}
 
 	/**
 	 * Set the entire IRI.
