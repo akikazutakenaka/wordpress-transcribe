@@ -326,7 +326,7 @@ class Requests
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * ......->: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP::register( &Requests_Hooks $hooks )
+ * ......->: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP::fsockopen_header( &string $out )
  */
 		}
 	}
