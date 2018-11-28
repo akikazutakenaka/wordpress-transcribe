@@ -74,13 +74,5 @@ class Requests_Proxy_HTTP implements Requests_Proxy {
 		$out .= sprintf("Proxy-Authorization: Basic %s\r\n", base64_encode($this->get_auth_string()));
 	}
 
-	/**
-	 * Get the authentication string (user:pass)
-	 *
-	 * @since 1.6
-	 * @return string
-	 */
-	public function get_auth_string() {
-		return $this->user . ':' . $this->pass;
-	}
+	// refactored. public function get_auth_string() {}
 }
