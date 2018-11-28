@@ -60,6 +60,20 @@ class Requests_Auth_Basic implements Requests_Auth
 	public function register( Requests_Hooks &$hooks )
 	{
 		$hooks->register( 'curl.before_send', array( &$this, 'curl_before_send' ) );
+		$hooks->register( 'fsockopen.after_headers', array( &$this, 'fsockopen_header' ) );
+	}
+
+	/**
+	 * Set cURL parameters before the data is sent.
+	 *
+	 * @param resource $handle cURL resource.
+	 */
+	public function curl_before_send( &$handle )
+	{
+		curl_setopt( $handle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+		curl_setopt( $handle, CURLOPT_USERPWD, $this->getAuthString() );
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -75,20 +89,8 @@ class Requests_Auth_Basic implements Requests_Auth
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * @NOW 015: wp-includes/Requests/Auth/Basic.php: Requests_Auth_Basic::register( &Requests_Hooks $hooks )
+ * @NOW 015: wp-includes/Requests/Auth/Basic.php: Requests_Auth_Basic::fsockopen_header( &string $out )
  */
-	}
-
-	/**
-	 * Set cURL parameters before the data is sent.
-	 *
-	 * @param resource $handle cURL resource.
-	 */
-	public function curl_before_send( &$handle )
-	{
-		curl_setopt( $handle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
-		curl_setopt( $handle, CURLOPT_USERPWD, $this->getAuthString() );
-	}
 
 	/**
 	 * Get the authentication string (user:pass).
