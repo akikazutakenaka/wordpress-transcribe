@@ -197,6 +197,7 @@ class Requests
 		}
 
 		$options = array_merge( self::get_default_options(), $options );
+		self::set_defaults( $url, $headers, $data, $type, $options );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -211,6 +212,7 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * ......->: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  */
 	}
 
@@ -273,5 +275,47 @@ class Requests
 	public static function set_certificate_path( $path )
 	{
 		Requests::$certificate_path = $path;
+	}
+
+	/**
+	 * Set the default values.
+	 *
+	 * @param  string     $url     URL to request.
+	 * @param  array      $headers Extra headers to send with the request.
+	 * @param  array|null $data    Data to send either as a query string for GET/HEAD requests, or in the body for POST requests.
+	 * @param  string     $type    HTTP request type.
+	 * @param  array      $options Options for the request.
+	 * @return array      $options
+	 */
+	protected static function set_defaults( &$url, &$headers, &$data, &$type, &$options )
+	{
+		if ( ! preg_match( '/^http(s)?:\/\//i', $url, $matches ) ) {
+			throw new Requests_Exception( 'Only HTTP(S) requests are handled.', 'nonhttp', $url );
+		}
+
+		if ( empty( $options['hooks'] ) ) {
+			$options['hooks'] = new Requests_Hooks();
+		}
+
+		if ( is_array( $options['auth'] ) ) {
+			$options['auth'] = new Requests_Auth_Basic( $options['auth'] );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * @NOW 014: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * ......->: wp-includes/Requests/Auth/Basic: Requests_Auth_Basic
+ */
+		}
 	}
 }
