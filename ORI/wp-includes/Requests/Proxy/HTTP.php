@@ -41,21 +41,7 @@ class Requests_Proxy_HTTP implements Requests_Proxy {
 		}
 	}
 
-	/**
-	 * Set cURL parameters before the data is sent
-	 *
-	 * @since 1.6
-	 * @param resource $handle cURL resource
-	 */
-	public function curl_before_send(&$handle) {
-		curl_setopt($handle, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
-		curl_setopt($handle, CURLOPT_PROXY, $this->proxy);
-
-		if ($this->use_authentication) {
-			curl_setopt($handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
-			curl_setopt($handle, CURLOPT_PROXYUSERPWD, $this->get_auth_string());
-		}
-	}
+	// refactored. public function curl_before_send(&$handle) {}
 
 	/**
 	 * Alter remote socket information before opening socket connection
