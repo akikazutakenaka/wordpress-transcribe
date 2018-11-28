@@ -143,6 +143,18 @@ class Requests_IRI
 		return $match;
 	}
 
+	/**
+	 * Replace invalid character with percent encoding.
+	 *
+	 * @param  string $string      Input string.
+	 * @param  string $extra_chars Valid characters not in iunreserved or iprivate (this is ASCII-only).
+	 * @param  bool   $iprivate    Allow iprivate.
+	 * @return string
+	 */
+	protected function replace_invalid_with_pct_encoding( $string, $extra_chars, $private = FALSE )
+	{
+		// Normalize as many pct-encoded sections as possible.
+		$string = preg_replace_callback( '/(?:%[A-Fa-f0-9]{2})+/', array( &$this, 'remove_iunreserved_percent_encoded' ), $string );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -164,6 +176,32 @@ class Requests_IRI
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
  * @NOW 020: wp-includes/Requests/IRI.php: Requests_IRI::replace_invalid_with_pct_encoding( string $string, string $extra_chars [, bool $iprivate = FALSE] )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::remove_iunreserved_percent_encoded( array $match )
+ */
+	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
+ * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
+ * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
+ * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
+ * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
+ * <-......: wp-includes/Requests/IRI.php: Requests_IRI::replace_invalid_with_pct_encoding( string $string, string $extra_chars [, bool $iprivate = FALSE] )
+ * @NOW 021: wp-includes/Requests/IRI.php: Requests_IRI::remove_iunreserved_percent_encoded( array $match )
  */
 
 	/**
