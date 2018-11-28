@@ -32,15 +32,7 @@ class Requests_Auth_Basic implements Requests_Auth {
 		$hooks->register('fsockopen.after_headers', array(&$this, 'fsockopen_header'));
 	}
 
-	/**
-	 * Set cURL parameters before the data is sent
-	 *
-	 * @param resource $handle cURL resource
-	 */
-	public function curl_before_send(&$handle) {
-		curl_setopt($handle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($handle, CURLOPT_USERPWD, $this->getAuthString());
-	}
+	// refactored. public function curl_before_send(&$handle) {}
 
 	/**
 	 * Add extra headers to the request before sending
