@@ -311,6 +311,16 @@ class Requests
 
 		if ( $options['proxy'] !== FALSE ) {
 			$options['proxy']->register( $options['hooks'] );
+		}
+
+		if ( is_array( $options['cookies'] ) ) {
+			$options['cookies'] = new Requests_Cookie_Jar( $options['cookies'] );
+		} elseif ( empty( $options['cookies'] ) ) {
+			$options['cookies'] = new Requests_Cookie_Jar();
+		}
+
+		if ( $options['cookies'] !== FALSE ) {
+			$options['cookies']->register( $options['hooks'] );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -326,6 +336,7 @@ class Requests
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * ......->: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  */
 		}
 	}
