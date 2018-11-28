@@ -16,19 +16,8 @@
  * @subpackage Authentication
  */
 class Requests_Auth_Basic implements Requests_Auth {
-	/**
-	 * Username
-	 *
-	 * @var string
-	 */
-	public $user;
-
-	/**
-	 * Password
-	 *
-	 * @var string
-	 */
-	public $pass;
+	// refactored. public $user;
+	// refactored. public $pass;
 
 	/**
 	 * Constructor
