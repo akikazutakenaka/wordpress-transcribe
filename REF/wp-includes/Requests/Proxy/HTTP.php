@@ -89,6 +89,7 @@ class Requests_Proxy_HTTP implements Requests_Proxy
 	{
 		$hooks->register( 'curl.before_send', array( &$this, 'curl_before_send' ) );
 		$hooks->register( 'fsockopen.remote_socket', array( &$this, 'fsockopen_remote_socket' ) );
+		$hooks->register( 'fsockopen.remote_host_path', array( &$this, 'fsockopen_remote_host_path' ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -136,6 +137,19 @@ class Requests_Proxy_HTTP implements Requests_Proxy
 	public function fsockopen_remote_socket( &$remote_socket )
 	{
 		$remote_socket = $this->proxy;
+	}
+
+	/**
+	 * Alter remote path before getting stream data.
+	 *
+	 * @since 1.6
+	 *
+	 * @param string $path Path to send in HTTP request string ("GET ...").
+	 * @param string $url  Full URL we're requesting.
+	 */
+	public function fsockopen_remote_host_path( &$path, $url )
+	{
+		$path = $url;
 	}
 
 	/**

@@ -42,18 +42,8 @@ class Requests_Proxy_HTTP implements Requests_Proxy {
 	}
 
 	// refactored. public function curl_before_send(&$handle) {}
-	// refactored. public function fsockopen_remote_socket(&$remote_socket) {}
-
-	/**
-	 * Alter remote path before getting stream data
-	 *
-	 * @since 1.6
-	 * @param string $path Path to send in HTTP request string ("GET ...")
-	 * @param string $url Full URL we're requesting
-	 */
-	public function fsockopen_remote_host_path(&$path, $url) {
-		$path = $url;
-	}
+	// :
+	// refactored. public function fsockopen_remote_host_path(&$path, $url) {}
 
 	/**
 	 * Add extra headers to the request before sending
