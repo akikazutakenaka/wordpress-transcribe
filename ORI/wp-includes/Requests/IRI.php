@@ -235,36 +235,7 @@ class Requests_IRI {
 		return $target;
 	}
 
-	/**
-	 * Parse an IRI into scheme/authority/path/query/fragment segments
-	 *
-	 * @param string $iri
-	 * @return array
-	 */
-	protected function parse_iri($iri) {
-		$iri = trim($iri, "\x20\x09\x0A\x0C\x0D");
-		$has_match = preg_match('/^((?P<scheme>[^:\/?#]+):)?(\/\/(?P<authority>[^\/?#]*))?(?P<path>[^?#]*)(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$/', $iri, $match);
-		if (!$has_match) {
-			throw new Requests_Exception('Cannot parse supplied IRI', 'iri.cannot_parse', $iri);
-		}
-
-		if ($match[1] === '') {
-			$match['scheme'] = null;
-		}
-		if (!isset($match[3]) || $match[3] === '') {
-			$match['authority'] = null;
-		}
-		if (!isset($match[5])) {
-			$match['path'] = '';
-		}
-		if (!isset($match[6]) || $match[6] === '') {
-			$match['query'] = null;
-		}
-		if (!isset($match[8]) || $match[8] === '') {
-			$match['fragment'] = null;
-		}
-		return $match;
-	}
+	// refactored. protected function parse_iri($iri) {}
 
 	/**
 	 * Remove dot segments from a path
