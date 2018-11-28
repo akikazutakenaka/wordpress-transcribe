@@ -103,7 +103,6 @@ class Requests_Proxy_HTTP implements Requests_Proxy
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * @NOW 015: wp-includes/Requests/Proxy/HTTP.php: Requests_Proxy_HTTP::register( &Requests_Hooks $hooks )
- * ......->: wp-includes/Requests/Proxy.php: Requests_Proxy::register( &Requests_Hooks $hooks )
  */
 	}
 }
