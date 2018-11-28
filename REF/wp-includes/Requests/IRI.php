@@ -155,28 +155,96 @@ class Requests_IRI
 	{
 		// Normalize as many pct-encoded sections as possible.
 		$string = preg_replace_callback( '/(?:%[A-Fa-f0-9]{2})+/', array( &$this, 'remove_iunreserved_percent_encoded' ), $string );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
- * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
- * @NOW 020: wp-includes/Requests/IRI.php: Requests_IRI::replace_invalid_with_pct_encoding( string $string, string $extra_chars [, bool $iprivate = FALSE] )
- */
+
+		// Replace invalid percent characters.
+		$string = preg_replace( '/%(?![A-Fa-f0-9]{2})/', '%25', $string );
+
+		// Add unreserved and % to $extra_chars (the latter is safe because all pct-encoded sections are now valid).
+		$extra_chars .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~%';
+
+		// Now replace any bytes that aren't allowed with their pct-encoded versions.
+		$position = 0;
+		$strlen = strlen( $string );
+
+		while ( ( $position += strspn( $string, $extra_chars, $position ) ) < $strlen ) {
+			$value = ord( $string[ $position ] );
+
+			// Start position.
+			$start = $position;
+
+			// By default we are valid.
+			$valid = TRUE;
+
+			// No one byte sequences are valid due to the while.
+			if ( ( $value & 0xE0 ) === 0xC0 ) {
+				// Two byte sequence:
+				$character = ( $value & 0x1F ) << 6;
+				$length = 2;
+				$remaining = 1;
+			} elseif ( ( $value & 0xF0 ) === 0xE0 ) {
+				// Three byte sequence:
+				$character = ( $value & 0x0F ) << 12;
+				$length = 3;
+				$remaining = 2;
+			} elseif ( ( $value & 0xF8 ) === 0xF0 ) {
+				// Four byte sequence:
+				$character = ( $value & 0x07 ) << 18;
+				$length = 4;
+				$remaining = 2;
+			} else {
+				// Invalid byte:
+				$valid = FALSE;
+				$length = 1;
+				$remaining = 0;
+			}
+
+			if ( $remaining ) {
+				if ( $position + $length <= $strlen ) {
+					for ( $position++; $remaining; $position++ ) {
+						$value = ord( $string[ $position ] );
+
+						if ( ( $value & 0xC0 ) === 0x80 ) {
+							// Check that the byte is valid, then add it to the character:
+							$character |= ( $value & 0x3F ) << ( --$remaining * 6 );
+						} else {
+							// If it is invalid, count the sequence as invalid and reprocess the current byte:
+							$valid = FALSE;
+							$position--;
+							break;
+						}
+					}
+				} else {
+					$position = $strlen - 1;
+					$valid = FALSE;
+				}
+			}
+
+			// Percent encode anything invalid or not in ucschar.
+			if ( ! $valid
+			  || $length > 1 && $character <= 0x7F
+			  || $length > 2 && $character <= 0x7FF
+			  || $length > 3 && $character <= 0xFFFF
+			  || ( $character & 0xFFFE ) === 0xFFFE
+			  || $character >= 0xFDD0 && $character < 0xFDEF
+			  || ( $character > 0xD7FF && $character < 0xF900
+			    || $character < 0xA0
+			    || $character > 0xEFFFD )
+			  && ( ! $iprivate || $character < 0xE000 || $character > 0x10FFFD ) ) {
+				// If we were a character, pretend we weren't, but rather an error.
+				if ( $valid ) {
+					$position--;
+				}
+
+				for ( $j = $start; $j <= $position; $j++ ) {
+					$string = substr_replace( $string, sprintf( '%%%02X', ord( $string[ $j ] ) ), $j, 1 );
+					$j += 2;
+					$position += 2;
+					$strlen += 2;
+				}
+			}
+		}
+
+		return $string;
 	}
 
 	/**
@@ -458,7 +526,6 @@ class Requests_IRI
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
  * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::set_userinfo( string $iuserinfo )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::replace_invalid_with_pct_encoding( string $string, string $extra_chars [, bool $iprivate = FALSE] )
  */
 		}
 	}
