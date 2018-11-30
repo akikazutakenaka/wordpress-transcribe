@@ -256,6 +256,9 @@ class Requests
 			$need_ssl = 0 === stripos( $url, 'https://' );
 			$capabilities = array( 'ssl' => $need_ssl );
 			$transport = self::get_transport( $capabilities );
+		}
+
+		$response = $transport->request( $url, $headers, $data, $options );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -270,8 +273,8 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * ......->: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  */
-		}
 	}
 
 	/**
