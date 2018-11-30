@@ -134,6 +134,8 @@ class Requests_Transport_cURL implements Requests_Transport
 	 */
 	public function request( $url, $headers = array(), $data = array(), $options = array() )
 	{
+		$this->hooks = $options['hooks'];
+		$this->setup_handle( $url, $headers, $data, $options );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -149,6 +151,45 @@ class Requests_Transport_cURL implements Requests_Transport
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
+ * ......->: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::setup_handle( string $url, array $headers, string|array $data, array $options )
+ */
+	}
+
+	/**
+	 * Setup the cURL handle for the given data.
+	 *
+	 * @param string       $url     URL to request.
+	 * @param array        $headers Associative array of request headers.
+	 * @param string|array $data    Data to send either as the POST body, or as parameters in the URL for a GET/HEAD.
+	 * @param array        $options Request options, see {@see Requests::response()} for documentation.
+	 */
+	protected function setup_handle( $url, $headers, $data, $options )
+	{
+		$options['hooks']->dispatch( 'curl.before_request', array( &$this->handle ) );
+
+		// Force closing the connection for old versions of cURL (<7.22).
+		if ( ! isset( $headers['Connection'] ) ) {
+			$headers['Connection'] = 'close';
+		}
+
+		$headers = Requests::flatten( $headers );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * <-......: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
+ * @NOW 015: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::setup_handle( string $url, array $headers, string|array $data, array $options )
+ * ......->: wp-includes/class-requests.php: Requests::flatten( array $array )
  */
 	}
 
