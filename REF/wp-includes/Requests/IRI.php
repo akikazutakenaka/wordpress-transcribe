@@ -472,7 +472,7 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * @NOW 017: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_query( string $iquery )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_fragment( string $ifragment )
  */
 	}
 
@@ -671,6 +671,24 @@ class Requests_IRI
 		return TRUE;
 	}
 
+	/**
+	 * Set the iquery.
+	 *
+	 * @param  string $iquery
+	 * @return bool
+	 */
+	protected function set_query( $iquery )
+	{
+		if ( $iquery === NULL ) {
+			$this->iquery = NULL;
+		} else {
+			$this->iquery = $this->replace_invalid_with_pct_encoding( $iquery, '!$&\'()*+,;=:@/?', TRUE );
+			$this->scheme_normalization();
+		}
+
+		return TRUE;
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -689,6 +707,6 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
- * @NOW 018: wp-includes/Requests/IRI.php: Requests_IRI::set_query( string $iquery )
+ * @NOW 018: wp-includes/Requests/IRI.php: Requests_IRI::set_fragment( string $ifragment )
  */
 }

@@ -313,24 +313,7 @@ class Requests_IRI {
 
 	// refactored. protected function set_scheme($scheme) {}
 	// :
-	// refactored. protected function set_path($ipath) {}
-
-	/**
-	 * Set the iquery.
-	 *
-	 * @param string $iquery
-	 * @return bool
-	 */
-	protected function set_query($iquery) {
-		if ($iquery === null) {
-			$this->iquery = null;
-		}
-		else {
-			$this->iquery = $this->replace_invalid_with_pct_encoding($iquery, '!$&\'()*+,;=:@/?', true);
-			$this->scheme_normalization();
-		}
-		return true;
-	}
+	// refactored. protected function set_query($iquery) {}
 
 	/**
 	 * Set the ifragment.
