@@ -198,6 +198,7 @@ class Requests
 
 		$options = array_merge( self::get_default_options(), $options );
 		self::set_defaults( $url, $headers, $data, $type, $options );
+		$options['hooks']->dispatch( 'requests.before_request', array( &$url, &$headers, &$data, &$type, &$options ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -212,6 +213,7 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * ......->: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests::dispatch( string $hook [, array $parameters = array()] )
  */
 	}
 
