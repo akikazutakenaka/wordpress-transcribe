@@ -143,27 +143,49 @@ class Requests_IRI
 		return $match;
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
- * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_path( string $ipath )
- * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::remove_dot_segments( string $input )
- */
+	/**
+	 * Remove dot segments from a path.
+	 *
+	 * @param  string $input
+	 * @return string
+	 */
+	protected function remove_dot_segments( $input )
+	{
+		$output = '';
+
+		while ( strpos( $input, './' ) !== FALSE || strpos( $input, '/.' ) !== FALSE || $input === '.' || $input === '..' ) {
+			if ( strpos( $input, '../' ) === 0 ) {
+				// A: If the input buffer begins with a prefix of "../" or "./", then remove that prefix from the input buffer.
+				$input = substr( $input, 3 );
+			} elseif ( strpos( $input, './' ) === 0 ) {
+				$input = substr( $input, 2 );
+			} elseif ( strpos( $input, '/./' ) === 0 ) {
+				// B: If the input buffer begins with a prefix of "/./" or "/.", where "." is a complete path segment, then replace that prefix with "/" in the input buffer.
+				$input = substr( $input, 2 );
+			} elseif ( $input === '/.' ) {
+				$input = '/';
+			} elseif ( strpos( $input, '/../' ) === 0 ) {
+				// C: If the input buffer begins with a prefix of "/../" or "/..", where ".." is a complete path segment, then replace that prefix with "/" in the input buffer and remove the last segment and its preceding "/" (if any) from the output buffer.
+				$input = substr( $input, 3 );
+				$output = substr_replace( $output, '', strrpos( $output, '/' ) );
+			} elseif ( $input === '/..' ) {
+				$input = '/';
+				$output = substr_replace( $output, '', strrpos( $output, '/' ) );
+			} elseif ( $input === '.' || $input === '..' ) {
+				// D: If the input buffer consists only of "." or "..", then remove that from the input buffer.
+				$input = '';
+			} elseif ( ( $pos = strpos( $input, '/', 1 ) ) !== FALSE ) {
+				// E: Move the first path segment in the input buffer to the end of the output buffer, including the initial "/" character (if any) and any subsequent characters up to, but not including, the next "/" character or the end of the input buffer.
+				$output .= substr( $input, 0, $pos );
+				$input = substr_replace( $input, '', 0, $pos );
+			} else {
+				$output .= $input;
+				$input = '';
+			}
+		}
+
+		return $output . $input;
+	}
 
 	/**
 	 * Replace invalid character with percent encoding.
@@ -657,7 +679,6 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * @NOW 018: wp-includes/Requests/IRI.php: Requests_IRI::set_path( string $ipath )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::remove_dot_segments( string $input )
  */
 		}
 	}

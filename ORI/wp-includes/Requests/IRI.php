@@ -236,67 +236,6 @@ class Requests_IRI {
 	}
 
 	// refactored. protected function parse_iri($iri) {}
-
-	/**
-	 * Remove dot segments from a path
-	 *
-	 * @param string $input
-	 * @return string
-	 */
-	protected function remove_dot_segments($input) {
-		$output = '';
-		while (strpos($input, './') !== false || strpos($input, '/.') !== false || $input === '.' || $input === '..') {
-			// A: If the input buffer begins with a prefix of "../" or "./",
-			// then remove that prefix from the input buffer; otherwise,
-			if (strpos($input, '../') === 0) {
-				$input = substr($input, 3);
-			}
-			elseif (strpos($input, './') === 0) {
-				$input = substr($input, 2);
-			}
-			// B: if the input buffer begins with a prefix of "/./" or "/.",
-			// where "." is a complete path segment, then replace that prefix
-			// with "/" in the input buffer; otherwise,
-			elseif (strpos($input, '/./') === 0) {
-				$input = substr($input, 2);
-			}
-			elseif ($input === '/.') {
-				$input = '/';
-			}
-			// C: if the input buffer begins with a prefix of "/../" or "/..",
-			// where ".." is a complete path segment, then replace that prefix
-			// with "/" in the input buffer and remove the last segment and its
-			// preceding "/" (if any) from the output buffer; otherwise,
-			elseif (strpos($input, '/../') === 0) {
-				$input = substr($input, 3);
-				$output = substr_replace($output, '', strrpos($output, '/'));
-			}
-			elseif ($input === '/..') {
-				$input = '/';
-				$output = substr_replace($output, '', strrpos($output, '/'));
-			}
-			// D: if the input buffer consists only of "." or "..", then remove
-			// that from the input buffer; otherwise,
-			elseif ($input === '.' || $input === '..') {
-				$input = '';
-			}
-			// E: move the first path segment in the input buffer to the end of
-			// the output buffer, including the initial "/" character (if any)
-			// and any subsequent characters up to, but not including, the next
-			// "/" character or the end of the input buffer
-			elseif (($pos = strpos($input, '/', 1)) !== false) {
-				$output .= substr($input, 0, $pos);
-				$input = substr_replace($input, '', 0, $pos);
-			}
-			else {
-				$output .= $input;
-				$input = '';
-			}
-		}
-		return $output . $input;
-	}
-
-	// refactored. protected function replace_invalid_with_pct_encoding($string, $extra_chars, $iprivate = false) {}
 	// :
 	// refactored. protected function scheme_normalization() {}
 
