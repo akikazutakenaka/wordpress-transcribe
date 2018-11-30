@@ -62,29 +62,7 @@ class Requests_IPv6 {
 		}
 	}
 
-	/**
-	 * Splits an IPv6 address into the IPv6 and IPv4 representation parts
-	 *
-	 * RFC 4291 allows you to represent the last two parts of an IPv6 address
-	 * using the standard IPv4 representation
-	 *
-	 * Example:  0:0:0:0:0:0:13.1.68.3
-	 *           0:0:0:0:0:FFFF:129.144.52.38
-	 *
-	 * @param string $ip An IPv6 address
-	 * @return string[] [0] contains the IPv6 represented part, and [1] the IPv4 represented part
-	 */
-	protected static function split_v6_v4($ip) {
-		if (strpos($ip, '.') !== false) {
-			$pos = strrpos($ip, ':');
-			$ipv6_part = substr($ip, 0, $pos);
-			$ipv4_part = substr($ip, $pos + 1);
-			return array($ipv6_part, $ipv4_part);
-		}
-		else {
-			return array($ip, '');
-		}
-	}
+	// refactored. protected static function split_v6_v4($ip) {}
 
 	/**
 	 * Checks an IPv6 address
