@@ -173,6 +173,12 @@ class Requests_Transport_cURL implements Requests_Transport
 		}
 
 		$headers = Requests::flatten( $headers );
+
+		if ( ! empty( $data ) ) {
+			$data_format = $options['data_format'];
+
+			if ( $data_format === 'query' ) {
+				$url = self::format_get( $url, $data );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -190,6 +196,39 @@ class Requests_Transport_cURL implements Requests_Transport
  * <-......: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  * @NOW 015: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::setup_handle( string $url, array $headers, string|array $data, array $options )
  */
+			}
+		}
+	}
+
+	/**
+	 * Format a URL given GET data.
+	 *
+	 * @param  string       $url
+	 * @param  array|object $data Data to build query using, see {@see https://secure.php.net/http_build_query}.
+	 * @return string       URL with data.
+	 */
+	protected static function format_get( $url, $data )
+	{
+		if ( ! empty( $data ) ) {
+			$url_parts = parse_url( $url );
+
+			if ( empty( $url_parts['query'] ) ) {
+				$query = $url_parts['query'] = '';
+			} else {
+				$query = $url_parts['query'];
+			}
+
+			$query .= '&' . http_build_query( $data, NULL, '&' );
+			$query = trim( $query, '&' );
+
+			if ( empty( $url_parts['query'] ) ) {
+				$url .= '?' . $query;
+			} else {
+				$url = str_replace( $url_parts['query'], $query, $url );
+			}
+		}
+
+		return $url;
 	}
 
 	/**

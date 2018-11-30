@@ -389,35 +389,6 @@ class Requests_Transport_cURL implements Requests_Transport {
 		return $data_length;
 	}
 
-	/**
-	 * Format a URL given GET data
-	 *
-	 * @param string $url
-	 * @param array|object $data Data to build query using, see {@see https://secure.php.net/http_build_query}
-	 * @return string URL with data
-	 */
-	protected static function format_get($url, $data) {
-		if (!empty($data)) {
-			$url_parts = parse_url($url);
-			if (empty($url_parts['query'])) {
-				$query = $url_parts['query'] = '';
-			}
-			else {
-				$query = $url_parts['query'];
-			}
-
-			$query .= '&' . http_build_query($data, null, '&');
-			$query = trim($query, '&');
-
-			if (empty($url_parts['query'])) {
-				$url .= '?' . $query;
-			}
-			else {
-				$url = str_replace($url_parts['query'], $query, $url);
-			}
-		}
-		return $url;
-	}
-
+	// refactored. protected static function format_get($url, $data) {}
 	// refactored. public static function test($capabilities = array()) {}
 }
