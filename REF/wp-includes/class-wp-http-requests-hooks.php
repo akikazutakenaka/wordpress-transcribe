@@ -66,7 +66,6 @@ class WP_HTTP_Requests_Hooks extends Requests_Hooks
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests::dispatch( string $hook [, array $parameters = array()] )
- * ......->: wp-includes/Requests/Hooks.php: Requests_Hooks::dispatch( string $hook [, array $parameters = array()] )
  */
 	}
 }
