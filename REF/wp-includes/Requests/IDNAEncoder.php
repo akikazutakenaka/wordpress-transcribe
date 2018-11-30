@@ -69,6 +69,21 @@ class Requests_IDNAEncoder
 		}
 	}
 
+	/**
+	 * Convert a UTF-8 string to an ASCII string using Punycode.
+	 *
+	 * @throws Requests_Exception Provided string longer than 64 ASCII characters (`idna.provided_too_long`).
+	 * @throws Requests_Exception Prepared string longer than 64 ASCII characters (`idna.prepared_too_long`).
+	 * @throws Requests_Exception Provided string already begins with xn-- (`idna.provided_is_prefixed`).
+	 * @throws Requests_Exception Encoded string longer than 64 ASCII characters (`idna.encoded_too_long`).
+	 *
+	 * @param  string $string ASCII or UTF-8 string (max length 64 characters).
+	 * @return string ASCII string.
+	 */
+	public static function to_ascii( $string )
+	{
+		// Step 1: Check if the string is already ASCII.
+		if ( self::is_ascii( $string ) ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -86,5 +101,28 @@ class Requests_IDNAEncoder
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
  * @NOW 016: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
+ * ......->: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::is_ascii( string $string )
+ */
+		}
+	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
+ * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
+ * @NOW 017: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::is_ascii( string $string )
  */
 }
