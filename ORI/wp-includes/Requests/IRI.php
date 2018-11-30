@@ -434,53 +434,7 @@ class Requests_IRI {
 	}
 
 	// refactored. protected function set_userinfo($iuserinfo) {}
-
-	/**
-	 * Set the ihost. Returns true on success, false on failure (if there are
-	 * any invalid characters).
-	 *
-	 * @param string $ihost
-	 * @return bool
-	 */
-	protected function set_host($ihost) {
-		if ($ihost === null) {
-			$this->ihost = null;
-			return true;
-		}
-		if (substr($ihost, 0, 1) === '[' && substr($ihost, -1) === ']') {
-			if (Requests_IPv6::check_ipv6(substr($ihost, 1, -1))) {
-				$this->ihost = '[' . Requests_IPv6::compress(substr($ihost, 1, -1)) . ']';
-			}
-			else {
-				$this->ihost = null;
-				return false;
-			}
-		}
-		else {
-			$ihost = $this->replace_invalid_with_pct_encoding($ihost, '!$&\'()*+,;=');
-
-			// Lowercase, but ignore pct-encoded sections (as they should
-			// remain uppercase). This must be done after the previous step
-			// as that can add unescaped characters.
-			$position = 0;
-			$strlen = strlen($ihost);
-			while (($position += strcspn($ihost, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ%', $position)) < $strlen) {
-				if ($ihost[$position] === '%') {
-					$position += 3;
-				}
-				else {
-					$ihost[$position] = strtolower($ihost[$position]);
-					$position++;
-				}
-			}
-
-			$this->ihost = $ihost;
-		}
-
-		$this->scheme_normalization();
-
-		return true;
-	}
+	// refactored. protected function set_host($ihost) {}
 
 	/**
 	 * Set the port. Returns true on success, false on failure (if there are

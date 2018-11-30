@@ -521,7 +521,7 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * @NOW 018: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_host( string $host )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_port( string $port )
  */
 	}
 
@@ -560,6 +560,36 @@ class Requests_IRI
 		if ( substr( $ihost, 0, 1 ) === '[' && substr( $ihost, -1 ) === ']' ) {
 			if ( Requests_IPv6::check_ipv6( substr( $ihost, 1, -1 ) ) ) {
 				$this->ihost = '[' . Requests_IPv6::compress( substr( $ihost, 1, -1 ) ) . ']';
+			} else {
+				$this->ihost = NULL;
+				return FALSE;
+			}
+		} else {
+			$ihost = $this->replace_invalid_with_pct_encoding( $ihost, '!$&\'()*+,;=' );
+
+			/**
+			 * Lowercase, but ignore pct-encoded sections (as they should remain uppercase).
+			 * This must be done after the previous step as that can add unescaped characters.
+			 */
+			$position = 0;
+			$strlen = strlen( $ihost );
+
+			while ( ( $position += strcspn( $ihost, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ%', $position ) ) < $strlen ) {
+				if ( $ihost[ $position ] === '%' ) {
+					$position += 3;
+				} else {
+					$ihost[ $position ] = strtolower( $ihost[ $position ] );
+					$position++;
+				}
+			}
+
+			$this->ihost = $ihost;
+		}
+
+		$this->scheme_normalization();
+		return TRUE;
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -579,9 +609,6 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
- * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::set_host( string $host )
+ * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::set_port( string $port )
  */
-			}
-		}
-	}
 }
