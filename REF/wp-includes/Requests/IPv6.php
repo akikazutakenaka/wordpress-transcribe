@@ -7,6 +7,16 @@
  */
 
 /**
+ * Class to validate and to work with IPv6 addresses.
+ *
+ * This was originally based on the PEAR class of the same name, but has been entirely rewritten.
+ *
+ * @package    Requests
+ * @subpackage Utilities
+ */
+class Requests_IPv6
+{
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -26,5 +36,6 @@
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_host( string $host )
- * @NOW 020: wp-includes/Requests/IPv6.php: Requests_IPv6
+ * @NOW 020: wp-includes/Requests/IPv6.php: Requests_IPv6::check_ipv6( string $ip )
  */
+}
