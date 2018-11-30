@@ -14,21 +14,8 @@
  */
 class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	// refactored. protected $cookies = array();
-	// refactored. public function __construct($cookies = array()) {}
-
-	/**
-	 * Normalise cookie data into a Requests_Cookie
-	 *
-	 * @param string|Requests_Cookie $cookie
-	 * @return Requests_Cookie
-	 */
-	public function normalize_cookie($cookie, $key = null) {
-		if ($cookie instanceof Requests_Cookie) {
-			return $cookie;
-		}
-
-		return Requests_Cookie::parse($cookie, $key);
-	}
+	// :
+	// refactored. public function normalize_cookie($cookie, $key = null) {}
 
 	/**
 	 * Normalise cookie data into a Requests_Cookie
