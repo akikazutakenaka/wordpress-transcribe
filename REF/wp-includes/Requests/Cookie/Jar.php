@@ -95,6 +95,20 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
 		}
 	}
 
+	/**
+	 * Parse all cookies from a response and attach them to the response.
+	 *
+	 * @var Requests_Response $response
+	 */
+	public function before_redirect_check( Requests_Response &$return )
+	{
+		$url = $return->url;
+
+		if ( ! $url instanceof Requests_IRI ) {
+			$url = new Requests_IRI( $url );
+		}
+
+		$cookies = Requests_Cookie::parse_from_headers( $return->headers, $url );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -111,5 +125,7 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * @NOW 015: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_redirect_check( &Requests_Response $return )
+ * ......->: wp-includes/Requests/Cookie.php: Requests_Cookie::parse_from_headers( Requests_Response_Headers $headers [, Requests_IRI|null $origin = NULL [, int|null $time = NULL]] )
  */
+	}
 }
