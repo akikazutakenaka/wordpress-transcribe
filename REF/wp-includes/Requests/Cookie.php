@@ -167,6 +167,42 @@ class Requests_Cookie
 		}
 	}
 
+	/**
+	 * Parse a cookie string into a cookie object.
+	 *
+	 * Based on Mozilla's parsing code in Firefox and related projects, which is an intentional deviation from RFC 2109 and RFC 2616.
+	 * RFC 6265 specifies some of this handling, but not in a thorough manner.
+	 *
+	 * @param  string          $string Cookie header value (from a Set-Cookie header)
+	 * @param  string          $name
+	 * @param  int             $reference_time
+	 * @return Requests_Cookie Parsed cookie object.
+	 */
+	public static function parse( $string, $name = '', $reference_time = NULL )
+	{
+		$parts = explode( ';', $string );
+		$kvparts = array_shift( $parts );
+
+		if ( ! empty( $name ) ) {
+			$value = $string;
+		} elseif ( strpos( $kvparts, '=' ) === FALSE ) {
+			/**
+			 * Some sites might only have a value without the equals separator.
+			 * Deviate from RFC 6265 and pretend it was actually a blank name (`=foo`).
+			 *
+			 * https://bugzilla.mozilla.org/show_bug.cgi?id=169091
+			 */
+			$name = '';
+			$value = $kvparts;
+		} else {
+			list( $name, $value ) = explode( '=', $kvparts, 2 );
+		}
+
+		$name = trim( $name );
+		$value = trim( $value );
+
+		// Attribute key are handled case-insensitively.
+		$attributes = new Requests_Utility_CaseInsensitiveDictionary();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -185,5 +221,7 @@ class Requests_Cookie
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * @NOW 017: wp-includes/Requests/Cookie.php: Requests_Cookie::parse( string $string [, string $name = '' [, int $reference_time = NULL]] )
+ * ......->: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary
  */
+	}
 }
