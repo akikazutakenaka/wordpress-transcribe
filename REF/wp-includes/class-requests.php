@@ -321,6 +321,11 @@ class Requests
 
 		if ( $options['cookies'] !== FALSE ) {
 			$options['cookies']->register( $options['hooks'] );
+		}
+
+		if ( $options['idn'] !== FALSE ) {
+			$iri = new Requests_IRI( $url );
+			$iri->host = Requests_IDNAEncoder::encode( $iri->ihost );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -336,6 +341,7 @@ class Requests
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * ......->: wp-includes/Requests/IDNAEncoder.php: Requests/IDNAEncoder
  */
 		}
 	}
