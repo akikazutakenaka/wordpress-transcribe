@@ -21,6 +21,18 @@ class Requests_Utility_CaseInsensitiveDictionary implements ArrayAccess, Iterato
 	 */
 	protected $data = array();
 
+	/**
+	 * Creates a case insensitive dictionary.
+	 *
+	 * @param array $data Dictionary/map to convert to case-insensitive.
+	 */
+	public function __construct( array $data = array() )
+	{
+		foreach ( $data as $key => $value ) {
+			$this->offsetSet( $key, $value );
+		}
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -39,6 +51,6 @@ class Requests_Utility_CaseInsensitiveDictionary implements ArrayAccess, Iterato
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie.php: Requests_Cookie::parse( string $string [, string $name = '' [, int $reference_time = NULL]] )
- * @NOW 018: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary::__construct( [array $data = array()] )
+ * @NOW 018: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary::offsetSet( string $key, string $value )
  */
 }
