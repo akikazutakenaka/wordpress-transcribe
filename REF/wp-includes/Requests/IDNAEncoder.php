@@ -94,6 +94,25 @@ class Requests_IDNAEncoder
 
 		// Step 2: nameprep.
 		$string = self::nameprep( $string );
+
+		// Step 3: UseSTD3ASCIIRules is false, continue.
+		// Step 4: Check if it's ASCII now.
+		if ( self::is_ascii( $string ) ) {
+			// Skip to step 7.
+			if ( strlen( $string ) < 64 ) {
+				return $string;
+			}
+
+			throw new Requests_Exception( 'Prepared string is too long', 'idna.prepared_too_long' );
+		}
+
+		// Step 5: Check ACE prefix.
+		if ( strpos( $string, self::ACE_PREFIX ) === 0 ) {
+			throw new Requests_Exception( 'Provided string begins with ACE prefix', 'idna.provided_is_prefixed', $string );
+		}
+
+		// Step 6: Encode with Punycode.
+		$string = self::punycode_encode( $string );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -111,6 +130,7 @@ class Requests_IDNAEncoder
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
  * @NOW 016: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
+ * ......->: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::punycode_encode( string $input )
  */
 	}
 
@@ -138,5 +158,64 @@ class Requests_IDNAEncoder
 	protected static function nameprep( $string )
 	{
 		return $string;
+	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
+ * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
+ * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::punycode_encode( string $input )
+ * @NOW 018: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::utf8_to_codepoints( string $input )
+ */
+
+	/**
+	 * RFC3492-compliant encoder.
+	 *
+	 * @throws Requests_Exception On character outside of the domain (never happens with Punycode) (`idna.character_outside_domain`)
+	 *
+	 * @param  string $input UTF-8 encoded string to encode.
+	 * @return string Punycode-encoded string.
+	 */
+	public static function punycode_encode( $input )
+	{
+		$output = '';
+		$n = self::BOOTSTRAP_INITIAL_N;
+		$delta = 0;
+		$bias = self::BOOTSTRAP_INITIAL_BIAS;
+		$h = $b = 0;
+		$codepoints = self::utf8_to_codepoints( $input );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
+ * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
+ * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
+ * @NOW 017: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::punycode_encode( string $input )
+ * ......->: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::utf8_to_codepoints( string $input )
+ */
 	}
 }
