@@ -543,6 +543,22 @@ class Requests_IRI
 		return TRUE;
 	}
 
+	/**
+	 * Set the ihost.
+	 * Returns true on success, false on failure (if there are any invalid characters).
+	 *
+	 * @param  string $ihost
+	 * @return bool
+	 */
+	protected function set_host( $ihost )
+	{
+		if ( $ihost === NULL ) {
+			$this->ihost = NULL;
+			return TRUE;
+		}
+
+		if ( substr( $ihost, 0, 1 ) === '[' && substr( $ihost, -1 ) === ']' ) {
+			if ( Requests_IPv6::check_ipv6( substr( $ihost, 1, -1 ) ) ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -563,5 +579,9 @@ class Requests_IRI
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
  * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::set_host( string $host )
+ * ......->: wp-includes/Requests/IPv6.php: Requests_IPv6
  */
+			}
+		}
+	}
 }
