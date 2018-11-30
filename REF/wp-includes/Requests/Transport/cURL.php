@@ -248,6 +248,7 @@ class Requests_Transport_cURL implements Requests_Transport
 
 		if ( TRUE === $options['blocking'] ) {
 			curl_setopt( $this->handle, CURLOPT_HEADERFUNCTION, array( &$this, 'stream_headers' ) );
+			curl_setopt( $this->handle, CURLOPT_WRITEFUNCTION, array( &$this, 'stream_body' ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -295,6 +296,44 @@ class Requests_Transport_cURL implements Requests_Transport
 		}
 
 		return strlen( $headers );
+	}
+
+	/**
+	 * Collect data as it's received.
+	 *
+	 * @since 1.6.1
+	 *
+	 * @param  resource $handle cURL resource.
+	 * @param  string   $data   Body data.
+	 * @return int      Length of provided data.
+	 */
+	public function stream_body( $handle, $data )
+	{
+		$this->hooks->dispatch( 'request.progress', array( $data, $this->response_bytes, $this->response_byte_limit ) );
+		$data_length = strlen( $data );
+
+		// Are we limiting the response size?
+		if ( $this->response_byte_limit ) {
+			if ( $this->response_bytes === $this->response_byte_limit ) {
+				// Already at maximum, move on.
+				return $data_length;
+			}
+
+			if ( ( $this->response_bytes + $data_length ) > $this->response_byte_limit ) {
+				// Limit the length.
+				$limited_length = ( $this->response_byte_limit - $this->response_bytes );
+				$data = substr( $data, 0, $limited_length );
+			}
+		}
+
+		if ( $this->stream_handle ) {
+			fwrite( $this->stream_handle, $data );
+		} else {
+			$this->response_data .= $data;
+		}
+
+		$this->response_bytes += strlen( $data );
+		return $data_length;
 	}
 
 	/**

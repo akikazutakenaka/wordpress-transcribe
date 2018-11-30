@@ -329,45 +329,6 @@ class Requests_Transport_cURL implements Requests_Transport {
 	}
 
 	// refactored. public function stream_headers($handle, $headers) {}
-
-	/**
-	 * Collect data as it's received
-	 *
-	 * @since 1.6.1
-	 *
-	 * @param resource $handle cURL resource
-	 * @param string $data Body data
-	 * @return integer Length of provided data
-	 */
-	public function stream_body($handle, $data) {
-		$this->hooks->dispatch('request.progress', array($data, $this->response_bytes, $this->response_byte_limit));
-		$data_length = strlen($data);
-
-		// Are we limiting the response size?
-		if ($this->response_byte_limit) {
-			if ($this->response_bytes === $this->response_byte_limit) {
-				// Already at maximum, move on
-				return $data_length;
-			}
-
-			if (($this->response_bytes + $data_length) > $this->response_byte_limit) {
-				// Limit the length
-				$limited_length = ($this->response_byte_limit - $this->response_bytes);
-				$data = substr($data, 0, $limited_length);
-			}
-		}
-
-		if ($this->stream_handle) {
-			fwrite($this->stream_handle, $data);
-		}
-		else {
-			$this->response_data .= $data;
-		}
-
-		$this->response_bytes += strlen($data);
-		return $data_length;
-	}
-
-	// refactored. protected static function format_get($url, $data) {}
+	// :
 	// refactored. public static function test($capabilities = array()) {}
 }
