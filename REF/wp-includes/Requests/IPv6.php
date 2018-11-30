@@ -75,6 +75,49 @@ class Requests_IPv6
 	}
 
 	/**
+	 * Compresses an IPv6 address.
+	 *
+	 * RFC 4291 allows you to compress consecutive zero pieces in an address to '::'.
+	 * This method expects a valid IPv6 address and compresses consecutive zero pieces to '::'.
+	 *
+	 * Example: FF01:0:0:0:0:0:0:101 -> FF01::101
+	 *          0:0:0:0:0:0:0:1      -> ::1
+	 *
+	 * @see uncompress()
+	 *
+	 * @param  string $ip An IPv6 address.
+	 * @return string The compressed IPv6 address.
+	 */
+	public static function compress( $ip )
+	{
+		// Prepare the IP to be compressed.
+		$ip = self::uncompress( $ip );
+		$ip_parts = self::split_v6_v4( $ip );
+
+		// Replace all leading zeros.
+		$ip_parts[0] = preg_replace( '/(^|:)0+([0-9])/', '\1\2', $ip_parts[0] );
+
+		// Find bunches of zeros.
+		if ( preg_match_all( '/(?:^|:)(?:0(?::|$))+/', $ip_parts[0], $matches, PREG_OFFSET_CAPTURE ) ) {
+			$max = 0;
+			$pos = NULL;
+
+			foreach ( $matches[0] as $match ) {
+				if ( strlen( $match[0] ) > $max ) {
+					$max = strlen( $match[0] );
+					$pos = $match[1];
+				}
+			}
+
+			$ip_parts[0] = substr_replace( $ip_parts[0], '::', $pos, $max );
+		}
+
+		return $ip_parts[1] !== ''
+			? implode( ':', $ip_parts )
+			: $ip_parts[0];
+	}
+
+	/**
 	 * Splits an IPv6 address into the IPv6 and IPv4 representation parts.
 	 *
 	 * RFC 4291 allows you to represent the last two parts of an IPv6 address using the standard IPv4 representation.

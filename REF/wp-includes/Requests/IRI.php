@@ -559,6 +559,7 @@ class Requests_IRI
 
 		if ( substr( $ihost, 0, 1 ) === '[' && substr( $ihost, -1 ) === ']' ) {
 			if ( Requests_IPv6::check_ipv6( substr( $ihost, 1, -1 ) ) ) {
+				$this->ihost = '[' . Requests_IPv6::compress( substr( $ihost, 1, -1 ) ) . ']';
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
