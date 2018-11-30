@@ -84,6 +84,16 @@ class Requests_IDNAEncoder
 	{
 		// Step 1: Check if the string is already ASCII.
 		if ( self::is_ascii( $string ) ) {
+			// Skip to step 7.
+			if ( strlen( $string ) < 64 ) {
+				return $string;
+			}
+
+			throw new Requests_Exception( 'Provided string is too long', 'idna.provided_too_long', $string );
+		}
+
+		// Step 2: nameprep.
+		$string = self::nameprep( $string );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -102,7 +112,6 @@ class Requests_IDNAEncoder
  * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
  * @NOW 016: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
  */
-		}
 	}
 
 	/**
@@ -116,5 +125,18 @@ class Requests_IDNAEncoder
 	protected static function is_ascii( $string )
 	{
 		return preg_match( '/(?:[^\x00-\x7F])/', $string ) !== 1;
+	}
+
+	/**
+	 * Prepare a string for use as an IDNA name.
+	 *
+	 * @todo Implement this based on RFC 3491 and the newer 5891.
+	 *
+	 * @param  string $string
+	 * @return string Prepared string.
+	 */
+	protected static function nameprep( $string )
+	{
+		return $string;
 	}
 }

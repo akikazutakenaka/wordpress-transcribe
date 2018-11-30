@@ -85,17 +85,7 @@ class Requests_IDNAEncoder {
 	}
 
 	// refactored. protected static function is_ascii($string) {}
-
-	/**
-	 * Prepare a string for use as an IDNA name
-	 *
-	 * @todo Implement this based on RFC 3491 and the newer 5891
-	 * @param string $string
-	 * @return string Prepared string
-	 */
-	protected static function nameprep($string) {
-		return $string;
-	}
+	// refactored. protected static function nameprep($string) {}
 
 	/**
 	 * Convert a UTF-8 string to a UCS-4 codepoint array
