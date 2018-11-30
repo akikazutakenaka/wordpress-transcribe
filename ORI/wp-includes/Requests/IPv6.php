@@ -63,56 +63,5 @@ class Requests_IPv6 {
 	}
 
 	// refactored. protected static function split_v6_v4($ip) {}
-
-	/**
-	 * Checks an IPv6 address
-	 *
-	 * Checks if the given IP is a valid IPv6 address
-	 *
-	 * @param string $ip An IPv6 address
-	 * @return bool true if $ip is a valid IPv6 address
-	 */
-	public static function check_ipv6($ip) {
-		$ip = self::uncompress($ip);
-		list($ipv6, $ipv4) = self::split_v6_v4($ip);
-		$ipv6 = explode(':', $ipv6);
-		$ipv4 = explode('.', $ipv4);
-		if (count($ipv6) === 8 && count($ipv4) === 1 || count($ipv6) === 6 && count($ipv4) === 4) {
-			foreach ($ipv6 as $ipv6_part) {
-				// The section can't be empty
-				if ($ipv6_part === '') {
-					return false;
-				}
-
-				// Nor can it be over four characters
-				if (strlen($ipv6_part) > 4) {
-					return false;
-				}
-
-				// Remove leading zeros (this is safe because of the above)
-				$ipv6_part = ltrim($ipv6_part, '0');
-				if ($ipv6_part === '') {
-					$ipv6_part = '0';
-				}
-
-				// Check the value is valid
-				$value = hexdec($ipv6_part);
-				if (dechex($value) !== strtolower($ipv6_part) || $value < 0 || $value > 0xFFFF) {
-					return false;
-				}
-			}
-			if (count($ipv4) === 4) {
-				foreach ($ipv4 as $ipv4_part) {
-					$value = (int) $ipv4_part;
-					if ((string) $value !== $ipv4_part || $value < 0 || $value > 0xFF) {
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+	// refactored. public static function check_ipv6($ip) {}
 }

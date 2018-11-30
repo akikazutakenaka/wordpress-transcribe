@@ -579,7 +579,6 @@ class Requests_IRI
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_authority( string $authority )
  * @NOW 019: wp-includes/Requests/IRI.php: Requests_IRI::set_host( string $host )
- * ......->: wp-includes/Requests/IPv6.php: Requests_IPv6::check_ipv6( string $ip )
  */
 			}
 		}
