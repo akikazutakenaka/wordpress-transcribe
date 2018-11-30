@@ -240,6 +240,18 @@ class Requests_Cookie
 	}
 
 	/**
+	 * Format a cookie for a Cookie header.
+	 *
+	 * This is used when sending cookies to a server.
+	 *
+	 * @return string Cookie formatted for Cookie header.
+	 */
+	public function format_for_header()
+	{
+		return sprintf( '%s=%s', $this->name, $this->value );
+	}
+
+	/**
 	 * Parse a cookie string into a cookie object.
 	 *
 	 * Based on Mozilla's parsing code in Firefox and related projects, which is an intentional deviation from RFC 2109 and RFC 2616.

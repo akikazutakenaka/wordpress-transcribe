@@ -83,18 +83,8 @@ class Requests_Cookie {
 	}
 
 	// refactored. public function normalize() {}
-	// refactored. protected function normalize_attribute($name, $value) {}
-
-	/**
-	 * Format a cookie for a Cookie header
-	 *
-	 * This is used when sending cookies to a server.
-	 *
-	 * @return string Cookie formatted for Cookie header
-	 */
-	public function format_for_header() {
-		return sprintf('%s=%s', $this->name, $this->value);
-	}
+	// :
+	// refactored. public function format_for_header() {}
 
 	/**
 	 * Format a cookie for a Cookie header

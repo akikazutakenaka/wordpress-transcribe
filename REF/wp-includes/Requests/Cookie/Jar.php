@@ -104,6 +104,7 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
 				}
 
 				if ( $cookie->domain_matches( $url->host ) ) {
+					$cookies[] = $cookie->format_for_header();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
