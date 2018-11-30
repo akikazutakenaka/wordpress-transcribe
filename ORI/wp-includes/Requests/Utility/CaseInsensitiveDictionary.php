@@ -13,12 +13,7 @@
  * @subpackage Utilities
  */
 class Requests_Utility_CaseInsensitiveDictionary implements ArrayAccess, IteratorAggregate {
-	/**
-	 * Actual item data
-	 *
-	 * @var array
-	 */
-	protected $data = array();
+	// refactored. protected $data = array();
 
 	/**
 	 * Creates a case insensitive dictionary.

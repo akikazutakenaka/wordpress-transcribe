@@ -221,7 +221,7 @@ class Requests_Cookie
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * @NOW 017: wp-includes/Requests/Cookie.php: Requests_Cookie::parse( string $string [, string $name = '' [, int $reference_time = NULL]] )
- * ......->: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary
+ * ......->: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary::__construct( [array $data = array()] )
  */
 	}
 }

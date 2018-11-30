@@ -7,6 +7,21 @@
  */
 
 /**
+ * Case-insensitive dictionary, suitable for HTTP headers.
+ *
+ * @package    Requests
+ * @subpackage Utilities
+ */
+class Requests_Utility_CaseInsensitiveDictionary implements ArrayAccess, IteratorAggregate
+{
+	/**
+	 * Actual item data.
+	 *
+	 * @var array
+	 */
+	protected $data = array();
+
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -24,5 +39,6 @@
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie.php: Requests_Cookie::parse( string $string [, string $name = '' [, int $reference_time = NULL]] )
- * @NOW 018: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary
+ * @NOW 018: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary::__construct( [array $data = array()] )
  */
+}
