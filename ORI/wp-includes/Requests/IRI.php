@@ -264,54 +264,7 @@ class Requests_IRI {
 		return true;
 	}
 
-	/**
-	 * Set the entire IRI. Returns true on success, false on failure (if there
-	 * are any invalid characters).
-	 *
-	 * @param string $iri
-	 * @return bool
-	 */
-	protected function set_iri($iri) {
-		static $cache;
-		if (!$cache) {
-			$cache = array();
-		}
-
-		if ($iri === null) {
-			return true;
-		}
-		if (isset($cache[$iri])) {
-			list($this->scheme,
-				 $this->iuserinfo,
-				 $this->ihost,
-				 $this->port,
-				 $this->ipath,
-				 $this->iquery,
-				 $this->ifragment,
-				 $return) = $cache[$iri];
-			return $return;
-		}
-
-		$parsed = $this->parse_iri((string) $iri);
-
-		$return = $this->set_scheme($parsed['scheme'])
-			&& $this->set_authority($parsed['authority'])
-			&& $this->set_path($parsed['path'])
-			&& $this->set_query($parsed['query'])
-			&& $this->set_fragment($parsed['fragment']);
-
-		$cache[$iri] = array($this->scheme,
-							 $this->iuserinfo,
-							 $this->ihost,
-							 $this->port,
-							 $this->ipath,
-							 $this->iquery,
-							 $this->ifragment,
-							 $return);
-		return $return;
-	}
-
-	// refactored. protected function set_scheme($scheme) {}
+	// refactored. protected function set_iri($iri) {}
 	// :
 	// refactored. protected function set_fragment($ifragment) {}
 
