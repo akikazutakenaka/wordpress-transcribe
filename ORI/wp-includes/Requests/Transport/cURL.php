@@ -15,16 +15,7 @@
 class Requests_Transport_cURL implements Requests_Transport {
 	// refactored. const CURL_7_10_5 = 0x070A05;
 	// :
-	// refactored. public function __construct() {}
-
-	/**
-	 * Destructor
-	 */
-	public function __destruct() {
-		if (is_resource($this->handle)) {
-			curl_close($this->handle);
-		}
-	}
+	// refactored. public function __destruct() {}
 
 	/**
 	 * Perform a request
