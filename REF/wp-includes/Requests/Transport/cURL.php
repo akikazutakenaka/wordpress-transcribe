@@ -179,6 +179,75 @@ class Requests_Transport_cURL implements Requests_Transport
 
 			if ( $data_format === 'query' ) {
 				$url = self::format_get( $url, $data );
+				$data = '';
+			} elseif ( ! is_string( $data ) ) {
+				$data = http_build_query( $data, NULL, '&' );
+			}
+		}
+
+		switch ( $options['type'] ) {
+			case Requests::POST:
+				curl_setopt( $this->handle, CURLOPT_POST, TRUE );
+				curl_setopt( $this->handle, CURLOPT_POSTFIELDS, $data );
+				break;
+
+			case Requests::HEAD:
+				curl_setopt( $this->handle, CURLOPT_CUSTOMREQUEST, $options['type'] );
+				curl_setopt( $this->handle, CURLOPT_NOBODY, TRUE );
+				break;
+
+			case Requests::TRACE:
+				curl_setopt( $this->handle, CURLOPT_CUSTOMREQUEST, $options['type'] );
+				break;
+
+			case Requests::PATCH:
+			case Requests::PUT:
+			case Requests::DELETE:
+			case Requests::OPTIONS:
+			default:
+				curl_setopt( $this->handle, CURLOPT_CUSTOMREQUEST, $options['type'] );
+
+				if ( ! empty( $data ) ) {
+					curl_setopt( $this->handle, CURLOPT_POSTFIELDS, $data );
+				}
+		}
+
+		/**
+		 * cURL requires a minimum timeout of 1 second when using the system DNS resolver, as it uses `alarm()`, which is second resolution only.
+		 * There's no way to detect which DNS resolver is being used from our end, so we need to round up regardless of the supplied timeout.
+		 *
+		 * https://github.com/curl/curl/blob/4f45240bc84a9aa648c8f7243be7b79e9f9323a5/lib/hostip.c#L606-L609
+		 */
+		$timeout = max( $options['timeout'], 1 );
+
+		if ( is_int( $timeout ) || $this->version < self::CURL_7_16_2 ) {
+			curl_setopt( $this->handle, CURLOPT_TIMEOUT, ceil( $timeout ) );
+		} else {
+			curl_setopt( $this->handle, CURLOPT_TIMEOUT_MS, round( $timeout * 1000 ) );
+		}
+
+		if ( is_int( $options['connect_timeout'] ) || $this->version < self::CURL_7_16_2 ) {
+			curl_setopt( $this->handle, CURLOPT_CONNECTTIMEOUT, ceil( $options['connect_timeout'] ) );
+		} else {
+			curl_setopt( $this->handle, CURLOPT_CONNECTTIMEOUT_MS, round( $options['connect_timeout'] * 1000 ) );
+		}
+
+		curl_setopt( $this->handle, CURLOPT_URL, $url );
+		curl_setopt( $this->handle, CURLOPT_REFERER, $url );
+		curl_setopt( $this->handle, CURLOPT_USERAGENT, $options['useragent'] );
+
+		if ( ! empty( $headers ) ) {
+			curl_setopt( $this->handle, CURLOPT_HTTPHEADER, $headers );
+		}
+
+		if ( $options['protocol_version'] === 1.1 ) {
+			curl_setopt( $this->handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
+		} else {
+			curl_setopt( $this->handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
+		}
+
+		if ( TRUE === $options['blocking'] ) {
+			curl_setopt( $this->handle, CURLOPT_HEADERFUNCTION, array( &$this, 'stream_headers' ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -196,8 +265,36 @@ class Requests_Transport_cURL implements Requests_Transport
  * <-......: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  * @NOW 015: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::setup_handle( string $url, array $headers, string|array $data, array $options )
  */
-			}
 		}
+	}
+
+	/**
+	 * Collect the headers as they are received.
+	 *
+	 * @param  resource $handle  cURL resource.
+	 * @param  string   $headers Header string.
+	 * @return int      Length of provided header.
+	 */
+	public function stream_headers( $handle, $headers )
+	{
+		/**
+		 * Why do we do this?
+		 * cURL will send both the final response and any interim responses, such as a 100 Continue.
+		 * We don't need that.
+		 * (We may want to keep this somewhere just in case)
+		 */
+		if ( $this->done_headers ) {
+			$this->headers = '';
+			$this->done_headers = FALSE;
+		}
+
+		$this->headers .= $headers;
+
+		if ( $headers === "\r\n" ) {
+			$this->done_headers = TRUE;
+		}
+
+		return strlen( $headers );
 	}
 
 	/**

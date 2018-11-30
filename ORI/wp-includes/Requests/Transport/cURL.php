@@ -328,28 +328,7 @@ class Requests_Transport_cURL implements Requests_Transport {
 		return $this->headers;
 	}
 
-	/**
-	 * Collect the headers as they are received
-	 *
-	 * @param resource $handle cURL resource
-	 * @param string $headers Header string
-	 * @return integer Length of provided header
-	 */
-	public function stream_headers($handle, $headers) {
-		// Why do we do this? cURL will send both the final response and any
-		// interim responses, such as a 100 Continue. We don't need that.
-		// (We may want to keep this somewhere just in case)
-		if ($this->done_headers) {
-			$this->headers = '';
-			$this->done_headers = false;
-		}
-		$this->headers .= $headers;
-
-		if ($headers === "\r\n") {
-			$this->done_headers = true;
-		}
-		return strlen($headers);
-	}
+	// refactored. public function stream_headers($handle, $headers) {}
 
 	/**
 	 * Collect data as it's received
