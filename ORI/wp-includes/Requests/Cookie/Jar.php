@@ -96,40 +96,7 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 		$hooks->register('requests.before_redirect_check', array($this, 'before_redirect_check'));
 	}
 
-	/**
-	 * Add Cookie header to a request if we have any
-	 *
-	 * As per RFC 6265, cookies are separated by '; '
-	 *
-	 * @param string $url
-	 * @param array $headers
-	 * @param array $data
-	 * @param string $type
-	 * @param array $options
-	 */
-	public function before_request($url, &$headers, &$data, &$type, &$options) {
-		if (!$url instanceof Requests_IRI) {
-			$url = new Requests_IRI($url);
-		}
-
-		if (!empty($this->cookies)) {
-			$cookies = array();
-			foreach ($this->cookies as $key => $cookie) {
-				$cookie = $this->normalize_cookie($cookie, $key);
-
-				// Skip expired cookies
-				if ($cookie->is_expired()) {
-					continue;
-				}
-
-				if ($cookie->domain_matches($url->host)) {
-					$cookies[] = $cookie->format_for_header();
-				}
-			}
-
-			$headers['Cookie'] = implode('; ', $cookies);
-		}
-	}
+	// refactored. public function before_request($url, &$headers, &$data, &$type, &$options) {}
 
 	/**
 	 * Parse all cookies from a response and attach them to the response
