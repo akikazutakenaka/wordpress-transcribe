@@ -175,7 +175,6 @@ class Requests
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/class-requests.php: Requests::get_transport( [array $capabilities = array()] )
- * ......->: wp-includes/Requests/Transport/cURL.php: Requests_Transport_fsockopen
  */
 	}
 
