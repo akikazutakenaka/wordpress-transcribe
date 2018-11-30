@@ -6,6 +6,13 @@
  */
 
 /**
+ * Case-insensitive dictionary, suitable for HTTP headers.
+ *
+ * @package Requests
+ */
+class Requests_Response_Headers extends Requests_Utility_CaseInsensitiveDictionary
+{
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -22,5 +29,6 @@
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_redirect_check( &Requests_Response $return )
  * <-......: wp-includes/Requests/Cookie.php: Requests_Cookie::parse_from_headers( Requests_Response_Headers $headers [, Requests_IRI|null $origin = NULL [, int|null $time = NULL]] )
- * @NOW 017: wp-includes/Requests/Response/Headers.php: Requests_Response_Headers
+ * @NOW 017: wp-includes/Requests/Response/Headers.php: Requests_Response_Headers::getValues( string $key )
  */
+}

@@ -316,7 +316,7 @@ class Requests_Cookie
 	 */
 	public static function parse_from_headers( Requests_Response_Headers $headers, Requests_IRI $origin = NULL, $time = NULL )
 	{
-		$cookie_headers = $headers->getValue( 'Set-Cookie' );
+		$cookie_headers = $headers->getValues( 'Set-Cookie' );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -334,7 +334,7 @@ class Requests_Cookie
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_redirect_check( &Requests_Response $return )
  * @NOW 016: wp-includes/Requests/Cookie.php: Requests_Cookie::parse_from_headers( Requests_Response_Headers $headers [, Requests_IRI|null $origin = NULL [, int|null $time = NULL]] )
- * ......->: wp-includes/Requests/Response/Headers.php: Requests_Response_Headers
+ * ......->: wp-includes/Requests/Response/Headers.php: Requests_Response_Headers::getValues( string $key )
  */
 	}
 }
