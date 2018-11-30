@@ -258,6 +258,61 @@ class Requests_IDNAEncoder
 		$bias = self::BOOTSTRAP_INITIAL_BIAS;
 		$h = $b = 0;
 		$codepoints = self::utf8_to_codepoints( $input );
+		$extended = array();
+
+		foreach ( $codepoints as $char ) {
+			if ( $char < 128 ) {
+				/**
+				 * Character is valid ASCII.
+				 * @todo This should also check if it's valid for a URL.
+				 */
+				$output .= chr( $char );
+				$h++;
+			} elseif ( $char < $n ) {
+				/**
+				 * Check if the character is non-ASCII, but below initial n.
+				 * This never occurs for Punycode, so ignore in coverage.
+				 */
+				throw new Requests_Exception( 'Invalid character', 'idna.character_outside_domain', $char );
+			} else {
+				$extended[ $char ] = TRUE;
+			}
+		}
+
+		$extended = array_keys( $extended );
+		sort( $extended );
+		$b = $h;
+
+		if ( strlen( $output ) > 0 ) {
+			$output .= '-';
+		}
+
+		while ( $h < count( $codepoints ) ) {
+			$m = array_shift( $extended );
+			$delta += ( $m - $n ) * ( $h + 1 );
+			$n = $m;
+
+			for ( $num = 0; $num < count( $codepoints ); $num++ ) {
+				$c = $codepoints[ $num ];
+
+				if ( $c < $n ) {
+					$delta++;
+				} elseif ( $c === $n ) {
+					$q = $delta;
+
+					for ( $k = self::BOOSTRAP_BASE; ; $k += self::BOOTSTRAP_BASE ) {
+						$t = $k <= ( $bias + self::BOOTSTRAP_TMIN )
+							? self::BOOTSTRAP_TMIN
+							: ( $k >= ( $bias + self::BOOTSTRAP_TMAX )
+								? self::BOOTSTRAP_TMAX
+								: $k - $bias );
+
+						if ( $q < $t ) {
+							break;
+						}
+
+						$digit = $t + ( ( $q - $t ) % ( self::BOOTSTRAP_BASE - $t ) );
+						$output .= self::digit_to_char( $digit );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -277,5 +332,29 @@ class Requests_IDNAEncoder
  * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
  * @NOW 017: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::punycode_encode( string $input )
  */
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Convert a digit to its respective character.
+	 *
+	 * @see    https://tools.ietf.org/html/rfc3492#section-5
+	 * @throws Requests_Exception On invalid digit (`idna.invalid_digit`)
+	 *
+	 * @param  int    $digit Digit in the range 0-35.
+	 * @return string Single character corresponding to digit.
+	 */
+	protected static function digit_to_char( $digit )
+	{
+		// As far as I know, this never happens, but still good to be sure.
+		if ( $digit < 0 || $digit > 35 ) {
+			throw new Requests_Exception( sprintf( 'Invalid digit %d', $digit ), 'idna.invalid_digit', $digit );
+		}
+
+		$digits = 'abcdefghijklmnopqrstuvwxyz0123456789';
+		return substr( $digits, $digit, 1 );
 	}
 }

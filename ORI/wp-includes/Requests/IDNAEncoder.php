@@ -202,25 +202,7 @@ class Requests_IDNAEncoder {
 		return $output;
 	}
 
-	/**
-	 * Convert a digit to its respective character
-	 *
-	 * @see https://tools.ietf.org/html/rfc3492#section-5
-	 * @throws Requests_Exception On invalid digit (`idna.invalid_digit`)
-	 *
-	 * @param int $digit Digit in the range 0-35
-	 * @return string Single character corresponding to digit
-	 */
-	protected static function digit_to_char($digit) {
-		// @codeCoverageIgnoreStart
-		// As far as I know, this never happens, but still good to be sure.
-		if ($digit < 0 || $digit > 35) {
-			throw new Requests_Exception(sprintf('Invalid digit %d', $digit), 'idna.invalid_digit', $digit);
-		}
-		// @codeCoverageIgnoreEnd
-		$digits = 'abcdefghijklmnopqrstuvwxyz0123456789';
-		return substr($digits, $digit, 1);
-	}
+	// refactored. protected static function digit_to_char($digit) {}
 
 	/**
 	 * Adapt the bias
