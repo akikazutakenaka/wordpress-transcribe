@@ -51,21 +51,28 @@ class WP_HTTP_Requests_Hooks extends Requests_Hooks
 	public function dispatch( $hook, $parameters = array() )
 	{
 		$result = parent::dispatch( $hook, $parameters );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * @NOW 014: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests::dispatch( string $hook [, array $parameters = array()] )
- */
+
+		// Handle back-compat actions.
+		switch ( $hook ) {
+			case 'curl.before_send':
+				// This action is documented in wp-includes/class-wp-http-curl.php
+				do_action_ref_array( 'http_api_curl', array( &$parameters[0], $this->request, $this->url ) );
+				break;
+		}
+
+		/**
+		 * Transforms a native Request hook to a WordPress actions.
+		 *
+		 * This action maps Requests internal hook to a native WordPress action.
+		 *
+		 * @see https://github.com/rmccue/Requests/blob/master/docs/hooks.md
+		 *
+		 * @param array  $parameters Parameters from Requests internal hook.
+		 * @param array  $request    Request data in WP_Http format.
+		 * @param string $url        URL to request.
+		 */
+		do_action_ref_array( "requests-{$hook}", $parameters, $this->request, $this->url );
+
+		return $result;
 	}
 }
