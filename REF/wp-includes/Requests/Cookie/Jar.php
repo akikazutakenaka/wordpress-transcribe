@@ -97,6 +97,9 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
 
 			foreach ( $this->cookies as $key => $cookie ) {
 				$cookie = $this->normalize_cookie( $cookie, $key );
+
+				// Skip expired cookies.
+				if ( $cookie->is_expired() ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -115,6 +118,7 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * @NOW 016: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  */
+				}
 			}
 		}
 	}

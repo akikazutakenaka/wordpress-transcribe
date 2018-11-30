@@ -86,6 +86,32 @@ class Requests_Cookie
 	}
 
 	/**
+	 * Check if a cookie is expired.
+	 *
+	 * Checks the age against $this->reference_time to determine if the cookie is expired.
+	 *
+	 * @return bool True if expired, false if time is valid.
+	 */
+	public function is_expired()
+	{
+		/**
+		 * RFC6265, s. 4.1.2.2:
+		 * If a cookie has both the Max-Age and the Expires attribute, the Max-Age attribute has precedence and controls the expiration date of the cookie.
+		 */
+		if ( isset( $this->attributes['max-age'] ) ) {
+			$max_age = $this->attributes['max-age'];
+			return $max_age < $this->reference_time;
+		}
+
+		if ( isset( $this->attributes['expires'] ) ) {
+			$expires = $this->attributes['expires'];
+			return $expires < $this->reference_time;
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Normalize cookie and attributes.
 	 *
 	 * @return bool Whether the cookie was successfully normalized.
