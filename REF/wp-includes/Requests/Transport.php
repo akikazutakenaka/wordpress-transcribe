@@ -31,4 +31,11 @@ interface Requests_Transport
  * <-......: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  * @NOW 015: wp-includes/Requests/Transport.php: Requests_Transport::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  */
+
+	/**
+	 * Self-test whether the transport can be used.
+	 *
+	 * @return bool
+	 */
+	public static function test();
 }
