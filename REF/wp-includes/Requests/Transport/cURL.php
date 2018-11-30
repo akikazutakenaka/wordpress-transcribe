@@ -102,7 +102,6 @@ class Requests_Transport_cURL implements Requests_Transport
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-requests.php: Requests::get_transport( [array $capabilities = array()] )
- * @NOW 015: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL
- * ......->: wp-includes/Requests/Transport.php: Requests_Transport
+ * @NOW 015: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::__construct()
  */
 }
