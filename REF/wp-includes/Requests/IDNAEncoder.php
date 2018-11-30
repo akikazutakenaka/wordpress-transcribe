@@ -313,6 +313,11 @@ class Requests_IDNAEncoder
 
 						$digit = $t + ( ( $q - $t ) % ( self::BOOTSTRAP_BASE - $t ) );
 						$output .= self::digit_to_char( $digit );
+						$q = floor( ( $q - $t ) / ( self::BOOTSTRAP_BASE - $t ) );
+					}
+
+					$output .= self::digit_to_char( $q );
+					$bias = self::adapt( $delta, $h + 1, $h === $b );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -332,7 +337,6 @@ class Requests_IDNAEncoder
  * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
  * @NOW 017: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::punycode_encode( string $input )
  */
-					}
 				}
 			}
 		}
@@ -356,5 +360,33 @@ class Requests_IDNAEncoder
 
 		$digits = 'abcdefghijklmnopqrstuvwxyz0123456789';
 		return substr( $digits, $digit, 1 );
+	}
+
+	/**
+	 * Adapt the bias.
+	 *
+	 * @see https://tools.ietf.org/html/rfc3492#section-6.1
+	 *
+	 * @param  int  $delta
+	 * @param  int  $numpoints
+	 * @param  bool $firsttime
+	 * @return int  New bias.
+	 */
+	protected static function adapt( $delta, $numpoints, $firsttime )
+	{
+		$delta = $firsttime
+			? floor( $delta / self::BOOTSTRAP_DAMP )
+			: floor( $delta / 2 );
+
+		$delta += floor( $delta / $numpoints );
+		$k = 0;
+		$max = floor( ( self::BOOTSTRAP_BASE - self::BOOTSTRAP_TMIN ) * self::BOOTSTRAP_TMAX / 2 );
+
+		while ( $delta > $max ) {
+			$delta = floor( $delta / ( self::BOOTSTRAP_BASE - self::BOOTSTRAP_TMIN ) );
+			$k += self::BOOTSTRAP_BASE;
+		}
+
+		return $k + floor( ( self::BOOTSTRAP_BASE - self::BOOTSTRAP_TMIN + 1 ) * $delta / ( $delta + self::BOOTSTRAP_SKEW ) );
 	}
 }

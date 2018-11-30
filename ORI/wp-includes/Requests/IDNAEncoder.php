@@ -203,40 +203,5 @@ class Requests_IDNAEncoder {
 	}
 
 	// refactored. protected static function digit_to_char($digit) {}
-
-	/**
-	 * Adapt the bias
-	 *
-	 * @see https://tools.ietf.org/html/rfc3492#section-6.1
-	 * @param int $delta
-	 * @param int $numpoints
-	 * @param bool $firsttime
-	 * @return int New bias
-	 */
-	protected static function adapt($delta, $numpoints, $firsttime) {
-#	function adapt(delta,numpoints,firsttime):
-#		if firsttime then let delta = delta div damp
-		if ($firsttime) {
-			$delta = floor($delta / self::BOOTSTRAP_DAMP);
-		}
-#		else let delta = delta div 2
-		else {
-			$delta = floor($delta / 2);
-		}
-#		let delta = delta + (delta div numpoints)
-		$delta += floor($delta / $numpoints);
-#		let k = 0
-		$k = 0;
-#		while delta > ((base - tmin) * tmax) div 2 do begin
-		$max = floor(((self::BOOTSTRAP_BASE - self::BOOTSTRAP_TMIN) * self::BOOTSTRAP_TMAX) / 2);
-		while ($delta > $max) {
-#			let delta = delta div (base - tmin)
-			$delta = floor($delta / (self::BOOTSTRAP_BASE - self::BOOTSTRAP_TMIN));
-#			let k = k + base
-			$k += self::BOOTSTRAP_BASE;
-#		end
-		}
-#		return k + (((base - tmin + 1) * delta) div (delta + skew))
-		return $k + floor(((self::BOOTSTRAP_BASE - self::BOOTSTRAP_TMIN + 1) * $delta) / ($delta + self::BOOTSTRAP_SKEW));
-	}
+	// refactored. protected static function adapt($delta, $numpoints, $firsttime) {}
 }
