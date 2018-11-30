@@ -334,7 +334,6 @@ class Requests_Cookie
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_redirect_check( &Requests_Response $return )
  * @NOW 016: wp-includes/Requests/Cookie.php: Requests_Cookie::parse_from_headers( Requests_Response_Headers $headers [, Requests_IRI|null $origin = NULL [, int|null $time = NULL]] )
- * ......->: wp-includes/Requests/Response/Headers.php: Requests_Response_Headers::getValues( string $key )
  */
 	}
 }

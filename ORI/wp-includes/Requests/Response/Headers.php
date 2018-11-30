@@ -54,20 +54,7 @@ class Requests_Response_Headers extends Requests_Utility_CaseInsensitiveDictiona
 		$this->data[$key][] = $value;
 	}
 
-	/**
-	 * Get all values for a given header
-	 *
-	 * @param string $key
-	 * @return array Header values
-	 */
-	public function getValues($key) {
-		$key = strtolower($key);
-		if (!isset($this->data[$key])) {
-			return null;
-		}
-
-		return $this->data[$key];
-	}
+	// refactored. public function getValues($key) {}
 
 	/**
 	 * Flattens a value into a string
