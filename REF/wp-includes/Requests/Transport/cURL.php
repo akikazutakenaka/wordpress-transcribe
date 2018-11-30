@@ -87,6 +87,30 @@ class Requests_Transport_cURL implements Requests_Transport
 	 */
 	protected $response_byte_limit;
 
+	/**
+	 * Constructor.
+	 */
+	public function __construct()
+	{
+		$curl = curl_version();
+		$this->version = $curl['version_number'];
+		$this->handle = curl_init();
+		curl_setopt( $this->handle, CURLOPT_HEADER, FALSE );
+		curl_setopt( $this->handle, CURLOPT_RETURNTRANSFER, 1 );
+
+		if ( $this->version >= self::CURL_7_10_5 ) {
+			curl_setopt( $this->handle, CURLOPT_ENCODING, '' );
+		}
+
+		if ( defined( 'CURLOPT_PROTOCOLS' ) ) {
+			curl_setopt( $this->handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS );
+		}
+
+		if ( defined( 'CURLOPT_REDIR_PROTOCOLS' ) ) {
+			curl_setopt( $this->handle, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS );
+		}
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -102,6 +126,6 @@ class Requests_Transport_cURL implements Requests_Transport
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-requests.php: Requests::get_transport( [array $capabilities = array()] )
- * @NOW 015: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::__construct()
+ * @NOW 015: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL::__destruct()
  */
 }

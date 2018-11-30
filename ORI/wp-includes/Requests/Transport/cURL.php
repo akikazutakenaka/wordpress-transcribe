@@ -15,28 +15,7 @@
 class Requests_Transport_cURL implements Requests_Transport {
 	// refactored. const CURL_7_10_5 = 0x070A05;
 	// :
-	// refactored. protected $response_byte_limit;
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		$curl = curl_version();
-		$this->version = $curl['version_number'];
-		$this->handle = curl_init();
-
-		curl_setopt($this->handle, CURLOPT_HEADER, false);
-		curl_setopt($this->handle, CURLOPT_RETURNTRANSFER, 1);
-		if ($this->version >= self::CURL_7_10_5) {
-			curl_setopt($this->handle, CURLOPT_ENCODING, '');
-		}
-		if (defined('CURLOPT_PROTOCOLS')) {
-			curl_setopt($this->handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-		}
-		if (defined('CURLOPT_REDIR_PROTOCOLS')) {
-			curl_setopt($this->handle, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-		}
-	}
+	// refactored. public function __construct() {}
 
 	/**
 	 * Destructor
