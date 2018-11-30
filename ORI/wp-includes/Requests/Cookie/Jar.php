@@ -87,21 +87,6 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 	}
 
 	// refactored. public function register(Requests_Hooker $hooks) {}
-	// refactored. public function before_request($url, &$headers, &$data, &$type, &$options) {}
-
-	/**
-	 * Parse all cookies from a response and attach them to the response
-	 *
-	 * @var Requests_Response $response
-	 */
-	public function before_redirect_check(Requests_Response &$return) {
-		$url = $return->url;
-		if (!$url instanceof Requests_IRI) {
-			$url = new Requests_IRI($url);
-		}
-
-		$cookies = Requests_Cookie::parse_from_headers($return->headers, $url);
-		$this->cookies = array_merge($this->cookies, $cookies);
-		$return->cookies = $this;
-	}
+	// :
+	// refactored. public function before_redirect_check(Requests_Response &$return) {}
 }
