@@ -373,67 +373,6 @@ class Requests_IRI {
 	}
 
 	// refactored. protected function set_scheme($scheme) {}
-
-	/**
-	 * Set the authority. Returns true on success, false on failure (if there are
-	 * any invalid characters).
-	 *
-	 * @param string $authority
-	 * @return bool
-	 */
-	protected function set_authority($authority) {
-		static $cache;
-		if (!$cache) {
-			$cache = array();
-		}
-
-		if ($authority === null) {
-			$this->iuserinfo = null;
-			$this->ihost = null;
-			$this->port = null;
-			return true;
-		}
-		if (isset($cache[$authority])) {
-			list($this->iuserinfo,
-				 $this->ihost,
-				 $this->port,
-				 $return) = $cache[$authority];
-
-			return $return;
-		}
-
-		$remaining = $authority;
-		if (($iuserinfo_end = strrpos($remaining, '@')) !== false) {
-			$iuserinfo = substr($remaining, 0, $iuserinfo_end);
-			$remaining = substr($remaining, $iuserinfo_end + 1);
-		}
-		else {
-			$iuserinfo = null;
-		}
-		if (($port_start = strpos($remaining, ':', strpos($remaining, ']'))) !== false) {
-			$port = substr($remaining, $port_start + 1);
-			if ($port === false || $port === '') {
-				$port = null;
-			}
-			$remaining = substr($remaining, 0, $port_start);
-		}
-		else {
-			$port = null;
-		}
-
-		$return = $this->set_userinfo($iuserinfo) &&
-				  $this->set_host($remaining) &&
-				  $this->set_port($port);
-
-		$cache[$authority] = array($this->iuserinfo,
-								   $this->ihost,
-								   $this->port,
-								   $return);
-
-		return $return;
-	}
-
-	// refactored. protected function set_userinfo($iuserinfo) {}
 	// :
 	// refactored. protected function set_port($port) {}
 
