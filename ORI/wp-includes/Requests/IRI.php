@@ -313,24 +313,7 @@ class Requests_IRI {
 
 	// refactored. protected function set_scheme($scheme) {}
 	// :
-	// refactored. protected function set_query($iquery) {}
-
-	/**
-	 * Set the ifragment.
-	 *
-	 * @param string $ifragment
-	 * @return bool
-	 */
-	protected function set_fragment($ifragment) {
-		if ($ifragment === null) {
-			$this->ifragment = null;
-		}
-		else {
-			$this->ifragment = $this->replace_invalid_with_pct_encoding($ifragment, '!$&\'()*+,;=:@/?');
-			$this->scheme_normalization();
-		}
-		return true;
-	}
+	// refactored. protected function set_fragment($ifragment) {}
 
 	/**
 	 * Convert an IRI to a URI (or parts thereof)
