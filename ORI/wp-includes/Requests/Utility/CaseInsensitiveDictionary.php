@@ -42,22 +42,7 @@ class Requests_Utility_CaseInsensitiveDictionary implements ArrayAccess, Iterato
 		return $this->data[$key];
 	}
 
-	/**
-	 * Set the given item
-	 *
-	 * @throws Requests_Exception On attempting to use dictionary as list (`invalidset`)
-	 *
-	 * @param string $key Item name
-	 * @param string $value Item value
-	 */
-	public function offsetSet($key, $value) {
-		if ($key === null) {
-			throw new Requests_Exception('Object is a dictionary, not a list', 'invalidset');
-		}
-
-		$key = strtolower($key);
-		$this->data[$key] = $value;
-	}
+	// refactored. public function offsetSet($key, $value) {}
 
 	/**
 	 * Unset the given header
