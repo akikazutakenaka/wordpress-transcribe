@@ -145,70 +145,7 @@ class Requests_Cookie {
 	}
 
 	// refactored. public static function parse($string, $name = '', $reference_time = null) {}
-
-	/**
-	 * Parse all Set-Cookie headers from request headers
-	 *
-	 * @param Requests_Response_Headers $headers Headers to parse from
-	 * @param Requests_IRI|null $origin URI for comparing cookie origins
-	 * @param int|null $time Reference time for expiration calculation
-	 * @return array
-	 */
-	public static function parse_from_headers(Requests_Response_Headers $headers, Requests_IRI $origin = null, $time = null) {
-		$cookie_headers = $headers->getValues('Set-Cookie');
-		if (empty($cookie_headers)) {
-			return array();
-		}
-
-		$cookies = array();
-		foreach ($cookie_headers as $header) {
-			$parsed = self::parse($header, '', $time);
-
-			// Default domain/path attributes
-			if (empty($parsed->attributes['domain']) && !empty($origin)) {
-				$parsed->attributes['domain'] = $origin->host;
-				$parsed->flags['host-only'] = true;
-			}
-			else {
-				$parsed->flags['host-only'] = false;
-			}
-
-			$path_is_valid = (!empty($parsed->attributes['path']) && $parsed->attributes['path'][0] === '/');
-			if (!$path_is_valid && !empty($origin)) {
-				$path = $origin->path;
-
-				// Default path normalization as per RFC 6265 section 5.1.4
-				if (substr($path, 0, 1) !== '/') {
-					// If the uri-path is empty or if the first character of
-					// the uri-path is not a %x2F ("/") character, output
-					// %x2F ("/") and skip the remaining steps.
-					$path = '/';
-				}
-				elseif (substr_count($path, '/') === 1) {
-					// If the uri-path contains no more than one %x2F ("/")
-					// character, output %x2F ("/") and skip the remaining
-					// step.
-					$path = '/';
-				}
-				else {
-					// Output the characters of the uri-path from the first
-					// character up to, but not including, the right-most
-					// %x2F ("/").
-					$path = substr($path, 0, strrpos($path, '/'));
-				}
-				$parsed->attributes['path'] = $path;
-			}
-
-			// Reject invalid cookie domains
-			if (!empty($origin) && !$parsed->domain_matches($origin->host)) {
-				continue;
-			}
-
-			$cookies[$parsed->name] = $parsed;
-		}
-
-		return $cookies;
-	}
+	// refactored. public static function parse_from_headers(Requests_Response_Headers $headers, Requests_IRI $origin = null, $time = null) {}
 
 	/**
 	 * Parse all Set-Cookie headers from request headers

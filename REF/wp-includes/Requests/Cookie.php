@@ -317,23 +317,47 @@ class Requests_Cookie
 	public static function parse_from_headers( Requests_Response_Headers $headers, Requests_IRI $origin = NULL, $time = NULL )
 	{
 		$cookie_headers = $headers->getValues( 'Set-Cookie' );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_redirect_check( &Requests_Response $return )
- * @NOW 016: wp-includes/Requests/Cookie.php: Requests_Cookie::parse_from_headers( Requests_Response_Headers $headers [, Requests_IRI|null $origin = NULL [, int|null $time = NULL]] )
- */
+
+		if ( empty( $cookie_headers ) ) {
+			return array();
+		}
+
+		$cookies = array();
+
+		foreach ( $cookie_headers as $header ) {
+			$parsed = self::parse( $header, '', $time );
+
+			// Default domain/path attributes.
+			if ( empty( $parsed->attributes['domain'] ) && ! empty( $origin ) ) {
+				$parsed->attributes['domain'] = $origin->host;
+				$parsed->flags['host-only'] = TRUE;
+			} else {
+				$parsed->flags['host-only'] = FALSE;
+			}
+
+			$path_is_valid = ! empty( $parsed->attributes['path'] ) && $parsed->attributes['path'][0] === '/';
+
+			if ( ! $path_is_valid && ! empty( $origin ) ) {
+				$path = $origin->path;
+
+				// Default path normalization as per RFC 6265 section 5.1.4.
+				$path = substr( $path, 0, 1 ) !== '/'
+					? '/' // If the uri-path is empty or if the first character of the uri-path is not a %x2F ("/") character, output %x2F ("/") and skip the remaining steps.
+					: ( substr_count( $path, '/' ) === 1
+						? '/' // If the uri-path contains no more than one %x2F ("/") character, output %x2F ("/") and skip the remaining step.
+						: substr( $path, 0, strrpos( $path, '/' ) ) ); // Output the characters of the uri-path from the first character up to, but not including, the right-most %x2F ("/").
+
+				$parsed->attributes['path'] = $path;
+			}
+
+			// Reject invalid cookie domains.
+			if ( ! empty( $origin ) && ! $parsed->domain_matches( $origin->host ) ) {
+				continue;
+			}
+
+			$cookies[ $parsed->name ] = $parsed;
+		}
+
+		return $cookies;
 	}
 }
