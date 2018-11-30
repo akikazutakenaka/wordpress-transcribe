@@ -160,26 +160,87 @@ class Requests_IDNAEncoder
 		return $string;
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
- * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
- * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::punycode_encode( string $input )
- * @NOW 018: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::utf8_to_codepoints( string $input )
- */
+	/**
+	 * Convert a UTF-8 string to a UCS-4 codepoint array.
+	 *
+	 * Based on Requests_IRI::replace_invalid_with_pct_encoding().
+	 *
+	 * @throws Requests_Exception Invalid UTF-8 codepoint (`idna.invalidcodepoint`)
+	 *
+	 * @param  string $input
+	 * @return array  Unicode code points.
+	 */
+	protected static function utf8_to_codepoints( $input )
+	{
+		$codepoints = array();
+
+		// Get number of bytes.
+		$strlen = strlen( $input );
+
+		for ( $position = 0; $position < $strlen; $position++ ) {
+			$value = ord( $input[ $position ] );
+
+			if ( ( ~ $value & 0x80 ) === 0x80 ) {
+				// One byte sequence:
+				$character = $value;
+				$length = 1;
+				$remaining = 0;
+			} elseif ( ( $value & 0xE0 ) === 0xC0 ) {
+				// Two byte sequence:
+				$character = ( $value & 0x1F ) << 6;
+				$length = 2;
+				$remaining = 1;
+			} elseif ( ( $value & 0xF0 ) === 0xE0 ) {
+				// Three byte sequence:
+				$character = ( $value & 0x0F ) << 12;
+				$length = 3;
+				$remaining = 2;
+			} elseif ( ( $value & 0xF8 ) === 0xF0 ) {
+				// Four byte sequence:
+				$character = ( $value & 0x07 ) << 18;
+				$length = 4;
+				$remaining = 3;
+			} else {
+				// Invalid byte:
+				throw new Requests_Exception( 'Invalid Unicode codepoint', 'idna.invalidcodepoint', $value );
+			}
+
+			if ( $remaining > 0 ) {
+				if ( $position + $length > $strlen ) {
+					throw new Requests_Exception( 'Invalid Unicode codepoint', 'idna.invalidcodepoint', $character );
+				}
+
+				for ( $position++; $remaining > 0; $position++ ) {
+					$value = ord( $input[ $position ] );
+
+					// If it is invalid, count the sequence as invalid and reprocess the current byte:
+					if ( ( $value & 0xC0 ) !== 0x80 ) {
+						throw new Requests_Exception( 'Invalid Unicode codepoint', 'idna.invalidcodepoint', $character );
+					}
+
+					$character |= ( $value & 0x3F ) << ( --$remaining * 6 );
+				}
+
+				$position--;
+			}
+
+			if ( $length > 1 && $character <= 0x7F
+			  || $length > 2 && $character <= 0x7FF
+			  || $length > 3 && $character <= 0xFFFF
+			  || ( $character & 0xFFFE ) === 0xFFFE
+			  || $character >= 0xFDD0 && $character <= 0xFDEF
+			  || ( $character > 0xD7FF && $character < 0xF900
+			    || $character < 0x20
+			    || $character > 0x7E && $character < 0xA0
+			    || $character > 0xEFFFD ) ) {
+				throw new Requests_Exception( 'Invalid Unicode codepoint', 'idna.invalidcodepoint', $character );
+			}
+
+			$codepoints[] = $character;
+		}
+
+		return $codepoints;
+	}
 
 	/**
 	 * RFC3492-compliant encoder.
@@ -215,7 +276,6 @@ class Requests_IDNAEncoder
  * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::encode( string $string )
  * <-......: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::to_ascii( string $string )
  * @NOW 017: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::punycode_encode( string $input )
- * ......->: wp-includes/Requests/IDNAEncoder.php: Requests_IDNAEncoder::utf8_to_codepoints( string $input )
  */
 	}
 }
