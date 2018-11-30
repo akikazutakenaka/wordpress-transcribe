@@ -65,50 +65,7 @@ class Requests {
 		self::$transports = array_merge(self::$transports, array($transport));
 	}
 
-	/**
-	 * Get a working transport
-	 *
-	 * @throws Requests_Exception If no valid transport is found (`notransport`)
-	 * @return Requests_Transport
-	 */
-	protected static function get_transport($capabilities = array()) {
-		// Caching code, don't bother testing coverage
-		// @codeCoverageIgnoreStart
-		// array of capabilities as a string to be used as an array key
-		ksort($capabilities);
-		$cap_string = serialize($capabilities);
-
-		// Don't search for a transport if it's already been done for these $capabilities
-		if (isset(self::$transport[$cap_string]) && self::$transport[$cap_string] !== null) {
-			return new self::$transport[$cap_string]();
-		}
-		// @codeCoverageIgnoreEnd
-
-		if (empty(self::$transports)) {
-			self::$transports = array(
-				'Requests_Transport_cURL',
-				'Requests_Transport_fsockopen',
-			);
-		}
-
-		// Find us a working transport
-		foreach (self::$transports as $class) {
-			if (!class_exists($class)) {
-				continue;
-			}
-
-			$result = call_user_func(array($class, 'test'), $capabilities);
-			if ($result) {
-				self::$transport[$cap_string] = $class;
-				break;
-			}
-		}
-		if (self::$transport[$cap_string] === null) {
-			throw new Requests_Exception('No working transports found', 'notransport', self::$transports);
-		}
-
-		return new self::$transport[$cap_string]();
-	}
+	// refactored. protected static function get_transport($capabilities = array()) {}
 
 	/**#@+
 	 * @see request()
