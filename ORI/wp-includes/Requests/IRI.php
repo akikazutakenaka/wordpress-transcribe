@@ -313,35 +313,7 @@ class Requests_IRI {
 
 	// refactored. protected function set_scheme($scheme) {}
 	// :
-	// refactored. protected function set_port($port) {}
-
-	/**
-	 * Set the ipath.
-	 *
-	 * @param string $ipath
-	 * @return bool
-	 */
-	protected function set_path($ipath) {
-		static $cache;
-		if (!$cache) {
-			$cache = array();
-		}
-
-		$ipath = (string) $ipath;
-
-		if (isset($cache[$ipath])) {
-			$this->ipath = $cache[$ipath][(int) ($this->scheme !== null)];
-		}
-		else {
-			$valid = $this->replace_invalid_with_pct_encoding($ipath, '!$&\'()*+,;=@:/');
-			$removed = $this->remove_dot_segments($valid);
-
-			$cache[$ipath] = array($valid, $removed);
-			$this->ipath = ($this->scheme !== null) ? $removed : $valid;
-		}
-		$this->scheme_normalization();
-		return true;
-	}
+	// refactored. protected function set_path($ipath) {}
 
 	/**
 	 * Set the iquery.

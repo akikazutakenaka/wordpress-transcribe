@@ -472,7 +472,7 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * @NOW 017: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_path( string $ipath )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::set_query( string $iquery )
  */
 	}
 
@@ -660,6 +660,17 @@ class Requests_IRI
 		} else {
 			$valid = $this->replace_invalid_with_pct_encoding( $ipath, '!$&\'()*+,;=@:/' );
 			$removed = $this->remove_dot_segments( $valid );
+			$cache[ $ipath ] = array( $valid, $removed );
+
+			$this->ipath = $this->scheme !== NULL
+				? $removed
+				: $valid;
+		}
+
+		$this->scheme_normalization();
+		return TRUE;
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -678,8 +689,6 @@ class Requests_IRI
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::register( Requests_Hooker $hooks )
  * <-......: wp-includes/Requests/Cookie/Jar.php: Requests_Cookie_Jar::before_request( string $url, &array $headers, &array $data, &string $type, &array $options )
  * <-......: wp-includes/Requests/IRI.php: Requests_IRI::set_iri( string $iri )
- * @NOW 018: wp-includes/Requests/IRI.php: Requests_IRI::set_path( string $ipath )
+ * @NOW 018: wp-includes/Requests/IRI.php: Requests_IRI::set_query( string $iquery )
  */
-		}
-	}
 }
