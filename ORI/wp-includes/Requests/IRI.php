@@ -434,30 +434,8 @@ class Requests_IRI {
 	}
 
 	// refactored. protected function set_userinfo($iuserinfo) {}
-	// refactored. protected function set_host($ihost) {}
-
-	/**
-	 * Set the port. Returns true on success, false on failure (if there are
-	 * any invalid characters).
-	 *
-	 * @param string $port
-	 * @return bool
-	 */
-	protected function set_port($port) {
-		if ($port === null) {
-			$this->port = null;
-			return true;
-		}
-
-		if (strspn($port, '0123456789') === strlen($port)) {
-			$this->port = (int) $port;
-			$this->scheme_normalization();
-			return true;
-		}
-
-		$this->port = null;
-		return false;
-	}
+	// :
+	// refactored. protected function set_port($port) {}
 
 	/**
 	 * Set the ipath.
