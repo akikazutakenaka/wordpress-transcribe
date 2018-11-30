@@ -387,69 +387,7 @@ class Requests {
 
 	// refactored. protected static function get_default_options($multirequest = false) {}
 	// :
-	// refactored. public static function set_certificate_path( $path ) {}
-
-	/**
-	 * Set the default values
-	 *
-	 * @param string $url URL to request
-	 * @param array $headers Extra headers to send with the request
-	 * @param array|null $data Data to send either as a query string for GET/HEAD requests, or in the body for POST requests
-	 * @param string $type HTTP request type
-	 * @param array $options Options for the request
-	 * @return array $options
-	 */
-	protected static function set_defaults(&$url, &$headers, &$data, &$type, &$options) {
-		if (!preg_match('/^http(s)?:\/\//i', $url, $matches)) {
-			throw new Requests_Exception('Only HTTP(S) requests are handled.', 'nonhttp', $url);
-		}
-
-		if (empty($options['hooks'])) {
-			$options['hooks'] = new Requests_Hooks();
-		}
-
-		if (is_array($options['auth'])) {
-			$options['auth'] = new Requests_Auth_Basic($options['auth']);
-		}
-		if ($options['auth'] !== false) {
-			$options['auth']->register($options['hooks']);
-		}
-
-		if (is_string($options['proxy']) || is_array($options['proxy'])) {
-			$options['proxy'] = new Requests_Proxy_HTTP($options['proxy']);
-		}
-		if ($options['proxy'] !== false) {
-			$options['proxy']->register($options['hooks']);
-		}
-
-		if (is_array($options['cookies'])) {
-			$options['cookies'] = new Requests_Cookie_Jar($options['cookies']);
-		}
-		elseif (empty($options['cookies'])) {
-			$options['cookies'] = new Requests_Cookie_Jar();
-		}
-		if ($options['cookies'] !== false) {
-			$options['cookies']->register($options['hooks']);
-		}
-
-		if ($options['idn'] !== false) {
-			$iri = new Requests_IRI($url);
-			$iri->host = Requests_IDNAEncoder::encode($iri->ihost);
-			$url = $iri->uri;
-		}
-
-		// Massage the type to ensure we support it.
-		$type = strtoupper($type);
-
-		if (!isset($options['data_format'])) {
-			if (in_array($type, array(self::HEAD, self::GET, self::DELETE))) {
-				$options['data_format'] = 'query';
-			}
-			else {
-				$options['data_format'] = 'body';
-			}
-		}
-	}
+	// refactored. protected static function set_defaults(&$url, &$headers, &$data, &$type, &$options) {}
 
 	/**
 	 * HTTP response parser
