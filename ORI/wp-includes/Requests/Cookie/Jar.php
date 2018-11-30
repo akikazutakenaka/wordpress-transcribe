@@ -86,16 +86,7 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate {
 		return new ArrayIterator($this->cookies);
 	}
 
-	/**
-	 * Register the cookie handler with the request's hooking system
-	 *
-	 * @param Requests_Hooker $hooks Hooking system
-	 */
-	public function register(Requests_Hooker $hooks) {
-		$hooks->register('requests.before_request', array($this, 'before_request'));
-		$hooks->register('requests.before_redirect_check', array($this, 'before_redirect_check'));
-	}
-
+	// refactored. public function register(Requests_Hooker $hooks) {}
 	// refactored. public function before_request($url, &$headers, &$data, &$type, &$options) {}
 
 	/**
