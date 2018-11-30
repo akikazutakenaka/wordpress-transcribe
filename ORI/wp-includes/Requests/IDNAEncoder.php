@@ -84,17 +84,7 @@ class Requests_IDNAEncoder {
 		throw new Requests_Exception('Encoded string is too long', 'idna.encoded_too_long', $string);
 	}
 
-	/**
-	 * Check whether a given string contains only ASCII characters
-	 *
-	 * @internal (Testing found regex was the fastest implementation)
-	 *
-	 * @param string $string
-	 * @return bool Is the string ASCII-only?
-	 */
-	protected static function is_ascii($string) {
-		return (preg_match('/(?:[^\x00-\x7F])/', $string) !== 1);
-	}
+	// refactored. protected static function is_ascii($string) {}
 
 	/**
 	 * Prepare a string for use as an IDNA name
