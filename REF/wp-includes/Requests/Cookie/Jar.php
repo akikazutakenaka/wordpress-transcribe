@@ -100,6 +100,10 @@ class Requests_Cookie_Jar implements ArrayAccess, IteratorAggregate
 
 				// Skip expired cookies.
 				if ( $cookie->is_expired() ) {
+					continue;
+				}
+
+				if ( $cookie->domain_matches( $url->host ) ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php

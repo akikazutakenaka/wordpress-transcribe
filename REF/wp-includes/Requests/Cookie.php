@@ -112,6 +112,52 @@ class Requests_Cookie
 	}
 
 	/**
+	 * Check if a cookie is valid for a given domain.
+	 *
+	 * @param  string $string Domain to check.
+	 * @return bool   Whether the cookie is valid for the given domain.
+	 */
+	public function domain_matches( $string )
+	{
+		if ( ! isset( $this->attributes['domain'] ) ) {
+			// Cookies created manually; cookies created by Requests will set the domain to the requested domain.
+			return TRUE;
+		}
+
+		$domain_string = $this->attributes['domain'];
+
+		if ( $domain_string === $string ) {
+			// The domain string and the string are identical.
+			return TRUE;
+		}
+
+		// If the cookie is marked as host-only and we don't have an exact match, reject the cookie.
+		if ( $this->flags['host-only'] === TRUE ) {
+			return FALSE;
+		}
+
+		if ( strlen( $string ) <= strlen( $domain_string ) ) {
+			// For obvious reasons, the string cannot be a suffix if the domain is shorter than the domain string.
+			return FALSE;
+		}
+
+		if ( substr( $string, -1 * strlen( $domain_string ) ) !== $domain_string ) {
+			// The domain string should be a suffix of the string.
+			return FALSE;
+		}
+
+		$prefix = substr( $string, 0, strlen( $string ) - strlen( $domain_string ) );
+
+		if ( substr( $prefix, -1 ) !== '.' ) {
+			// The last character of the string that is not included in the domain string should be a %x2E (".") character.
+			return FALSE;
+		}
+
+		// The string should be a host name (i.e., not an IP address).
+		return ! preg_match( '#^(.+\.)\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$#', $string );
+	}
+
+	/**
 	 * Normalize cookie and attributes.
 	 *
 	 * @return bool Whether the cookie was successfully normalized.
