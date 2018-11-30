@@ -419,25 +419,5 @@ class Requests_Transport_cURL implements Requests_Transport {
 		return $url;
 	}
 
-	/**
-	 * Whether this transport is valid
-	 *
-	 * @codeCoverageIgnore
-	 * @return boolean True if the transport is valid, false otherwise.
-	 */
-	public static function test($capabilities = array()) {
-		if (!function_exists('curl_init') || !function_exists('curl_exec')) {
-			return false;
-		}
-
-		// If needed, check that our installed curl version supports SSL
-		if (isset($capabilities['ssl']) && $capabilities['ssl']) {
-			$curl_version = curl_version();
-			if (!(CURL_VERSION_SSL & $curl_version['features'])) {
-				return false;
-			}
-		}
-
-		return true;
-	}
+	// refactored. public static function test($capabilities = array()) {}
 }
