@@ -11,28 +11,9 @@
  * @see https://tools.ietf.org/html/rfc3492 Punycode/Bootstrap specification
  */
 class Requests_IDNAEncoder {
-	/**
-	 * ACE prefix used for IDNA
-	 *
-	 * @see https://tools.ietf.org/html/rfc3490#section-5
-	 * @var string
-	 */
-	const ACE_PREFIX = 'xn--';
-
-	/**#@+
-	 * Bootstrap constant for Punycode
-	 *
-	 * @see https://tools.ietf.org/html/rfc3492#section-5
-	 * @var int
-	 */
-	const BOOTSTRAP_BASE         = 36;
-	const BOOTSTRAP_TMIN         = 1;
-	const BOOTSTRAP_TMAX         = 26;
-	const BOOTSTRAP_SKEW         = 38;
-	const BOOTSTRAP_DAMP         = 700;
-	const BOOTSTRAP_INITIAL_BIAS = 72;
-	const BOOTSTRAP_INITIAL_N    = 128;
-	/**#@-*/
+	// refactored. const ACE_PREFIX = 'xn--';
+	// :
+	// refactored. const BOOTSTRAP_INITIAL_N    = 128;
 
 	/**
 	 * Encode a hostname using Punycode

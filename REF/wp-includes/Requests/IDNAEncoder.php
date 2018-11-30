@@ -1,6 +1,42 @@
 <?php
 
 /**
+ * IDNA URL encoder.
+ *
+ * Note: Not fully compliant, as nameprep does nothing yet.
+ *
+ * @package    Requests
+ * @subpackage Utilities
+ * @see        https://tools.ietf.org/html/rfc3490 IDNA specification
+ * @see        https://tools.ietf.org/html/rfc3492 Punycode/Bootstrap specification
+ */
+class Requests_IDNAEncoder
+{
+	/**
+	 * ACE prefix used for IDNA.
+	 *
+	 * @see https://tools.ietf.org/html/rfc3490#section-5
+	 *
+	 * @var string
+	 */
+	const ACE_PREFIX = 'xn--';
+
+	/**
+	 * Bootstrap constant for Punycode.
+	 *
+	 * @see https://tools.ietf.org/html/rfc3492#section-5
+	 *
+	 * @var int
+	 */
+	const BOOTSTRAP_BASE         = 36;
+	const BOOTSTRAP_TMIN         = 1;
+	const BOOTSTRAP_TMAX         = 26;
+	const BOOTSTRAP_SKEW         = 38;
+	const BOOTSTRAP_DAMP         = 700;
+	const BOOTSTRAP_INITIAL_BIAS = 72;
+	const BOOTSTRAP_INITIAL_N    = 128;
+
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -15,5 +51,6 @@
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-requests.php: Requests::set_defaults( &string $url, &array $headers, &array|null $data, &string $type, &array $options )
- * @NOW 015: wp-includes/Requests/IDNAEncoder.php: Requests/IDNAEncoder
+ * @NOW 015: wp-includes/Requests/IDNAEncoder.php: Requests/IDNAEncoder::encode( string $string )
  */
+}
