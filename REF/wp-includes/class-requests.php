@@ -137,6 +137,49 @@ class Requests
 	}
 
 	/**
+	 * Get a working transport.
+	 *
+	 * @throws Requests_Exception If no valid transport is found (`notransport`)
+	 *
+	 * @return Requests_Transport
+	 */
+	protected static function get_transport( $capabilities = array() )
+	{
+		/**
+		 * Caching code, don't bother testing coverage.
+		 * Array of capabilities as a string to be used as an array key.
+		 */
+		ksort( $capabilities );
+		$cap_string = serialize( $capabilities );
+
+		// Don't search for a transport if it's already been done for these $capabilities.
+		if ( isset( self::$transport[ $cap_string ] ) && self::$transport[ $cap_string ] !== NULL ) {
+			return new self::$transport[ $cap_string ]();
+		}
+
+		if ( empty( self::$transports ) ) {
+			self::$transports = array( 'Requests_Transport_cURL', 'Requests_Transport_fsockopen' );
+		}
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * @NOW 014: wp-includes/class-requests.php: Requests::get_transport( [array $capabilities = array()] )
+ * ......->: wp-includes/Requests/Transport/cURL.php: Requests_Transport_cURL
+ */
+	}
+
+	/**
 	 * Main interface for HTTP requests.
 	 *
 	 * This method initiates a request and sends it via a transport before parsing.
@@ -199,6 +242,17 @@ class Requests
 		$options = array_merge( self::get_default_options(), $options );
 		self::set_defaults( $url, $headers, $data, $type, $options );
 		$options['hooks']->dispatch( 'requests.before_request', array( &$url, &$headers, &$data, &$type, &$options ) );
+
+		if ( ! empty( $options['transport'] ) ) {
+			$transport = $options['transport'];
+
+			if ( is_string( $options['transport'] ) ) {
+				$transport = new $transport();
+			}
+		} else {
+			$need_ssl = 0 === stripos( $url, 'https://' );
+			$capabilities = array( 'ssl' => $need_ssl );
+			$transport = self::get_transport( $capabilities );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -213,7 +267,9 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * ......->: wp-includes/class-requests.php: Requests::get_transport( [array $capabilities = array()] )
  */
+		}
 	}
 
 	/**
