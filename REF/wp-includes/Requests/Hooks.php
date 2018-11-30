@@ -73,7 +73,6 @@ class Requests_Hooks implements Requests_Hooker
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/class-wp-http-requests-hooks.php: WP_HTTP_Requests::dispatch( string $hook [, array $parameters = array()] )
  * @NOW 015: wp-includes/Requests/Hooks.php: Requests_Hooks::dispatch( string $hook [, array $parameters = array()] )
- * ......->: wp-includes/Requests/Hooker.php: Requests_Hooker::dispatch( string $hook [, array $parameters = array()] )
  */
 	}
 }
