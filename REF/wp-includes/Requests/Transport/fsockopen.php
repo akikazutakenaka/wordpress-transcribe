@@ -203,7 +203,7 @@ class Requests_Transport_fsockopen implements Requests_Transport
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/Requests/Transport/fsockopen.php: Requests_Transport_fsockopen::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  * @NOW 015: wp-includes/Requests/Transport/fsockopen.php: verify_certificate_from_context( string $host, resource $context )
- * ......->: wp-includes/Requests/SSL.php: Requests_SSL
+ * ......->: wp-includes/Requests/SSL.php: Requests_SSL::verity_certificate( string $host, array $cert )
  */
 
 	/**

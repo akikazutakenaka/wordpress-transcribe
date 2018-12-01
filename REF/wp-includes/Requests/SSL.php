@@ -7,6 +7,16 @@
  */
 
 /**
+ * SSL utilities for Requests.
+ *
+ * Collection of utilities for working with and verifying SSL certificates.
+ *
+ * @package    Requests
+ * @subpackage Utilities
+ */
+class Requests_SSL
+{
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -22,5 +32,6 @@
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * <-......: wp-includes/Requests/Transport/fsockopen.php: Requests_Transport_fsockopen::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  * <-......: wp-includes/Requests/Transport/fsockopen.php: verify_certificate_from_context( string $host, resource $context )
- * @NOW 016: wp-includes/Requests/SSL.php: Requests_SSL
+ * @NOW 016: wp-includes/Requests/SSL.php: Requests_SSL::verity_certificate( string $host, array $cert )
  */
+}
