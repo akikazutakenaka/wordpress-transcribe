@@ -136,6 +136,48 @@ class Requests_Transport_cURL implements Requests_Transport
 	{
 		$this->hooks = $options['hooks'];
 		$this->setup_handle( $url, $headers, $data, $options );
+		$options['hooks']->dispatch( 'curl.before_send', array( &$this->handle ) );
+
+		if ( $options['filename'] !== FALSE ) {
+			$this->stream_handle = fopen( $options['filename'], 'wb' );
+		}
+
+		$this->response_data = '';
+		$this->response_bytes = 0;
+		$this->response_byte_limit = FALSE;
+
+		if ( $options['max_bytes'] !== FALSE ) {
+			$this->response_byte_limit = $options['max_bytes'];
+		}
+
+		if ( isset( $options['verify'] ) ) {
+			if ( $options['verify'] === FALSE ) {
+				curl_setopt( $this->handle, CURLOPT_SSL_VERIFYHOST, 0 );
+				curl_setopt( $this->handle, CURLOPT_SSL_VERIFYPEER, 0 );
+			} elseif ( is_string( $options['verify'] ) ) {
+				curl_setopt( $this->handle, CURLOPT_CAINFO, $options['verify'] );
+			}
+		}
+
+		if ( isset( $options['verifyname'] ) && $options['verifyname'] === FALSE ) {
+			curl_setopt( $this->handle, CURLOPT_SSL_VERIFYHOST, 0 );
+		}
+
+		curl_exec( $this->handle );
+		$response = $this->response_data;
+		$options['hooks']->dispatch( 'curl.after_send', array() );
+
+		if ( curl_errno( $this->handle ) === 23 || curl_errno( $this->handle ) === 61 ) {
+			// Reset encoding and try again.
+			curl_setopt( $this->handle, CURLOPT_ENCODING, 'none' );
+
+			$this->response_data = '';
+			$this->response_bytes = 0;
+			curl_exec( $this->handle );
+			$response = $this->response_data;
+		}
+
+		$this->process_response( $response, $options );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -250,6 +292,38 @@ class Requests_Transport_cURL implements Requests_Transport
 			curl_setopt( $this->handle, CURLOPT_WRITEFUNCTION, array( &$this, 'stream_body' ) );
 			curl_setopt( $this->handle, CURLOPT_BUFFERSIZE, Requests::BUFFER_SIZE );
 		}
+	}
+
+	/**
+	 * Process a response.
+	 *
+	 * @param  string $response Response data from the body.
+	 * @param  array  $options  Request options.
+	 * @return string HTTP response data inclduing headers.
+	 */
+	public function process_response( $response, $options )
+	{
+		if ( $options['blocking'] === FALSE ) {
+			$fake_headers = '';
+			$options['hooks']->dispatch( 'curl.after_request', array( &$fake_headers ) );
+			return FALSE;
+		}
+
+		if ( $options['filename'] !== FALSE ) {
+			fclose( $this->stream_handle );
+			$this->headers = trim( $this->headers );
+		} else {
+			$this->headers .= $response;
+		}
+
+		if ( curl_errno( $this->handle ) ) {
+			$error = sprintf( 'cURL error %s: %s', curl_errno( $this->handle ), curl_error( $this->handle ) );
+			throw new Requests_Exception( $error, 'curlerror', $this->handle );
+		}
+
+		$this->info = curl_getinfo( $this->handle );
+		$options['hooks']->dispatch( 'curl.after_request', array( &$this->headers, &$this->info ) );
+		return $this->headers;
 	}
 
 	/**

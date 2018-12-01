@@ -200,43 +200,6 @@ class Requests_Transport_cURL implements Requests_Transport {
 	}
 
 	// refactored. protected function setup_handle($url, $headers, $data, $options) {}
-
-	/**
-	 * Process a response
-	 *
-	 * @param string $response Response data from the body
-	 * @param array $options Request options
-	 * @return string HTTP response data including headers
-	 */
-	public function process_response($response, $options) {
-		if ($options['blocking'] === false) {
-			$fake_headers = '';
-			$options['hooks']->dispatch('curl.after_request', array(&$fake_headers));
-			return false;
-		}
-		if ($options['filename'] !== false) {
-			fclose($this->stream_handle);
-			$this->headers = trim($this->headers);
-		}
-		else {
-			$this->headers .= $response;
-		}
-
-		if (curl_errno($this->handle)) {
-			$error = sprintf(
-				'cURL error %s: %s',
-				curl_errno($this->handle),
-				curl_error($this->handle)
-			);
-			throw new Requests_Exception($error, 'curlerror', $this->handle);
-		}
-		$this->info = curl_getinfo($this->handle);
-
-		$options['hooks']->dispatch('curl.after_request', array(&$this->headers, &$this->info));
-		return $this->headers;
-	}
-
-	// refactored. public function stream_headers($handle, $headers) {}
 	// :
 	// refactored. public static function test($capabilities = array()) {}
 }
