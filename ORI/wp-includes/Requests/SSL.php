@@ -72,50 +72,7 @@ class Requests_SSL {
 		return false;
 	}
 
-	/**
-	 * Verify that a reference name is valid
-	 *
-	 * Verifies a dNSName for HTTPS usage, (almost) as per Firefox's rules:
-	 * - Wildcards can only occur in a name with more than 3 components
-	 * - Wildcards can only occur as the last character in the first
-	 *   component
-	 * - Wildcards may be preceded by additional characters
-	 *
-	 * We modify these rules to be a bit stricter and only allow the wildcard
-	 * character to be the full first component; that is, with the exclusion of
-	 * the third rule.
-	 *
-	 * @param string $reference Reference dNSName
-	 * @return boolean Is the name valid?
-	 */
-	public static function verify_reference_name($reference) {
-		$parts = explode('.', $reference);
-
-		// Check the first part of the name
-		$first = array_shift($parts);
-
-		if (strpos($first, '*') !== false) {
-			// Check that the wildcard is the full part
-			if ($first !== '*') {
-				return false;
-			}
-
-			// Check that we have at least 3 components (including first)
-			if (count($parts) < 2) {
-				return false;
-			}
-		}
-
-		// Check the remaining parts
-		foreach ($parts as $part) {
-			if (strpos($part, '*') !== false) {
-				return false;
-			}
-		}
-
-		// Nothing found, verified!
-		return true;
-	}
+	// refactored. public static function verify_reference_name($reference) {}
 
 	/**
 	 * Match a hostname against a dNSName reference

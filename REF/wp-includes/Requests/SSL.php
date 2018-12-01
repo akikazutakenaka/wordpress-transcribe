@@ -82,26 +82,48 @@ class Requests_SSL
 		}
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * <-......: wp-includes/Requests/Transport/fsockopen.php: Requests_Transport_fsockopen::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
- * <-......: wp-includes/Requests/Transport/fsockopen.php: verify_certificate_from_context( string $host, resource $context )
- * <-......: wp-includes/Requests/SSL.php: Requests_SSL::verity_certificate( string $host, array $cert )
- * <-......: wp-includes/Requests/SSL.php: Requests_SSL::match_domain( string $host, string $reference )
- * @NOW 018: wp-includes/Requests/SSL.php: Requests_SSL::verify_reference_name( string $reference )
- */
+	/**
+	 * Verify that a reference name is valid.
+	 *
+	 * Verifies a DNS name for HTTPS usage, (almost) as per Firefox's rules:
+	 * - Wildcards can only occur in a name with more than 3 components.
+	 * - Wildcards can only occur as the last character in the first component.
+	 * - Wildcards may be preceded by additional characters.
+	 *
+	 * We modify these rules to be a bit stricter and only allow the wildcard character to be the full first component; that is, with the exclusion of the third rule.
+	 *
+	 * @param  string $reference Reference DNS name.
+	 * @return bool   Is the name valid?
+	 */
+	public static function verify_reference_name( $reference )
+	{
+		$parts = explode( '.', $reference );
+
+		// Check the first part of the name.
+		$first = array_shift( $parts );
+
+		if ( strpos( $first, '*' ) !== FALSE ) {
+			// Check that the wildcard is the full part.
+			if ( $first !== '*' ) {
+				return FALSE;
+			}
+
+			// Check that we have at least 3 components (including first).
+			if ( count( $parts ) < 2 ) {
+				return FALSE;
+			}
+		}
+
+		// Check the remaining parts.
+		foreach ( $parts as $part ) {
+			if ( strpos( $part, '*' ) !== FALSE ) {
+				return FALSE;
+			}
+		}
+
+		// Nothing found, verified!
+		return TRUE;
+	}
 
 	/**
 	 * Match a hostname against a DNS name reference.
@@ -132,7 +154,6 @@ class Requests_SSL
  * <-......: wp-includes/Requests/Transport/fsockopen.php: verify_certificate_from_context( string $host, resource $context )
  * <-......: wp-includes/Requests/SSL.php: Requests_SSL::verity_certificate( string $host, array $cert )
  * @NOW 017: wp-includes/Requests/SSL.php: Requests_SSL::match_domain( string $host, string $reference )
- * ......->: wp-includes/Requests/SSL.php: Requests_SSL::verify_reference_name( string $reference )
  */
 		}
 	}
