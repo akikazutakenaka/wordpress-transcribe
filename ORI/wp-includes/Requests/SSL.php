@@ -73,37 +73,5 @@ class Requests_SSL {
 	}
 
 	// refactored. public static function verify_reference_name($reference) {}
-
-	/**
-	 * Match a hostname against a dNSName reference
-	 *
-	 * @param string $host Requested host
-	 * @param string $reference dNSName to match against
-	 * @return boolean Does the domain match?
-	 */
-	public static function match_domain($host, $reference) {
-		// Check if the reference is blacklisted first
-		if (self::verify_reference_name($reference) !== true) {
-			return false;
-		}
-
-		// Check for a direct match
-		if ($host === $reference) {
-			return true;
-		}
-
-		// Calculate the valid wildcard match if the host is not an IP address
-		// Also validates that the host has 3 parts or more, as per Firefox's
-		// ruleset.
-		if (ip2long($host) === false) {
-			$parts = explode('.', $host);
-			$parts[0] = '*';
-			$wildcard = implode('.', $parts);
-			if ($wildcard === $reference) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+	// refactored. public static function match_domain($host, $reference) {}
 }
