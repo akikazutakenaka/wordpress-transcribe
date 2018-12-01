@@ -15,75 +15,7 @@
 class Requests_Transport_cURL implements Requests_Transport {
 	// refactored. const CURL_7_10_5 = 0x070A05;
 	// :
-	// refactored. public function __destruct() {}
-
-	/**
-	 * Perform a request
-	 *
-	 * @throws Requests_Exception On a cURL error (`curlerror`)
-	 *
-	 * @param string $url URL to request
-	 * @param array $headers Associative array of request headers
-	 * @param string|array $data Data to send either as the POST body, or as parameters in the URL for a GET/HEAD
-	 * @param array $options Request options, see {@see Requests::response()} for documentation
-	 * @return string Raw HTTP result
-	 */
-	public function request($url, $headers = array(), $data = array(), $options = array()) {
-		$this->hooks = $options['hooks'];
-
-		$this->setup_handle($url, $headers, $data, $options);
-
-		$options['hooks']->dispatch('curl.before_send', array(&$this->handle));
-
-		if ($options['filename'] !== false) {
-			$this->stream_handle = fopen($options['filename'], 'wb');
-		}
-
-		$this->response_data = '';
-		$this->response_bytes = 0;
-		$this->response_byte_limit = false;
-		if ($options['max_bytes'] !== false) {
-			$this->response_byte_limit = $options['max_bytes'];
-		}
-
-		if (isset($options['verify'])) {
-			if ($options['verify'] === false) {
-				curl_setopt($this->handle, CURLOPT_SSL_VERIFYHOST, 0);
-				curl_setopt($this->handle, CURLOPT_SSL_VERIFYPEER, 0);
-			}
-			elseif (is_string($options['verify'])) {
-				curl_setopt($this->handle, CURLOPT_CAINFO, $options['verify']);
-			}
-		}
-
-		if (isset($options['verifyname']) && $options['verifyname'] === false) {
-			curl_setopt($this->handle, CURLOPT_SSL_VERIFYHOST, 0);
-		}
-
-		curl_exec($this->handle);
-		$response = $this->response_data;
-
-		$options['hooks']->dispatch('curl.after_send', array());
-
-		if (curl_errno($this->handle) === 23 || curl_errno($this->handle) === 61) {
-			// Reset encoding and try again
-			curl_setopt($this->handle, CURLOPT_ENCODING, 'none');
-
-			$this->response_data = '';
-			$this->response_bytes = 0;
-			curl_exec($this->handle);
-			$response = $this->response_data;
-		}
-
-		$this->process_response($response, $options);
-
-		// Need to remove the $this reference from the curl handle.
-		// Otherwise Requests_Transport_cURL wont be garbage collected and the curl_close() will never be called.
-		curl_setopt($this->handle, CURLOPT_HEADERFUNCTION, null);
-		curl_setopt($this->handle, CURLOPT_WRITEFUNCTION, null);
-
-		return $this->headers;
-	}
+	// refactored. public function request($url, $headers = array(), $data = array(), $options = array()) {}
 
 	/**
 	 * Send multiple requests simultaneously
