@@ -344,22 +344,7 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 		return $get;
 	}
 
-	/**
-	 * Error handler for stream_socket_client()
-	 *
-	 * @param int $errno Error number (e.g. E_WARNING)
-	 * @param string $errstr Error message
-	 */
-	public function connect_error_handler($errno, $errstr) {
-		// Double-check we can handle it
-		if (($errno & E_WARNING) === 0 && ($errno & E_NOTICE) === 0) {
-			// Return false to indicate the default error handler should engage
-			return false;
-		}
-
-		$this->connect_error .= $errstr . "\n";
-		return true;
-	}
+	// refactored. public function connect_error_handler($errno, $errstr) {}
 
 	/**
 	 * Verify the certificate against common name and subject alternative names
