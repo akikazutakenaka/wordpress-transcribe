@@ -124,6 +124,22 @@ class Requests_Transport_fsockopen implements Requests_Transport
 		restore_error_handler();
 
 		if ( $verifyname && ! $this->verify_certificate_from_context( $host, $context ) ) {
+			throw new Requests_Exception( 'SSL certificate did not match the requeted domain name', 'ssl.no_match' );
+		}
+
+		if ( ! $socket ) {
+			if ( $errno === 0 ) {
+				// Connection issue.
+				throw new Requests_Exception( rtrim( $this->connect_error ), 'fsockopen.connect_error' );
+			}
+
+			throw new Requests_Exception( $errstr, 'fsockopenerror', NULL, $errno );
+		}
+
+		$data_format = $options['data_format'];
+
+		if ( $data_format === 'query' ) {
+			$path = self::format_get( $url_parts, $data );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -141,6 +157,33 @@ class Requests_Transport_fsockopen implements Requests_Transport
  * @NOW 014: wp-includes/Requests/Transport/fsockopen.php: Requests_Transport_fsockopen::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  */
 		}
+	}
+
+	/**
+	 * Format a URL given GET data.
+	 *
+	 * @param  array        $url_parts
+	 * @param  array|object $data      Data to build query using, see {@see https://secure.php.net/http_build_query}.
+	 * @return string       URL with data.
+	 */
+	protected static function format_get( $url_parts, $data )
+	{
+		if ( ! empty( $data ) ) {
+			if ( empty( $url_parts['query'] ) ) {
+				$url_parts['query'] = '';
+			}
+
+			$url_parts['query'] .= '&' . http_build_query( $data, NULL, '&' );
+			$url_parts['query'] = trim( $url_parts['query'], '&' );
+		}
+
+		$get = isset( $url_parts['path'] )
+			? ( isset( $url_parts['query'] )
+				? $url_parts['path'] . '?' . $url_parts['query']
+				: $url_parts['path'] )
+			: '/';
+
+		return $get;
 	}
 
 	/**

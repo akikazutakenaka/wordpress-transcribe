@@ -314,37 +314,7 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 		return implode(', ', $type);
 	}
 
-	/**
-	 * Format a URL given GET data
-	 *
-	 * @param array $url_parts
-	 * @param array|object $data Data to build query using, see {@see https://secure.php.net/http_build_query}
-	 * @return string URL with data
-	 */
-	protected static function format_get($url_parts, $data) {
-		if (!empty($data)) {
-			if (empty($url_parts['query'])) {
-				$url_parts['query'] = '';
-			}
-
-			$url_parts['query'] .= '&' . http_build_query($data, null, '&');
-			$url_parts['query'] = trim($url_parts['query'], '&');
-		}
-		if (isset($url_parts['path'])) {
-			if (isset($url_parts['query'])) {
-				$get = $url_parts['path'] . '?' . $url_parts['query'];
-			}
-			else {
-				$get = $url_parts['path'];
-			}
-		}
-		else {
-			$get = '/';
-		}
-		return $get;
-	}
-
-	// refactored. public function connect_error_handler($errno, $errstr) {}
+	// refactored. protected static function format_get($url_parts, $data) {}
 	// :
 	// refactored. public static function test($capabilities = array()) {}
 }
