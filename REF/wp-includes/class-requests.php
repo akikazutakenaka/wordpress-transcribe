@@ -386,6 +386,23 @@ class Requests
 		}
 	}
 
+	/**
+	 * HTTP respose parser.
+	 *
+	 * @throws Requests_Exception On missing head/body separator (`requests.no_crlf_separator`)
+	 * @throws Requests_Exception On missing head/body separator (`noversion`)
+	 * @throws Requests_Exception On missing head/body separator (`toomanyredirects`)
+	 *
+	 * @param  string            $headers     Full response text including headers and body.
+	 * @param  string            $url         Original request URL.
+	 * @param  array             $req_headers Original $headers array passed to {@link request()}, in case we need to follow redirects.
+	 * @param  array             $req_data    Original $data array passed to {@link request()}, in case we need to follow redirects.
+	 * @param  array             $options     Original $options array passed to {@link request()}, in case we need to follow redirects.
+	 * @return Requests_Response
+	 */
+	protected static function parse_response( $headers, $url, $req_headers, $req_data, $options )
+	{
+		$return = new Requests_Response();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -400,7 +417,9 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ * ......->: wp-includes/Requests/Response.php: Requests_Response
  */
+	}
 
 	/**
 	 * Convert a key => value to a 'key: value' array for headers.
