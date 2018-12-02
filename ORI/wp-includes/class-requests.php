@@ -404,37 +404,7 @@ class Requests {
 		return self::flatten($array);
 	}
 
-	/**
-	 * Decompress an encoded body
-	 *
-	 * Implements gzip, compress and deflate. Guesses which it is by attempting
-	 * to decode.
-	 *
-	 * @param string $data Compressed data in one of the above formats
-	 * @return string Decompressed string
-	 */
-	public static function decompress($data) {
-		if (substr($data, 0, 2) !== "\x1f\x8b" && substr($data, 0, 2) !== "\x78\x9c") {
-			// Not actually compressed. Probably cURL ruining this for us.
-			return $data;
-		}
-
-		if (function_exists('gzdecode') && ($decoded = @gzdecode($data)) !== false) {
-			return $decoded;
-		}
-		elseif (function_exists('gzinflate') && ($decoded = @gzinflate($data)) !== false) {
-			return $decoded;
-		}
-		elseif (($decoded = self::compatible_gzinflate($data)) !== false) {
-			return $decoded;
-		}
-		elseif (function_exists('gzuncompress') && ($decoded = @gzuncompress($data)) !== false) {
-			return $decoded;
-		}
-
-		return $data;
-	}
-
+	// refactored. public static function decompress($data) {}
 	// refactored. public static function compatible_gzinflate($gzData) {}
 
 	public static function match_domain($host, $reference) {
