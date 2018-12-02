@@ -121,6 +121,20 @@ class Requests_IRI
 		}
 
 		if ( ! $relative->is_valid() ) {
+			return FALSE;
+		} elseif ( $relative->scheme !== NULL ) {
+			return clone $relative;
+		}
+
+		if ( ! ( $base instanceof Requests_IRI ) ) {
+			$base = new Requests_IRI( $base );
+		}
+
+		if ( $base->scheme === NULL || ! $base->is_valid() ) {
+			return FALSE;
+		}
+
+		if ( $relative->get_iri() !== '' ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -136,6 +150,7 @@ class Requests_IRI
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
  * @NOW 014: wp-includes/Requests/IRI.php: Requests_IRI::absolutize( IRI|string $base, IRI|string $relative )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::get_iri()
  */
 		}
 	}
@@ -743,4 +758,62 @@ class Requests_IRI
 
 		return TRUE;
 	}
+
+	/**
+	 * Get the complete IRI.
+	 *
+	 * @return string
+	 */
+	protected function get_iri()
+	{
+		if ( ! $this->is_valid() ) {
+			return FALSE;
+		}
+
+		$iri = '';
+
+		if ( $this->scheme !== NULL ) {
+			$iri .= $this->scheme . ':';
+		}
+
+		if ( ( $iauthority = $this->get_iauthority() ) !== NULL ) {
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ * <-......: wp-includes/Requests/IRI.php: Requests_IRI::absolutize( IRI|string $base, IRI|string $relative )
+ * @NOW 015: wp-includes/Requests/IRI.php: Requests_IRI::get_iri()
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::get_iauthority()
+ */
+		}
+	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ * <-......: wp-includes/Requests/IRI.php: Requests_IRI::absolutize( IRI|string $base, IRI|string $relative )
+ * <-......: wp-includes/Requests/IRI.php: Requests_IRI::get_iri()
+ * @NOW 016: wp-includes/Requests/IRI.php: Requests_IRI::get_iauthority()
+ */
 }
