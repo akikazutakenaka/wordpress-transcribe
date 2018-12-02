@@ -1,37 +1,11 @@
 <?php
 /**
- * HTTP API: WP_HTTP_Requests_Response class
+ * HTTP API: WP_HTTP_Response class
  *
  * @package    WordPress
  * @subpackage HTTP
- * @since      4.6.0
+ * @since      4.4.0
  */
-
-/**
- * Core wrapper object for a Requests_Response for standardisation.
- *
- * @since 4.6.0
- * @see   WP_HTTP_Response
- */
-class WP_HTTP_Requests_Response extends WP_HTTP_Response
-{
-	/**
-	 * Requests Response object.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @var Requests_Response
-	 */
-	protected $response;
-
-	/**
-	 * Filename the response was saved to.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @var string|null
-	 */
-	protected $filename;
 
 /**
  * <-......: wp-blog-header.php
@@ -46,7 +20,6 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response
- * ......->: wp-includes/class-wp-http-response.php: WP_HTTP_Response
+ * <-......: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response
+ * @NOW 014: wp-includes/class-wp-http-response.php: WP_HTTP_Response
  */
-}

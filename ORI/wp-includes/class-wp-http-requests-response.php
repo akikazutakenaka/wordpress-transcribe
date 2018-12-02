@@ -15,21 +15,8 @@
  * @see WP_HTTP_Response
  */
 class WP_HTTP_Requests_Response extends WP_HTTP_Response {
-	/**
-	 * Requests Response object.
-	 *
-	 * @since 4.6.0
-	 * @var Requests_Response
-	 */
-	protected $response;
-
-	/**
-	 * Filename the response was saved to.
-	 *
-	 * @since 4.6.0
-	 * @var string|null
-	 */
-	protected $filename;
+	// refactored. protected $response;
+	// refactored. protected $filename;
 
 	/**
 	 * Constructor.
