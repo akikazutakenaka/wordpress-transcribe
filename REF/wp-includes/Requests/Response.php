@@ -94,4 +94,15 @@ class Requests_Response
 		$this->headers = new Requests_Response_Headers();
 		$this->cookies = new Requests_Cookie_Jar();
 	}
+
+	/**
+	 * Is the response a redirect?
+	 *
+	 * @return bool True if redirect (3xx status), false if not.
+	 */
+	public function is_redirect()
+	{
+		$code = $this->status_code;
+		return in_array( $code, array( 300, 301, 302, 303, 307 ) ) || $code > 307 && $code < 400;
+	}
 }

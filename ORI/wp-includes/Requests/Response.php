@@ -15,17 +15,7 @@
 class Requests_Response {
 	// refactored. public function __construct() {}
 	// :
-	// refactored. public $cookies = array();
-
-	/**
-	 * Is the response a redirect?
-	 *
-	 * @return boolean True if redirect (3xx status), false if not.
-	 */
-	public function is_redirect() {
-		$code = $this->status_code;
-		return in_array($code, array(300, 301, 302, 303, 307)) || $code > 307 && $code < 400;
-	}
+	// refactored. public function is_redirect() {}
 
 	/**
 	 * Throws an exception if the request was not successful

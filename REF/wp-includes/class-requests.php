@@ -455,6 +455,16 @@ class Requests
 
 		if ( isset( $return->headers['content-encoding'] ) ) {
 			$return->body = self::decompress( $return->body );
+		}
+
+		// fsockopen and cURL compatibility.
+		if ( isset( $return->headers['connection'] ) ) {
+			unset( $return->headers['connection'] );
+		}
+
+		$options['hooks']->dispatch( 'requests.before_redirect_check', array( &$return, $req_headers, $req_data, $options ) );
+
+		if ( $return->is_redirect() && $options['follow_redirects'] === TRUE ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
