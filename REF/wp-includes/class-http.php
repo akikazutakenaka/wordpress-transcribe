@@ -402,7 +402,7 @@ class WP_Http
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * ......->: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
+ * ......->: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
  */
 		}
 	}

@@ -259,21 +259,8 @@ class Requests
 		}
 
 		$response = $transport->request( $url, $headers, $data, $options );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- */
+		$options['hooks']->dispatch( 'requests.before_parse', array( &$response, $url, $headers, $data, $type, $options ) );
+		return self::parse_response( $response, $url, $headers, $data, $options );
 	}
 
 	/**
@@ -398,6 +385,22 @@ class Requests
 				: 'body';
 		}
 	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * @NOW 013: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ */
 
 	/**
 	 * Convert a key => value to a 'key: value' array for headers.
