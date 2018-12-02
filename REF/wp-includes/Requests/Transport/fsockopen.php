@@ -181,22 +181,113 @@ class Requests_Transport_fsockopen implements Requests_Transport
 		}
 
 		$accept_encoding = $this->accept_encoding();
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
- * @NOW 014: wp-includes/Requests/Transport/fsockopen.php: Requests_Transport_fsockopen::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
- */
+
+		if ( ! isset( $case_insensitive_headers['Accept-Encoding'] ) && ! empty( $accept_encoding ) ) {
+			$out .= sprintf( "Accept-Encoding: %s\r\n", $accept_encoding );
+		}
+
+		$headers = Requests::flatten( $headers );
+
+		if ( ! empty( $headers ) ) {
+			$out .= implode( $headers, "\r\n" ) . "\r\n";
+		}
+
+		$options['hooks']->dispatch( 'fsockopen.after_headers', array( &$out ) );
+
+		if ( substr( $out, -2 ) !== "\r\n" ) {
+			$out .= "\r\n";
+		}
+
+		if ( ! isset( $case_insensitive_headers['Connection'] ) ) {
+			$out .= "Connection: Close\r\n";
+		}
+
+		$out .= "\r\n" . $request_body;
+		$options['hooks']->dispatch( 'fsockopen.before_send', array( &$out ) );
+		fwrite( $socket, $out );
+		$options['hooks']->dispatch( 'fsockopen.after_send', array( $out ) );
+
+		if ( ! $options['blocking'] ) {
+			fclose( $socket );
+			$fake_headers = '';
+			$options['hooks']->dispatch( 'fsockopen.after_request', array( &$fake_headers ) );
+			return '';
+		}
+
+		$timeout_sec = ( int ) floor( $options['timeout'] );
+
+		$timeout_msec = $timeout_sec == $options['timeout']
+			? 0
+			: self::SECOND_IN_MICROSECONDS * $options['timeout'] % self::SECOND_IN_MICROSECONDS;
+
+		stream_set_timeout( $socket, $timeout_sec, $itmeout_msec );
+		$response = $body = $headers = '';
+		$this->info = stream_get_meta_data( $socket );
+		$size = 0;
+		$doingbody = FALSE;
+		$download = FALSE;
+
+		if ( $options['filename'] ) {
+			$download = fopen( $options['filename'], 'wb' );
+		}
+
+		while ( ! feof( $socket ) ) {
+			$this->info = stream_get_meta_data( $socket );
+
+			if ( $this->info['timed_out'] ) {
+				throw new Requests_Exception( 'fsocket timed out', 'timeout' );
+			}
+
+			$block = fread( $socket, Requests::BUFFER_SIZE );
+
+			if ( ! $doingbody ) {
+				$response .= $block;
+
+				if ( strpos( $response, "\r\n\r\n" ) ) {
+					list( $headers, $block ) = explode( "\r\n\r\n", $response, 2 );
+					$doingbody = TRUE;
+				}
+			}
+
+			// Are we in body mode now?
+			if ( $doingbody ) {
+				$options['hooks']->dispatch( 'request.progress', array( $block, $size, $this->max_bytes ) );
+				$data_length = strlen( $block );
+
+				if ( $this->max_bytes ) {
+					// Have we already hit a limit?
+					if ( $size === $this->max_bytes ) {
+						continue;
+					}
+
+					if ( ( $size + $data_length ) > $this->max_bytes ) {
+						// Limit the length.
+						$limited_length = ( $this->max_bytes - $size );
+						$block = substr( $block, 0, $limited_length );
+					}
+				}
+
+				$size += strlen( $block );
+
+				if ( $download ) {
+					fwrite( $download, $block );
+				} else {
+					$body .= $block;
+				}
+			}
+		}
+
+		$this->headers = $headers;
+
+		if ( $download ) {
+			fclose( $download );
+		} else {
+			$this->headers .= "\r\n\r\n" . $body;
+		}
+
+		fclose( $socket );
+		$options['hooks']->dispatch( 'fsockopen.after_request', array( &$this->headers, &$this->info ) );
+		return $this->headers;
 	}
 
 	/**
