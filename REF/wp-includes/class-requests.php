@@ -417,7 +417,7 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
- * ......->: wp-includes/Requests/Response.php: Requests_Response
+ * ......->: wp-includes/Requests/Response.php: Requests_Response::__construct()
  */
 	}
 
