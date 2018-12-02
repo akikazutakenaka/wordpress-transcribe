@@ -136,7 +136,6 @@ class Requests_IRI
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
  * @NOW 014: wp-includes/Requests/IRI.php: Requests_IRI::absolutize( IRI|string $base, IRI|string $relative )
- * ......->: wp-includes/Requests/IRI.php: Requests_IRI::is_valid()
  */
 		}
 	}
@@ -464,23 +463,25 @@ class Requests_IRI
 		}
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
- * <-......: wp-includes/Requests/IRI.php: Requests_IRI::absolutize( IRI|string $base, IRI|string $relative )
- * @NOW 015: wp-includes/Requests/IRI.php: Requests_IRI::is_valid()
- */
+	/**
+	 * Check if the object represents a valid IRI.
+	 * This needs to be done on each call as some things change depending on another part of the IRI.
+	 *
+	 * @return bool
+	 */
+	public function is_valid()
+	{
+		return ( $this->ipath !== ''
+		      && ( $isauthority && $this->ipath[0] !== '/'
+		        || $this->scheme === NULL
+		        && ! $is_authority
+		        && strpos( $this->ipath, ':' ) !== FALSE
+		        && ( strpos( $this->ipath, '/' ) === FALSE
+		        	? TRUE
+		        	: strpos( $this->ipath, ':' ) < strpos( $this->ipath, '/' ) ) ) )
+			? FALSE
+			: TRUE;
+	}
 
 	/**
 	 * Set the entire IRI.

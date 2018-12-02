@@ -237,35 +237,6 @@ class Requests_IRI {
 
 	// refactored. protected function parse_iri($iri) {}
 	// :
-	// refactored. protected function scheme_normalization() {}
-
-	/**
-	 * Check if the object represents a valid IRI. This needs to be done on each
-	 * call as some things change depending on another part of the IRI.
-	 *
-	 * @return bool
-	 */
-	public function is_valid() {
-		$isauthority = $this->iuserinfo !== null || $this->ihost !== null || $this->port !== null;
-		if ($this->ipath !== '' &&
-			(
-				$isauthority && $this->ipath[0] !== '/' ||
-				(
-					$this->scheme === null &&
-					!$isauthority &&
-					strpos($this->ipath, ':') !== false &&
-					(strpos($this->ipath, '/') === false ? true : strpos($this->ipath, ':') < strpos($this->ipath, '/'))
-				)
-			)
-		) {
-			return false;
-		}
-
-		return true;
-	}
-
-	// refactored. protected function set_iri($iri) {}
-	// :
 	// refactored. protected function set_fragment($ifragment) {}
 
 	/**
