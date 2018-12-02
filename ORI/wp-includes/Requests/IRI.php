@@ -266,33 +266,7 @@ class Requests_IRI {
 		return $string;
 	}
 
-	/**
-	 * Get the complete IRI
-	 *
-	 * @return string
-	 */
-	protected function get_iri() {
-		if (!$this->is_valid()) {
-			return false;
-		}
-
-		$iri = '';
-		if ($this->scheme !== null) {
-			$iri .= $this->scheme . ':';
-		}
-		if (($iauthority = $this->get_iauthority()) !== null) {
-			$iri .= '//' . $iauthority;
-		}
-		$iri .= $this->ipath;
-		if ($this->iquery !== null) {
-			$iri .= '?' . $this->iquery;
-		}
-		if ($this->ifragment !== null) {
-			$iri .= '#' . $this->ifragment;
-		}
-
-		return $iri;
-	}
+	// refactored. protected function get_iri() {}
 
 	/**
 	 * Get the complete URI
