@@ -450,6 +450,11 @@ class Requests
 
 		if ( isset( $return->headers['transfer-encoding'] ) ) {
 			$return->body = self::decode_chunked( $return->body );
+			unset( $return->headers['transfer-encoding'] );
+		}
+
+		if ( isset( $return->headers['content-encoding'] ) ) {
+			$return->body = self::decompress( $return->body );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -464,6 +469,7 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ * ......->: wp-includes/class-requests.php: Requests::decompress( string $data )
  */
 		}
 	}
@@ -528,4 +534,66 @@ class Requests
 
 		return $return;
 	}
+
+	/**
+	 * Decompress an encoded body.
+	 *
+	 * Implements gzip, compress and deflate.
+	 * Guesses which it is by attempting to decode.
+	 *
+	 * @param  string $data Compressed data in one of the above formats.
+	 * @return string Decompressed string.
+	 */
+	public static function decompress( $data )
+	{
+		if ( substr( $data, 0, 2 ) !== "\x1f\x8b" && substr( $data, 0, 2 ) !== "\x78\x9c" ) {
+			/**
+			 * Not actually compressed.
+			 * Probably cURL ruining this for us.
+			 */
+			return $data;
+		}
+
+		if ( function_exists( 'gzdecode' ) && ( $decoded  = @ gzdecode( $data ) ) !== FALSE ) {
+			return $decoded;
+		} elseif ( function_exists( 'gzinflate' ) && ( $decoded = @ gzinflate( $data ) ) !== FALSE ) {
+			return $decoded;
+		} elseif ( ( $decoded = self::compatible_gzinflate( $data ) ) !== FALSE ) {
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ * @NOW 014: wp-includes/class-requests.php: Requests::decompress( string $data )
+ * ......->: wp-includes/class-requests.php: Requests::compatible_gzinflate( string $gzData )
+ */
+		}
+	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ * <-......: wp-includes/class-requests.php: Requests::decompress( string $data )
+ * @NOW 015: wp-includes/class-requests.php: Requests::compatible_gzinflate( string $gzData )
+ */
 }
