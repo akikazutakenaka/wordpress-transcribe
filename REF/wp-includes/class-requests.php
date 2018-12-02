@@ -465,6 +465,17 @@ class Requests
 		$options['hooks']->dispatch( 'requests.before_redirect_check', array( &$return, $req_headers, $req_data, $options ) );
 
 		if ( $return->is_redirect() && $options['follow_redirects'] === TRUE ) {
+			if ( isset( $return->headers['location'] ) && $options['redirected'] < $options['redirects'] ) {
+				if ( $return->status_code === 303 ) {
+					$options['type'] = self::GET;
+				}
+
+				$options['redirected']++;
+				$location = $return->headers['location'];
+
+				if ( strpos( $location, 'http://' ) !== 0 && strpos( $location, 'https://' ) !== 0 ) {
+					// Relative redirect, for compatibility make it absolute.
+					$location = Requests_IRI::absolutize( $url, $location );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -479,7 +490,10 @@ class Requests
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
+ * ......->: wp-includes/Requests/IRI.php: Requests_IRI::absolutize( IRI|string $base, IRI|string $relative )
  */
+				}
+			}
 		}
 	}
 
