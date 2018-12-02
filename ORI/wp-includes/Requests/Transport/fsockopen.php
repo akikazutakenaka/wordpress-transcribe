@@ -294,27 +294,7 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 		return $responses;
 	}
 
-	/**
-	 * Retrieve the encodings we can accept
-	 *
-	 * @return string Accept-Encoding header value
-	 */
-	protected static function accept_encoding() {
-		$type = array();
-		if (function_exists('gzinflate')) {
-			$type[] = 'deflate;q=1.0';
-		}
-
-		if (function_exists('gzuncompress')) {
-			$type[] = 'compress;q=0.5';
-		}
-
-		$type[] = 'gzip;q=0.5';
-
-		return implode(', ', $type);
-	}
-
-	// refactored. protected static function format_get($url_parts, $data) {}
+	// refactored. protected static function accept_encoding() {}
 	// :
 	// refactored. public static function test($capabilities = array()) {}
 }

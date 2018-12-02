@@ -140,6 +140,47 @@ class Requests_Transport_fsockopen implements Requests_Transport
 
 		if ( $data_format === 'query' ) {
 			$path = self::format_get( $url_parts, $data );
+			$data = '';
+		} else {
+			$path = self::format_get( $url_parts, array() );
+		}
+
+		$options['hooks']->dispatch( 'fsockopen.remote_host_path', array( &$path, $url ) );
+		$request_body = '';
+		$out = sprintf( "%s %s HTTP/%.1f\r\n", $options['type'], $path, $options['protocol_version'] );
+
+		if ( $options['type'] !== Requests::TRACE ) {
+			$request_body = is_array( $data )
+				? http_build_query( $data, NULL, '&' )
+				: $data;
+
+			if ( ! empty( $data ) ) {
+				if ( ! isset( $case_insensitive_headers['Content-Length'] ) ) {
+					$headers['Content-Length'] = strlen( $request_body );
+				}
+
+				if ( ! isset( $case_insensitive_headers['Content-Type'] ) ) {
+					$headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+				}
+			}
+		}
+
+		if ( ! isset( $case_insensitive_headers['Host'] ) ) {
+			$out .= sprintf( 'Host: %s', $url_parts['host'] );
+
+			if ( 'http' === strtolower( $url_parts['scheme'] ) && $url_parts['port'] !== 80
+			  || 'https' === strtolower( $url_parts['scheme'] ) && $url_parts['port'] !== 443 ) {
+				$out .= ':' . $url_parts['port'];
+			}
+
+			$out .= "\r\n";
+		}
+
+		if ( ! isset( $case_insensitive_headers['User-Agent'] ) ) {
+			$out .= sprintf( "User-Agent: %s\r\n", $options['useragent'] );
+		}
+
+		$accept_encoding = $this->accept_encoding();
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -156,7 +197,27 @@ class Requests_Transport_fsockopen implements Requests_Transport
  * <-......: wp-includes/class-requests.php: Requests::request( string $url [, array $headers = array() [, array|null $data = array() [, string $type = self::GET [, array $options = array()]]]] )
  * @NOW 014: wp-includes/Requests/Transport/fsockopen.php: Requests_Transport_fsockopen::request( string $url [, array $headers = array() [, string|array $data = array() [, array $options = array()]]] )
  */
+	}
+
+	/**
+	 * Retrieve the encodings we can accept.
+	 *
+	 * @return string Accept-Encoding header value.
+	 */
+	protected static function accept_encoding()
+	{
+		$type = array();
+
+		if ( function_exists( 'gzinflate' ) ) {
+			$type[] = 'deflate;q=1.0';
 		}
+
+		if ( function_exists( 'gzuncompress' ) ) {
+			$type[] = 'compress;q=0.5';
+		}
+
+		$type[] = 'gzip;q=0.5';
+		return implode( ', ', $type );
 	}
 
 	/**
