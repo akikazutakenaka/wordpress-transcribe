@@ -389,50 +389,7 @@ class Requests {
 		}
 	}
 
-	/**
-	 * Decoded a chunked body as per RFC 2616
-	 *
-	 * @see https://tools.ietf.org/html/rfc2616#section-3.6.1
-	 * @param string $data Chunked body
-	 * @return string Decoded body
-	 */
-	protected static function decode_chunked($data) {
-		if (!preg_match('/^([0-9a-f]+)(?:;(?:[\w-]*)(?:=(?:(?:[\w-]*)*|"(?:[^\r\n])*"))?)*\r\n/i', trim($data))) {
-			return $data;
-		}
-
-
-
-		$decoded = '';
-		$encoded = $data;
-
-		while (true) {
-			$is_chunked = (bool) preg_match('/^([0-9a-f]+)(?:;(?:[\w-]*)(?:=(?:(?:[\w-]*)*|"(?:[^\r\n])*"))?)*\r\n/i', $encoded, $matches);
-			if (!$is_chunked) {
-				// Looks like it's not chunked after all
-				return $data;
-			}
-
-			$length = hexdec(trim($matches[1]));
-			if ($length === 0) {
-				// Ignore trailer headers
-				return $decoded;
-			}
-
-			$chunk_length = strlen($matches[0]);
-			$decoded .= substr($encoded, $chunk_length, $length);
-			$encoded = substr($encoded, $chunk_length + $length + 2);
-
-			if (trim($encoded) === '0' || empty($encoded)) {
-				return $decoded;
-			}
-		}
-
-		// We'll never actually get down here
-		// @codeCoverageIgnoreStart
-	}
-	// @codeCoverageIgnoreEnd
-
+	// refactored. protected static function decode_chunked($data) {}
 	// refactored. public static function flatten($array) {}
 
 	/**

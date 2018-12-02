@@ -403,6 +403,53 @@ class Requests
 	protected static function parse_response( $headers, $url, $req_headers, $req_data, $options )
 	{
 		$return = new Requests_Response();
+
+		if ( ! $options['blocking'] ) {
+			return $return;
+		}
+
+		$return->raw = $headers;
+		$return->url = $url;
+
+		if ( ! $options['filename'] ) {
+			if ( ( $pos = strpos( $headers, "\r\n\r\n" ) ) === FALSE ) {
+				throw new Requests_Exception( 'Missing header/body separator', 'requests.no_crlf_separator' );
+			}
+
+			$headers = substr( $return->raw, 0, $pos );
+			$return->body = substr( $return->raw, $pos + strlen( "\n\r\n\r" ) );
+		} else {
+			$return->body = '';
+		}
+
+		// Pretend CRLF = LF for compatibility (RFC 2616, Section 19.3).
+		$headers = str_replace( "\r\n", "\n", $headers );
+
+		// Unfold headers (replace [CRLF] 1*( SP | HT ) with SP) as per RFC 2616 (section 2.2).
+		$headers = preg_replace( '/\n[ \t]/', ' ', $headers );
+		$headers = explode( "\n", $headers );
+		preg_match( '#^HTTP/(1\.\d)[ \t]+(\d+)#i', array_shift( $headers ), $matches );
+
+		if ( empty( $matches ) ) {
+			throw new Requests_Exception( 'Response could not be parsed', 'noversion', $headers );
+		}
+
+		$return->protocol_version = ( float ) $matches[1];
+		$return->status_code = ( int ) $matches[2];
+
+		if ( $return->status_code >= 200 && $return->status_code < 300 ) {
+			$return->success = TRUE;
+		}
+
+		foreach ( $headers as $header ) {
+			list( $key, $value ) = explode( ':', $headers, 2 );
+			$value = trim( $value );
+			preg_replace( '#(\s+)#i', ' ', $value );
+			$return->headers[ $key ] = $value;
+		}
+
+		if ( isset( $return->headers['transfer-encoding'] ) ) {
+			$return->body = self::decode_chunked( $return->body );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -418,6 +465,51 @@ class Requests
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
  */
+		}
+	}
+
+	/**
+	 * Decoded a chunked body as per RFC 2616.
+	 *
+	 * @see https://tools.ietf.org/html/rfc2616#section-3.6.1
+	 *
+	 * @param  string $data Chunked body.
+	 * @return string Decoded body.
+	 */
+	protected static function decode_chunked( $data )
+	{
+		if ( ! preg_match( '/^([0-9a-f]+)(?:;(?:[\w-]*)(?:=(?:(?:[\w-]*)*|"(?:[^\r\n])*"))?)*\r\n/i', trim( $data ) ) ) {
+			return $data;
+		}
+
+		$decoded = '';
+		$encoded = $data;
+
+		while ( TRUE ) {
+			$is_chunked = ( bool ) preg_match( '/^([0-9a-f]+)(?:;(?:[\w-]*)(?:=(?:(?:[\w-]*)*|"(?:[^\r\n])*"))?)*\r\n/i', $encoded, $matches );
+
+			if ( ! $is_chunked ) {
+				// Looks like it's not chunked after all.
+				return $data;
+			}
+
+			$length = hexdec( trim( $matches[1] ) );
+
+			if ( $length === 0 ) {
+				// Ignore trailer headers.
+				return $decoded;
+			}
+
+			$chunk_length = strlen( $matches[0] );
+			$decoded .= substr( $encoded, $chunk_length, $length );
+			$encoded = substr( $encoded, $chunk_length + $length + 2 );
+
+			if ( trim( $encoded ) === '0' || empty( $encoded ) ) {
+				return $decoded;
+			}
+		}
+
+		// We'll never actually get down here.
 	}
 
 	/**
