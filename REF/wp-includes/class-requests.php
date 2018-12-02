@@ -574,26 +574,126 @@ class Requests
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
  * @NOW 014: wp-includes/class-requests.php: Requests::decompress( string $data )
- * ......->: wp-includes/class-requests.php: Requests::compatible_gzinflate( string $gzData )
  */
 		}
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * <-......: wp-includes/class-requests.php: Requests::parse_response( string $headers, string $url, array $req_headers, array $req_data, array $options )
- * <-......: wp-includes/class-requests.php: Requests::decompress( string $data )
- * @NOW 015: wp-includes/class-requests.php: Requests::compatible_gzinflate( string $gzData )
- */
+	/**
+	 * Decompression of deflated string while staying compatible with the majority of servers.
+	 *
+	 * Certain Servers will return deflated data with headers which PHP's gzinflate() function cannot handle out of the box.
+	 * The following function has been created from various snippets on the gzinflate() PHP documentation.
+	 *
+	 * Warning: Magic numbers within.
+	 * Due to the potential different formats that the compressed data may be returned in, some "magic offsets" are needed to ensure proper decompression takes place.
+	 * For a simple progmatic way to determine the magic offset in use, see: https://core.trac.wordpress.org/ticket/18273
+	 *
+	 * @since 2.8.1
+	 * @link  https://core.trac.wordpress.org/ticket/18273
+	 * @link  https://secure.php.net/manual/en/function.gzinflate.php#70875
+	 * @link  https://secure.php.net/manual/en/function.gzinflate.php#77336
+	 *
+	 * @param  string      $gzData String to decompress.
+	 * @return string|bool False on failure.
+	 */
+	public static function compatible_gzinflate( $gzData )
+	{
+		// Compressed data might contain a full zlib header, if so strip it for gzinflate().
+		if ( substr( $gzData, 0, 3 ) == "\x1f\x8b\x08" ) {
+			$i = 10;
+			$flg = ord( substr( $gzData, 3, 1 ) );
+
+			if ( $flg > 0 ) {
+				if ( $flg & 4 ) {
+					list( $xlen ) = unpack( 'v', substr( $gzData, $i, 2 ) );
+					$i = $i + 2 + $xlen;
+				}
+
+				if ( $flg & 8 ) {
+					$i = strpos( $gzData, "\0", $i ) + 1;
+				}
+
+				if ( $flg & 16 ) {
+					$i = strpos( $gzData, "\0", $i ) + 1;
+				}
+
+				if ( $flg & 2 ) {
+					$i = $i + 2;
+				}
+			}
+
+			$decompressed = self::compatible_gzinflate( substr( $gzData, $i ) );
+
+			if ( FALSE !== $decompressed ) {
+				return $decompressed;
+			}
+		}
+
+		/**
+		 * If the data is Huffman Encoded, we must first strip the leading 2 byte Huffman marker for gzinflate().
+		 * The response is Huffman coded by many compressors such as java.util.zip.Deflater, Ruby's Zlib::Deflate, and .NET's System.IO.Compression.DeflateStream.
+		 *
+		 * See https://decompress.blogspot.com/ for a quick explanation of this data type.
+		 */
+		$huffman_encoded = FALSE;
+
+		// Low nibble of first byte should be 0x08.
+		list( , $first_nibble ) = unpack( 'h', $gzData );
+
+		// First 2 bytes should be divisible by 0x1F.
+		list( , $first_two_bytes ) = unpack( 'n', $gzData );
+
+		if ( 0x08 == $first_nibble && 0 == ( $first_two_bytes % 0x1F ) ) {
+			$huffman_encoded = TRUE;
+		}
+
+		if ( $huffman_encoded ) {
+			if ( FALSE !== ( $decompressed = @ gzinflate( substr( $gzData, 2 ) ) ) ) {
+				return $decompressed;
+			}
+		}
+
+		if ( "\x50\x4b\x03\x04" == substr( $gzData, 0, 4 ) ) {
+			/**
+			 * ZIP file format header:
+			 * Offset 6: 2 bytes, General-purpose field.
+			 * Offset 26: 2 bytes, filename length.
+			 * Offset 28: 2 bytes, optional field length.
+			 * Offset 30: Filename field, followed by optional field, followed immediately by data.
+			 */
+			list( , $general_purpose_flag ) = unpack( 'v', substr( $gzData, 6, 2 ) );
+
+			/**
+			 * If the file has been compressed on the fly, 0x08 bit is set of the general purpose field.
+			 * We can use this to differentiate between a compressed document, and a ZIP file.
+			 */
+			$zip_compressed_on_the_fly = 0x08 == ( 0x08 & $general_purpose_flag );
+
+			if ( ! $zip_compressed_on_the_fly ) {
+				// Don't attempt to decode a compressed zip file.
+				return $gzData;
+			}
+
+			// Determine the first byte of data, based on the above ZIP header offsets:
+			$first_file_start = array_sum( unpack( 'v2', substr( $gzData, 26, 4 ) ) );
+
+			if ( FALSE !== ( $decompressed = @ gzinflate( substr( $gzData, 30 + $first_file_start ) ) ) ) {
+				return $decompressed;
+			}
+
+			return FALSE;
+		}
+
+		// Finally fall back to straight gzinflate.
+		if ( FALSE !== ( $decompressed = @ gzinflate( $gzData ) ) ) {
+			return $decompressed;
+		}
+
+		// Fallback for all above failing, not expected, but included for debugging and preventing regressions and to track stats.
+		if ( FALSE !== ( $decompressed = @ gzinflate( substr( $gzData, 2 ) ) ) ) {
+			return $decompressed;
+		}
+
+		return FALSE;
+	}
 }
