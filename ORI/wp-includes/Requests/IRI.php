@@ -303,28 +303,7 @@ class Requests_IRI {
 		return $this->to_uri($this->get_iri());
 	}
 
-	/**
-	 * Get the complete iauthority
-	 *
-	 * @return string
-	 */
-	protected function get_iauthority() {
-		if ($this->iuserinfo === null && $this->ihost === null && $this->port === null) {
-			return null;
-		}
-
-		$iauthority = '';
-		if ($this->iuserinfo !== null) {
-			$iauthority .= $this->iuserinfo . '@';
-		}
-		if ($this->ihost !== null) {
-			$iauthority .= $this->ihost;
-		}
-		if ($this->port !== null) {
-			$iauthority .= ':' . $this->port;
-		}
-		return $iauthority;
-	}
+	// refactored. protected function get_iauthority() {}
 
 	/**
 	 * Get the complete authority
