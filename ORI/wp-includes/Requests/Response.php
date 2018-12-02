@@ -13,15 +13,7 @@
  * @package Requests
  */
 class Requests_Response {
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		$this->headers = new Requests_Response_Headers();
-		$this->cookies = new Requests_Cookie_Jar();
-	}
-
-	// refactored. public $body = '';
+	// refactored. public function __construct() {}
 	// :
 	// refactored. public $cookies = array();
 
