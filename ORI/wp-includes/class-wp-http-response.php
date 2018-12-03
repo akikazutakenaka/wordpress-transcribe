@@ -14,23 +14,8 @@
  */
 class WP_HTTP_Response {
 	// refactored. public $data;
-	// refactored. public $headers;
-	// refactored. public $status;
-
-	/**
-	 * Constructor.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param mixed $data    Response data. Default null.
-	 * @param int   $status  Optional. HTTP status code. Default 200.
-	 * @param array $headers Optional. HTTP header map. Default empty array.
-	 */
-	public function __construct( $data = null, $status = 200, $headers = array() ) {
-		$this->set_data( $data );
-		$this->set_status( $status );
-		$this->set_headers( $headers );
-	}
+	// :
+	// refactored. public function __construct( $data = null, $status = 200, $headers = array() ) {}
 
 	/**
 	 * Retrieves headers associated with the response.

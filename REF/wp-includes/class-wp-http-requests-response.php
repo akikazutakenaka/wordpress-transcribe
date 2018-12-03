@@ -47,6 +47,6 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response
- * ......->: wp-includes/class-wp-http-response.php: WP_HTTP_Response::__construct( [mixed $data = NULL [, int $status = 200 [, array $headers = array()]]] )
+ * ......->: wp-includes/class-wp-http-response.php: WP_HTTP_Response::set_headers( array $headers )
  */
 }

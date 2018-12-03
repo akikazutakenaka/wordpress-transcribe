@@ -59,6 +59,9 @@ class WP_HTTP_Response
 	{
 		$this->set_data( $data );
 		$this->set_status( $status );
+		$this->set_headers( $headers );
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -73,9 +76,8 @@ class WP_HTTP_Response
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response
- * @NOW 014: wp-includes/class-wp-http-response.php: WP_HTTP_Response::__construct( [mixed $data = NULL [, int $status = 200 [, array $headers = array()]]] )
+ * @NOW 014: wp-includes/class-wp-http-response.php: WP_HTTP_Response::set_headers( array $headers )
  */
-	}
 
 	/**
 	 * Sets the 3-digit HTTP status code.
