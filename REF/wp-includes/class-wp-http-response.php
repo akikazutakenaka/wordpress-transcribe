@@ -8,6 +8,40 @@
  */
 
 /**
+ * Core class used to prepare HTTP responses.
+ *
+ * @since 4.4.0
+ */
+class WP_HTTP_Response
+{
+	/**
+	 * Response data.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @var mixed
+	 */
+	public $data;
+
+	/**
+	 * Response headers.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @var array
+	 */
+	public $headers;
+
+	/**
+	 * Response status.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @var int
+	 */
+	public $status;
+
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -21,5 +55,6 @@
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * <-......: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response
- * @NOW 014: wp-includes/class-wp-http-response.php: WP_HTTP_Response
+ * @NOW 014: wp-includes/class-wp-http-response.php: WP_HTTP_Response::__construct( [mixed $data = NULL [, int $status = 200 [, array $headers = array()]]] )
  */
+}

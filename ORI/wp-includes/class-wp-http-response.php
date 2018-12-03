@@ -13,30 +13,9 @@
  * @since 4.4.0
  */
 class WP_HTTP_Response {
-
-	/**
-	 * Response data.
-	 *
-	 * @since 4.4.0
-	 * @var mixed
-	 */
-	public $data;
-
-	/**
-	 * Response headers.
-	 *
-	 * @since 4.4.0
-	 * @var array
-	 */
-	public $headers;
-
-	/**
-	 * Response status.
-	 *
-	 * @since 4.4.0
-	 * @var int
-	 */
-	public $status;
+	// refactored. public $data;
+	// refactored. public $headers;
+	// refactored. public $status;
 
 	/**
 	 * Constructor.
