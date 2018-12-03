@@ -17,19 +17,7 @@
 class WP_HTTP_Requests_Response extends WP_HTTP_Response {
 	// refactored. protected $response;
 	// refactored. protected $filename;
-
-	/**
-	 * Constructor.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param Requests_Response $response HTTP response.
-	 * @param string            $filename Optional. File name. Default empty.
-	 */
-	public function __construct( Requests_Response $response, $filename = '' ) {
-		$this->response = $response;
-		$this->filename = $filename;
-	}
+	// refactored. public function __construct( Requests_Response $response, $filename = '' ) {}
 
 	/**
 	 * Retrieves the response object for the request.
