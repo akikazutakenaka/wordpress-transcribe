@@ -61,16 +61,7 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response {
 		$this->response->headers[ $key ] = $value;
 	}
 
-	/**
-	 * Retrieves the HTTP return code for the response.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @return int The 3-digit HTTP status code.
-	 */
-	public function get_status() {
-		return $this->response->status_code;
-	}
+	// refactored. public function get_status() {}
 
 	/**
 	 * Sets the 3-digit HTTP status code.

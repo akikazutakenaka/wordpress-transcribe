@@ -72,6 +72,30 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
 		return $converted;
 	}
 
+	/**
+	 * Retrieves the HTTP return code for the response.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @return int The 3-digit HTTP status code.
+	 */
+	public function get_status()
+	{
+		return $this->response->status_code;
+	}
+
+	/**
+	 * Retrieves the response data.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @return mixed Response data.
+	 */
+	public function get_data()
+	{
+		return $this->response->body;
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -85,20 +109,8 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response::get_status()
+ * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response::get_cookies()
  */
-
-	/**
-	 * Retrieves the response data.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @return mixed Response data.
-	 */
-	public function get_data()
-	{
-		return $this->response->body;
-	}
 
 	/**
 	 * Converts the object to a WP_Http response array.
