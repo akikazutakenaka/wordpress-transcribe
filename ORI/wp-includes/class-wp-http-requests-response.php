@@ -30,29 +30,7 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response {
 		return $this->response;
 	}
 
-	/**
-	 * Retrieves headers associated with the response.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @see \Requests_Utility_CaseInsensitiveDictionary
-	 *
-	 * @return \Requests_Utility_CaseInsensitiveDictionary Map of header name to header value.
-	 */
-	public function get_headers() {
-		// Ensure headers remain case-insensitive.
-		$converted = new Requests_Utility_CaseInsensitiveDictionary();
-
-		foreach ( $this->response->headers->getAll() as $key => $value ) {
-			if ( count( $value ) === 1 ) {
-				$converted[ $key ] = $value[0];
-			} else {
-				$converted[ $key ] = $value;
-			}
-		}
-
-		return $converted;
-	}
+	// refactored. public function get_headers() {}
 
 	/**
 	 * Sets all header values.
