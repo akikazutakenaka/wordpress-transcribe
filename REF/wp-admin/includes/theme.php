@@ -78,7 +78,6 @@ function get_theme_feature_list( $api = TRUE )
  * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
  * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
  * @NOW 010: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * ......->: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  */
 	}
 }
@@ -260,19 +259,22 @@ function themes_api( $action, $args = array() )
 			$res = new WP_Error( 'themes_api_failed', sprintf( __( 'An unexpected error occured. SOmething may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ), __( 'https://wordpress.org/support/' ) ), $request->get_error_message() );
 		} else {
 			$res = maybe_unserialize( wp_remote_retrieve_body( $request ) );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * @NOW 011: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- */
+
+			if ( ! is_object( $res ) && ! is_array( $res ) ) {
+				$res = new WP_Error( 'themes_api_failed', sprintf( __( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ), __( 'https://wordpress.org/support/' ) ), wp_remote_retrieve_body( $request ) );
+			}
 		}
 	}
+
+	/**
+	 * Filters the returned WordPress.org Themes API response.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array|object|WP_Error $res    WordPress.org Themes API response.
+	 * @param string                $action Requested action.
+	 *                                      Likely values are 'theme_information', 'feature_list', or 'query_themes'.
+	 * @param object                $args   Arguments used to query for installer pages from the WordPress.org Themes API.
+	 */
+	return apply_filters( 'themes_api_result', $res, $action, $args );
 }
