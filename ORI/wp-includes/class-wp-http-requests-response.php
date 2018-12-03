@@ -83,16 +83,7 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response {
 		$this->response->status_code = absint( $code );
 	}
 
-	/**
-	 * Retrieves the response data.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @return mixed Response data.
-	 */
-	public function get_data() {
-		return $this->response->body;
-	}
+	// refactored. public function get_data() {}
 
 	/**
 	 * Sets the response data.

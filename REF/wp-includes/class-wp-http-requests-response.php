@@ -85,8 +85,20 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response::get_data()
+ * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response::get_status()
  */
+
+	/**
+	 * Retrieves the response data.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @return mixed Response data.
+	 */
+	public function get_data()
+	{
+		return $this->response->body;
+	}
 
 	/**
 	 * Converts the object to a WP_Http response array.
