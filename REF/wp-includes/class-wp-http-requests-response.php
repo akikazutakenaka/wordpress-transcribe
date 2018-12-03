@@ -49,6 +49,21 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
 		$this->filename = $filename;
 	}
 
+	/**
+	 * Retrieves headers associated with the response.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @see \Requests_Utility_CaseInsensitiveDictionary
+	 *
+	 * @return \Requests_Utility_CaseInsensitiveDictionary Map of header name to header value.
+	 */
+	public function get_headers()
+	{
+		// Ensure headers remain case-insensitive.
+		$converted = new Requests_Utility_CaseInsensitiveDictionary();
+
+		foreach ( $this->response->headers->getAll() as $key => $value ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -63,7 +78,10 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
  * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
  * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response::get_headers()
+ * ......->: wp-includes/Requests/Utility/CaseInsensitiveDictionary.php: Requests_Utility_CaseInsensitiveDictionary::getAll()
  */
+		}
+	}
 
 	/**
 	 * Converts the object to a WP_Http response array.
