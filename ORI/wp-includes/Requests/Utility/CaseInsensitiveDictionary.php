@@ -62,12 +62,5 @@ class Requests_Utility_CaseInsensitiveDictionary implements ArrayAccess, Iterato
 		return new ArrayIterator($this->data);
 	}
 
-	/**
-	 * Get the headers as an array
-	 *
-	 * @return array Header data
-	 */
-	public function getAll() {
-		return $this->data;
-	}
+	// refactored. public function getAll() {}
 }
