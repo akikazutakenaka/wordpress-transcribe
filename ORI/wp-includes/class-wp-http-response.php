@@ -28,16 +28,7 @@ class WP_HTTP_Response {
 		return $this->headers;
 	}
 
-	/**
-	 * Sets all header values.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param array $headers Map of header name to header value.
-	 */
-	public function set_headers( $headers ) {
-		$this->headers = $headers;
-	}
+	// refactored. public function set_headers( $headers ) {}
 
 	/**
 	 * Sets a single HTTP header.
