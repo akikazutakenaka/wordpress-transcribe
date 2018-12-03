@@ -246,20 +246,7 @@ function wp_remote_retrieve_response_message( $response ) {
 	return $response['response']['message'];
 }
 
-/**
- * Retrieve only the body from the raw response.
- *
- * @since 2.7.0
- *
- * @param array $response HTTP response.
- * @return string The body of the response. Empty string if no body or incorrect parameter given.
- */
-function wp_remote_retrieve_body( $response ) {
-	if ( is_wp_error($response) || ! isset($response['body']) )
-		return '';
-
-	return $response['body'];
-}
+// refactored. function wp_remote_retrieve_body( $response ) {}
 
 /**
  * Retrieve only the cookies from the raw response.

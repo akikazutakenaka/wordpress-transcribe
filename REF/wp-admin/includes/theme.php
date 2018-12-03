@@ -247,6 +247,19 @@ function themes_api( $action, $args = array() )
 			)
 		);
 		$request = wp_remote_post( $url, $http_args );
+
+		if ( $ssl && is_wp_error( $request ) ) {
+			if ( ! wp_doing_ajax() ) {
+				trigger_error( sprintf( __( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ), __( 'https://wordpress.org/support/' ) ) . ' ' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ), headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE );
+			}
+
+			$request = wp_remote_post( $http_url, $http_args );
+		}
+
+		if ( is_wp_error( $request ) ) {
+			$res = new WP_Error( 'themes_api_failed', sprintf( __( 'An unexpected error occured. SOmething may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ), __( 'https://wordpress.org/support/' ) ), $request->get_error_message() );
+		} else {
+			$res = maybe_unserialize( wp_remote_retrieve_body( $request ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -260,5 +273,6 @@ function themes_api( $action, $args = array() )
  * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  * @NOW 011: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
  */
+		}
 	}
 }
