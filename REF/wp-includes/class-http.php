@@ -393,21 +393,55 @@ class WP_Http
 			// Convert the response into an array.
 			$http_response = new WP_HTTP_Requests_Response( $requests_response, $r['filename'] );
 			$response = $http_response->to_array();
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * @NOW 012: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- */
+
+			// Add the original object to the array.
+			$response['http_response'] = $http_response;
+		} catch ( Requests_Exception $e ) {
+			$response = new WP_Error( 'http_request_failed', $e->getMessage() );
 		}
+
+		reset_mbstring_encoding();
+
+		/**
+		 * Fires after an HTTP API response is received and before the response is returned.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array|WP_Error $response HTTP response or WP_Error object.
+		 * @param string         $context  Context under which the hook is fired.
+		 * @param string         $class    HTTP transport used.
+		 * @param array          $r        HTTP request arguments.
+		 * @param string         $url      The request URL.
+		 */
+		do_action( 'http_api_debug', $response, 'response', 'Requests', $r, $url );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		if ( ! $r['blocking'] ) {
+			return array(
+				'headers'       => array(),
+				'body'          => '',
+				'response'      => array(
+					'code'    => FALSE,
+					'message' => FALSE
+				),
+				'cookies'       => array(),
+				'http_response' => NULL
+			);
+		}
+
+		/**
+		 * Filters the HTTP API response immediately before the response is returned.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array  $response HTTP response.
+		 * @param array  $r        HTTP request arguments.
+		 * @param string $url      The request URL.
+		 */
+		return apply_filters( 'http_response', $response, $r, $url );
 	}
 
 	/**
