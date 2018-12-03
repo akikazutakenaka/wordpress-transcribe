@@ -83,16 +83,7 @@ class WP_HTTP_Response {
 		return $this->status;
 	}
 
-	/**
-	 * Sets the 3-digit HTTP status code.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param int $code HTTP status.
-	 */
-	public function set_status( $code ) {
-		$this->status = absint( $code );
-	}
+	// refactored. public function set_status( $code ) {}
 
 	/**
 	 * Retrieves the response data.

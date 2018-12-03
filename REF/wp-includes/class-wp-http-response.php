@@ -58,6 +58,7 @@ class WP_HTTP_Response
 	public function __construct( $data = NULL, $status = 200, $headers = array() )
 	{
 		$this->set_data( $data );
+		$this->set_status( $status );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -74,6 +75,18 @@ class WP_HTTP_Response
  * <-......: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response
  * @NOW 014: wp-includes/class-wp-http-response.php: WP_HTTP_Response::__construct( [mixed $data = NULL [, int $status = 200 [, array $headers = array()]]] )
  */
+	}
+
+	/**
+	 * Sets the 3-digit HTTP status code.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param int $code HTTP status.
+	 */
+	public function set_status( $code )
+	{
+		$this->status = absint( $code );
 	}
 
 	/**
