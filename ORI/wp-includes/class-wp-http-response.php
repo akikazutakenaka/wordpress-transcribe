@@ -105,16 +105,7 @@ class WP_HTTP_Response {
 		return $this->data;
 	}
 
-	/**
-	 * Sets the response data.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param mixed $data Response data.
-	 */
-	public function set_data( $data ) {
-		$this->data = $data;
-	}
+	// refactored. public function set_data( $data ) {}
 
 	/**
 	 * Retrieves the response data for JSON serialization.
