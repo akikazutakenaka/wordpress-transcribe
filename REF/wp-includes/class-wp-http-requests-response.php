@@ -48,4 +48,41 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
 		$this->response = $response;
 		$this->filename = $filename;
 	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
+ * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
+ * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
+ * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
+ * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
+ * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
+ * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response::get_headers()
+ */
+
+	/**
+	 * Converts the object to a WP_Http response array.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @return array WP_Http response array, per WP_Http::request().
+	 */
+	public function to_array()
+	{
+		return array(
+			'headers'  => $this->get_headers(),
+			'body'     => $this->get_data(),
+			'response' => array(
+				'code'    => $this->get_status(),
+				'message' => get_status_header_desc( $this->get_status() )
+			),
+			'cookies'  => $this->get_cookies(),
+			'filename' => $this->filename
+		);
+	}
 }

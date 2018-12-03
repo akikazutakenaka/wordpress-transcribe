@@ -149,23 +149,5 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response {
 		return $cookies;
 	}
 
-	/**
-	 * Converts the object to a WP_Http response array.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @return array WP_Http response array, per WP_Http::request().
-	 */
-	public function to_array() {
-		return array(
-			'headers' => $this->get_headers(),
-			'body' => $this->get_data(),
-			'response' => array(
-				'code'    => $this->get_status(),
-				'message' => get_status_header_desc( $this->get_status() ),
-			),
-			'cookies' => $this->get_cookies(),
-			'filename' => $this->filename,
-		);
-	}
+	// refactored. public function to_array() {}
 }
