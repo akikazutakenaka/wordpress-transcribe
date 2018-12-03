@@ -96,21 +96,35 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response
 		return $this->response->body;
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * <-......: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- * <-......: wp-admin/includes/theme.php: themes_api( string $action [, array|object $args = array()] )
- * <-......: wp-includes/class-http.php: WP_Http::request( string $url [, string|array $args = array()] )
- * @NOW 013: wp-includes/class-wp-http-requests-response.php: WP_HTTP_Requests_Response::get_cookies()
- */
+	/**
+	 * Retrieves cookies from the response.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @return WP_HTTP_Cookie[] List of cookie objects.
+	 */
+	public function get_cookies()
+	{
+		$cookies = array();
+
+		foreach ( $this->response->cookies as $cookie ) {
+			$cookies[] = new WP_Http_Cookie( array(
+					'name'    => $cookie->name,
+					'value'   => urldecode( $cookie->value ),
+					'expires' => isset( $cookie->attributes['expires'] )
+						? $cookie->attributes['expires']
+						: NULL,
+					'path'    => isset( $cookie->attributes['path'] )
+						? $cookie->attributes['path']
+						: NULL,
+					'domain'  => isset( $cookie->attributes['domain'] )
+						? $cookie->attributes['domain']
+						: NULL
+				) );
+		}
+
+		return $cookies;
+	}
 
 	/**
 	 * Converts the object to a WP_Http response array.

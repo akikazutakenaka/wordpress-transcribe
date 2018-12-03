@@ -87,27 +87,6 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response {
 		$this->response->body = $data;
 	}
 
-	/**
-	 * Retrieves cookies from the response.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @return WP_HTTP_Cookie[] List of cookie objects.
-	 */
-	public function get_cookies() {
-		$cookies = array();
-		foreach ( $this->response->cookies as $cookie ) {
-			$cookies[] = new WP_Http_Cookie( array(
-				'name'    => $cookie->name,
-				'value'   => urldecode( $cookie->value ),
-				'expires' => isset( $cookie->attributes['expires'] ) ? $cookie->attributes['expires'] : null,
-				'path'    => isset( $cookie->attributes['path'] ) ? $cookie->attributes['path'] : null,
-				'domain'  => isset( $cookie->attributes['domain'] ) ? $cookie->attributes['domain'] : null,
-			));
-		}
-
-		return $cookies;
-	}
-
+	// refactored. public function get_cookies() {}
 	// refactored. public function to_array() {}
 }
