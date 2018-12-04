@@ -489,6 +489,30 @@ function add_query_arg()
 }
 
 /**
+ * Removes an item or items from a query string.
+ *
+ * @since 1.5.0
+ *
+ * @param  string|array $key   Query key or keys to remove.
+ * @param  bool|string  $query Optional.
+ *                             When false uses the current URL.
+ *                             Default false.
+ * @return string       New URL query string.
+ */
+function remove_query_arg( $key, $query = FALSE )
+{
+	if ( is_array( $key ) ) { //Removing multiple keys.
+		foreach ( $key as $k ) {
+			$query = add_query_arg( $k, FALSE, $query );
+		}
+
+		return $query;
+	}
+
+	return add_query_arg( $key, FALSE, $query );
+}
+
+/**
  * Retrieve the description for the HTTP status.
  *
  * @since  2.3.0

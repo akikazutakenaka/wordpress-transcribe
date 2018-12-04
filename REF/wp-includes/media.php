@@ -1132,6 +1132,15 @@ function wp_video_shortcode( $attr, $content = '' )
 
 	if ( 'mediaelement' === $library && did_action( 'init' ) ) {
 		wp_enqueue_style( 'wp-mediaelement' );
+		wp_enqueue_script( 'wp-mediaelement' );
+		wp_enqueue_script( 'mediaelement-vimeo' );
+	}
+
+	// Mediaelement has issues with some URL formats for Vimeo and YouTube, so update the URL to prevent the ME.js player from breaking.
+	if ( 'mediaelement' === $library ) {
+		if ( $is_youtube ) {
+			// Remove `feature` query arg and force SSL - see #40866.
+			$atts['src'] = remove_query_arg( 'feature', $atts['src'] );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -1140,6 +1149,7 @@ function wp_video_shortcode( $attr, $content = '' )
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  */
+		}
 	}
 }
 

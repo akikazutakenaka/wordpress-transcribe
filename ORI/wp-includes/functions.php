@@ -438,25 +438,7 @@ function is_new_day() {
 
 // refactored. function build_query( $data ) {}
 // :
-// refactored. function add_query_arg() {}
-
-/**
- * Removes an item or items from a query string.
- *
- * @since 1.5.0
- *
- * @param string|array $key   Query key or keys to remove.
- * @param bool|string  $query Optional. When false uses the current URL. Default false.
- * @return string New URL query string.
- */
-function remove_query_arg( $key, $query = false ) {
-	if ( is_array( $key ) ) { // removing multiple keys
-		foreach ( $key as $k )
-			$query = add_query_arg( $k, false, $query );
-		return $query;
-	}
-	return add_query_arg( $key, false, $query );
-}
+// refactored. function remove_query_arg( $key, $query = false ) {}
 
 /**
  * Returns an array of single-use query variable names that can be removed from a URL.
