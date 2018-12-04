@@ -1054,6 +1054,40 @@ function wp_video_shortcode( $attr, $content = '' )
 	}
 
 	$atts = shortcode_atts( $defaults_atts, $attr, 'video' );
+
+	if ( is_admin() ) {
+		// Shrink the video so it isn't huge in the admin.
+		if ( $atts['width'] > $defaults_atts['width'] ) {
+			$atts['height'] = round( ( $atts['height'] * $defaults_atts['width'] ) / $atts['width'] );
+			$atts['width'] = $defaults_atts['width'];
+		}
+	} else {
+		// If the video is bigger than the theme.
+		if ( ! empty( $content_width ) && $atts['width'] > $content_width ) {
+			$atts['height'] = round( ( $atts['height'] * $content_width ) / $atts['width'] );
+			$atts['width'] = $content_width;
+		}
+	}
+
+	$is_vimeo = $is_youtube = FALSE;
+	$yt_pattern = '#^https?://(?:www\.)?(?:youtube\.com/watch|youtu\.be/)#';
+	$vimeo_pattern = '#^https?://(.+\.)?vimeo\.com/.*#';
+	$primary = FALSE;
+
+	if ( ! empty( $atts['src'] ) ) {
+		$is_vimeo = preg_match( $vimeo_pattern, $atts['src'] );
+		$is_youtube = preg_match( $yt_pattern, $atts['src'] );
+
+		if ( ! $is_youtube && ! $is_vimeo ) {
+			$type = wp_check_filetype( $atts['src'], wp_get_mime_types() );
+
+			if ( ! in_array( strtolower( $type['ext'] ), $default_types ) ) {
+				return sprintf( '<a class="wp-embedded-video" href="%s">%s</a>', esc_url( $atts['src'] ), esc_html( $atts['src'] ) );
+			}
+		}
+
+		if ( $is_vimeo ) {
+			wp_enqueue_script( 'mediaelement-vimeo' );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -1061,7 +1095,10 @@ function wp_video_shortcode( $attr, $content = '' )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * ......->: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
  */
+		}
+	}
 }
 
 /**
