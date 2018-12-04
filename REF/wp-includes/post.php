@@ -1487,7 +1487,6 @@ EOQ
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
  * @NOW 006: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * ......->: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
  */
 	}
 }

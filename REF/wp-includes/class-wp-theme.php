@@ -802,15 +802,42 @@ final class WP_Theme implements ArrayAccess
 		}
 
 		$post_templates = $this->get_post_templates();
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * @NOW 007: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- */
+
+		$post_templates = isset( $post_templates[ $post_type ] )
+			? $post_templates[ $post_type ]
+			: array();
+
+		/**
+		 * Filters list of page templates for a theme.
+		 *
+		 * @since 4.9.6
+		 *
+		 * @param string[]     $post_templates Array of page templates.
+		 *                                     Keys are filenames, values are translated names.
+		 * @param WP_Theme     $this           The theme object.
+		 * @param WP_Post|null $post           The post being edited, provided for context, or null.
+		 * @param string       $post_type      Post type to get the templates for.
+		 */
+		$post_templates = ( array ) apply_filters( 'theme_templates', $post_templates, $this, $post, $post_type );
+
+		/**
+		 * Filters list of page templates for a theme.
+		 *
+		 * The dynamic portion of the hook name, `$post_type`, refers to the post type.
+		 *
+		 * @since 3.9.0
+		 * @since 4.4.0 Converted to allow complete control over the `$page_templates` array.
+		 * @since 4.7.0 Added the `$post_type` parameter.
+		 *
+		 * @param array        $post_templates Array of page templates.
+		 *                                     Keys are filenames, values are translated names.
+		 * @param WP_Theme     $this           The theme object.
+		 * @param WP_Post|null $post           The post being edited, provided for context, or null.
+		 * @param string       $post_type      Post type to get the templates for.
+		 */
+		$post_templates = ( array ) apply_filters( "theme_{$post_type}_templates", $post_templates, $this, $post, $post_type );
+
+		return $post_templates;
 	}
 
 	/**

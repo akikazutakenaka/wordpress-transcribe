@@ -430,61 +430,7 @@ final class WP_Theme implements ArrayAccess {
 	}
 
 	// refactored. public function get_files( $type = null, $depth = 0, $search_parent = false ) {}
-	// refactored. public function get_post_templates() {}
-
-	/**
-	 * Returns the theme's post templates for a given post type.
-	 *
-	 * @since 3.4.0
-	 * @since 4.7.0 Added the `$post_type` parameter.
-	 *
-	 * @param WP_Post|null $post      Optional. The post being edited, provided for context.
-	 * @param string       $post_type Optional. Post type to get the templates for. Default 'page'.
-	 *                                If a post is provided, its post type is used.
-	 * @return array Array of page templates, keyed by filename, with the value of the translated header name.
-	 */
-	public function get_page_templates( $post = null, $post_type = 'page' ) {
-		if ( $post ) {
-			$post_type = get_post_type( $post );
-		}
-
-		$post_templates = $this->get_post_templates();
-		$post_templates = isset( $post_templates[ $post_type ] ) ? $post_templates[ $post_type ] : array();
-
-		/**
-		 * Filters list of page templates for a theme.
-		 *
-		 * @since 4.9.6
-		 *
-		 * @param string[]     $post_templates Array of page templates. Keys are filenames,
-		 *                                     values are translated names.
-		 * @param WP_Theme     $this           The theme object.
-		 * @param WP_Post|null $post           The post being edited, provided for context, or null.
-		 * @param string       $post_type      Post type to get the templates for.
-		 */
-		$post_templates = (array) apply_filters( 'theme_templates', $post_templates, $this, $post, $post_type );
-
-		/**
-		 * Filters list of page templates for a theme.
-		 *
-		 * The dynamic portion of the hook name, `$post_type`, refers to the post type.
-		 *
-		 * @since 3.9.0
-		 * @since 4.4.0 Converted to allow complete control over the `$page_templates` array.
-		 * @since 4.7.0 Added the `$post_type` parameter.
-		 *
-		 * @param array        $post_templates Array of page templates. Keys are filenames,
-		 *                                     values are translated names.
-		 * @param WP_Theme     $this           The theme object.
-		 * @param WP_Post|null $post           The post being edited, provided for context, or null.
-		 * @param string       $post_type      Post type to get the templates for.
-		 */
-		$post_templates = (array) apply_filters( "theme_{$post_type}_templates", $post_templates, $this, $post, $post_type );
-
-		return $post_templates;
-	}
-
-	// refactored. private static function scandir( $path, $extensions = null, $depth = 0, $relative_path = '' ) {}
+	// :
 	// refactored. public function load_textdomain() {}
 
 	/**
