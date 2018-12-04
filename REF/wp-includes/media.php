@@ -1106,6 +1106,32 @@ function wp_video_shortcode( $attr, $content = '' )
 
 	if ( ! $primary ) {
 		$videos = get_attached_media( 'video', $post_id );
+
+		if ( empty( $videos ) ) {
+			return;
+		}
+
+		$video = reset( $videos );
+		$atts['src'] = wp_get_attachment_url( $video->ID );
+
+		if ( empty( $atts['src'] ) ) {
+			return;
+		}
+
+		array_unshift( $default_types, 'src' );
+	}
+
+	/**
+	 * Filters the media library used for the video shortcode.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param string $library Media library used for the video shortcode.
+	 */
+	$library = apply_filters( 'wp_video_shortcode_library', 'mediaelement' );
+
+	if ( 'mediaelement' === $library && did_action( 'init' ) ) {
+		wp_enqueue_style( 'wp-mediaelement' );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -1113,6 +1139,7 @@ function wp_video_shortcode( $attr, $content = '' )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * ......->: wp-includes/functions.wp-styles.php: wp_enqueue_style( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, string $media = 'all']]]] )
  */
 	}
 }
