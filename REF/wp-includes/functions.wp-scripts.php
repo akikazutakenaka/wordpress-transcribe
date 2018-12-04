@@ -8,6 +8,20 @@
  */
 
 /**
+ * Initialize $wp_scripts if it has not been set.
+ *
+ * @global WP_Scripts $wp_scripts
+ * @since  4.2.0
+ *
+ * @return WP_Scripts WP_Scripts instance.
+ */
+function wp_scripts()
+{
+	global $wp_scripts;
+
+	if ( ! ( $wp_scripts instanceof WP_Scripts ) ) {
+		$wp_scripts = new WP_Scripts();
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -16,7 +30,10 @@
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * <-......: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
  * @NOW 008: wp-includes/functions.wp-scripts.php: wp_scripts()
+ * ......->: wp-includes/class.wp-scripts.php: WP_Scripts
  */
+	}
+}
 
 /**
  * Enqueue a script.
