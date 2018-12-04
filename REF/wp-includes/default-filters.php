@@ -149,5 +149,4 @@ add_filter( 'the_content', 'convert_smilies', 20 );
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
- * ......->: wp-includes/formatting.php: convert_smilies( string $text )
  */

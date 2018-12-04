@@ -2136,16 +2136,21 @@ function convert_smilies( $text )
 			// If it's not a tag and not in ignore block.
 			if ( '' == $ignore_block_element && strlen( $content ) > 0 && '<' != $content[0] ) {
 				$content = preg_replace_callback( $wp_smiliessearch, 'translate_smiley', $content );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * @NOW 005: wp-includes/formatting.php: convert_smilies( string $text )
- */
 			}
+
+			// Did we exit ignore block?
+			if ( '' != $ignore_block_element && '</' . $ignore_block_element . '>' == $content ) {
+				$ignore_block_element = '';
+			}
+
+			$output .= $content;
 		}
+	} else {
+		// Return default text.
+		$output = $text;
 	}
+
+	return $output;
 }
 
 /**
