@@ -18,18 +18,6 @@
 class WP_Scripts extends WP_Dependencies {
 	// refactored. public $base_url;
 	// :
-	// refactored. public $default_dirs;
-
-	/**
-	 * Constructor.
-	 *
-	 * @since 2.6.0
-	 */
-	public function __construct() {
-		$this->init();
-		add_action( 'init', array( $this, 'init' ), 0 );
-	}
-
 	// refactored. public function init() {}
 
 	/**
