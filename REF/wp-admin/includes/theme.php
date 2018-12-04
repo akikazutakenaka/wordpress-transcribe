@@ -67,19 +67,41 @@ function get_theme_feature_list( $api = TRUE )
 
 	if ( ! $feature_list ) {
 		$feature_list = themes_api( 'feature_list', array() );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * @NOW 010: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
- */
+
+		if ( is_wp_error( $feature_list ) ) {
+			return $features;
+		}
 	}
+
+	if ( ! $feature_list ) {
+		return $features;
+	}
+
+	set_site_transient( 'wporg_theme_feature_list', $feature_list, 3 * HOUR_IN_SECONDS );
+	$category_translations = array(
+		'Layout'   => __( 'Layout' ),
+		'Features' => __( 'Features' ),
+		'Subject'  => __( 'Subject' )
+	);
+
+	// Loop over the wporg canonical list and apply translations.
+	$wporg_features = array();
+
+	foreach ( ( array ) $feature_list as $feature_category => $feature_items ) {
+		if ( isset( $category_translations[ $feature_category ] ) ) {
+			$feature_category = $category_translations[ $feature_category ];
+		}
+
+		$wporg_features[ $feature_category ] = array();
+
+		foreach ( $feature_items as $feature ) {
+			$wporg_features[ $feature_category ][ $feature ] = isset( $features[ $feature_category ][ $feature ] )
+				? $features[ $feature_category ][ $feature ]
+				: $feature;
+		}
+	}
+
+	return $wporg_features;
 }
 
 /**

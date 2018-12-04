@@ -647,7 +647,6 @@ final class WP_Theme implements ArrayAccess
  * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
  * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
  * @NOW 009: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- * ......->: wp-admin/includes/theme.php: get_theme_feature_list( [bool $api = TRUE] )
  */
 				}
 		}
