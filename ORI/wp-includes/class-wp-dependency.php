@@ -17,55 +17,9 @@
  * @since 2.6.0
  */
 class _WP_Dependency {
-	/**
-	 * The handle name.
-	 *
-	 * @since 2.6.0
-	 * @var null
-	 */
-	public $handle;
-
-	/**
-	 * The handle source.
-	 *
-	 * @since 2.6.0
-	 * @var null
-	 */
-	public $src;
-
-	/**
-	 * An array of handle dependencies.
-	 *
-	 * @since 2.6.0
-	 * @var array
-	 */
-	public $deps = array();
-
-	/**
-	 * The handle version.
-	 *
-	 * Used for cache-busting.
-	 *
-	 * @since 2.6.0
-	 * @var bool|string
-	 */
-	public $ver = false;
-
-	/**
-	 * Additional arguments for the handle.
-	 *
-	 * @since 2.6.0
-	 * @var null
-	 */
-	public $args = null;  // Custom property, such as $in_footer or $media.
-
-	/**
-	 * Extra data to supply to the handle.
-	 *
-	 * @since 2.6.0
-	 * @var array
-	 */
-	public $extra = array();
+	// refactored. public $handle;
+	// :
+	// refactored. public $extra = array();
 
 	/**
 	 * Setup dependencies.
