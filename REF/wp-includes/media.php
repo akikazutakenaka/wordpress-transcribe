@@ -1259,6 +1259,5 @@ function get_attached_media( $type, $post = 0 )
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * @NOW 007: wp-includes/media.php: get_attached_media( string $type [, int|WP_Post $post = 0] )
- * ......->: wp-includes/post.php: get_children( [mixed $args = '' [, string $output = OBJECT]] )
  */
 }

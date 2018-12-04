@@ -112,15 +112,108 @@ function _wp_relative_upload_path( $path )
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * <-......: wp-includes/media.php: get_attached_media( string $type [, int|WP_Post $post = 0] )
- * @NOW 008: wp-includes/post.php: get_children( [mixed $args = '' [, string $output = OBJECT]] )
+ * Retrieve all children of the post parent ID.
+ *
+ * Normally, without any enhancements, the children would apply to pages.
+ * In the context of the inner workings of WordPress, pages, posts, and attachments share the same table, so therefore the functionality could apply to any one of them.
+ * It is then noted that while this function does not work on posts, it does not mean that it won't work on posts.
+ * It is recommended that you know what context you wish to retrieve the children of.
+ *
+ * Attachments may also be made the child of a post, so if that is an accurate statement (which needs to be verified), it would then be possible to get all of the attachments for a post.
+ * Attachments have since changed since version 2.5, so this is most likely inaccurate, but serves generally as an example of what is possible.
+ *
+ * The arguments listed as defaults are for this function and also of the get_posts() function.
+ * The arguments are combined with the get_children defaults and are then passed to the get_posts() function, which accepts additional arguments.
+ * You can replace the defaults in this function, listed below and the additional arguments listed in the get_posts() function.
+ *
+ * The 'post_parent' is the most important argument and important attention needs to be paid to the $args parameter.
+ * If you pass either an object or an integer (number), then just the 'post_parent' is grabbed and everything else is lost.
+ * If you don't specify any arguments, then it is assumed that you are in The Loop and the post parent will be grabbed for from the current post.
+ *
+ * The 'post_parent' argument is the ID to get the children.
+ * The 'numberposts' is the amount of posts to retrieve that has a default of '-1', which is used to get all of the posts.
+ * Giving a number higher than 0 will only retrieve that amount of posts.
+ *
+ * The 'post_type' and 'post_status' arguments can be used to choose what criteria of posts to retrieve.
+ * The 'post_type' can be anything, but WordPress post types are 'post', 'pages', and 'attachments'.
+ * The 'post_status' argument will accept any post status within the write administration panels.
+ *
+ * @since  2.0.0
+ * @see    get_posts()
+ * @todo   Check validity of description.
+ * @global WP_Post $post
+ *
+ * @param  mixed  $args   Optional.
+ *                        User defined arguments for replacing the defaults.
+ *                        Default empty.
+ * @param  string $output Optional.
+ *                        The required return type.
+ *                        One of OBJECT, ARRAY_A, or ARRAY_N, which correspond to a WP_Post object, an associative array, or a numeric array, respectively.
+ *                        Default OBJECT.
+ * @return array  Array of children, where the type of each element is determined by $output parameter.
+ *                Empty array on failure.
  */
+function get_children( $args = '', $output = OBJECT )
+{
+	$kids = array();
+
+	if ( empty( $args ) ) {
+		if ( isset( $GLOBALS['post'] ) ) {
+			$args = array( 'post_parent' => ( int ) $GLOBALS['post']->post_parent );
+		} else {
+			return $kids;
+		}
+	} elseif ( is_object( $args ) ) {
+		$args = array( 'post_parent' => ( int ) $args->post_parent );
+	} elseif ( is_numeric( $args ) ) {
+		$args = array( 'post_parent' => ( int ) $args );
+	}
+
+	$defaults = array(
+		'numberposts' => -1,
+		'post_type'   => 'any',
+		'post_status' => 'any',
+		'post_parent' => 0
+	);
+	$r = wp_parse_args( $args, $defaults );
+	$children = get_posts( $r );
+
+	if ( ! $children ) {
+		return $kids;
+	}
+
+	if ( ! empty( $r['fields'] ) ) {
+		return $children;
+	}
+
+	update_post_cache( $children );
+
+	foreach ( $children as $key => $child ) {
+		$kids[ $child->ID ] = $children[ $key ];
+	}
+
+	if ( $output == OBJECT ) {
+		return $kids;
+	} elseif ( $output == ARRAY_A ) {
+		$weeuns = array();
+
+		foreach ( ( array ) $kids as $kid ) {
+			$weeuns[ $kid->ID ] = get_object_vars( $kids[ $kid->ID ] );
+		}
+
+		return $weeuns;
+	} elseif ( $output == ARRAY_N ) {
+		$babes = array();
+
+		foreach ( ( array ) $kids as $kid ) {
+			$babes[ $kid->ID ] = array_values( get_object_vars( $kids[ $kid->ID ] ) );
+		}
+
+		return $babes;
+	} else {
+		return $kids;
+	}
+}
 
 /**
  * Retrieves post data given a post ID or post object.
