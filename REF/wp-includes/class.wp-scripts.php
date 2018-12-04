@@ -138,7 +138,6 @@ class WP_Scripts extends WP_Dependencies
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * <-......: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
  * <-......: wp-includes/functions.wp-scripts.php: wp_scripts()
- * @NOW 009: wp-includes/class.wp-scripts.php: WP_Scripts
- * ......->: wp-includes/class.wp-dependencies.php: WP_Dependencies
+ * @NOW 009: wp-includes/class.wp-scripts.php: WP_Scripts::__construct()
  */
 }

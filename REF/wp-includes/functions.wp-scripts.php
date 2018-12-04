@@ -30,7 +30,7 @@ function wp_scripts()
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * <-......: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
  * @NOW 008: wp-includes/functions.wp-scripts.php: wp_scripts()
- * ......->: wp-includes/class.wp-scripts.php: WP_Scripts
+ * ......->: wp-includes/class.wp-scripts.php: WP_Scripts::__construct()
  */
 	}
 }
