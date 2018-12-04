@@ -136,9 +136,18 @@ add_filter( 'term_name_rss', 'convert_chars' );
 // Pre save hierarchy
 add_filter( 'wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2 );
 add_filter( 'wp_update_term_parent', 'wp_check_term_hierarchy_for_loops', 10, 3 );
+
+// Display filters
+add_filter( 'the_title', 'wptexturize' );
+add_filter( 'the_title', 'convert_chars' );
+add_filter( 'the_title', 'trim' );
+
+add_filter( 'the_content', 'wptexturize' );
+add_filter( 'the_content', 'convert_smilies', 20 );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
+ * ......->: wp-includes/formatting.php: convert_smilies( string $text )
  */

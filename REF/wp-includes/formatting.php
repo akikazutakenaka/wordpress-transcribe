@@ -2050,6 +2050,64 @@ function urlencode_deep( $value )
 }
 
 /**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: convert_smilies( string $text )
+ * @NOW 006: wp-includes/formatting.php: translate_smiley( array $matches )
+ */
+
+/**
+ * Convert text equivalent of smilies to images.
+ *
+ * Will only convert smilies if the option 'use_smilies' is true and the global used in the function isn't empty.
+ *
+ * @since  0.71
+ * @global string|array $wp_smiliessearch
+ *
+ * @param  string $text     Content to convert smilies from text.
+ * @return string Converted content with text smilies replaced with images.
+ */
+function convert_smilies( $text )
+{
+	global $wp_smiliessearch;
+	$output = '';
+
+	if ( get_option( 'use_smilies' ) && ! empty( $wp_smiliessearch ) ) {
+		// HTML loop taken from texturize function, could possible be consolidated.
+		$textarr = preg_split( '/(<.*>)/U', $text, -1, PREG_SPLIT_DELIM_CAPTURE ); // Capture the tags as well as in between.
+		$stop = count( $textarr ); // Loop stuff.
+
+		// Ignore processing of specific tags.
+		$tags_to_ignore = 'code|pre|style|script|textarea';
+		$ignore_block_element = '';
+
+		for ( $i = 0; $i < $stop; $i++ ) {
+			$content = $textarr[ $i ];
+
+			// If we're in an ignore block, wait until we find its closing tag.
+			if ( '' == $ignore_block_element && preg_match( '/^<(' . $tags_to_ignore . ')>/', $content, $matches ) ) {
+				$ignore_block_element = $matches[1];
+			}
+
+			// If it's not a tag and not in ignore block.
+			if ( '' == $ignore_block_element && strlen( $content ) > 0 && '<' != $content[0] ) {
+				$content = preg_replace_callback( $wp_smiliessearch, 'translate_smiley', $content );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * @NOW 005: wp-includes/formatting.php: convert_smilies( string $text )
+ * ......->: wp-includes/formatting.php: translate_smiley( array $matches )
+ */
+			}
+		}
+	}
+}
+
+/**
  * Verifies that an email is valid.
  *
  * Does not grok i18n domains.
