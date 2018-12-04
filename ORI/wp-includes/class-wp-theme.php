@@ -297,65 +297,7 @@ final class WP_Theme implements ArrayAccess {
 		return $value;
 	}
 
-	/**
-	 * Translate a theme header.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @staticvar array $tags_list
-	 *
-	 * @param string $header Theme header. Name, Description, Author, Version, ThemeURI, AuthorURI, Status, Tags.
-	 * @param string $value Value to translate.
-	 * @return string Translated value.
-	 */
-	private function translate_header( $header, $value ) {
-		switch ( $header ) {
-			case 'Name' :
-				// Cached for sorting reasons.
-				if ( isset( $this->name_translated ) )
-					return $this->name_translated;
-				$this->name_translated = translate( $value, $this->get('TextDomain' ) );
-				return $this->name_translated;
-			case 'Tags' :
-				if ( empty( $value ) || ! function_exists( 'get_theme_feature_list' ) ) {
-					return $value;
-				}
-
-				static $tags_list;
-				if ( ! isset( $tags_list ) ) {
-					$tags_list = array(
-						// As of 4.6, deprecated tags which are only used to provide translation for older themes.
-						'black' => __( 'Black' ), 'blue' => __( 'Blue' ), 'brown'  => __( 'Brown' ),
-						'gray' => __( 'Gray' ), 'green'  => __( 'Green' ), 'orange' => __( 'Orange' ),
-						'pink' => __( 'Pink' ), 'purple' => __( 'Purple' ), 'red' => __( 'Red' ),
-						'silver' => __( 'Silver' ), 'tan' => __( 'Tan' ), 'white' => __( 'White' ),
-						'yellow' => __( 'Yellow' ), 'dark' => __( 'Dark' ), 'light' => __( 'Light' ),
-						'fixed-layout' => __( 'Fixed Layout' ), 'fluid-layout' => __( 'Fluid Layout' ),
-						'responsive-layout' => __( 'Responsive Layout' ), 'blavatar' => __( 'Blavatar' ),
-						'photoblogging' => __( 'Photoblogging' ), 'seasonal' => __( 'Seasonal' ),
-					);
-
-					$feature_list = get_theme_feature_list( false ); // No API
-					foreach ( $feature_list as $tags ) {
-						$tags_list += $tags;
-					}
-				}
-
-				foreach ( $value as &$tag ) {
-					if ( isset( $tags_list[ $tag ] ) ) {
-						$tag = $tags_list[ $tag ];
-					} elseif ( isset( self::$tag_map[ $tag ] ) ) {
-						$tag = $tags_list[ self::$tag_map[ $tag ] ];
-					}
-				}
-
-				return $value;
-
-			default :
-				$value = translate( $value, $this->get('TextDomain') );
-		}
-		return $value;
-	}
+	// refactored. private function translate_header( $header, $value ) {}
 
 	/**
 	 * The directory name of the theme's "stylesheet" files, inside the theme root.

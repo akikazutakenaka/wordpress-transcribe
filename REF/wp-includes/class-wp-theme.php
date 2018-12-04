@@ -637,19 +637,27 @@ final class WP_Theme implements ArrayAccess
 						'seasonal'          => __( 'Seasonal' )
 					);
 					$feature_list = get_theme_feature_list( FALSE ); // No API
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
- * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * @NOW 009: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
- */
+
+					foreach ( $feature_list as $tags ) {
+						$tags_list += $tags;
+					}
 				}
+
+				foreach ( $value as &$tag ) {
+					if ( isset( $tags_list[ $tag ] ) ) {
+						$tag = $tags_list[ $tag ];
+					} elseif ( isset( self::$tag_map[ $tag ] ) ) {
+						$tag = $tags_list[ self::$tag_map[ $tag ] ];
+					}
+				}
+
+				return $value;
+
+			default:
+				$value = translate( $value, $this->get( 'TextDomain' ) );
 		}
+
+		return $value;
 	}
 
 	/**
@@ -775,7 +783,6 @@ final class WP_Theme implements ArrayAccess
  * <-......: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
  * <-......: wp-includes/class-wp-theme.php: WP_Theme::get_page_templates( [WP_Post|null $post = NULL [, string $post_type = 'page']] )
  * @NOW 008: wp-includes/class-wp-theme.php: WP_Theme::get_post_templates()
- * ......->: wp-includes/class-wp-theme.php: WP_Theme::translate_header( string $header, string $value )
  */
 				}
 			}
