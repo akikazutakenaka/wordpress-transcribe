@@ -2671,52 +2671,7 @@ function wp_enqueue_media( $args = array() ) {
 	do_action( 'wp_enqueue_media' );
 }
 
-/**
- * Retrieves media attached to the passed post.
- *
- * @since 3.6.0
- *
- * @param string      $type Mime type.
- * @param int|WP_Post $post Optional. Post ID or WP_Post object. Default is global $post.
- * @return array Found attachments.
- */
-function get_attached_media( $type, $post = 0 ) {
-	if ( ! $post = get_post( $post ) )
-		return array();
-
-	$args = array(
-		'post_parent' => $post->ID,
-		'post_type' => 'attachment',
-		'post_mime_type' => $type,
-		'posts_per_page' => -1,
-		'orderby' => 'menu_order',
-		'order' => 'ASC',
-	);
-
-	/**
-	 * Filters arguments used to retrieve media attached to the given post.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @param array  $args Post query arguments.
-	 * @param string $type Mime type of the desired media.
-	 * @param mixed  $post Post ID or object.
-	 */
-	$args = apply_filters( 'get_attached_media_args', $args, $type, $post );
-
-	$children = get_children( $args );
-
-	/**
-	 * Filters the list of media attached to the given post.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @param array  $children Associative array of media attached to the given post.
-	 * @param string $type     Mime type of the media desired.
-	 * @param mixed  $post     Post ID or object.
-	 */
-	return (array) apply_filters( 'get_attached_media', $children, $type, $post );
-}
+// refactored. function get_attached_media( $type, $post = 0 ) {}
 
 /**
  * Check the content blob for an audio, video, object, embed, or iframe tags.

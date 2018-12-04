@@ -1113,7 +1113,6 @@ function wp_video_shortcode( $attr, $content = '' )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * ......->: wp-includes/media.php: get_attached_media( string $type [, int|WP_Post $post = 0] )
  */
 	}
 }
@@ -1251,13 +1250,15 @@ function get_attached_media( $type, $post = 0 )
 	$args = apply_filters( 'get_attached_media_args', $args, $type, $post );
 
 	$children = get_children( $args );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * @NOW 007: wp-includes/media.php: get_attached_media( string $type [, int|WP_Post $post = 0] )
- */
+
+	/**
+	 * Filters the list of media attached to the given post.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array  $children Associative array of media attached to the given post.
+	 * @param string $type     Mime type of the media desired.
+	 * @param mixed  $post     Post ID or object.
+	 */
+	return ( array ) apply_filters( 'get_attached_media', $children, $type, $post );
 }
