@@ -9,13 +9,21 @@
  */
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * @NOW 006: wp-includes/post-template.php: get_the_ID()
+ * Retrieve the ID of the current item in the WordPress Loop.
+ *
+ * @since 2.1.0
+ *
+ * @return int|false The ID of the current item in the WordPress Loop.
+ *                   False if $post is not set.
  */
+function get_the_ID()
+{
+	$post = get_post();
+
+	return ! empty( $post )
+		? $post->ID
+		: FALSE;
+}
 
 /**
  * Retrieves the Post Global Unique Identifier (guid).
@@ -77,7 +85,6 @@ function prepend_attachment( $content )
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/post-template.php: prepend_attachment( string $content )
- * ......->: wp-includes/post-template.php: get_the_ID()
  */
 	}
 }
