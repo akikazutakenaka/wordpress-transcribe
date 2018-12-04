@@ -25,11 +25,49 @@
  */
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * @NOW 007: wp-includes/shortcodes.php: shortcode_atts( array $pairs, array $atts [, string $shortcode = ''] )
+ * Combine user attributes with known attributes and fill in defaults when needed.
+ *
+ * The pairs should be considered to be all of the attributes which are supported by the caller and given as a list.
+ * The returned attributes will only contain the attributes in the $pairs list.
+ *
+ * If the $atts list has unsupported attributes, then they will be ignored and removed from the final returned list.
+ *
+ * @since 2.5.0
+ *
+ * @param  array  $pairs     Entire list of supported attributes and their defaults.
+ * @param  array  $atts      User defined attributes in shortcode tag.
+ * @param  string $shortcode Optional.
+ *                           The name of the shortcode, provided for context to enable filtering.
+ * @return array  Combined and filtered attribute list.
  */
+function shortcode_atts( $pairs, $atts, $shortcode = '' )
+{
+	$atts = ( array ) $atts;
+	$out = array();
+
+	foreach ( $pairs as $name => $default ) {
+		$out[ $name ] = array_key_exists( $name, $atts )
+			? $atts[ $name ]
+			: $default;
+	}
+
+	/**
+	 * Filters a shortcode's default attributes.
+	 *
+	 * If the third parameter of the shortcode_atts() function is present then this filter is available.
+	 * The third parameter, $shortcode, is the name of the shortcode.
+	 *
+	 * @since 3.6.0
+	 * @since 4.4.0 Added the `$shortcode` parameter.
+	 *
+	 * @param array  $out       The output array of shortcode attributes.
+	 * @param array  $pairs     The supported attributes and their defaults.
+	 * @param array  $atts      The user defined shortcode attributes.
+	 * @param string $shortcode The shortcode name.
+	 */
+	if ( $shortcode ) {
+		$out = apply_filters( "shortcode_atts_{$shortcode}", $out, $pairs, $atts, $shortcode );
+	}
+
+	return $out;
+}
