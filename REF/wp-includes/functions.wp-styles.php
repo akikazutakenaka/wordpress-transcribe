@@ -8,6 +8,20 @@
  */
 
 /**
+ * Initialize $wp_styles if it has not been set.
+ *
+ * @global WP_Styles $wp_styles
+ * @since  4.2.0
+ *
+ * @return WP_Styles WP_Styles instance.
+ */
+function wp_styles()
+{
+	global $wp_styles;
+
+	if ( ! ( $wp_styles instanceof WP_Styles ) ) {
+		$wp_styles = new WP_Styles();
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -16,7 +30,10 @@
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * <-......: wp-includes/functions.wp-styles.php: wp_enqueue_style( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, string $media = 'all']]]] )
  * @NOW 008: wp-includes/functions.wp-styles.php: wp_styles()
+ * ......->: wp-includes/class.wp-styles.css: WP_Styles
  */
+	}
+}
 
 /**
  * Enqueue a CSS stylesheet.
