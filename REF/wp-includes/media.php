@@ -974,6 +974,98 @@ function wp_get_video_extensions()
 }
 
 /**
+ * Builds the Video shortcode output.
+ *
+ * This implements the functionality of the Video Shortcode for displaying WordPress mp4s in a post.
+ *
+ * @since     3.6.0
+ * @global    int $content_width
+ * @staticvar int $instance
+ *
+ * @param  array       $attr {
+ *     Attributes of the shortcode.
+ *
+ *     @type string $src      URL to the source of the video file.
+ *                            Default empty.
+ *     @type int    $height   Height of the video embed in pixels.
+ *                            Default 360.
+ *     @type int    $width    Width of the video embed in pixels.
+ *                            Default $content_width or 640.
+ *     @type string $poster   The 'poster' attribute for the `<video>` element.
+ *                            Default empty.
+ *     @type string $loop     The 'loop' attribute for the `<video>` element.
+ *                            Default empty.
+ *     @type string $autoplay The 'autoplay' attribute for the `<video>` element.
+ *                            Default empty.
+ *     @type string $preload  The 'preload' attribute for the `<video>` element.
+ *                            Default 'metadata'.
+ *     @type string $class    The 'class' attribute for the `<video>` element.
+ *                            Default 'wp-video-shortcode'.
+ * }
+ * @param  string      $content Shortcode content.
+ * @return string|void HTML content to display video.
+ */
+function wp_video_shortcode( $attr, $content = '' )
+{
+	global $content_width;
+
+	$post_id = get_post()
+		? get_the_ID()
+		: 0;
+
+	static $instance = 0;
+	$instance++;
+
+	/**
+	 * Filters the default video shortcode output.
+	 *
+	 * If the filtered output isn't empty, it will be used instead of generating the default video template.
+	 *
+	 * @since 3.6.0
+	 * @see   wp_video_shortcode()
+	 *
+	 * @param string $html     Empty variable to be replaced with shortcode markup.
+	 * @param array  $attr     Attributes of the shortcode.
+	 *                         @see wp_video_shortcode()
+	 * @param string $content  Video shortcode content.
+	 * @param int    $instance Unique numeric ID of this video shortcode instance.
+	 */
+	$override = apply_filters( 'wp_video_shortcode_override', '', $attr, $content, $instance );
+
+	if ( '' !== $override ) {
+		return $override;
+	}
+
+	$video = NULL;
+	$default_types = wp_get_video_extensions();
+	$defaults_atts = array(
+		'src'      => '',
+		'poster'   => '',
+		'loop'     => '',
+		'autoplay' => '',
+		'preload'  => 'metadata',
+		'width'    => 640,
+		'height'   => 360,
+		'class'    => 'wp-video-shortcode'
+	);
+
+	foreach ( $default_types as $type ) {
+		$defaults_atts[ $type ] = '';
+	}
+
+	$atts = shortcode_atts( $defaults_atts, $attr, 'video' );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
+ * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * ......->: wp-includes/shortcodes.php: shortcode_atts( array $pairs, array $atts [, string $shortcode = ''] )
+ */
+}
+
+/**
  * Retrieve taxonomies attached to given the attachment.
  *
  * @since 2.5.0

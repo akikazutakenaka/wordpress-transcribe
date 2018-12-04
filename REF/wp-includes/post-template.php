@@ -87,13 +87,17 @@ function prepend_attachment( $content )
 		}
 
 		if ( has_post_thumbnail() ) {
+			$atts['poster'] = wp_get_attachment_url( get_post_thumbnail_id() );
+		}
+
+		$p = wp_video_shortcode( $atts );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/post-template.php: prepend_attachment( string $content )
+ * ......->: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  */
-		}
 	}
 }
