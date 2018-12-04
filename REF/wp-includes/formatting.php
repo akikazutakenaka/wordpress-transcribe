@@ -2050,13 +2050,55 @@ function urlencode_deep( $value )
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: convert_smilies( string $text )
- * @NOW 006: wp-includes/formatting.php: translate_smiley( array $matches )
+ * Convert one smiley code to the icon graphic file equivalent.
+ *
+ * Callback handler for convert_smilies().
+ *
+ * Looks up one smiley code in the $wpsmiliestrans global array and returns an `<img>` string for that smiley.
+ *
+ * @since  2.8.0
+ * @global array $wpsmiliestrans
+ *
+ * @param  array  $matches Single match.
+ *                         Smiley code to convert to image.
+ * @return string Image string for smiley.
  */
+function translate_smiley( $matches )
+{
+	global $wpsmiliestrans;
+
+	if ( count( $matches ) == 0 ) {
+		return '';
+	}
+
+	$smiley = trim( reset( $matches ) );
+	$img = $wpsmiliestrans[ $smiley ];
+	$matches = array();
+
+	$ext = preg_match( '/\.([^.]+)$/', $img, $matches )
+		? strtolower( $matches[1] )
+		: FALSE;
+
+	$image_exts = array( 'jpg', 'jpeg', 'jpe', 'gif', 'png' );
+
+	// Don't convert smilies that aren't images - they're probably emoji.
+	if ( ! in_array( $ext, $image_exts ) ) {
+		return $img;
+	}
+
+	/**
+	 * Filters the Smiley image URL before it's used in the image element.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $smiley_url URL for the smiley image.
+	 * @param string $img        Filename for the smiley image.
+	 * @param string $site_url   Site URL, as returned by site_url().
+	 */
+	$src_url = apply_filters( 'smilies_src', includes_url( "images/smilies/$img" ), $img, site_url() );
+
+	return sprintf( '<img src="%s" alt="%s" class="wp-smiley" style="height: 1em; max-height: 1em;" />', esc_url( $src_url ), esc_attr( $smiley ) );
+}
 
 /**
  * Convert text equivalent of smilies to images.
@@ -2100,7 +2142,6 @@ function convert_smilies( $text )
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/formatting.php: convert_smilies( string $text )
- * ......->: wp-includes/formatting.php: translate_smiley( array $matches )
  */
 			}
 		}
