@@ -1480,6 +1480,20 @@ EOQ
 	if ( ! empty( $postarr['page_template'] ) ) {
 		$post->page_template = $postarr['page_template'];
 		$page_templates = wp_get_theme()->get_page_templates( $post );
+
+		if ( 'default' != $postarr['page_template'] && ! isset( $page_templates[ $postarr['page_template'] ] ) ) {
+			if ( $wp_error ) {
+				return new WP_Error( 'invalid_page_template', __( 'Invalid page template.' ) );
+			}
+
+			update_post_meta( $post_ID, '_wp_page_template', 'default' );
+		} else {
+			update_post_meta( $post_ID, '_wp_page_template', $postarr['page_template'] );
+		}
+	}
+
+	if ( 'attachment' !== $postarr['post_type'] ) {
+		wp_transition_post_status( $data['post_status'], $previous_status, $post );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -1868,6 +1882,63 @@ function wp_set_post_categories( $post_ID = 0, $post_categories = array(), $appe
 	}
 
 	return wp_set_post_terms( $post_ID, $post_categories, 'category', $append );
+}
+
+/**
+ * Fires actions related to the transitioning of a post's status.
+ *
+ * When a post is saved, the post status is "transitioned" from one status to another, though this does not always mean the status has actually changed before and after the save.
+ * This function fires a number of action hooks related to that transition: the generic {@see 'transition_post_status'} action, as well as the dynamic hooks {@see '$old_status_to_$new_status'} and {@see '$new_status_$post->post_type'}.
+ * Note that the function does not transition the post object in the database.
+ *
+ * For instance: When publishing a post for the first time, the post status may transition from 'draft' - or some other status - to 'publish'.
+ * However, if a post is already published and is simply being updated, the "old" and "new" statuses may both be 'publish' before and after the transition.
+ *
+ * @since 2.3.0
+ *
+ * @param string  $new_status Transition to this post status.
+ * @param string  $old_status Previous post status.
+ * @param WP_Post $post       Post data.
+ */
+function wp_transition_post_status( $new_status, $old_status, $post )
+{
+	/**
+	 * Fires when a post is transitioned from one status to another.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string  $new_status New post status.
+	 * @param string  $old_status Old post status.
+	 * @param WP_Post $post       Post object.
+	 */
+	do_action( 'transition_post_status', $new_status, $old_status, $post );
+
+	/**
+	 * Fires when a post is transitioned from one status to another.
+	 *
+	 * The dynamic portions of the hook name, `$new_status` and `$old_status`, refer to the old and new post statuses, respectively.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param WP_Post $post Post object.
+	 */
+	do_action( "{$old_status}_to_{$new_status}", $post );
+
+	/**
+	 * Fires when a post is transitioned from one status to another.
+	 *
+	 * The dynamic portions of the hook name, `$new_status` and `$post->post_type`, refer to the new post status and post type, respectively.
+	 *
+	 * Please note: When this action is hooked using a particular post status (like 'publish', as `publish_{$post->post_type}`), it will fire both when a post is first transitioned to that status from something else, as well as upon subsequent post updates (old and new status are both the same).
+	 *
+	 * Therefore, if you are looking to only fire a callback when a post is first transitioned to a status, use the {@see 'transition_post_status'} hook instead.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
+	 */
+	do_action( "{$new_status}_{$post->post_type}", $post->ID, $post );
 }
 
 /**
