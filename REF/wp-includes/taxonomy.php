@@ -3065,3 +3065,50 @@ function get_ancestors( $object_id = 0, $object_type = '', $resource_type = '' )
 	 */
 	return apply_filters( 'get_ancestors', $ancestors, $object_id, $object_type, $resource_type );
 }
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/taxonomy.php: wp_check_term_hierarchy_for_loops( int $parent, int $term_id, string $taxonomy )
+ * @NOW 006: wp-includes/taxonomy.php: wp_get_term_taxonomy_parent_id( int $term_id, string $taxonomy )
+ */
+
+/**
+ * Checks the given subset of the term hierarchy for hierarchy loops.
+ * Prevents loops from forming and breaks those that it finds.
+ *
+ * Attached to the {@see 'wp_update_term_parent'} filter.
+ *
+ * @since 3.1.0
+ *
+ * @param  int    $parent   `term_id` of the parent for the term we're checking.
+ * @param  int    $term_id  The term we're checking.
+ * @param  string $taxonomy The taxonomy of the term we're checking.
+ * @return int    The new parent for the term.
+ */
+function wp_check_term_hierarchy_for_loops( $parent, $term_id, $taxonomy )
+{
+	// Nothing fancy here - bail.
+	if ( ! $parent ) {
+		return 0;
+	}
+
+	// Can't be its own parent.
+	if ( $parent == $term_id ) {
+		return 0;
+	}
+
+	// Now look for larger loops.
+	if ( ! $loop = wp_find_hierarchy_loop( 'wp_get_term_taxonomy_parent_id', $term_id, $parent, array( $taxonomy ) ) ) {
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * @NOW 005: wp-includes/taxonomy.php: wp_check_term_hierarchy_for_loops( int $parent, int $term_id, string $taxonomy )
+ * ......->: wp-includes/taxonomy.php: wp_get_term_taxonomy_parent_id( int $term_id, string $taxonomy )
+ */
+	}
+}
