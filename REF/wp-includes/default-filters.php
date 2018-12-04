@@ -140,5 +140,4 @@ add_filter( 'wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2 
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
- * ......->: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
  */

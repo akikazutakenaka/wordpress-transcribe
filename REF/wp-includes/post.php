@@ -2805,14 +2805,9 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
 				'ID'          => $loop_member,
 				'post_parent' => 0
 			) );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * @NOW 005: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- */
 	}
+
+	return $post_parent;
 }
 
 /**
