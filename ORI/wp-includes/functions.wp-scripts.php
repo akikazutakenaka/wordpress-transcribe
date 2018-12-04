@@ -9,28 +9,7 @@
  */
 
 // refactored. function wp_scripts() {}
-
-/**
- * Helper function to output a _doing_it_wrong message when applicable.
- *
- * @ignore
- * @since 4.2.0
- *
- * @param string $function Function name.
- */
-function _wp_scripts_maybe_doing_it_wrong( $function ) {
-	if ( did_action( 'init' ) || did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' ) || did_action( 'login_enqueue_scripts' ) ) {
-		return;
-	}
-
-	_doing_it_wrong( $function, sprintf(
-		/* translators: 1: wp_enqueue_scripts, 2: admin_enqueue_scripts, 3: login_enqueue_scripts */
-		__( 'Scripts and styles should not be registered or enqueued until the %1$s, %2$s, or %3$s hooks.' ),
-		'<code>wp_enqueue_scripts</code>',
-		'<code>admin_enqueue_scripts</code>',
-		'<code>login_enqueue_scripts</code>'
-	), '3.3.0' );
-}
+// refactored. function _wp_scripts_maybe_doing_it_wrong( $function ) {}
 
 /**
  * Prints scripts in document head that are in the $handles queue.

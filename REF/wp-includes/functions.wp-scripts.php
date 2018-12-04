@@ -27,6 +27,23 @@ function wp_scripts()
 }
 
 /**
+ * Helper function to output a _doing_it_wrong message when applicable.
+ *
+ * @ignore
+ * @since  4.2.0
+ *
+ * @param string $function Function name.
+ */
+function _wp_scripts_maybe_doing_it_wrong( $function )
+{
+	if ( did_action( 'init' ) || did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' ) || did_action( 'login_enqueue_scripts' ) ) {
+		return;
+	}
+
+	_doing_it_wrong( $function, sprintf( __( 'Scripts and styles should not be registered or enqueued until the %1$s, %2$s, or %3$s hooks.' ), '<code>wp_enqueue_scripts</code>', '<code>admin_enqueue_scripts</code>', '<code>login_enqueue_scripts</code>' ), '3.3.0' );
+}
+
+/**
  * Enqueue a script.
  *
  * Registers the script if $src provided (does NOT overwrite), and enqueues it.
@@ -54,6 +71,7 @@ function wp_scripts()
 function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = FALSE, $in_footer = FALSE )
 {
 	$wp_scripts = wp_scripts();
+	_wp_scripts_maybe_doing_it_wrong( __FUNCTION__ );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
