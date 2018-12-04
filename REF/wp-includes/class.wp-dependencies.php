@@ -113,15 +113,6 @@ class WP_Dependencies
 		}
 
 		$this->registered[ $handle ] = new _WP_Dependency( $handle, $src, $deps, $ver, $args );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * <-......: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
- * @NOW 008: wp-includes/class.wp-dependencies.php: WP_Dependencies::add( string $handle, string $src [, array $deps = array() [, string|bool|null $ver = FALSE [, mixed $args = NULL]]] )
- */
+		return TRUE;
 	}
 }
