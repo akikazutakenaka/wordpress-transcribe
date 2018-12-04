@@ -87,14 +87,22 @@ class _WP_Dependency
 		}
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * <-......: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
- * @NOW 008: wp-includes/class-wp-dependency.php: _WP_Dependency::add_data( string $name, mixed $data )
- */
+	/**
+	 * Add handle data.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param  string $name The data key to add.
+	 * @param  mixed  $data The data value to add.
+	 * @return bool   False if not scalar, true otherwise.
+	 */
+	public function add_data( $name, $data )
+	{
+		if ( ! is_scalar( $name ) ) {
+			return FALSE;
+		}
+
+		$this->extra[ $name ] = $data;
+		return TRUE;
+	}
 }
