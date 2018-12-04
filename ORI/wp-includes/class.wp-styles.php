@@ -18,23 +18,7 @@
 class WP_Styles extends WP_Dependencies {
 	// refactored. public $base_url;
 	// :
-	// refactored. public $default_dirs;
-
-	/**
-	 * Constructor.
-	 *
-	 * @since 2.6.0
-	 */
-	public function __construct() {
-		/**
-		 * Fires when the WP_Styles instance is initialized.
-		 *
-		 * @since 2.6.0
-		 *
-		 * @param WP_Styles $this WP_Styles instance (passed by reference).
-		 */
-		do_action_ref_array( 'wp_default_styles', array(&$this) );
-	}
+	// refactored. public function __construct() {}
 
 	/**
 	 * Processes a style dependency.

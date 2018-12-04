@@ -30,7 +30,6 @@ function wp_styles()
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * <-......: wp-includes/functions.wp-styles.php: wp_enqueue_style( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, string $media = 'all']]]] )
  * @NOW 008: wp-includes/functions.wp-styles.php: wp_styles()
- * ......->: wp-includes/class.wp-styles.css: WP_Styles::__construct()
  */
 	}
 }
