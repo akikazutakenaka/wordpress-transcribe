@@ -8,22 +8,7 @@
  * @subpackage Dependencies
  */
 
-/**
- * Initialize $wp_scripts if it has not been set.
- *
- * @global WP_Scripts $wp_scripts
- *
- * @since 4.2.0
- *
- * @return WP_Scripts WP_Scripts instance.
- */
-function wp_scripts() {
-	global $wp_scripts;
-	if ( ! ( $wp_scripts instanceof WP_Scripts ) ) {
-		$wp_scripts = new WP_Scripts();
-	}
-	return $wp_scripts;
-}
+// refactored. function wp_scripts() {}
 
 /**
  * Helper function to output a _doing_it_wrong message when applicable.
