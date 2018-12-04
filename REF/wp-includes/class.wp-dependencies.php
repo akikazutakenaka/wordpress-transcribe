@@ -80,4 +80,49 @@ class WP_Dependencies
 	 * @var int
 	 */
 	public $group = 0;
+
+	/**
+	 * Register an item.
+	 *
+	 * Registers the item if no item of that name already exists.
+	 *
+	 * @since 2.1.0
+	 * @since 2.6.0 Moved from `WP_Scripts`.
+	 *
+	 * @param  string           $handle Name of the item.
+	 *                                  Should be unique.
+	 * @param  string           $src    Full URL of the item, or path of the item relative to the WordPress root directory.
+	 * @param  array            $deps   Optional.
+	 *                                  An array of registered item handles this item depends on.
+	 *                                  Default empty array.
+	 * @param  string|bool|null $ver    Optional.
+	 *                                  String specifying item version number, if it has one, which is added to the URL as a query string for cache busting purposes.
+	 *                                  If version is set to false, a version number is automatically added equal to current installed WordPress version.
+	 *                                  If set to null, no version is added.
+	 * @param  mixed            $args   Optional.
+	 *                                  Custom property of the item.
+	 *                                  NOT the class property $args.
+	 *                                  Examples: $media, $in_footer.
+	 * @return bool             Whether the item has been registered.
+	 *                          True on success, false on failure.
+	 */
+	public function add( $handle, $src, $deps = array(), $ver = FALSE, $args = NULL )
+	{
+		if ( isset( $this->registered[ $handle ] ) ) {
+			return FALSE;
+		}
+
+		$this->registered[ $handle ] = new _WP_Dependency( $handle, $src, $deps, $ver, $args );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
+ * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * <-......: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
+ * @NOW 008: wp-includes/class.wp-dependencies.php: WP_Dependencies::add( string $handle, string $src [, array $deps = array() [, string|bool|null $ver = FALSE [, mixed $args = NULL]]] )
+ * ......->: wp-includes/class-wp-dependency.php: _WP_Dependency
+ */
+	}
 }

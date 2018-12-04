@@ -72,6 +72,14 @@ function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = FALSE, $
 {
 	$wp_scripts = wp_scripts();
 	_wp_scripts_maybe_doing_it_wrong( __FUNCTION__ );
+
+	if ( $src || $in_footer ) {
+		$_handle = explode( '?', $handle );
+
+		if ( $src ) {
+			$wp_scripts->add( $_handle[0], $src, $deps, $ver );
+		}
+	}
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -80,5 +88,6 @@ function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = FALSE, $
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * @NOW 007: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
+ * ......->: wp-includes/class.wp-dependencies.php: WP_Dependencies::add( string $handle, string $src [, array $deps = array() [, string|bool|null $ver = FALSE [, mixed $args = NULL]]] )
  */
 }
