@@ -1494,15 +1494,104 @@ EOQ
 
 	if ( 'attachment' !== $postarr['post_type'] ) {
 		wp_transition_post_status( $data['post_status'], $previous_status, $post );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * @NOW 006: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
- */
+	} else {
+		if ( $update ) {
+			/**
+			 * Fires once an existing attachment has been updated.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param int $post_ID Attachment ID.
+			 */
+			do_action( 'edit_attachment', $post_ID );
+
+			$post_after = get_post( $post_ID );
+
+			/**
+			 * Fires once an existing attachment has been updated.
+			 *
+			 * @since 4.4.0
+			 *
+			 * @param int     $post_ID     Post ID.
+			 * @param WP_Post $post_after  Post object following the update.
+			 * @param WP_Post $post_before Post object before the update.
+			 */
+			do_action( 'attachment_updated', $post_ID, $post_after, $post_before );
+		} else {
+			/**
+			 * Fires once an attachment has been added.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param int $post_id Attachment ID.
+			 */
+			do_action( 'add_attachment', $post_ID );
+		}
+
+		return $post_ID;
 	}
+
+	if ( $update ) {
+		/**
+		 * Fires once an existing post has been updated.
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param int     $post_ID Post ID.
+		 * @param WP_Post $post    Post object.
+		 */
+		do_action( 'edit_post', $post_ID, $post );
+
+		$post_after = get_post( $post_ID );
+
+		/**
+		 * Fires once an existing post has been updated.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int     $post_ID     Post ID.
+		 * @param WP_Post $post_after  Post object following the update.
+		 * @param WP_Post $post_before Post object before the update.
+		 */
+		do_action( 'post_updated', $post_ID, $post_after, $post_before );
+	}
+
+	/**
+	 * Fires once a post has been saved.
+	 *
+	 * The dynamic portion of the hook name, `$post->post_type`, refers to the post type slug.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param int     $post_ID Post ID.
+	 * @param WP_Post $post    Post object.
+	 * @param bool    $update  Whether this is an existing post being updated or not.
+	 */
+	do_action( "save_post_{$post->post_type}", $post_ID, $post, $update );
+
+	/**
+	 * Fires once a post has been saved.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param int     $post_ID Post ID.
+	 * @param WP_Post $post    Post object.
+	 * @param bool    $update  Whether this is an existing post being updated or not.
+	 */
+	do_action( 'save_post', $post_ID, $post, $update );
+
+	/**
+	 * Fires once a post has been saved.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int     $post_ID Post ID.
+	 * @param WP_Post $post    Post object.
+	 * @param bool    $update  Whether this is an existing post being updated or not.
+	 */
+	do_action( 'wp_insert_post', $post_ID, $post, $update );
+
+	return $post_ID;
 }
 
 /**
@@ -2722,7 +2811,6 @@ function wp_check_post_hierarchy_for_loops( $post_parent, $post_ID )
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/post.php: wp_check_post_hierarchy_for_loops( int $post_parent, int $post_ID )
- * ......->: wp-includes/post.php: wp_insert_post( array $postarr [, bool $wp_error = FALSE] )
  */
 	}
 }
