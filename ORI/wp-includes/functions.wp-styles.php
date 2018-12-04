@@ -8,22 +8,7 @@
  * @subpackage Dependencies
  */
 
-/**
- * Initialize $wp_styles if it has not been set.
- *
- * @global WP_Styles $wp_styles
- *
- * @since 4.2.0
- *
- * @return WP_Styles WP_Styles instance.
- */
-function wp_styles() {
-	global $wp_styles;
-	if ( ! ( $wp_styles instanceof WP_Styles ) ) {
-		$wp_styles = new WP_Styles();
-	}
-	return $wp_styles;
-}
+// refactored. function wp_styles() {}
 
 /**
  * Display styles that are in the $handles queue.
