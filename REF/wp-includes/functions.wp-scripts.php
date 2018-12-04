@@ -78,6 +78,10 @@ function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = FALSE, $
 
 		if ( $src ) {
 			$wp_scripts->add( $_handle[0], $src, $deps, $ver );
+		}
+
+		if ( $in_footer ) {
+			$wp_scripts->add_data( $_handle[0], 'group', 1 );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -86,6 +90,7 @@ function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = FALSE, $
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * @NOW 007: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
+ * ......->: wp-includes/class-wp-dependency.php: _WP_Dependency::add_data( string $name, mixed $data )
  */
 		}
 	}

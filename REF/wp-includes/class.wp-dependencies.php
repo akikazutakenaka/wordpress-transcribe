@@ -115,4 +115,24 @@ class WP_Dependencies
 		$this->registered[ $handle ] = new _WP_Dependency( $handle, $src, $deps, $ver, $args );
 		return TRUE;
 	}
+
+	/**
+	 * Add extra item data.
+	 *
+	 * Adds data to a registered item.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param  string $handle Name of the item.
+	 *                        Should be unique.
+	 * @param  string $key    The data key.
+	 * @param  mixed  $value  The data value.
+	 * @return bool   True on success, false on failure.
+	 */
+	public function add_data( $handle, $key, $value )
+	{
+		return ! isset( $this->registered[ $handle ] )
+			? FALSE
+			: $this->registered[ $handle ]->add_data( $key, $data );
+	}
 }
