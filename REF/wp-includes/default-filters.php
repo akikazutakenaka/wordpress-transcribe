@@ -141,5 +141,4 @@ add_filter( 'wp_update_term_parent', 'wp_check_term_hierarchy_for_loops', 10, 3 
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
- * ......->: wp-includes/taxonomy.php: wp_check_term_hierarchy_for_loops( int $parent, int $term_id, string $taxonomy )
  */

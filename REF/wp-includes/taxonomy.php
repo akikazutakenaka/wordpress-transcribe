@@ -3111,12 +3111,21 @@ function wp_check_term_hierarchy_for_loops( $parent, $term_id, $taxonomy )
 
 	// Now look for larger loops.
 	if ( ! $loop = wp_find_hierarchy_loop( 'wp_get_term_taxonomy_parent_id', $term_id, $parent, array( $taxonomy ) ) ) {
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * @NOW 005: wp-includes/taxonomy.php: wp_check_term_hierarchy_for_loops( int $parent, int $term_id, string $taxonomy )
- */
+		return $parent; // No loop
 	}
+
+	// Setting $parent to the given value causes a loop.
+	if ( isset( $loop[ $term_id ] ) ) {
+		return 0;
+	}
+
+	/**
+	 * There's a loop, but it doesn't contain $term_id.
+	 * Break the loop.
+	 */
+	foreach ( array_keys( $loop ) as $loop_member ) {
+		wp_update_term( $loop_member, $taxonomy, array( 'parent' => 0 ) );
+	}
+
+	return $parent;
 }

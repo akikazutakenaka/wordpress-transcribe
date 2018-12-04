@@ -1547,43 +1547,5 @@ function is_object_in_term( $object_id, $taxonomy, $terms = null ) {
 }
 
 // refactored. function is_object_in_taxonomy( $object_type, $taxonomy ) {}
-// refactored. function get_ancestors( $object_id = 0, $object_type = '', $resource_type = '' ) {}
-// refactored. function wp_get_term_taxonomy_parent_id( $term_id, $taxonomy ) {}
-
-/**
- * Checks the given subset of the term hierarchy for hierarchy loops.
- * Prevents loops from forming and breaks those that it finds.
- *
- * Attached to the {@see 'wp_update_term_parent'} filter.
- *
- * @since 3.1.0
- *
- * @param int    $parent   `term_id` of the parent for the term we're checking.
- * @param int    $term_id  The term we're checking.
- * @param string $taxonomy The taxonomy of the term we're checking.
- *
- * @return int The new parent for the term.
- */
-function wp_check_term_hierarchy_for_loops( $parent, $term_id, $taxonomy ) {
-	// Nothing fancy here - bail
-	if ( !$parent )
-		return 0;
-
-	// Can't be its own parent.
-	if ( $parent == $term_id )
-		return 0;
-
-	// Now look for larger loops.
-	if ( !$loop = wp_find_hierarchy_loop( 'wp_get_term_taxonomy_parent_id', $term_id, $parent, array( $taxonomy ) ) )
-		return $parent; // No loop
-
-	// Setting $parent to the given value causes a loop.
-	if ( isset( $loop[$term_id] ) )
-		return 0;
-
-	// There's a loop, but it doesn't contain $term_id. Break the loop.
-	foreach ( array_keys( $loop ) as $loop_member )
-		wp_update_term( $loop_member, $taxonomy, array( 'parent' => 0 ) );
-
-	return $parent;
-}
+// :
+// refactored. function wp_check_term_hierarchy_for_loops( $parent, $term_id, $taxonomy ) {}
