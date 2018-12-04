@@ -26,10 +26,21 @@ function has_post_thumbnail( $post = NULL )
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * @NOW 006: wp-includes/post-thumbnail-template.php: get_post_thumbnail_id( [ int|WP_Post $post = NULL] )
+ * Retrieve post thumbnail ID.
+ *
+ * @since 2.9.0
+ * @since 4.4.0 `$post` can be a post ID or WP_Post object.
+ *
+ * @param  int|WP_Post $post Optional.
+ *                           Post ID or WP_Post object.
+ *                           Default is global `$post`.
+ * @return string|int  Post thumbnail ID or empty string.
  */
+function get_post_thumbnail_id( $post = NULL )
+{
+	$post = get_post( $post );
+
+	return ! $post
+		? ''
+		: get_post_meta( $post->ID, '_thumbnail_id', TRUE );
+}
