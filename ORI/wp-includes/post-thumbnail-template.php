@@ -9,18 +9,7 @@
  * @subpackage Template
  */
 
-/**
- * Check if post has an image attached.
- *
- * @since 2.9.0
- * @since 4.4.0 `$post` can be a post ID or WP_Post object.
- *
- * @param int|WP_Post $post Optional. Post ID or WP_Post object. Default is global `$post`.
- * @return bool Whether the post has an image attached.
- */
-function has_post_thumbnail( $post = null ) {
-	return (bool) get_post_thumbnail_id( $post );
-}
+// refactored. function has_post_thumbnail( $post = null ) {}
 
 /**
  * Retrieve post thumbnail ID.

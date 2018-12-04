@@ -93,7 +93,7 @@ function prepend_attachment( $content )
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/post-template.php: prepend_attachment( string $content )
- * ......->: wp-includes/post-thumbnail-template.php: has_post_thumbnail( [int|WP_Post $post = NULL] )
+ * ......->: wp-includes/post-thumbnail-template.php: get_post_thumbnail_id( [ int|WP_Post $post = NULL] )
  */
 		}
 	}
