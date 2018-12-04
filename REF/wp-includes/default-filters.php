@@ -144,9 +144,13 @@ add_filter( 'the_title', 'trim' );
 
 add_filter( 'the_content', 'wptexturize' );
 add_filter( 'the_content', 'convert_smilies', 20 );
+add_filter( 'the_content', 'wpautop' );
+add_filter( 'the_content', 'shortcode_unautop' );
+add_filter( 'the_content', 'prepend_attachment' );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
+ * ......->: wp-includes/post-template.php: prepend_attachment( string $content )
  */

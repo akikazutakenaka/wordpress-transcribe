@@ -9,6 +9,15 @@
  */
 
 /**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
+ * @NOW 006: wp-includes/post-template.php: get_the_ID()
+ */
+
+/**
  * Retrieves the Post Global Unique Identifier (guid).
  *
  * The guid will appear to be a link, but should not be used as an link to the post.
@@ -42,4 +51,33 @@ function get_the_guid( $post = 0 )
 	 * @param int    $id   The post ID.
 	 */
 	return apply_filters( 'get_the_guid', $guid, $id );
+}
+
+/**
+ * Wrap attachment in paragraph tag before content.
+ *
+ * @since 2.0.0
+ *
+ * @param  string $content
+ * @return string
+ */
+function prepend_attachment( $content )
+{
+	$post = get_post();
+
+	if ( empty( $post->post_type ) || $post->post_type != 'attachment' ) {
+		return $content;
+	}
+
+	if ( wp_attachment_is( 'video', $post ) ) {
+		$meta = wp_get_attachment_metadata( get_the_ID() );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * @NOW 005: wp-includes/post-template.php: prepend_attachment( string $content )
+ * ......->: wp-includes/post-template.php: get_the_ID()
+ */
+	}
 }
