@@ -136,13 +136,30 @@ class WP_Dependencies
 			: $this->registered[ $handle ]->add_data( $key, $data );
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * @NOW 007: wp-includes/class.wp-dependencies.php: WP_Dependencies::enqueue( mixed $handles )
- */
+	/**
+	 * Queue an item or items.
+	 *
+	 * Decodes handles and arguments, then queues handles and stores arguments in the class property $args.
+	 * For example in extending classes, $args is appended to the item url as a query string.
+	 * Note $args is NOT the $args property of items in the $registered array.
+	 *
+	 * @since 2.1.0
+	 * @since 2.6.0 Moved from `WP_Scripts`.
+	 *
+	 * @param mixed $handles Item handle and argument (string) or item handles and arguments (array of strings).
+	 */
+	public function enqueue( $handles )
+	{
+		foreach ( ( array ) $handles as $handle ) {
+			$handle = explode( '?', $handle );
+
+			if ( ! in_array( $handle[0], $this->queue ) && isset( $this->registered[ $handle[0] ] ) ) {
+				$this->queue[] = $handle[0];
+
+				if ( isset( $handle[1] ) ) {
+					$this->args[ $handle[0] ] = $handle[1];
+				}
+			}
+		}
+	}
 }
