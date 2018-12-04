@@ -79,12 +79,22 @@ function prepend_attachment( $content )
 
 	if ( wp_attachment_is( 'video', $post ) ) {
 		$meta = wp_get_attachment_metadata( get_the_ID() );
+		$atts = array( 'src' => wp_get_attachment_url() );
+
+		if ( ! empty( $meta['width'] ) && ! empty( $meta['height'] ) ) {
+			$atts['width'] = ( int ) $meta['width'];
+			$atts['height'] = ( int ) $meta['height'];
+		}
+
+		if ( has_post_thumbnail() ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/post-template.php: prepend_attachment( string $content )
+ * ......->: wp-includes/post-thumbnail-template.php: has_post_thumbnail( [int|WP_Post $post = NULL] )
  */
+		}
 	}
 }
