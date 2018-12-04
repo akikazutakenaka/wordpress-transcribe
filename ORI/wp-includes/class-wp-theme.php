@@ -430,61 +430,7 @@ final class WP_Theme implements ArrayAccess {
 	}
 
 	// refactored. public function get_files( $type = null, $depth = 0, $search_parent = false ) {}
-
-	/**
-	 * Returns the theme's post templates.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @return array Array of page templates, keyed by filename and post type,
-	 *               with the value of the translated header name.
-	 */
-	public function get_post_templates() {
-		// If you screw up your current theme and we invalidate your parent, most things still work. Let it slide.
-		if ( $this->errors() && $this->errors()->get_error_codes() !== array( 'theme_parent_invalid' ) ) {
-			return array();
-		}
-
-		$post_templates = $this->cache_get( 'post_templates' );
-
-		if ( ! is_array( $post_templates ) ) {
-			$post_templates = array();
-
-			$files = (array) $this->get_files( 'php', 1, true);
-
-			foreach ( $files as $file => $full_path ) {
-				if ( ! preg_match( '|Template Name:(.*)$|mi', file_get_contents( $full_path ), $header ) ) {
-					continue;
-				}
-
-				$types = array( 'page' );
-				if ( preg_match( '|Template Post Type:(.*)$|mi', file_get_contents( $full_path ), $type ) ) {
-					$types = explode( ',', _cleanup_header_comment( $type[1] ) );
-				}
-
-				foreach ( $types as $type ) {
-					$type = sanitize_key( $type );
-					if ( ! isset( $post_templates[ $type ] ) ) {
-						$post_templates[ $type ] = array();
-					}
-
-					$post_templates[ $type ][ $file ] = _cleanup_header_comment( $header[1] );
-				}
-			}
-
-			$this->cache_add( 'post_templates', $post_templates );
-		}
-
-		if ( $this->load_textdomain() ) {
-			foreach ( $post_templates as &$post_type ) {
-				foreach ( $post_type as &$post_template ) {
-					$post_template = $this->translate_header( 'Template Name', $post_template );
-				}
-			}
-		}
-
-		return $post_templates;
-	}
+	// refactored. public function get_post_templates() {}
 
 	/**
 	 * Returns the theme's post templates for a given post type.
