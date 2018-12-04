@@ -1139,7 +1139,6 @@ function wp_video_shortcode( $attr, $content = '' )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * ......->: wp-includes/functions.wp-styles.php: wp_enqueue_style( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, string $media = 'all']]]] )
  */
 	}
 }

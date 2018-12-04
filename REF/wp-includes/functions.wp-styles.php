@@ -56,13 +56,11 @@ function wp_enqueue_style( $handle, $src = '', $deps = array(), $ver = FALSE, $m
 {
 	_wp_scripts_maybe_doing_it_wrong( __FUNCTION__ );
 	$wp_styles = wp_styles();
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- * @NOW 007: wp-includes/functions.wp-styles.php: wp_enqueue_style( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, string $media = 'all']]]] )
- */
+
+	if ( $src ) {
+		$_handle = explode( '?', $handle );
+		$wp_styles->add( $_handle[0], $src, $src, $deps, $ver, $media );
+	}
+
+	$wp_styles->enqueue( $handle );
 }
