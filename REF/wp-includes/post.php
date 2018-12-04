@@ -112,6 +112,17 @@ function _wp_relative_upload_path( $path )
 }
 
 /**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
+ * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * <-......: wp-includes/media.php: get_attached_media( string $type [, int|WP_Post $post = 0] )
+ * @NOW 008: wp-includes/post.php: get_children( [mixed $args = '' [, string $output = OBJECT]] )
+ */
+
+/**
  * Retrieves post data given a post ID or post object.
  *
  * See sanitize_post() for optional $filter values.

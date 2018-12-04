@@ -1088,6 +1088,24 @@ function wp_video_shortcode( $attr, $content = '' )
 
 		if ( $is_vimeo ) {
 			wp_enqueue_script( 'mediaelement-vimeo' );
+		}
+
+		$primary = TRUE;
+		array_unshift( $default_types, 'src' );
+	} else {
+		foreach ( $default_types as $ext ) {
+			if ( ! empty( $atts[ $ext ] ) ) {
+				$type = wp_check_filetype( $atts[ $ext ], wp_get_mime_types() );
+
+				if ( strtolower( $type['ext'] ) === $ext ) {
+					$primary = TRUE;
+				}
+			}
+		}
+	}
+
+	if ( ! $primary ) {
+		$videos = get_attached_media( 'video', $post_id );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -1095,8 +1113,8 @@ function wp_video_shortcode( $attr, $content = '' )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * ......->: wp-includes/media.php: get_attached_media( string $type [, int|WP_Post $post = 0] )
  */
-		}
 	}
 }
 
@@ -1193,4 +1211,54 @@ function get_taxonomies_for_attachments( $output = 'names' )
 	}
 
 	return $taxonomies;
+}
+
+/**
+ * Retrieves media attached to the passed post.
+ *
+ * @since 3.6.0
+ *
+ * @param  string      $type Mime type.
+ * @param  int|WP_Post $post Optional.
+ *                           Post ID or WP_Post object.
+ *                           Default is global $post.
+ * @return array       Found attachments.
+ */
+function get_attached_media( $type, $post = 0 )
+{
+	if ( ! $post = get_post( $post ) ) {
+		return array();
+	}
+
+	$args = array(
+		'post_parent'    => $post->ID,
+		'post_type'      => 'attachment',
+		'post_mime_type' => $type,
+		'posts_per_page' => -1,
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC'
+	);
+
+	/**
+	 * Filters arguments used to retrieve media attached to the given post.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array  $args Post query arguments.
+	 * @param string $type Mime type of the desired media.
+	 * @param mixed  $post Post ID or object.
+	 */
+	$args = apply_filters( 'get_attached_media_args', $args, $type, $post );
+
+	$children = get_children( $args );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
+ * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * @NOW 007: wp-includes/media.php: get_attached_media( string $type [, int|WP_Post $post = 0] )
+ * ......->: wp-includes/post.php: get_children( [mixed $args = '' [, string $output = OBJECT]] )
+ */
 }
