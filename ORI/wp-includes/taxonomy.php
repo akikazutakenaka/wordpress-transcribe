@@ -1548,23 +1548,7 @@ function is_object_in_term( $object_id, $taxonomy, $terms = null ) {
 
 // refactored. function is_object_in_taxonomy( $object_type, $taxonomy ) {}
 // refactored. function get_ancestors( $object_id = 0, $object_type = '', $resource_type = '' ) {}
-
-/**
- * Returns the term's parent's term_ID.
- *
- * @since 3.1.0
- *
- * @param int    $term_id  Term ID.
- * @param string $taxonomy Taxonomy name.
- * @return int|false False on error.
- */
-function wp_get_term_taxonomy_parent_id( $term_id, $taxonomy ) {
-	$term = get_term( $term_id, $taxonomy );
-	if ( ! $term || is_wp_error( $term ) ) {
-		return false;
-	}
-	return (int) $term->parent;
-}
+// refactored. function wp_get_term_taxonomy_parent_id( $term_id, $taxonomy ) {}
 
 /**
  * Checks the given subset of the term hierarchy for hierarchy loops.

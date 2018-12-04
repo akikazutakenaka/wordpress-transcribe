@@ -3067,13 +3067,22 @@ function get_ancestors( $object_id = 0, $object_type = '', $resource_type = '' )
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/taxonomy.php: wp_check_term_hierarchy_for_loops( int $parent, int $term_id, string $taxonomy )
- * @NOW 006: wp-includes/taxonomy.php: wp_get_term_taxonomy_parent_id( int $term_id, string $taxonomy )
+ * Returns the term's parent's term_ID.
+ *
+ * @since 3.1.0
+ *
+ * @param  int       $term_id  Term ID.
+ * @param  string    $taxonomy Taxonomy name.
+ * @return int|false False on error.
  */
+function wp_get_term_taxonomy_parent_id( $term_id, $taxonomy )
+{
+	$term = get_term( $term_id, $taxonomy );
+
+	return ! $term || is_wp_error( $term )
+		? FALSE
+		: ( int ) $term->parent;
+}
 
 /**
  * Checks the given subset of the term hierarchy for hierarchy loops.
@@ -3108,7 +3117,6 @@ function wp_check_term_hierarchy_for_loops( $parent, $term_id, $taxonomy )
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/taxonomy.php: wp_check_term_hierarchy_for_loops( int $parent, int $term_id, string $taxonomy )
- * ......->: wp-includes/taxonomy.php: wp_get_term_taxonomy_parent_id( int $term_id, string $taxonomy )
  */
 	}
 }
