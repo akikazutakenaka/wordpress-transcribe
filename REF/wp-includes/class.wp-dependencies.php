@@ -122,7 +122,6 @@ class WP_Dependencies
  * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  * <-......: wp-includes/functions.wp-scripts.php: wp_enqueue_script( string $handle [, string $src = '' [, array $deps = array() [, string|bool|null $ver = FALSE [, bool $in_footer = FALSE]]]] )
  * @NOW 008: wp-includes/class.wp-dependencies.php: WP_Dependencies::add( string $handle, string $src [, array $deps = array() [, string|bool|null $ver = FALSE [, mixed $args = NULL]]] )
- * ......->: wp-includes/class-wp-dependency.php: _WP_Dependency::__construct()
  */
 	}
 }
