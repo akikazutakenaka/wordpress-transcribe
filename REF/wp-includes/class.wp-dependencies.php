@@ -135,4 +135,14 @@ class WP_Dependencies
 			? FALSE
 			: $this->registered[ $handle ]->add_data( $key, $data );
 	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
+ * <-......: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * @NOW 007: wp-includes/class.wp-dependencies.php: WP_Dependencies::enqueue( mixed $handles )
+ */
 }
