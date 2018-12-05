@@ -26,6 +26,41 @@ function get_the_ID()
 }
 
 /**
+ * Sanitize the current title when retrieving or displaying.
+ *
+ * Works like the_title(), except the parameters can be in a string or an array.
+ * See the function for what can be override in the $args parameter.
+ *
+ * The title before it is displayed will have the tags stripped and esc_attr() before it is passed to the user or displayed.
+ * The default as with the_title(), is to display the title.
+ *
+ * @since 2.3.0
+ *
+ * @param  string|array $args {
+ *     Title attribute arguments.
+ *     Optional.
+ *
+ *     @type string  $before Markup to prepend to the title.
+ *                           Default empty.
+ *     @type string  $after  Markup to append to the title.
+ *                           Default empty.
+ *     @type bool    $echo   Whether to echo or return the title.
+ *                           Default true for echo.
+ *     @type WP_Post $post   Current post object to retrieve the title for.
+ * }
+ * @return string|void  String when echo is false.
+ */
+function the_title_attribute( $args = '' )
+{
+	$defaults = array(
+		'before' => '',
+		'after'  => '',
+		'echo'   => TRUE,
+		'post'   => get_post()
+	);
+	$r = wp_parse_args( $args, $defaults );
+	$title = get_the_title( $r['post'] );
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
@@ -33,6 +68,19 @@ function get_the_ID()
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  * @NOW 007: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
+ * ......->: wp-includes/post-template.php: get_the_title( [int|WP_Post $post = 0] )
+ */
+}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * <-......: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
+ * @NOW 008: wp-includes/post-template.php: get_the_title( [int|WP_Post $post = 0] )
  */
 
 /**
