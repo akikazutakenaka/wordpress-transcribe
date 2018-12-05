@@ -934,6 +934,27 @@ function wp_calculate_image_sizes( $size, $image_src = NULL, $image_meta = NULL,
 }
 
 /**
+ * Provides a No-JS Flash fallback as a last resort for audio / video.
+ *
+ * @since 3.6.0
+ *
+ * @param  string $url The media element URL.
+ * @return string Fallback HTML.
+ */
+function wp_mediaelement_fallback( $url )
+{
+	/**
+	 * Filters the Mediaelement fallback output for no-JS.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param string $output Fallback output for no-JS.
+	 * @param string $url    Media file URL.
+	 */
+	return apply_filters( 'wp_mediaelement_fallback', sprintf( '<a href="%1$s">%1$s</a>', esc_url( $url ) ), $url );
+}
+
+/**
  * Returns a filtered list of WP-supported audio formats.
  *
  * @since 3.6.0
@@ -1141,6 +1162,93 @@ function wp_video_shortcode( $attr, $content = '' )
 		if ( $is_youtube ) {
 			// Remove `feature` query arg and force SSL - see #40866.
 			$atts['src'] = remove_query_arg( 'feature', $atts['src'] );
+			$atts['src'] = set_url_scheme( $atts['src'], 'https' );
+		} elseif ( $is_vimeo ) {
+			// Remove all query arguments and force SSL - see #40866.
+			$parsed_vimeo_url = wp_parse_url( $atts['src'] );
+			$vimeo_src = 'https://' . $parsed_vimeo_url['host'] . $parsed_vimeo_url['path'];
+
+			// Add loop param for mejs bug - see #40977, not needed after #39686.
+			$loop = $atts['loop']
+				? 1
+				: 0;
+
+			$atts['src'] = add_query_arg( 'loop', $loop, $vimeo_src );
+		}
+	}
+
+	/**
+	 * Filters the class attribute for the video shortcode output container.
+	 *
+	 * @since 3.6.0
+	 * @since 4.9.0 The `$atts` parameter was added.
+	 *
+	 * @param string $class CSS class or list of space-separated classes.
+	 * @param array  $atts  Array of video shortcode attributes.
+	 */
+	$atts['class'] = apply_filters( 'wp_video_shortcode_class', $atts['class'], $atts );
+
+	$html_atts = array(
+		'class'    => $atts['class'],
+		'id'       => sprintf( 'video-%d-%d', $post_id, $instance ),
+		'width'    => absint( $atts['width'] ),
+		'height'   => absint( $atts['height'] ),
+		'poster'   => esc_url( $atts['poster'] ),
+		'loop'     => wp_validate_boolean( $atts['loop'] ),
+		'autoplay' => wp_validate_boolean( $atts['autoplay'] ),
+		'preload'  => $atts['preload']
+	);
+
+	// These ones should just be omitted altogether if they are blank.
+	foreach ( array( 'poster', 'loop', 'autoplay', 'preload' ) as $a ) {
+		if ( empty( $html_atts[ $a ] ) ) {
+			unset( $html_atts[ $a ] );
+		}
+	}
+
+	$attr_strings = array();
+
+	foreach ( $html_atts as $k => $v ) {
+		$attr_strings[] = $k . '="' . esc_attr( $v ) . '"';
+	}
+
+	$html = '';
+
+	if ( 'mediaelement' === $library && 1 === $instance ) {
+		$html .= "<!--[if lt IE 9]><script>document.createElement('video');</script><![endif]-->\n";
+	}
+
+	$html .= sprintf( '<video %s controls="controls">', join( ' ', $attr_strings ) );
+	$fileurl = '';
+	$source = '<source type="%s" src="%s" />';
+
+	foreach ( $default_types as $fallback ) {
+		if ( ! empty( $atts[ $fallback ] ) ) {
+			if ( empty( $fileurl ) ) {
+				$fileurl = $atts[ $fallback ];
+			}
+
+			$type = 'src' === $fallback && $is_youtube
+				? array( 'type' => 'video/youtube' )
+				: ( 'src' === $fallback && $is_vimeo
+					? array( 'type' => 'video/vimeo' )
+					: wp_check_filetype( $atts[ $fallback ], wp_get_mime_types() ) );
+
+			$url = add_query_arg( '_', $instance, $atts[ $fallback ] );
+			$html .= sprintf( $source, $type['type'], esc_url( $url ) );
+		}
+	}
+
+	if ( ! empty( $content ) ) {
+		if ( FALSE !== strpos( $content, "\n" ) ) {
+			$content = str_replace( array( "\r\n", "\n", "\t" ), '', $content );
+		}
+
+		$html .= trim( $content );
+	}
+
+	if ( 'mediaelement' === $library ) {
+		$html .= wp_mediaelement_fallback( $fileurl );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -1149,7 +1257,6 @@ function wp_video_shortcode( $attr, $content = '' )
  * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
  * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
  */
-		}
 	}
 }
 

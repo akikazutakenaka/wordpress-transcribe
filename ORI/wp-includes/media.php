@@ -1242,26 +1242,7 @@ function wp_playlist_shortcode( $attr ) {
 }
 add_shortcode( 'playlist', 'wp_playlist_shortcode' );
 
-/**
- * Provides a No-JS Flash fallback as a last resort for audio / video.
- *
- * @since 3.6.0
- *
- * @param string $url The media element URL.
- * @return string Fallback HTML.
- */
-function wp_mediaelement_fallback( $url ) {
-	/**
-	 * Filters the Mediaelement fallback output for no-JS.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @param string $output Fallback output for no-JS.
-	 * @param string $url    Media file URL.
-	 */
-	return apply_filters( 'wp_mediaelement_fallback', sprintf( '<a href="%1$s">%1$s</a>', esc_url( $url ) ), $url );
-}
-
+// refactored. function wp_mediaelement_fallback( $url ) {}
 // refactored. function wp_get_audio_extensions() {}
 
 /**
@@ -1682,8 +1663,8 @@ function wp_video_shortcode( $attr, $content = '' ) {
 	$attr_strings = array();
 	foreach ( $html_atts as $k => $v ) {
 		$attr_strings[] = $k . '="' . esc_attr( $v ) . '"';
-	}
 
+	}
 	$html = '';
 	if ( 'mediaelement' === $library && 1 === $instance ) {
 		$html .= "<!--[if lt IE 9]><script>document.createElement('video');</script><![endif]-->\n";
