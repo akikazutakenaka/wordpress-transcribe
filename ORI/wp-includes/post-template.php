@@ -1506,53 +1506,7 @@ function wp_get_attachment_link( $id = 0, $size = 'thumbnail', $permalink = fals
 	return apply_filters( 'wp_get_attachment_link', "<a href='" . esc_url( $url ) . "'>$link_text</a>", $id, $size, $permalink, $icon, $text );
 }
 
-/**
- * Wrap attachment in paragraph tag before content.
- *
- * @since 2.0.0
- *
- * @param string $content
- * @return string
- */
-function prepend_attachment($content) {
-	$post = get_post();
-
-	if ( empty($post->post_type) || $post->post_type != 'attachment' )
-		return $content;
-
-	if ( wp_attachment_is( 'video', $post ) ) {
-		$meta = wp_get_attachment_metadata( get_the_ID() );
-		$atts = array( 'src' => wp_get_attachment_url() );
-		if ( ! empty( $meta['width'] ) && ! empty( $meta['height'] ) ) {
-			$atts['width'] = (int) $meta['width'];
-			$atts['height'] = (int) $meta['height'];
-		}
-		if ( has_post_thumbnail() ) {
-			$atts['poster'] = wp_get_attachment_url( get_post_thumbnail_id() );
-		}
-		$p = wp_video_shortcode( $atts );
-	} elseif ( wp_attachment_is( 'audio', $post ) ) {
-		$p = wp_audio_shortcode( array( 'src' => wp_get_attachment_url() ) );
-	} else {
-		$p = '<p class="attachment">';
-		// show the medium sized image representation of the attachment if available, and link to the raw file
-		$p .= wp_get_attachment_link(0, 'medium', false);
-		$p .= '</p>';
-	}
-
-	/**
-	 * Filters the attachment markup to be prepended to the post content.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @see prepend_attachment()
-	 *
-	 * @param string $p The attachment HTML output.
-	 */
-	$p = apply_filters( 'prepend_attachment', $p );
-
-	return "$p\n$content";
-}
+// refactored. function prepend_attachment($content) {}
 
 //
 // Misc

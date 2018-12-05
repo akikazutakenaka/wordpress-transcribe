@@ -93,12 +93,23 @@ function prepend_attachment( $content )
 		$p = wp_video_shortcode( $atts );
 	} elseif ( wp_attachment_is( 'audio', $post ) ) {
 		$p = wp_audio_shortcode( $array( 'src' => wp_get_attachment_url() ) );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * @NOW 005: wp-includes/post-template.php: prepend_attachment( string $content )
- */
+	} else {
+		$p = '<p class="attachment">';
+
+		// Show the medium sized image representation of the attachment if available, and link to the raw file.
+		$p .= wp_get_attachment_link( 0, 'medium', FALSE );
+		$p .= '</p>';
 	}
+
+	/**
+	 * Filters the attachment markup to be prepended to the post content.
+	 *
+	 * @since 2.0.0
+	 * @see   prepend_attachment()
+	 *
+	 * @param string $p The attachment HTML output.
+	 */
+	$p = apply_filters( 'prepend_attachment', $p );
+
+	return "$p\n$content";
 }
