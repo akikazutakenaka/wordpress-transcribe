@@ -35,13 +35,36 @@
 $shortcode_tags = array();
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * @NOW 006: wp-includes/shortcodes.php: add_shortcode( string $tag, callable $callback )
+ * Adds a new shortcode.
+ *
+ * Care should be taken through prefixing or other means to ensure that the shortcode tag being added is unique and will not conflict with other, already-added shortcode tags.
+ * In the event of a duplicated tag, the tag loaded last will take precedence.
+ *
+ * @since  2.5.0
+ * @global array $shortcode_tags
+ *
+ * @param string   $tag      Shortcode tag to be searched in post content.
+ * @param callable $callback The callback function to run when the shortcode is found.
+ *                           Every shortcode callback is passed three parameters by default, including an array of attributes (`$atts`), the shortcode content or null if not set (`$content`), and finally the shortcode tag itself (`$shortcode_tag`), in that order.
  */
+function add_shortcode( $tag, $callback )
+{
+	global $shortcode_tags;
+
+	if ( '' == trim( $tag ) ) {
+		$message = __( 'Invalid shortcode name: Empty name given.' );
+		_doing_it_wrong( __FUNCTION__, $message, '4.4.0' );
+		return;
+	}
+
+	if ( 0 !== preg_match( '@[<>&/\[\]\x00-\x20=]@', $tag ) ) {
+		$message = sprintf( __( 'Invalid shortcode name: %1$s. Do not use spaces or reserved characters: %2$s' ), $tag, '& / < > [ ] =' );
+		_doing_it_wrong( __FUNCTION__, $message, '4.4.0' );
+		return;
+	}
+
+	$shortcode_tags[ $tag ] = $callback;
+}
 
 /**
  * Combine user attributes with known attributes and fill in defaults when needed.
