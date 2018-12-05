@@ -975,6 +975,208 @@ function wp_get_audio_extensions()
 }
 
 /**
+ * Builds the Audio shortcode output.
+ *
+ * This implements the functionality of the Audio Shortcode for displaying WordPress mp3s in a post.
+ *
+ * @since     3.6.0
+ * @staticvar int $instance
+ *
+ * @param  array       $attr {
+ *     Attributes of the audio shortcode.
+ *
+ *     @type string $src      URL to the source of the audio file.
+ *                            Default empty.
+ *     @type string $loop     The 'loop' attribute for the `<audio>` element.
+ *                            Default empty.
+ *     @type string $autoplay The 'autoplay' attribute for the `<audio>` element.
+ *                            Default empty.
+ *     @type string $preload  The 'preload' attribute for the `<audio>` element.
+ *                            Default 'none'.
+ *     @type string $class    The 'class' attribute for the `<audio>` element.
+ *                            Default 'wp-audio-shortcode'.
+ *     @type string $style    The 'style' attribute for the `<audio>` element.
+ *                            Default 'width: 100%;'.
+ * }
+ * @param  string      $content Shortcode content.
+ * @return string|void HTML content to display audio.
+ */
+function wp_audio_shortcode( $attr, $content = '' )
+{
+	$post_id = get_post()
+		? get_the_ID()
+		: 0;
+
+	static $instance = 0;
+	$instance++;
+
+	/**
+	 * Filters the default audio shortcode output.
+	 *
+	 * If the filtered output isn't empty, it will be used instead of generating the default audio template.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param string $html     Empty variable to be replaced with shortcode markup.
+	 * @param array  $attr     Attributes of the shortcode.
+	 *                         @see wp_audio_shortcode()
+	 * @param string $content  Shortcode content.
+	 * @param int    $instance Unique numeric ID of this audio shortcode instance.
+	 */
+	$override = apply_filters( 'wp_audio_shortcode_override', '', $attr, $content, $instance );
+
+	if ( '' !== $override ) {
+		return $override;
+	}
+
+	$audio = NULL;
+	$default_types = wp_get_audio_extensions();
+	$defaults_atts = array(
+		'src'      => '',
+		'loop'     => '',
+		'autoplay' => '',
+		'preload'  => 'none',
+		'class'    => 'wp-audio-shortcode',
+		'style'    => 'width: 100%;'
+	);
+
+	foreach ( $default_types as $type ) {
+		$defaults_atts[ $type ] = '';
+	}
+
+	$atts = shortcode_atts( $defaults_atts, $attr, 'audio' );
+	$primary = FALSE;
+
+	if ( ! empty( $atts['src'] ) ) {
+		$type = wp_check_filetype( $atts['src'], wp_get_mime_types() );
+
+		if ( ! in_array( strtolower( $type['ext'] ), $default_types ) ) {
+			return sprintf( '<a class="wp-embedded-audio" href="%s">%s</a>', esc_url( $atts['src'] ), esc_html( $atts['src'] ) );
+		}
+
+		$primary = TRUE;
+		array_unshift( $default_types, 'src' );
+	} else {
+		foreach ( $default_types as $ext ) {
+			if ( ! empty( $atts[ $ext ] ) ) {
+				$type = wp_check_filetype( $atts[ $ext ], wp_get_mime_types() );
+
+				if ( strtolower( $type['ext'] ) === $ext ) {
+					$primary = TRUE;
+				}
+			}
+		}
+	}
+
+	if ( ! $primary ) {
+		$audios = get_attached_media( 'audio', $post_id );
+
+		if ( empty( $audios ) ) {
+			return;
+		}
+
+		$audio = reset( $audios );
+		$atts['src'] = wp_get_attachment_url( $audio->ID );
+
+		if ( empty( $atts['src'] ) ) {
+			return;
+		}
+
+		array_unshift( $default_types, 'src' );
+	}
+
+	/**
+	 * Filters the media library used for the audio shortcode.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param string $library Media library used for the audio shortcode.
+	 */
+	$library = apply_filters( 'wp_audio_shortcode_library', 'mediaelement' );
+
+	if ( 'mediaelement' === $library && did_action( 'init' ) ) {
+		wp_enqueue_style( 'wp-mediaelement' );
+		wp_enqueue_script( 'wp-mediaelement' );
+	}
+
+	/**
+	 * Filters the class attribute for the audio shortcode output container.
+	 *
+	 * @since 3.6.0
+	 * @since 4.9.0 The `$atts` parameter was added.
+	 *
+	 * @param string $class CSS class or list of space-separated classes.
+	 * @param array  $atts  Array of audio shortcode attributes.
+	 */
+	$atts['class'] = apply_filters( 'wp_audio_shortcode_class', $atts['class'], $atts );
+
+	$html_atts = array(
+		'class'    => $atts['class'],
+		'id'       => sprintf( 'audio-%d-%d', $post_id, $instance ),
+		'loop'     => wp_validate_boolean( $atts['loop'] ),
+		'autoplay' => wp_validate_boolean( $atts['autoplay'] ),
+		'preload'  => $atts['preload'],
+		'style'    => $atts['style']
+	);
+
+	// These ones should just be omitted altogether if they are blank.
+	foreach ( array( 'loop', 'autoplay', 'preload' ) as $a ) {
+		if ( empty( $html_atts[ $a ] ) ) {
+			unset( $html_atts[ $a ] );
+		}
+	}
+
+	$attr_strings = array();
+
+	foreach ( $html_atts as $k => $v ) {
+		$attr_strings[] = $k . '="' . esc_attr( $v ) . '"';
+	}
+
+	$html = '';
+
+	if ( 'mediaelement' === $library && 1 === $instance ) {
+		$html .= "<!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->\n";
+	}
+
+	$html .= sprintf( '<audio %s controls="controls">', join( ' ', $attr_strings ) );
+	$fileurl = '';
+	$source = '<source type="%s" src="%s" />';
+
+	foreach ( $default_types as $fallback ) {
+		if ( ! empty( $atts[ $fallback ] ) ) {
+			if ( empty( $fileurl ) ) {
+				$fileurl = $atts[ $fallback ];
+			}
+
+			$type = wp_check_filetype( $atts[ $fallback ], wp_get_mime_types() );
+			$url = add_query_arg( '_', $instance, $atts[ $fallback ] );
+			$html .= sprintf( $source, $type['type'], esc_url( $url ) );
+		}
+	}
+
+	if ( 'mediaelement' === $library ) {
+		$html .= wp_mediaelement_fallback( $fileurl );
+	}
+
+	$html .= '</audio>';
+
+	/**
+	 * Filters the audio shortcode output.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param string $html    Audio shortcode HTML output.
+	 * @param array  $atts    Array of audio shortcode attributes.
+	 * @param string $audio   Audio file.
+	 * @param int    $post_id Post ID.
+	 * @param string $library Media library used for the audio shortcode.
+	 */
+	return apply_filters( 'wp_audio_shortcode', $html, $atts, $audio, $post_id, $library );
+}
+
+add_shortcode( 'audio', 'wp_audio_shortcode' );
+
+/**
  * Returns a filtered list of WP-supported video formats.
  *
  * @since 3.6.0

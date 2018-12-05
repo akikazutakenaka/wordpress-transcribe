@@ -91,6 +91,8 @@ function prepend_attachment( $content )
 		}
 
 		$p = wp_video_shortcode( $atts );
+	} elseif ( wp_attachment_is( 'audio', $post ) ) {
+		$p = wp_audio_shortcode( $array( 'src' => wp_get_attachment_url() ) );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
