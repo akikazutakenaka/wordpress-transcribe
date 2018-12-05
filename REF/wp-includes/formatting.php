@@ -2435,6 +2435,39 @@ function sanitize_email( $email )
 }
 
 /**
+ * Generates an excerpt from the content, if needed.
+ *
+ * The excerpt word amount will be 55 words and if the amount is greater than that, then the string ' [&hellip;]' will be appended to the excerpt.
+ * If the string is less than 55 words, then the content will be returned as is.
+ *
+ * The 55 word limit can be modified by plugins/themes using the {@see 'excerpt_length'} filter.
+ * The ' [&hellip;]' string can be modified by plugins/themes using the {@see 'excerpt_more'} filter.
+ *
+ * @since 1.5.0
+ *
+ * @param  string $text Optional.
+ *                      The excerpt.
+ *                      If set to empty, an excerpt is generated.
+ * @return string The excerpt.
+ */
+function wp_trim_excerpt( $text = '' )
+{
+	$raw_excerpt = $text;
+
+	if ( '' == $text ) {
+		$text = get_the_content( '' );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * @NOW 005: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * ......->: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ */
+	}
+}
+
+/**
  * Escapes data for use in a MySQL query.
  *
  * Usually you should prepare queries using wpdb::prepare().

@@ -62,6 +62,15 @@ function get_the_guid( $post = 0 )
 }
 
 /**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ */
+
+/**
  * Wrap attachment in paragraph tag before content.
  *
  * @since 2.0.0
