@@ -36,14 +36,7 @@
 class PasswordHash {
 	// refactored. var $itoa64;
 	// :
-	// refactored. function __construct( $iteration_count_log2, $portable_hashes ) {}
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function PasswordHash( $iteration_count_log2, $portable_hashes ) {
-		self::__construct( $iteration_count_log2, $portable_hashes );
-	}
+	// refactored. public function PasswordHash( $iteration_count_log2, $portable_hashes ) {}
 
 	function get_random_bytes($count)
 	{
