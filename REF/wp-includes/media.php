@@ -934,6 +934,64 @@ function wp_calculate_image_sizes( $size, $image_src = NULL, $image_meta = NULL,
 }
 
 /**
+ * Filters 'img' elements in post content to add 'srcset' and 'sizes' attributes.
+ *
+ * @since 4.4.0
+ * @see   wp_image_add_srcset_and_sizes()
+ *
+ * @param  string $content The raw post content to be filtered.
+ * @return string Converted content with 'srcset' and 'sizes' attributes added to images.
+ */
+function wp_make_content_images_responsive( $content )
+{
+	if ( ! preg_match_all( '/<img [^>]+>/', $content, $matches ) ) {
+		return $content;
+	}
+
+	$selected_images = $attachment_ids = array();
+
+	foreach ( $matches[0] as $image ) {
+		if ( FALSE === strpos( $image, ' srcset=' ) && preg_match( '/wp-image-([0-9]+)/i', $image, $class_id ) && ( $attachment_id = absint( $class_id[1] ) ) ) {
+			/**
+			 * If exactly the same image tag is used more than once, overwrite it.
+			 * All identical tags will be replaced later with 'str_replace()'.
+			 */
+			$selected_images[ $image ] = $attachment_id;
+
+			// Overwrite the ID when the same image is included more than once.
+			$attachment_ids[ $attachment_id ] = TRUE;
+		}
+	}
+
+	if ( count( $attachment_ids ) > 1 ) {
+		// Warm the object cache with post and meta information for all found images to avoid making individual database calls.
+		_prime_post_caches( array_keys( $attachment_ids ), FALSE, TRUE );
+	}
+
+	foreach ( $selected_images as $image => $attachment_id ) {
+		$image_meta = wp_get_attachment_metadata( $attachment_id );
+		$content = str_replace( $image, wp_image_add_srcset_and_sizes( $image, $image_meta, $attachment_id ), $content );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * @NOW 005: wp-includes/media.php: wp_make_content_images_responsive( string $content )
+ * ......->: wp-includes/media.php: wp_image_add_srcset_and_sizes( string $image, array $image_meta, int $attachment_id )
+ */
+	}
+}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/media.php: wp_make_content_images_responsive( string $content )
+ * @NOW 006: wp-includes/media.php: wp_image_add_srcset_and_sizes( string $image, array $image_meta, int $attachment_id )
+ */
+
+/**
  * Provides a No-JS Flash fallback as a last resort for audio / video.
  *
  * @since 3.6.0

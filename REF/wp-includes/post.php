@@ -3008,7 +3008,7 @@ function wp_queue_posts_for_term_meta_lazyload( $posts )
  *                                 Whether to update the meta cache.
  *                                 Default true.
  */
-function _prime_post_cache( $ids, $update_term_cache = TRUE, $update_meta_cache = FALSE )
+function _prime_post_caches( $ids, $update_term_cache = TRUE, $update_meta_cache = FALSE )
 {
 	global $wpdb;
 	$non_cached_ids = _get_non_cached_ids( $ids, 'posts' );

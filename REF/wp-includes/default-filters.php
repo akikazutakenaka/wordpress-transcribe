@@ -147,9 +147,11 @@ add_filter( 'the_content', 'convert_smilies', 20 );
 add_filter( 'the_content', 'wpautop' );
 add_filter( 'the_content', 'shortcode_unautop' );
 add_filter( 'the_content', 'prepend_attachment' );
+add_filter( 'the_content', 'wp_make_content_images_responsive' );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
+ * ......->: wp-includes/media.php: wp_make_content_images_responsive( string $content )
  */
