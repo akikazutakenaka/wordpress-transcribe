@@ -68,20 +68,78 @@ function the_title_attribute( $args = '' )
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  * @NOW 007: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
- * ......->: wp-includes/post-template.php: get_the_title( [int|WP_Post $post = 0] )
  */
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * <-......: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
- * @NOW 008: wp-includes/post-template.php: get_the_title( [int|WP_Post $post = 0] )
+ * Retrieve post title.
+ *
+ * If the post is protected and the visitor is not an admin, then "Protected" will be displayed before the post title.
+ * If the post is private, then "Private" will be located before the post title.
+ *
+ * @since 0.71
+ *
+ * @param  int|WP_Post $post Optional.
+ *                           Post ID or WP_Post object.
+ *                           Default is global $post.
+ * @return string
  */
+function get_the_title( $post = 0 )
+{
+	$post = get_post( $post );
+
+	$title = isset( $post->post_title )
+		? $post->post_title
+		: '';
+
+	$id = isset( $post->ID )
+		? $post->ID
+		: 0;
+
+	if ( ! is_admin() ) {
+		if ( ! empty( $post->post_password ) ) {
+			/**
+			 * Filters the text prepended to the post title for protected posts.
+			 *
+			 * The filter is only applied on the front end.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param string  $prepend Text displayed before the post title.
+			 *                         Default 'Protected: %s'.
+			 * @param WP_Post $post    Current post object.
+			 */
+			$protected_title_format = apply_filters( 'protected_title_format', __( 'Protected: %s' ), $post );
+
+			$title = sprintf( $protected_title_format, $title );
+		} elseif ( isset( $post->post_status ) && 'private' == $post->post_status ) {
+			/**
+			 * Filters the text prepended to the post title of private posts.
+			 *
+			 * The filter is only applied on the front end.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param string  $prepend Text displayed before the post title.
+			 *                         Default 'Private: %s'.
+			 * @param WP_Post $post    Current post object.
+			 */
+			$private_title_format = apply_filters( 'private_title_format', __( 'Private: %s' ), $post );
+
+			$title = sprintf( $private_title_format, $title );
+		}
+	}
+
+	/**
+	 * Filters the post title.
+	 *
+	 * @since 0.71
+	 *
+	 * @param string $title The post title.
+	 * @param int    $id    The post ID.
+	 */
+	return apply_filters( 'the_title', $title, $id );
+}
 
 /**
  * Retrieves the Post Global Unique Identifier (guid).

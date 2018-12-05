@@ -85,68 +85,7 @@ function the_title_attribute( $args = '' ) {
 	}
 }
 
-/**
- * Retrieve post title.
- *
- * If the post is protected and the visitor is not an admin, then "Protected"
- * will be displayed before the post title. If the post is private, then
- * "Private" will be located before the post title.
- *
- * @since 0.71
- *
- * @param int|WP_Post $post Optional. Post ID or WP_Post object. Default is global $post.
- * @return string
- */
-function get_the_title( $post = 0 ) {
-	$post = get_post( $post );
-
-	$title = isset( $post->post_title ) ? $post->post_title : '';
-	$id = isset( $post->ID ) ? $post->ID : 0;
-
-	if ( ! is_admin() ) {
-		if ( ! empty( $post->post_password ) ) {
-
-			/**
-			 * Filters the text prepended to the post title for protected posts.
-			 *
-			 * The filter is only applied on the front end.
-			 *
-			 * @since 2.8.0
-			 *
-			 * @param string  $prepend Text displayed before the post title.
-			 *                         Default 'Protected: %s'.
-			 * @param WP_Post $post    Current post object.
-			 */
-			$protected_title_format = apply_filters( 'protected_title_format', __( 'Protected: %s' ), $post );
-			$title = sprintf( $protected_title_format, $title );
-		} elseif ( isset( $post->post_status ) && 'private' == $post->post_status ) {
-
-			/**
-			 * Filters the text prepended to the post title of private posts.
-			 *
-			 * The filter is only applied on the front end.
-			 *
-			 * @since 2.8.0
-			 *
-			 * @param string  $prepend Text displayed before the post title.
-			 *                         Default 'Private: %s'.
-			 * @param WP_Post $post    Current post object.
-			 */
-			$private_title_format = apply_filters( 'private_title_format', __( 'Private: %s' ), $post );
-			$title = sprintf( $private_title_format, $title );
-		}
-	}
-
-	/**
-	 * Filters the post title.
-	 *
-	 * @since 0.71
-	 *
-	 * @param string $title The post title.
-	 * @param int    $id    The post ID.
-	 */
-	return apply_filters( 'the_title', $title, $id );
-}
+// refactored. function get_the_title( $post = 0 ) {}
 
 /**
  * Display the Post Global Unique Identifier (guid).
