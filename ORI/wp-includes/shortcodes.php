@@ -30,16 +30,7 @@
  * @since 2.5.0
  */
 
-/**
- * Container for storing shortcode tags and their hook to call for the shortcode
- *
- * @since 2.5.0
- *
- * @name $shortcode_tags
- * @var array
- * @global array $shortcode_tags
- */
-$shortcode_tags = array();
+// refactored. $shortcode_tags = array();
 
 /**
  * Adds a new shortcode.

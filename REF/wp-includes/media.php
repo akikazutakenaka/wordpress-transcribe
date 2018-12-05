@@ -1249,16 +1249,32 @@ function wp_video_shortcode( $attr, $content = '' )
 
 	if ( 'mediaelement' === $library ) {
 		$html .= wp_mediaelement_fallback( $fileurl );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
- * @NOW 006: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
- */
 	}
+
+	$html .= '</video>';
+	$width_rule = '';
+
+	if ( ! empty( $atts['width'] ) ) {
+		$width_rule = sprintf( 'width: %dpx;', $atts['width'] );
+	}
+
+	$output = sprintf( '<div style="%s" class="wp-video">%s</div>', $width_rule, $html );
+
+	/**
+	 * Filters the output of the video shortcode.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param string $output  Video shortcode HTML output.
+	 * @param array  $atts    Array of video shortcode attributes.
+	 * @param string $video   Video file.
+	 * @param int    $post_id Post ID.
+	 * @param string $library Media library used for the video shortcode.
+	 */
+	return apply_filters( 'wp_video_shortcode', $output, $atts, $video, $post_id, $library );
 }
+
+add_shortcode( 'video', 'wp_video_shortcode' );
 
 /**
  * Retrieve taxonomies attached to given the attachment.

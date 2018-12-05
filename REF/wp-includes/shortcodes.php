@@ -25,6 +25,25 @@
  */
 
 /**
+ * Container for storing shortcode tags and their hook to call for the shortcode.
+ *
+ * @since  2.5.0
+ * @global array $shortcode_tags
+ *
+ * @var array
+ */
+$shortcode_tags = array();
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/post-template.php: prepend_attachment( string $content )
+ * @NOW 006: wp-includes/shortcodes.php: add_shortcode( string $tag, callable $callback )
+ */
+
+/**
  * Combine user attributes with known attributes and fill in defaults when needed.
  *
  * The pairs should be considered to be all of the attributes which are supported by the caller and given as a list.

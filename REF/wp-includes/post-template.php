@@ -97,7 +97,7 @@ function prepend_attachment( $content )
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/post-template.php: prepend_attachment( string $content )
- * ......->: wp-includes/media.php: wp_video_shortcode( array $attr [, string $content = ''] )
+ * ......->: wp-includes/shortcodes.php: add_shortcode( string $tag, callable $callback )
  */
 	}
 }
