@@ -38,6 +38,22 @@ class PasswordHash
 	var $portable_hashes;
 	var $random_state;
 
+	/**
+	 * PHP5 constructor.
+	 */
+	function __construct( $iteration_count_log2, $portable_hashes )
+	{
+		$this->itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+		if ( $iteration_count_log2 < 4 || $iteration_count_log2 > 31 ) {
+			$iteration_count_log2 = 8;
+		}
+
+		$this->iteration_count_log2 = $iteration_count_log2;
+		$this->portable_hashes = $portable_hashes;
+		$this->random_state = microtime() . uniqid( rand(), TRUE ); // Removed getmypid() for compatibility reasons.
+	}
+
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -46,6 +62,6 @@ class PasswordHash
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
- * @NOW 008: wp-includes/class-phpass.php::__construct( int $iteration_count_log2, bool $portable_hashes )
+ * @NOW 008: wp-includes/class-phpass.php: PasswordHash::PasswordHash( int $iteration_count_log2, bool $portable_hashes )
  */
 }
