@@ -60,15 +60,19 @@ function the_title_attribute( $args = '' )
 	);
 	$r = wp_parse_args( $args, $defaults );
 	$title = get_the_title( $r['post'] );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * @NOW 007: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
- */
+
+	if ( strlen( $title ) == 0 ) {
+		return;
+	}
+
+	$title = $r['before'] . $title . $r['after'];
+	$title = esc_attr( strip_tags( $title ) );
+
+	if ( $r['echo'] ) {
+		echo $title;
+	} else {
+		return $title;
+	}
 }
 
 /**
@@ -209,7 +213,6 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * ......->: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
  */
 	}
 }
