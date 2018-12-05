@@ -206,6 +206,13 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
 
 	if ( NULL === $more_link_text ) {
 		$more_link_text = sprintf( '<span aria-label="%1$s">%2$s</span>', sprintf( __( 'Continue reading %s' ), the_title_attribute( array( 'echo' => FALSE ) ) ), __( '(more&hellip;)' ) );
+	}
+
+	$output = '';
+	$has_teaser = FALSE;
+
+	// If post password required and it doesn't match the cookie.
+	if ( post_password_required( $post ) ) {
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -213,8 +220,44 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * ......->: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
  */
 	}
+}
+
+/**
+ * Whether post requires password and correct password has been provided.
+ *
+ * @since 2.7.0
+ *
+ * @param  int|WP_Post|null $post An optional post.
+ *                                Global $post used if not provided.
+ * @return bool             False if a password is not required or the correct password cookie is present, true otherwise.
+ */
+function post_password_required( $post = NULL )
+{
+	$post = get_post( $post );
+
+	if ( empty( $post->post_password ) ) {
+		// This filter is documented in wp-includes/post-template.php
+		return apply_filters( 'post_password_required', FALSE, $post );
+	}
+
+	if ( ! isset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] ) ) {
+		// This filter is documented in wp-includes/post-template.php
+		return apply_filters( 'post_password_required', TRUE, $post );
+	}
+
+	require_once ABSPATH . WPINC . '/class-phpass.php';
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * @NOW 007: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
+ */
 }
 
 /**
