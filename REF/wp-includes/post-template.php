@@ -26,6 +26,16 @@ function get_the_ID()
 }
 
 /**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * @NOW 007: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
+ */
+
+/**
  * Retrieves the Post Global Unique Identifier (guid).
  *
  * The guid will appear to be a link, but should not be used as an link to the post.
@@ -62,13 +72,41 @@ function get_the_guid( $post = 0 )
 }
 
 /**
+ * Retrieve the post content.
+ *
+ * @since  0.71
+ * @global int   $page      Page number of a single post/page.
+ * @global int   $more      Boolean indicator for whether single post/page is being viewed.
+ * @global bool  $preview   Whether post/page is in preview mode.
+ * @global array $pages     Array of all pages in post/page.
+ *                          Each array element contains part of the content separated by the <!--nextpage--> tag.
+ * @global int   $multipage Boolean indicator for whether multiple pages are in play.
+ *
+ * @param  string $more_link_text Optional.
+ *                                Content for when there is more text.
+ * @param  bool   $strip_teaser   Optional.
+ *                                Strip teaser content before the more text.
+ *                                Default is false.
+ * @return string
+ */
+function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
+{
+	global $page, $more, $preview, $pages, $multipage;
+	$post = get_post();
+
+	if ( NULL === $more_link_text ) {
+		$more_link_text = sprintf( '<span aria-label="%1$s">%2$s</span>', sprintf( __( 'Continue reading %s' ), the_title_attribute( array( 'echo' => FALSE ) ) ), __( '(more&hellip;)' ) );
+/**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * ......->: wp-includes/post-template.php: the_title_attribute( [string|array $args = ''] )
  */
+	}
+}
 
 /**
  * Wrap attachment in paragraph tag before content.
