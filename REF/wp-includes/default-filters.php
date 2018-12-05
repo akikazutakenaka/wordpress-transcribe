@@ -153,5 +153,4 @@ add_filter( 'the_content', 'wp_make_content_images_responsive' );
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * @NOW 004: wp-includes/default-filters.php
- * ......->: wp-includes/media.php: wp_make_content_images_responsive( string $content )
  */

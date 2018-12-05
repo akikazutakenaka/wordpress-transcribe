@@ -971,14 +971,9 @@ function wp_make_content_images_responsive( $content )
 	foreach ( $selected_images as $image => $attachment_id ) {
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
 		$content = str_replace( $image, wp_image_add_srcset_and_sizes( $image, $image_meta, $attachment_id ), $content );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * @NOW 005: wp-includes/media.php: wp_make_content_images_responsive( string $content )
- */
 	}
+
+	return $content;
 }
 
 /**
