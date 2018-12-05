@@ -249,6 +249,7 @@ function post_password_required( $post = NULL )
 	}
 
 	require_once ABSPATH . WPINC . '/class-phpass.php';
+	$hasher = new PasswordHash( 8, TRUE );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -257,6 +258,7 @@ function post_password_required( $post = NULL )
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  * @NOW 007: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
+ * ......->: wp-includes/class-phpass.php::__construct( int $iteration_count_log2, bool $portable_hashes )
  */
 }
 

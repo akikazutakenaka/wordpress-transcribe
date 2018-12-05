@@ -34,10 +34,9 @@
  * @since 2.5.0
  */
 class PasswordHash {
-	var $itoa64;
-	var $iteration_count_log2;
-	var $portable_hashes;
-	var $random_state;
+	// refactored. var $itoa64;
+	// :
+	// refactored. var $random_state;
 
 	/**
 	 * PHP5 constructor.

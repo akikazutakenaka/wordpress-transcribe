@@ -22,3 +22,30 @@
  *
  * Obviously, since this code is in the public domain, the above are not requirements (there can be none), but merely suggestions.
  */
+
+/**
+ * Portable PHP password hashing framework.
+ *
+ * @package phpass
+ * @version 0.3 / WordPress
+ * @link    http://www.openwall.com/phpass/
+ * @since   2.5.0
+ */
+class PasswordHash
+{
+	var $itoa64;
+	var $iteration_count_log2;
+	var $portable_hashes;
+	var $random_state;
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
+ * @NOW 008: wp-includes/class-phpass.php::__construct( int $iteration_count_log2, bool $portable_hashes )
+ */
+}
