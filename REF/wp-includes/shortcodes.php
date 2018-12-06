@@ -73,8 +73,48 @@ function add_shortcode( $tag, $callback )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
- * @NOW 007: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * @NOW 008: wp-includes/shortcodes.php: get_shortcode_regex( array $tagnames )
  */
+
+/**
+ * Search only inside HTML elements for shortcodes and process them.
+ *
+ * Any [ or ] characters remaining inside elements will be HTML encoded to prevent interference with shortcodes that are outside the elements.
+ * Assumes $content processed by KSES already.
+ * Users with unfiltered_html capability may get unexpected output if angle braces are nested in tags.
+ *
+ * @since 4.2.3
+ *
+ * @param  string $content     Content to search for shortcodes.
+ * @param  bool   $ignore_html When true, all square braces inside elements will be encoded.
+ * @param  array  $tagnames    List of shortcodes to find.
+ * @return string Content with shortcodes filtered out.
+ */
+function do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames )
+{
+	// Normalize entities in unfiltered HTML before adding placeholders.
+	$trans = array(
+		'&#91;' => '&#091;',
+		'&#93;' => '&#093;'
+	);
+	$content = strtr( $content, $trans );
+	$trans = array(
+		'[' => '&#91;',
+		']' => '&#93;'
+	);
+	$pattern = get_shortcode_regex( $tagnames );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
+ * @NOW 007: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * ......->: wp-includes/shortcodes.php: get_shortcode_regex( array $tagnames )
+ */
+}
 
 /**
  * Combine user attributes with known attributes and fill in defaults when needed.
