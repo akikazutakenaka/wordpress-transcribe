@@ -236,6 +236,17 @@ function _x( $text, $context, $domain = 'default' )
 }
 
 /**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * <-......: wp-includes/post-template.php: get_the_password_form( [int|WP_Post $post = 0] )
+ * @NOW 008: wp-includes/l10n.php: esc_attr_x( string $text, string $context [, string $domain = 'default'] )
+ */
+
+/**
  * Load a .mo file into the text domain $domain.
  *
  * If the text domain already exists, the translations will be merged.

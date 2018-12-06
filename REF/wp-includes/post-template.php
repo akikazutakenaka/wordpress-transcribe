@@ -213,6 +213,7 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
 
 	// If post password required and it doesn't match the cookie.
 	if ( post_password_required( $post ) ) {
+		return get_the_password_form( $post );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -220,6 +221,7 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * ......->: wp-includes/post-template.php: get_the_password_form( [int|WP_Post $post = 0] )
  */
 	}
 }
@@ -318,4 +320,35 @@ function prepend_attachment( $content )
 	$p = apply_filters( 'prepend_attachment', $p );
 
 	return "$p\n$content";
+}
+
+//
+// Misc
+//
+
+/**
+ * Retrieve protected post password form content.
+ *
+ * @since 1.0.0
+ *
+ * @param  int|WP_Post $post Optional.
+ *                           Post ID or WP_Post object.
+ *                           Default is global $post.
+ * @return string      HTML content for password form for password protected post.
+ */
+function get_the_password_form( $post = 0 )
+{
+	$post = get_post( $post );
+	$label = 'pwbox-' . ( empty( $post->ID ) ? rand() : $post->ID );
+	$output = '<form action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" class="post-password-form" method="post"><p>' . __( 'This content is password protected. To view it please enter your password below:' ) . '</p><p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label> <input type="submit" name="Submit" value="' . esc_attr_x( 'Enter', 'post password form' ) . '" /></p></form>';
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * @NOW 007: wp-includes/post-template.php: get_the_password_form( [int|WP_Post $post = 0] )
+ * ......->: wp-includes/l10n.php: esc_attr_x( string $text, string $context [, string $domain = 'default'] )
+ */
 }
