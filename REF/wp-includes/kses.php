@@ -624,6 +624,74 @@ function wp_kses_split2( $string, $allowed_html, $allowed_protocols )
 }
 
 /**
+ * Finds all attributes of an HTML element.
+ *
+ * Does not modify input.
+ * May return "evil" output.
+ *
+ * Based on wp_kses_split2() and wp_kses_attr().
+ *
+ * @since 4.2.3
+ *
+ * @param  string     $element HTML element/tag.
+ * @return array|bool List of attributes found in $element.
+ *                    Returns false on failure.
+ */
+function wp_kses_attr_parse( $element )
+{
+	$valid = preg_match( '%^(<\s*)(/\s*)?([a-zA-Z0-9]+\s*)([^>]*)(>?)$%', $element, $matches );
+
+	if ( 1 !== $valid ) {
+		return FALSE;
+	}
+
+	$begin  = $matches[1];
+	$slash  = $matches[2];
+	$elname = $matches[3];
+	$attr   = $matches[4];
+	$end    = $matches[5];
+
+	if ( '' !== $slash ) {
+		// Closing elements do not get parsed.
+		return FALSE;
+	}
+
+	// Is there a closing XHTML slash at the end of the attributes?
+	if ( 1 === preg_match( '%\s*/\s*$%', $attr, $matches ) ) {
+		$xhtml_slash = $matches[0];
+		$attr = substr( $attr, 0, -strlen( $xhtml_slash ) );
+	} else {
+		$xhtml_slash = '';
+	}
+
+	// Split it.
+	$attrarr = wp_kses_hair_parse( $attr );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
+ * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * @NOW 008: wp-includes/kses.php: wp_kses_attr_parse( string $element )
+ * ......->: wp-includes/kses.php: wp_kses_hair_parse( string $attr )
+ */
+}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
+ * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * <-......: wp-includes/kses.php: wp_kses_attr_parse( string $element )
+ * @NOW 009: wp-includes/kses.php: wp_kses_hair_parse( string $attr )
+ */
+
+/**
  * Sanitize string from bad protocols.
  *
  * This function removes all non-allowed protocols from the beginning of $string.

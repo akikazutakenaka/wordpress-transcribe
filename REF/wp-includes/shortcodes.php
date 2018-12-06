@@ -161,6 +161,33 @@ function do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames )
 		']' => '&#93;'
 	);
 	$pattern = get_shortcode_regex( $tagnames );
+	$textarr = wp_html_split( $content );
+
+	foreach ( $textarr as &$element ) {
+		if ( '' == $element || '<' !== $element[0] ) {
+			continue;
+		}
+
+		$noopen = FALSE === strpos( $element, '[' );
+		$noclose = FALSE === strpos( $element, ']' );
+
+		if ( $noopen || $noclose ) {
+			// This element does not contain shortcodes.
+			if ( $noopen xor $noclose ) {
+				// Need to encode stray [ or ] chars.
+				$element = strtr( $element, $trans );
+			}
+
+			continue;
+		}
+
+		if ( $ignore_html || '<!--' === substr( $element, 0, 4 ) || '<![CDATA[' === substr( $element, 0, 9 ) ) {
+			// Encode all [ and ] chars.
+			$element = strtr( $element, $trans );
+			continue;
+		}
+
+		$attributes = wp_kses_attr_parse( $element );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -169,7 +196,9 @@ function do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames )
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
  * @NOW 007: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * ......->: wp-includes/kses.php: wp_kses_attr_parse( string $element )
  */
+	}
 }
 
 /**
