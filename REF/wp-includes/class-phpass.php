@@ -40,6 +40,9 @@ class PasswordHash
 
 	/**
 	 * PHP5 constructor.
+	 *
+	 * @param int  $iteration_count_log2
+	 * @param bool $portable_hashes
 	 */
 	function __construct( $iteration_count_log2, $portable_hashes )
 	{
@@ -56,9 +59,49 @@ class PasswordHash
 
 	/**
 	 * PHP4 constructor.
+	 *
+	 * @param int  $iteration_count_log2
+	 * @param bool $portable_hashes
 	 */
 	public function PasswordHash( $iteration_count_log2, $portable_hashes )
 	{
 		self::__construct( $iteration_count_log2, $portable_hashes );
+	}
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
+ * <-......: wp-includes/class-phpass.php: PasswordHash::CheckPassword( string $password, string $stored_hash )
+ * @NOW 009: wp-includes/class-phpass.php: PasswordHash::crypt_private( string $password, string $setting )
+ */
+
+	/**
+	 * @param  string $password
+	 * @param  string $stored_hash
+	 * @return bool
+	 */
+	function CheckPassword( $password, $stored_hash )
+	{
+		if ( strlen( $password ) > 4096 ) {
+			return FALSE;
+		}
+
+		$hash = $this->crypt_private( $password, $stored_hash );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
+ * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
+ * @NOW 008: wp-includes/class-phpass.php: PasswordHash::CheckPassword( string $password, string $stored_hash )
+ * ......->: wp-includes/class-phpass.php: PasswordHash::crypt_private( string $password, string $setting )
+ */
 	}
 }
