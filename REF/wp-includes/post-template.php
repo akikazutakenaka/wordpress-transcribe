@@ -214,6 +214,61 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
 	// If post password required and it doesn't match the cookie.
 	if ( post_password_required( $post ) ) {
 		return get_the_password_form( $post );
+	}
+
+	if ( $page > count( $pages ) ) { // If the requested page doesn't exist
+		$page = count( $pages ); // Give them the highest numbered page that DOES exist.
+	}
+
+	$content = $pages[ $page - 1 ];
+
+	if ( preg_match( '/<!--more(.*?)?-->/', $content, $matches ) ) {
+		$content = explode( $matches[0], $content, 2 );
+
+		if ( ! empty( $matches[1] ) && ! empty( $more_link_text ) ) {
+			$more_link_text = strip_tags( wp_kses_no_null( trim( $matches[1] ) ) );
+		}
+
+		$has_teaser = TRUE;
+	} else {
+		$content = array( $content );
+	}
+
+	if ( FALSE !== strpos( $post->post_content, '<!--noteaser-->' )
+	  && ( ! $multipage || $page == 1 ) ) {
+		$strip_teaser = TRUE;
+	}
+
+	$teaser = $content[0];
+
+	if ( $more && $strip_teaser && $has_teaser ) {
+		$teaser = '';
+	}
+
+	$output .= $teaser;
+
+	if ( count( $content ) > 1 ) {
+		if ( $more ) {
+			$output .= '<span id="more-' . $post->ID . '"></span>' . $content[1];
+		} else {
+			if ( ! empty( $more_link_text ) ) {
+				/**
+				 * Filters the Read More link text.
+				 *
+				 * @since 2.8.0
+				 *
+				 * @param string $more_link_element Read More link element.
+				 * @param string $more_link_text    Read More text.
+				 */
+				$output .= apply_filters( 'the_content_more_link', ' <a href="' . get_permalink() . "#more-{$post->ID}\" class=\"more-link\">$more_link_text</a>", $more_link_text );
+			}
+
+			$output = force_balance_tags( $output );
+		}
+	}
+
+	if ( $preview ) { // Preview fix for JavaScript bug with foreign languages.
+		$output = preg_replace_callback( '/\%u([0-9A-F]{4})/', '_convert_urlencoded_to_entities', $output );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -223,6 +278,20 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
  * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  */
 	}
+}
+
+/**
+ * Preview fix for JavaScript bug with foreign languages.
+ *
+ * @since  3.1.0
+ * @access private
+ *
+ * @param  array  $match Match array from preg_replace_callback.
+ * @return string
+ */
+function _convert_urlencoded_to_entities( $match )
+{
+	return '&#' . base_convert( $match[1], 16, 10 ) . ';';
 }
 
 /**
