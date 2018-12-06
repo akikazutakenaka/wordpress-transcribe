@@ -135,6 +135,41 @@ function get_shortcode_regex( $tagnames = NULL )
 }
 
 /**
+ * Regular Expression callable for do_shortcode() for calling shortcode hook.
+ *
+ * @see    get_shortcode_regex for details of the match array contents.
+ * @since  2.5.0
+ * @access private
+ * @global array $shortcode_tags
+ *
+ * @param  array        $m Regular expression match array.
+ * @return string|false False on failure.
+ */
+function do_shortcode_tag( $m )
+{
+	global $shortcode_tags;
+
+	// Allow [[foo]] syntax for escaping a tag.
+	if ( $m[1] == '[' && $m[6] == ']' ) {
+		return substr( $m[0], 1, -1 );
+	}
+
+	$tag = $m[2];
+	$attr = shortcode_parse_atts( $m[3] );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
+ * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * @NOW 008: wp-includes/shortcodes.php: do_shortcode_tag( array $m )
+ * ......->: wp-includes/shortcodes.php: shortcode_parse_atts( string $text )
+ */
+}
+
+/**
  * Search only inside HTML elements for shortcodes and process them.
  *
  * Any [ or ] characters remaining inside elements will be HTML encoded to prevent interference with shortcodes that are outside the elements.
@@ -188,6 +223,11 @@ function do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames )
 		}
 
 		$attributes = wp_kses_attr_parse( $element );
+
+		if ( FALSE === $attributes ) {
+			// Some plugins are doing things like [name] <[email]>.
+			if ( 1 === preg_match( '%^<\s*\[\[?[^\[\]]+\]%', $element ) ) {
+				$element = preg_replace_callback( "/$pattern/", 'do_shortcode_tag', $element );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
@@ -196,9 +236,24 @@ function do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames )
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
  * @NOW 007: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * ......->: wp-includes/shortcodes.php: do_shortcode_tag( array $m )
  */
+			}
+		}
 	}
 }
+
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
+ * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ * <-......: wp-includes/shortcodes.php: do_shortcode_tag( array $m )
+ * @NOW 009: wp-includes/shortcodes.php: shortcode_parse_atts( string $text )
+ */
 
 /**
  * Combine user attributes with known attributes and fill in defaults when needed.
