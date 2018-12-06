@@ -220,7 +220,6 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * ......->: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
  */
 	}
 }
@@ -255,15 +254,17 @@ function post_password_required( $post = NULL )
 	$required = 0 !== strpos( $hash, '$P$B' )
 		? TRUE
 		: ! $hasher->CheckPassword( $post->post_password, $hash );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * @NOW 007: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
- */
+
+	/**
+	 * Filters whether a post requires the user to supply a password.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param bool    $required Whether the user needs to supply a password.
+	 *                          True if password has not been provided or is incorrect, false if password has been supplied or is not required.
+	 * @param WP_Post $post     Post data.
+	 */
+	return apply_filters( 'post_password_required', $required, $post );
 }
 
 /**

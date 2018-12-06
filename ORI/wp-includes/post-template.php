@@ -633,48 +633,7 @@ function get_body_class( $class = '' ) {
 	return array_unique( $classes );
 }
 
-/**
- * Whether post requires password and correct password has been provided.
- *
- * @since 2.7.0
- *
- * @param int|WP_Post|null $post An optional post. Global $post used if not provided.
- * @return bool false if a password is not required or the correct password cookie is present, true otherwise.
- */
-function post_password_required( $post = null ) {
-	$post = get_post($post);
-
-	if ( empty( $post->post_password ) ) {
-		/** This filter is documented in wp-includes/post-template.php */
-		return apply_filters( 'post_password_required', false, $post );
-	}
-
-	if ( ! isset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] ) ) {
-		/** This filter is documented in wp-includes/post-template.php */
-		return apply_filters( 'post_password_required', true, $post );
-	}
-
-	require_once ABSPATH . WPINC . '/class-phpass.php';
-	$hasher = new PasswordHash( 8, true );
-
-	$hash = wp_unslash( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
-	if ( 0 !== strpos( $hash, '$P$B' ) ) {
-		$required = true;
-	} else {
-		$required = ! $hasher->CheckPassword( $post->post_password, $hash );
-	}
-
-	/**
-	 * Filters whether a post requires the user to supply a password.
-	 *
-	 * @since 4.7.0
-	 *
-	 * @param bool    $required Whether the user needs to supply a password. True if password has not been
-	 *                          provided or is incorrect, false if password has been supplied or is not required.
-	 * @param WP_Post $post     Post data.
-	 */
-	return apply_filters( 'post_password_required', $required, $post );
-}
+// refactored. function post_password_required( $post = null ) {}
 
 //
 // Page Template Functions for usage in Themes
