@@ -1364,40 +1364,7 @@ function wp_get_attachment_link( $id = 0, $size = 'thumbnail', $permalink = fals
 }
 
 // refactored. function prepend_attachment($content) {}
-
-//
-// Misc
-//
-
-/**
- * Retrieve protected post password form content.
- *
- * @since 1.0.0
- *
- * @param int|WP_Post $post Optional. Post ID or WP_Post object. Default is global $post.
- * @return string HTML content for password form for password protected post.
- */
-function get_the_password_form( $post = 0 ) {
-	$post = get_post( $post );
-	$label = 'pwbox-' . ( empty($post->ID) ? rand() : $post->ID );
-	$output = '<form action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" class="post-password-form" method="post">
-	<p>' . __( 'This content is password protected. To view it please enter your password below:' ) . '</p>
-	<p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label> <input type="submit" name="Submit" value="' . esc_attr_x( 'Enter', 'post password form' ) . '" /></p></form>
-	';
-
-	/**
-	 * Filters the HTML output for the protected post password form.
-	 *
-	 * If modifying the password field, please note that the core database schema
-	 * limits the password field to 20 characters regardless of the value of the
-	 * size attribute in the form input.
-	 *
-	 * @since 2.7.0
-	 *
-	 * @param string $output The password form HTML output.
-	 */
-	return apply_filters( 'the_password_form', $output );
-}
+// refactored. function get_the_password_form( $post = 0 ) {}
 
 /**
  * Whether currently in a page template.

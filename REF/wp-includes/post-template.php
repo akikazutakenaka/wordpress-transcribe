@@ -221,7 +221,6 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
  * <-......: wp-includes/default-filters.php
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * ......->: wp-includes/post-template.php: get_the_password_form( [int|WP_Post $post = 0] )
  */
 	}
 }
@@ -341,13 +340,15 @@ function get_the_password_form( $post = 0 )
 	$post = get_post( $post );
 	$label = 'pwbox-' . ( empty( $post->ID ) ? rand() : $post->ID );
 	$output = '<form action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" class="post-password-form" method="post"><p>' . __( 'This content is password protected. To view it please enter your password below:' ) . '</p><p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label> <input type="submit" name="Submit" value="' . esc_attr_x( 'Enter', 'post password form' ) . '" /></p></form>';
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * @NOW 007: wp-includes/post-template.php: get_the_password_form( [int|WP_Post $post = 0] )
- */
+
+	/**
+	 * Filters the HTML output for the protected post password form.
+	 *
+	 * If modifying the password field, please note that the core database schema limits the password field to 20 characters regardless of the value of the size attribute in the form input.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param string $output The password form HTML output.
+	 */
+	return apply_filters( 'the_password_form', $output );
 }
