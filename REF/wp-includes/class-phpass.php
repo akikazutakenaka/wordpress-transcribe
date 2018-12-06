@@ -68,18 +68,44 @@ class PasswordHash
 		self::__construct( $iteration_count_log2, $portable_hashes );
 	}
 
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
- * <-......: wp-includes/class-phpass.php: PasswordHash::CheckPassword( string $password, string $stored_hash )
- * <-......: wp-includes/class-phpass.php: PasswordHash::crypt_private( string $password, string $setting )
- * @NOW 010: wp-includes/class-phpass.php: PasswordHash::encode64( string $input, int $count )
- */
+	/**
+	 * @param string $input
+	 * @param int    $count
+	 */
+	function encode64( $input, $count )
+	{
+		$output = '';
+		$i = 0;
+
+		do {
+			$value = ord( $input[ $i++ ] );
+			$output .= $this->itoa64[ $value & 0x3f ];
+
+			if ( $i < $count ) {
+				$value |= ord( $input[ $i ] ) << 8;
+			}
+
+			$output .= $this->itoa64[ ( $value >> 6 ) & 0x3f ];
+
+			if ( $i++ >= $count ) {
+				break;
+			}
+
+			if ( $i < $count ) {
+				$value |= ord( $input[ $i ] ) << 16;
+			}
+
+			$output .= $this->itoa64[ ( $value >> 12 ) & 0x3f ];
+
+			if ( $i++ >= $count ) {
+				break;
+			}
+
+			$output .= $this->itoa64[ ( $value >> 18 ) & 0x3f ];
+		} while ( $i < $count );
+
+		return $output;
+	}
 
 	/**
 	 * @param  string $password
@@ -144,7 +170,6 @@ class PasswordHash
  * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
  * <-......: wp-includes/class-phpass.php: PasswordHash::CheckPassword( string $password, string $stored_hash )
  * @NOW 009: wp-includes/class-phpass.php: PasswordHash::crypt_private( string $password, string $setting )
- * ......->: wp-includes/class-phpass.php: PasswordHash::encode64( string $input, int $count )
  */
 	}
 
