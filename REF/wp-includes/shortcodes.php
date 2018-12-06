@@ -67,6 +67,16 @@ function add_shortcode( $tag, $callback )
 }
 
 /**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
+ * @NOW 007: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ */
+
+/**
  * Combine user attributes with known attributes and fill in defaults when needed.
  *
  * The pairs should be considered to be all of the attributes which are supported by the caller and given as a list.
@@ -112,4 +122,58 @@ function shortcode_atts( $pairs, $atts, $shortcode = '' )
 	}
 
 	return $out;
+}
+
+/**
+ * Remove all shortcode tags from the given content.
+ *
+ * @since  2.5.0
+ * @global array  $shortcode_tags
+ *
+ * @param  string $content Content to remove shortcode tags.
+ * @return string Content without shortcode tags.
+ */
+function strip_shortcodes( $content )
+{
+	global $shortcode_tags;
+
+	if ( FALSE === strpos( $content, '[' ) ) {
+		return $content;
+	}
+
+	if ( empty( $shortcode_tags ) || ! is_array( $shortcode_tags ) ) {
+		return $content;
+	}
+
+	// Find all registered tag names in $content.
+	preg_match_all( '@\[([^<>&/\[\]\x00-\x20=]++)@', $content, $matches );
+
+	$tags_to_remove = array_keys( $shortcode_tags );
+
+	/**
+	 * Filters the list of shortcode tags to remove from the content.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param array  $tag_array Array of shortcode tags to remove.
+	 * @param string $content   Content shortcodes are being removed from.
+	 */
+	$tags_to_remove = apply_filters( 'strip_shortcodes_tagnames', $tags_to_remove, $content );
+
+	$tagnames = array_intersect( $tags_to_remove, $matches[1] );
+
+	if ( empty( $tagnames ) ) {
+		return $content;
+	}
+
+	$content = do_shortcodes_in_html_tags( $content, TRUE, $tagnames );
+/**
+ * <-......: wp-blog-header.php
+ * <-......: wp-load.php
+ * <-......: wp-settings.php
+ * <-......: wp-includes/default-filters.php
+ * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * @NOW 006: wp-includes/shortcodes.php: strip_shortcodes( string $content )
+ * ......->: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
+ */
 }

@@ -2456,12 +2456,14 @@ function wp_trim_excerpt( $text = '' )
 
 	if ( '' == $text ) {
 		$text = get_the_content( '' );
+		$text = strip_shortcodes( $text );
 /**
  * <-......: wp-blog-header.php
  * <-......: wp-load.php
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
+ * ......->: wp-includes/shortcodes.php: strip_shortcodes( string $content )
  */
 	}
 }
