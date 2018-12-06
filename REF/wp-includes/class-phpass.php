@@ -160,17 +160,7 @@ class PasswordHash
 
 		$output = substr( $setting, 0, 12 );
 		$output .= $this->encode64( $hash, 16 );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
- * <-......: wp-includes/class-phpass.php: PasswordHash::CheckPassword( string $password, string $stored_hash )
- * @NOW 009: wp-includes/class-phpass.php: PasswordHash::crypt_private( string $password, string $setting )
- */
+		return $output;
 	}
 
 	/**
@@ -194,7 +184,6 @@ class PasswordHash
  * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
  * @NOW 008: wp-includes/class-phpass.php: PasswordHash::CheckPassword( string $password, string $stored_hash )
- * ......->: wp-includes/class-phpass.php: PasswordHash::crypt_private( string $password, string $setting )
  */
 	}
 }
