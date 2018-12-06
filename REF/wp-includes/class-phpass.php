@@ -175,15 +175,11 @@ class PasswordHash
 		}
 
 		$hash = $this->crypt_private( $password, $stored_hash );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * <-......: wp-includes/post-template.php: post_password_required( [int|WP_Post|null $post = NULL] )
- * @NOW 008: wp-includes/class-phpass.php: PasswordHash::CheckPassword( string $password, string $stored_hash )
- */
+
+		if ( $hash[0] == '*' ) {
+			$hash = crypt( $password, $stored_hash );
+		}
+
+		return $hash === $stored_hash;
 	}
 }
