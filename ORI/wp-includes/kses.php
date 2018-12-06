@@ -378,56 +378,7 @@ function wp_kses_hair($attr, $allowed_protocols) {
 	return $attrarr;
 }
 
-/**
- * Finds all attributes of an HTML element.
- *
- * Does not modify input.  May return "evil" output.
- *
- * Based on wp_kses_split2() and wp_kses_attr()
- *
- * @since 4.2.3
- *
- * @param string $element HTML element/tag
- * @return array|bool List of attributes found in $element. Returns false on failure.
- */
-function wp_kses_attr_parse( $element ) {
-	$valid = preg_match('%^(<\s*)(/\s*)?([a-zA-Z0-9]+\s*)([^>]*)(>?)$%', $element, $matches);
-	if ( 1 !== $valid ) {
-		return false;
-	}
-
-	$begin =  $matches[1];
-	$slash =  $matches[2];
-	$elname = $matches[3];
-	$attr =   $matches[4];
-	$end =    $matches[5];
-
-	if ( '' !== $slash ) {
-		// Closing elements do not get parsed.
-		return false;
-	}
-
-	// Is there a closing XHTML slash at the end of the attributes?
-	if ( 1 === preg_match( '%\s*/\s*$%', $attr, $matches ) ) {
-		$xhtml_slash = $matches[0];
-		$attr = substr( $attr, 0, -strlen( $xhtml_slash ) );
-	} else {
-		$xhtml_slash = '';
-	}
-	
-	// Split it
-	$attrarr = wp_kses_hair_parse( $attr );
-	if ( false === $attrarr ) {
-		return false;
-	}
-
-	// Make sure all input is returned by adding front and back matter.
-	array_unshift( $attrarr, $begin . $slash . $elname );
-	array_push( $attrarr, $xhtml_slash . $end );
-	
-	return $attrarr;
-}
-
+// refactored. function wp_kses_attr_parse( $element ) {}
 // refactored. function wp_kses_hair_parse( $attr ) {}
 
 /**

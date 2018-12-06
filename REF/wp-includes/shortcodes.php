@@ -196,7 +196,6 @@ function do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames )
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
  * @NOW 007: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
- * ......->: wp-includes/kses.php: wp_kses_attr_parse( string $element )
  */
 	}
 }

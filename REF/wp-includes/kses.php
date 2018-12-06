@@ -666,16 +666,16 @@ function wp_kses_attr_parse( $element )
 
 	// Split it.
 	$attrarr = wp_kses_hair_parse( $attr );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
- * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
- * @NOW 008: wp-includes/kses.php: wp_kses_attr_parse( string $element )
- */
+
+	if ( FALSE === $attrarr ) {
+		return FALSE;
+	}
+
+	// Make sure all input is returned by adding front and back matter.
+	array_unshift( $attrarr, $begin . $slash . $elname );
+	array_push( $attrarr, $xhtml_slash . $end );
+
+	return $attrarr;
 }
 
 /**
