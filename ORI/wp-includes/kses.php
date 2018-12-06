@@ -428,58 +428,7 @@ function wp_kses_attr_parse( $element ) {
 	return $attrarr;
 }
 
-/**
- * Builds an attribute list from string containing attributes.
- *
- * Does not modify input.  May return "evil" output.
- * In case of unexpected input, returns false instead of stripping things.
- *
- * Based on wp_kses_hair() but does not return a multi-dimensional array.
- *
- * @since 4.2.3
- *
- * @param string $attr Attribute list from HTML element to closing HTML element tag
- * @return array|bool List of attributes found in $attr. Returns false on failure.
- */
-function wp_kses_hair_parse( $attr ) {
-	if ( '' === $attr ) {
-		return array();
-	}
-
-	$regex =
-	  '(?:'
-	.     '[-a-zA-Z:]+'   // Attribute name.
-	. '|'
-	.     '\[\[?[^\[\]]+\]\]?' // Shortcode in the name position implies unfiltered_html.
-	. ')'
-	. '(?:'               // Attribute value.
-	.     '\s*=\s*'       // All values begin with '='
-	.     '(?:'
-	.         '"[^"]*"'   // Double-quoted
-	.     '|'
-	.         "'[^']*'"   // Single-quoted
-	.     '|'
-	.         '[^\s"\']+' // Non-quoted
-	.         '(?:\s|$)'  // Must have a space
-	.     ')'
-	. '|'
-	.     '(?:\s|$)'      // If attribute has no value, space is required.
-	. ')'
-	. '\s*';              // Trailing space is optional except as mentioned above.
-
-	// Although it is possible to reduce this procedure to a single regexp,
-	// we must run that regexp twice to get exactly the expected result.
-
-	$validation = "%^($regex)+$%";
-	$extraction = "%$regex%";
-
-	if ( 1 === preg_match( $validation, $attr ) ) {
-		preg_match_all( $extraction, $attr, $attrarr );
-		return $attrarr[0];
-	} else {
-		return false;
-	}
-}
+// refactored. function wp_kses_hair_parse( $attr ) {}
 
 /**
  * Performs different checks for attribute values.

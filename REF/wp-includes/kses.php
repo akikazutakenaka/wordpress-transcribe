@@ -675,21 +675,61 @@ function wp_kses_attr_parse( $element )
  * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
  * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
  * @NOW 008: wp-includes/kses.php: wp_kses_attr_parse( string $element )
- * ......->: wp-includes/kses.php: wp_kses_hair_parse( string $attr )
  */
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/shortcodes.php: strip_shortcodes( string $content )
- * <-......: wp-includes/shortcodes.php: do_shortcodes_in_html_tags( string $content, bool $ignore_html, array $tagnames )
- * <-......: wp-includes/kses.php: wp_kses_attr_parse( string $element )
- * @NOW 009: wp-includes/kses.php: wp_kses_hair_parse( string $attr )
+ * Builds an attribute list from string containing attributes.
+ *
+ * Does not modify input.
+ * May return "evil" output.
+ * In case of unexpected input, returns false instead of stripping things.
+ *
+ * Based on wp_kses_hair() but does not return a multi-dimensional array.
+ *
+ * @since 4.2.3
+ *
+ * @param  string     $attr Attribute list from HTML element to closing HTML element tag.
+ * @return array|bool List of attributes found in $attr.
+ *                    Returns false on failure.
  */
+function wp_kses_hair_parse( $attr )
+{
+	if ( '' === $attr ) {
+		return array();
+	}
+
+	$regex = '(?:'
+			. '[a-zA-Z:]+'         // Attribute name.
+		. '|'
+			. '\[\[?[^\[\]]+\]\]?' // Shortcode in the name position implies unfiltered_html.
+		. ')'
+		. '(?:'                    // Attribute value.
+			. '\s*=\s*'            // All values begin with '='.
+			. '(?:'
+				. '"[^"]*"'        // Double-quoted.
+			. '|'
+				. "'[^']*'"        // Single-quoted.
+			. '|'
+				. '[^\s"\']+'      // Non-quoted.
+				. '(?:\s|$)'       // Must have a space.
+			. ')'
+		'|'
+			. '(?:\s|$)'           // If attribute has no value, space is required.
+		. ')'
+		. '\s*';                   // Trailing space is optional except as mentioned above.
+
+	// Although it is possible to reduce this procedure to a single regexp, we must run that regexp twice to get exactly the expected result.
+	$validation = "%^($regex)+$%";
+	$extraction = "%$regex%";
+
+	if ( 1 === preg_match( $validation, $attr ) ) {
+		preg_match_all( $extraction, $attr, $attrarr );
+		return $attrarr[0];
+	} else {
+		return FALSE;
+	}
+}
 
 /**
  * Sanitize string from bad protocols.
