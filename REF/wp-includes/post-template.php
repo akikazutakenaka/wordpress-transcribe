@@ -269,15 +269,9 @@ function get_the_content( $more_link_text = NULL, $strip_teaser = FALSE )
 
 	if ( $preview ) { // Preview fix for JavaScript bug with foreign languages.
 		$output = preg_replace_callback( '/\%u([0-9A-F]{4})/', '_convert_urlencoded_to_entities', $output );
-/**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * @NOW 006: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- */
 	}
+
+	return $output;
 }
 
 /**

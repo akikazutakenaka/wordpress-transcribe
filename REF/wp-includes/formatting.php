@@ -2462,7 +2462,6 @@ function wp_trim_excerpt( $text = '' )
  * <-......: wp-settings.php
  * <-......: wp-includes/default-filters.php
  * @NOW 005: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * ......->: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  */
 	}
 }
