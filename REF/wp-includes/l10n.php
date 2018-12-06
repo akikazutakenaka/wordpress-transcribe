@@ -236,15 +236,22 @@ function _x( $text, $context, $domain = 'default' )
 }
 
 /**
- * <-......: wp-blog-header.php
- * <-......: wp-load.php
- * <-......: wp-settings.php
- * <-......: wp-includes/default-filters.php
- * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
- * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
- * <-......: wp-includes/post-template.php: get_the_password_form( [int|WP_Post $post = 0] )
- * @NOW 008: wp-includes/l10n.php: esc_attr_x( string $text, string $context [, string $domain = 'default'] )
+ * Translate string with gettext context, and escapes it for safe use in an attribute.
+ *
+ * @since 2.8.0
+ *
+ * @param  string $text    Text to translate.
+ * @param  string $context Context information for the translators.
+ * @param  string $domain  Optional.
+ *                         Text domain.
+ *                         Unique identifier for retrieving translated strings.
+ *                         Default 'default'.
+ * @return string Translated text.
  */
+function esc_attr_x( $text, $context, $domain = 'default' )
+{
+	return esc_attr( translate_with_gettext_context( $text, $context, $domain ) );
+}
 
 /**
  * Load a .mo file into the text domain $domain.

@@ -349,6 +349,5 @@ function get_the_password_form( $post = 0 )
  * <-......: wp-includes/formatting.php: wp_trim_excerpt( [string $text = ''] )
  * <-......: wp-includes/post-template.php: get_the_content( [string $more_link_text = NULL [, bool $strip_teaser = FALSE]] )
  * @NOW 007: wp-includes/post-template.php: get_the_password_form( [int|WP_Post $post = 0] )
- * ......->: wp-includes/l10n.php: esc_attr_x( string $text, string $context [, string $domain = 'default'] )
  */
 }
